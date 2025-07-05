@@ -201,8 +201,28 @@ function instance_create(x, y, obj) {
   return instance;
 }
 
-function instance_destroy(id, execute_event_flag) {
-  
+/**
+ * You call this function whenever you wish to "destroy" an instance, normally triggering a Destroy Event and also a Clean Up Event. This will remove it from the room until the room is restarted (unless the room is persistent). Calling the function will simply destroy all instances of a particular object.
+ * 
+ * @param {string} index The object asset to destroy instances of
+ * @returns {void}
+ */
+function instance_destroy(index) {
+  const arr = instances[index];
+  if (!arr) return;
+  for (const inst of arr.slice()) {
+    inst.instance_destroy(executeEvent);
+  }
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy };
+/**
+ * This function can be used in two ways depending on what you wish to check. You can give it an object_index to check for, in which case this function will return true if any active instances of the specified object exist in the current room, or you can also supply it with an instance id, in which case this function will return true if that specific instance exists and is active in the current room.
+ * 
+ * @param {string} obj The object or instance to check for the exsistence  of
+ * @returns {boolean}
+ */
+function instance_exists(obj) {
+  return instances[obj] && instances[obj].length > 0;
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists };
