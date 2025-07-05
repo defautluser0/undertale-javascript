@@ -6,6 +6,7 @@ const global = {
   control_new_state: [0, 0, 0],
   roomEnd: false,
   eventDone: true,
+  nextRoom: null,
 }
 
 export default global;
