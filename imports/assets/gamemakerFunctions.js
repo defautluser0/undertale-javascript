@@ -225,4 +225,65 @@ function instance_exists(obj) {
   return instances[obj] && instances[obj].length > 0;
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists };
+/**
+ * This function draws the given sprite and sub-image at a position within the game room. For the sprite you can use the instance variable sprite_index to get the current sprite that is assigned to the instance running the code, or you can use any other sprite asset. The same goes for the sub-image, as this can also be set to the instance variable image_index which will set the sub-image to that selected for the current instance sprite (note, that you can draw a different sprite and still use the sub-image value for the current instance), or you can use any other value for this to draw a specific sub-image of the chosen sprite. If the value is larger than the number of sub-images, then GameMaker will automatically loop the number to select the corresponding image (for example, if the sprite being drawn has 5 sub-images numbered 0 to 4 and we set the index value to 7, then the function will draw the third sub-image, numbered 2). Finally, the x and y position is the position within the room that the sprite will be drawn, and it is centered on the sprite x offset and y offset.
+ * 
+ * @param {object} sprite The index of the sprite to draw
+ * @param {number} subimg The sub-image (frame) of  the  sprite to draw (image_index or -1 correlate to the current frame of animation in the object)
+ * @param {number} x The x coordinate of where to draw the spirte
+ * @param {number} y The y coordinate of where to draw the sprite
+ */
+function draw_sprite(sprite, subimg, x, y) {
+  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, 1, "#ffffff")
+}
+
+/**
+ * This function will draw the given sprite as in the function draw_sprite() but with additional options to change the scale, blending, rotation and alpha of the sprite being drawn. Changing these values does not modify the resource in any way (only how it is drawn), and you can use any of the available sprite variables instead of direct values for all the arguments in the function.
+ * 
+ * @param {object} sprite The index of the sprite to draw
+ * @param {number} subimg The subimg (frame) of the sprite to draw (image_index or -1 correlate to the current frame of animation in thhe object)
+ * @param {number} x The x coordinate of where to draw the sprite
+ * @param {number} y The y coordinate of where to draw the sprite
+ * @param {number} xscale The horizontal scaling of the sprite, as a multiplier: 1 = normall scaling, 0.5 is half etc...
+ * @param {number} yscale The vertical scaling of the sprite as a multiplier: 1 = normal scaling, 0.5 is half etc...
+ * @param {number} rot The rotation of the sprite. 0=right way up, 90=rotated 90 degrees counter-clockwise etc...
+ * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally. Currently unused until coloring sprites is added
+ * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
+ * @returns {void}
+ */
+function draw_sprite_ext(sprite, subimg, x, y, xscale = 1, yscale = 1, rot = 0, colour = c_white, alpha = 1) {
+  if (!sprite || !sprite.path) return;
+
+  // Normalize subimg to valid frame index
+  const frame = subimg < 0 ? 0 : subimg % sprite.frameCount;
+
+  const img = new Image();
+  img.src = `${sprite.path}${frame}.png`; // e.g. "/spr/introimage/3.png"
+
+  img.onload = () => {
+    ctx.save();
+
+    // Translate to position
+    ctx.translate(x, y);
+
+    // Rotate (convert degrees to radians)
+    ctx.rotate(rot * Math.PI / 180);
+
+    // Scale
+    ctx.scale(xscale, yscale);
+
+    // Apply alpha
+    ctx.globalAlpha = alpha;
+
+    // TODO: Implement tinting with colour if needed — canvas doesn't support direct tinting easily
+
+    // Draw image centered on (0, 0)
+    ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+    ctx.restore();
+  };
+
+  // If the image is already cached, onload fires immediately.
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext };
