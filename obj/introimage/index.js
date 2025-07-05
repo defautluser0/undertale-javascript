@@ -1,5 +1,6 @@
 import { caster_load, caster_play, caster_stop, caster_free, caster_set_volume } from '/imports/customFunctions.js';
 import { mus_story } from '/imports/assets.js';
+import { instance_create, instance_destroy } from '/imports/assets/gamemakerFunctions.js';
 import global from '/imports/assets/global.js'
 
 // general gamemaker variables
@@ -48,7 +49,7 @@ function alarm2() {
 	global.typer =  11;
 	global.faceemotion = 0;
 	global.msc = 0;
-	//instance_create(0, 0, obj_introtangle);
+	instance_create(0, 0, obj_introtangle);
   fadercreator = 0;
 	skip = 0;
 	global.msg[0] = "Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^6. \E1 ^1 %"
@@ -66,7 +67,7 @@ function alarm2() {
 	global.msg[12] = " ^9 ^9 ^9 ^9 ^9  \E0 %%"
 	global.msg[13] = " ^9 ^9 ^9 ^9 ^9 ^9 \E0 %"
 	global.msg[14] = " %%"
-	// let mywriter = instance_create(40, 140, OBJ_WRITER);
+	let mywriter = instance_create(40, 140, OBJ_WRITER);
 	alarm[0] = 5;
 }
 
@@ -78,7 +79,7 @@ function alarm1() {
 
 function alarm0() {
 	if (fadercreator !== global.faceemotion) {
-		// instance_create(0, 0, obj_introfader);
+		instance_create(0, 0, obj_introfader);
 	}
 	alarm[0] = 3
 	fadercreator = global.faceemotion;
@@ -106,7 +107,18 @@ function introimage_beginStep() {
 }
 
 function introimage_step() {
+	if (act == 1) {
+		if (control_check_pressed(0)) {
+			if (skip == 0) {
+				skip = 1;
+				fader = innstance_create(0, 0, obj_unfader)
+				fader.tspeed = 0.05
+				alarm[1] = 30;
 
+				instance_destroy(OBJ_WRITER);
+			}
+		}
+	}
 }
 
 export { introimage_beginStep, introimage_step, updateGamemakerFunctions_introimage, instanceID }

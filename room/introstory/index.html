@@ -23,6 +23,7 @@
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
     import { introimage_beginStep, introimage_step, updateGamemakerFunctions_introimage } from '/obj/introimage/index.js'
     import { unfader_step } from '/obj/unfader/index.js'
+    import global from '/imports/assets/global.js'
 
     // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
@@ -41,6 +42,15 @@
         introimage_step();
         unfader_step();
         input_update();
+
+        if (global.roomEnd && !global.eventDone) {
+          global.eventDone = true;
+        }
+
+        if (global.roomEnd && global.eventDone) {
+          global.eventDone = false;
+          window.location.href = global.nextRoom;
+        }
       }
 
       requestAnimationFrame(game_loop);
