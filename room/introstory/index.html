@@ -21,9 +21,14 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-    import { introimage_beginStep, introimage_step, updateGamemakerFunctions_introimage } from '/obj/introimage/index.js'
-    import { unfader_step } from '/obj/unfader/index.js'
+    import * as introimage from '/obj/introimage/index.js'
+    import * as unfader from '/obj/unfader/index.js'
+    import * as unfader2 from '/obj/unfader/index.js'
     import global from '/imports/assets/global.js'
+
+    const introimageInstance = introimage.create()
+    const unfaderInstance = unfader.create()
+    const unfaderInstance2 = unfader2.create()
 
     // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
@@ -37,10 +42,11 @@
         lastFrameTime = currentTime;
 
         control_update();
-        updateGamemakerFunctions_introimage();
-        introimage_beginStep();
-        introimage_step();
-        unfader_step();
+        introimage.updateGamemakerFunctions.call(introimageInstance);
+        introimage.beginStep.call(introimageInstance);
+        introimage.step.call(introimageInstance);
+        unfader.step.call(unfaderInstance);
+        unfader.step.call(unfaderInstance2);
         input_update();
 
         if (global.roomEnd && !global.eventDone) {

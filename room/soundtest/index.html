@@ -19,7 +19,11 @@
   </script>
   <script type="module">
 import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-import { soundtest_step, soundtest_draw, updateGamemakerFunctions_soundtest } from '/obj/soundtest/index.js'
+import * as soundtest from '/obj/soundtest/index.js'
+
+// create
+const instance = soundtest.create();
+
 // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events). IF SO PLEASE CHANGE THE TEMPLATE.
 const FPS = 30;
 const FRAME_DURATION = 1000 / FPS;
@@ -32,9 +36,9 @@ function game_loop(currentTime) {
     lastFrameTime = currentTime;
 
     control_update();
-    updateGamemakerFunctions_soundtest();
-    soundtest_step();
-    soundtest_draw();
+    soundtest.updateGamemakerFunctions();
+    soundtest.step.call(instance);
+    soundtest.draw.call(instance);
     input_update();
   }
 

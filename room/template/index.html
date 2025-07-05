@@ -15,8 +15,9 @@
   <script type="module">
     import roomSize from '/imports/assets/roomSize.js'
 
-    roomSize.width = 320;
-    roomSize.height = 240;
+    roomSize.width = 320;  // room width in px
+    roomSize.height = 240; // room height in px
+
   </script>
   <script src="/imports/howler.js"></script>
   <script type="module">
@@ -51,7 +52,6 @@
 
       requestAnimationFrame(game_loop);
     }
-
     window.addEventListener("keydown", e => {
       keyboard[e.code] = true;
       _key_state[e.key] = true;
@@ -60,6 +60,8 @@
       keyboard[e.code] = false;
       _key_state[e.key] = false;
     });
+
+    // room code (object positioning and such) goes here
 
     // starts the game loop once everything has been defined
     window.addEventListener('load', () => {
