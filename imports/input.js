@@ -1,4 +1,4 @@
-import { global } from '/imports/assets.js'
+import global from '/imports/assets/global.js'
 
 // keyboard setup
 const vk_left = "ArrowLeft";

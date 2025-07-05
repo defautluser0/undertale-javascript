@@ -28,6 +28,21 @@ function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1
   index.play();
   playingSounds.set(index, index);
 }
+/**
+ * This function can be used to change the pitch of a given sound. The sound can either be one referenced from an index for an individual sound being played which has been stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions, or an actual sound asset from the Asset Browser. If it is an index of a playing sound, then only that instance will be changed, however when using a sound asset from the Asset Browser, all instances of that sound asset being played will be changed. The pitch argument is a pitch multiplier, in that the input value multiplies the current pitch by that amount, so the default value of 1 is no pitch change, while a value of less than 1 will lower the pitch and greater than 1 will raise the pitch. It is best to use small increments for this function as any value under 0 or over 5 may not be audible anyway. It is worth noting that the total pitch change permitted is clamped to (1/256) - 256 octaves, so any value over or under this will not be registered.
+ * 
+ * @param {string} index The index of the sound to change.
+ * @param {number} pitch The pitch multiplier (default 1).
+ */
+function audio_sound_pitch(index, pitch) {
+  if (index instanceof Howl) {
+    index.rate(pitch)
+  }
+}
+
+function audio_sound_gain(index, volume, time) {
+  console.log("TODO: finish");
+}
 
 /**
  * This function will check the given sound to see if it is currently playing. The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be checked and if any of them are playing the function will return true otherwise it will return false. Note that this function will still return true if the sound being checked has previously been paused using the audio_pause_sound() function.

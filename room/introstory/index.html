@@ -13,7 +13,7 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
 import { control_update, input_update } from "/imports/input.js";
-import { introimage_beginStep, introimage_step } from '/obj/introimage/index.js'
+import { introimage_beginStep, introimage_step, introimage_alarm_update } from '/obj/introimage/index.js'
 import { unfader_step } from '/obj/unfader/index.js'
 
 // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
@@ -28,6 +28,7 @@ function game_loop(currentTime) {
     lastFrameTime = currentTime;
 
     control_update();
+    introimage_alarm_update();
     introimage_beginStep();
     introimage_step();
     unfader_step();

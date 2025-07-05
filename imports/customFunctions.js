@@ -116,4 +116,8 @@ function scr_setfont(newfont) {
   draw_set_font(newfont);
 }
 
-export { scr_drawtext_icons, scr_drawtext_icons_multiline, scr_drawtext_centered, scr_drawtext_centered_scaled, scr_setfont }
+function caster_play(sound, volume, pitch) {
+  
+}
+
+export { scr_drawtext_icons, scr_drawtext_icons_multiline, scr_drawtext_centered, scr_drawtext_centered_scaled, scr_setfont, caster_play }

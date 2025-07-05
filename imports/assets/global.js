@@ -6,4 +6,4 @@ const global = {
   control_new_state: [0, 0, 0],
 }
 
-export { global }
+export default global;
