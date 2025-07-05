@@ -17,6 +17,16 @@ function game_loop(currentTime) {
     objectname_endStep();
     objectname_draw();
     input_update();
+
+    if (global.roomEnd && !global.eventDone) {
+      global.eventDone = true;
+      objectname_roomEnd();
+    }
+
+    if (global.roomEnd && global.eventDone) {
+      global.eventDone = false;
+      window.location.href = global.nextRoom;
+    }
   }
 
   requestAnimationFrame(game_loop);
