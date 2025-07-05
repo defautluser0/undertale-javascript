@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNDERTALE</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/imports/assets/font.css">
+</head>
+<body>
+	
+  <canvas id="gameCanvas" width="640" height="480"></canvas>
+  <script src="/imports/howler.js"></script>
+  <script type="module">
+import { control_update, input_update } from "/imports/input.js";
+
+// gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
+// IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
+const FPS = 30;
+const FRAME_DURATION = 1000 / FPS;
+let lastFrameTime = 0;
+function game_loop(currentTime) {
+  const elapsed = currentTime - lastFrameTime;
+
+  if (elapsed >= FRAME_DURATION) {
+    lastFrameTime = currentTime;
+
+    control_update();
+    objectname_step();
+    objectname_draw();
+    input_update();
+  }
+
+  requestAnimationFrame(game_loop);
+}
+
+window.addEventListener("keydown", e => {
+  keyboard[e.code] = true;
+  _key_state[e.key] = true;
+});
+window.addEventListener("keyup", e => {
+  keyboard[e.code] = false;
+  _key_state[e.key] = false;
+});
+
+// starts the game loop once everything has been defined
+window.addEventListener('load',  () => {
+  requestAnimationFrame(game_loop);
+})
+</script>
+</body>
+</html>
