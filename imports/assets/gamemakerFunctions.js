@@ -175,12 +175,9 @@ function draw_set_font(font) {
  * @param {string} index 
  */
 function room_goto(index) {
-  if (global.eventDone = true) {
-    window.location.href = `/room/${index.slice(5)}/`;
-  } else {
-    global.eventDone = false;
-    room_goto(index);
-  }
+  global.eventDone = false;
+  global.roomEnd = true;
+  global.nextRoom = `/room/${index.slice(5)}/`;
 }
 
 /**
@@ -192,7 +189,20 @@ function room_goto(index) {
  * @param {string} obj The object index of the object to create an instance of
  */
 function instance_create(x, y, obj) {
+  const instance = {
+    x,
+    y,
+    visible: true,
+    alarm: new Array(12).fill(-1),
+    ...obj
+  }
 
+  instances.push(instance)
+  return instance;
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create };
+function instance_destroy(id, execute_event_flag) {
+  
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy };
