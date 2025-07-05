@@ -12,12 +12,19 @@
   <canvas id="gameCanvas" width="640" height="480"></canvas>
   <script src="/imports/howler.js"></script>
   <script type="module">
+    import roomSize from '/imports/assets/roomSize.js'
+
+    roomSize.width = 640;
+    roomSize.height = 480;
+  </script>
+  <script type="module">
 import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-import { soundtest_step, soundtest_draw } from '/obj/soundtest/index.js'
+import { soundtest_step, soundtest_draw, updateGamemakerFunctions_soundtest } from '/obj/soundtest/index.js'
 // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events). IF SO PLEASE CHANGE THE TEMPLATE.
 const FPS = 30;
 const FRAME_DURATION = 1000 / FPS;
 let lastFrameTime = 0;
+
 function game_loop(currentTime) {
   const elapsed = currentTime - lastFrameTime;
 
@@ -25,6 +32,7 @@ function game_loop(currentTime) {
     lastFrameTime = currentTime;
 
     control_update();
+    updateGamemakerFunctions_soundtest();
     soundtest_step();
     soundtest_draw();
     input_update();

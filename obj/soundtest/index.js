@@ -1,27 +1,63 @@
 // function/declaration imports
-import { scr_setfont, scr_drawtext_icons_multiline, scr_drawtext_centered_scaled, scr_drawtext_centered } from '/imports/customFunctions.js'
-import { control_check_pressed, vk_left, vk_right } from '/imports/input.js'
-import { draw_set_color, audio_is_playing, audio_play_sound, audio_stop_all, keyboard_check_pressed, draw_text, room_goto } from '/imports/assets/gamemakerFunctions.js'
-import { canvas, ctx } from '/imports/canvasSetup.js'
+import {
+  scr_setfont,
+  scr_drawtext_icons_multiline,
+  scr_drawtext_centered_scaled,
+  scr_drawtext_centered,
+} from "/imports/customFunctions.js";
+import { control_check_pressed, vk_left, vk_right } from "/imports/input.js";
+import {
+  draw_set_color,
+  audio_is_playing,
+  audio_play_sound,
+  audio_stop_all,
+  keyboard_check_pressed,
+  draw_text,
+  room_goto,
+} from "/imports/assets/gamemakerFunctions.js";
+import { canvas, ctx, ogCanvas, ogCtx } from "/imports/canvasSetup.js";
 // asset imports
-import { c_white, c_yellow, mus_st_happytown, mus_st_him, mus_st_meatfactory, mus_st_troubledingle, fnt_main } from '/imports/assets.js'
+import {
+  c_white,
+  c_yellow,
+  mus_st_happytown,
+  mus_st_him,
+  mus_st_meatfactory,
+  mus_st_troubledingle,
+  fnt_main,
+} from "/imports/assets.js";
 
 // create
-let con = 0
-let songno = 0
-let gaster = 0
-let g_timer = 0
-let buffer = 0
-let active_l = 0
-let active_r = 0
-let seeya_timer = 0
+let con = 0;
+let songno = 0;
+let gaster = 0;
+let g_timer = 0;
+let buffer = 0;
+let active_l = 0;
+let active_r = 0;
+let seeya_timer = 0;
+
+function updateGamemakerFunctions_soundtest() {
+  ogCtx.clearRect(0, 0, ogCanvas.width, ogCanvas.height);
+  ogCtx.drawImage(
+    canvas,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+    0,
+    0,
+    ogCanvas.width,
+    ogCanvas.height
+  );
+}
 
 function soundtest_step() {
   // step starts here
-	if (seeya_timer >= 180) {
-		room_goto("room_tundra3A")
-	}
-		// step ends ere
+  if (seeya_timer >= 180) {
+    room_goto("room_tundra3A");
+  }
+  // step ends ere
 }
 
 function soundtest_draw() {
@@ -30,14 +66,19 @@ function soundtest_draw() {
   if (con === 0) {
     draw_set_color(c_white);
     scr_setfont(fnt_main);
-    scr_drawtext_icons_multiline(120, 50, "Welcome to the Sound Test!#Listen to all your favorites.#Press Left or Right to select.#Press \*Z to play a song.#", 2);
-    buffer = buffer + 1
+    scr_drawtext_icons_multiline(
+      120,
+      50,
+      "Welcome to the Sound Test!#Listen to all your favorites.#Press Left or Right to select.#Press *Z to play a song.#",
+      2
+    );
+    buffer = buffer + 1;
 
     if (buffer >= 20) {
       if (control_check_pressed(0)) {
         buffer = -10;
-        con = 1
-        songno = 0
+        con = 1;
+        songno = 0;
       }
     }
   }
@@ -48,50 +89,46 @@ function soundtest_draw() {
     scr_drawtext_centered_scaled(320, 50, "SOUND TEST", 2, 2);
 
     switch (songno) {
-    case 0:
-      if (audio_is_playing(mus_st_happytown)) {
-        draw_set_color(c_yellow);
-      }
-      else if (control_check_pressed(0) && gaster === 0) {
-        audio_stop_all();
-        audio_play_sound(mus_st_happytown, 50, true);
-      }
-      scr_drawtext_centered(320, 200, "Happy Town");
-      break;
+      case 0:
+        if (audio_is_playing(mus_st_happytown)) {
+          draw_set_color(c_yellow);
+        } else if (control_check_pressed(0) && gaster === 0) {
+          audio_stop_all();
+          audio_play_sound(mus_st_happytown, 50, true);
+        }
+        scr_drawtext_centered(320, 200, "Happy Town");
+        break;
 
-    case 1:
-      if (audio_is_playing(mus_st_meatfactory)) {
-        draw_set_color(c_yellow);
-      }
-      else if (control_check_pressed(0) && gaster === 0) {
-        audio_stop_all();
-        audio_play_sound(mus_st_meatfactory, 50, true);
-      }
-      scr_drawtext_centered(320, 200, "Meat Factory");
-      break;
+      case 1:
+        if (audio_is_playing(mus_st_meatfactory)) {
+          draw_set_color(c_yellow);
+        } else if (control_check_pressed(0) && gaster === 0) {
+          audio_stop_all();
+          audio_play_sound(mus_st_meatfactory, 50, true);
+        }
+        scr_drawtext_centered(320, 200, "Meat Factory");
+        break;
 
-    case 2:
-      if (audio_is_playing(mus_st_troubledingle)) {
-        draw_set_color(c_yellow);
-      }
-      else if (control_check_pressed(0) && gaster === 0) {
-        audio_stop_all();
-        audio_play_sound(mus_st_troubledingle, 50, true);
-      }
-      scr_drawtext_centered(320, 200, "Trouble Dingle");
-      break;
+      case 2:
+        if (audio_is_playing(mus_st_troubledingle)) {
+          draw_set_color(c_yellow);
+        } else if (control_check_pressed(0) && gaster === 0) {
+          audio_stop_all();
+          audio_play_sound(mus_st_troubledingle, 50, true);
+        }
+        scr_drawtext_centered(320, 200, "Trouble Dingle");
+        break;
 
-    case 3:
-      if (audio_is_playing(mus_st_him)) {
-        draw_set_color(c_yellow);
-      }
-      else if (control_check_pressed(0) && gaster === 0) {
-        gaster = 1;
-        audio_stop_all();
-        audio_play_sound(mus_st_him, 50, true);
-      }
-      scr_drawtext_centered(320, 200, "Gaster's Theme");
-      break;
+      case 3:
+        if (audio_is_playing(mus_st_him)) {
+          draw_set_color(c_yellow);
+        } else if (control_check_pressed(0) && gaster === 0) {
+          gaster = 1;
+          audio_stop_all();
+          audio_play_sound(mus_st_him, 50, true);
+        }
+        scr_drawtext_centered(320, 200, "Gaster's Theme");
+        break;
     }
 
     buffer += 1;
@@ -105,18 +142,17 @@ function soundtest_draw() {
         active_l = 10;
       } else {
         active_l = 2;
-        songno -= 1
+        songno -= 1;
         if (songno < 0) songno = 3;
       }
     }
 
-    if (keyboard_check_pressed(vk_right) && buffer > 0 && active_r < 0)
-    {
+    if (keyboard_check_pressed(vk_right) && buffer > 0 && active_r < 0) {
       active_r = 10;
       songno = songno + 1;
-      
+
       if (songno > 3) songno = 0;
-      
+
       if (gaster === 1) active_r = 2;
     }
 
@@ -150,4 +186,4 @@ function soundtest_draw() {
   // draw ends here
 }
 
-export { soundtest_step, soundtest_draw }
+export { soundtest_step, soundtest_draw, updateGamemakerFunctions_soundtest };

@@ -1,4 +1,6 @@
-import { draw_text, draw_text_transformed, draw_set_font, global, fnt_main, fnt_maintext, fnt_plain } from '/imports/assets.js'
+import { audio_play_sound, audio_sound_gain, audio_sound_pitch, audio_stop_all, audio_stop_sound } from '/imports/assets/gamemakerFunctions.js';
+import { draw_text, draw_text_transformed, draw_set_font, fnt_main, fnt_maintext, fnt_plain } from '/imports/assets.js'
+import global from '/imports/assets/global.js'
 import { ctx } from '/imports/canvasSetup.js'
 
 function scr_replace_buttons_pc(str) {
@@ -116,8 +118,37 @@ function scr_setfont(newfont) {
   draw_set_font(newfont);
 }
 
-function caster_play(sound, volume, pitch) {
-  
+function scr_getmusicindex(sound) {
+  const song_index = sound;
+  const priority = 80;
+  return song_index;
 }
 
-export { scr_drawtext_icons, scr_drawtext_icons_multiline, scr_drawtext_centered, scr_drawtext_centered_scaled, scr_setfont, caster_play }
+function caster_load(sound) {
+  return scr_getmusicindex(sound);
+}
+
+function caster_play(sound, volume, pitch) {
+  const this_song_i = audio_play_sound(sound, 100, false);
+  audio_sound_pitch(sound, pitch);
+  audio_sound_gain(sound, volume, 0);
+  return this_song_i;
+}
+
+function caster_stop(sound) {
+  caster_free(sound);
+}
+
+function caster_free(sound) {
+  if (sound != all) {
+    audio_stop_sound(sound);
+  } else {
+    audio_stop_all();
+  }
+}
+
+function caster_set_volume(sound, vol) {
+  audio_sound_gain(sound, vol, 0);
+}
+
+export { scr_drawtext_icons, scr_drawtext_icons_multiline, scr_drawtext_centered, scr_drawtext_centered_scaled, scr_setfont, caster_load, caster_play, caster_stop, caster_free, caster_set_volume }

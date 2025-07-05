@@ -1,21 +1,23 @@
 import { _key_prev_state, _key_state } from '/imports/input.js';
 import { playingSounds } from '/imports/assets.js'
 import { ctx } from '/imports/canvasSetup.js';
+import global from '/imports/assets/global.js';
 
 let currentDrawColor = null;
 let currentFontName = null;
+const instances = [];
 
 /**
  * With this function you can play any sound asset in your game. You provide the sound asset and assign it a priority, which is then used to determine how sounds are dealt with when the number of sounds playing is over the limit set by the function audio_channel_num(). Lower priority sounds will be stopped in favour of higher priority sounds, and the priority value can be any real number (the actual value is arbitrary, and can be from 0 to 1 or 0 to 100, as GameMaker will prioritize them the same). The higher the number the higher the priority, so a sound with priority 100 will be favoured over a sound with priority 1. The third argument is for making the sound loop and setting it to true will make the sound repeat until it's stopped manually, and setting it to false will play the sound once only.
  * 
- * @param {object} index The index of the sound to play.
+ * @param {string} index The index of the sound to play.
  * @param {number} priority Set the channel priority for the sound.
  * @param {boolean} loop Sets the sound to loop or not.
  * @param {number} gain [OPTIONAL] Value for the gain.
  * @param {number} offset [OPTIONAL] The time (in seconds) to set the start point to. Values longer than the length of the given sound are ignored.
  * @param {number} pitch [OPTIONAL] The pitch multiplier (default 1).
  * 
- * @returns {void}
+ * @returns {string}
  */
 function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1) {
   if (!index) return;
@@ -27,6 +29,7 @@ function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1
 
   index.play();
   playingSounds.set(index, index);
+  return index;
 }
 /**
  * This function can be used to change the pitch of a given sound. The sound can either be one referenced from an index for an individual sound being played which has been stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions, or an actual sound asset from the Asset Browser. If it is an index of a playing sound, then only that instance will be changed, however when using a sound asset from the Asset Browser, all instances of that sound asset being played will be changed. The pitch argument is a pitch multiplier, in that the input value multiplies the current pitch by that amount, so the default value of 1 is no pitch change, while a value of less than 1 will lower the pitch and greater than 1 will raise the pitch. It is best to use small increments for this function as any value under 0 or over 5 may not be audible anyway. It is worth noting that the total pitch change permitted is clamped to (1/256) - 256 octaves, so any value over or under this will not be registered.
@@ -35,13 +38,19 @@ function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1
  * @param {number} pitch The pitch multiplier (default 1).
  */
 function audio_sound_pitch(index, pitch) {
-  if (index instanceof Howl) {
-    index.rate(pitch)
-  }
+  index.rate(pitch)
 }
 
+/**
+ * With this function you can fade a sound in or out over a given length of time, or it can be used to set the sound gain instantly. The time is measured in milliseconds, and the function requires that you input a final level of gain for the sound to have reached by the end of that time. This gain can be between 0 (silent) and any value greater than 0, although normally you'd consider the maximum volume as 1. Anything over 1 can be used but, depending on the sound used and the platform being compiled to, you may get distortion or clipping when the sound is played back. Note that the gain scale is linear, and to instantly change the gain, simply set the time argument to 0. This function will affect all instances of the sound that are playing currently in the room if the index is a sound resource, and the final volume will be the volume at which all further instances of the sound will be played. However if you have used the index returned from a function like audio_play_sound() it will only affect that one instance of the sound.
+ * 
+ * @param {string} index The index of the sound to set the gain for.
+ * @param {number} volume Value for the music volume.
+ * @param {number} time The length for the change in gain in milliseconds.
+ */
 function audio_sound_gain(index, volume, time) {
-  console.log("TODO: finish");
+  const id = index._sounds[0]?.id ?? null;
+  index.fade(index.volume(), volume, time, id)
 }
 
 /**
@@ -64,6 +73,15 @@ function audio_stop_all(){
   Howler.stop();
   playingSounds.clear();
 }
+
+/**
+ * This function will stop the given sound if it is currently playing. The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be stopped.
+ * 
+ * @param {string} index The index of the sound to stop.
+ */
+function audio_stop_sound(index) {
+  index.stop();
+} 
 
 /** 
  * This function will get the font currently assigned for drawing text. The function will return -1 if no font is set, or the name of the font assigned.
@@ -152,14 +170,29 @@ function draw_set_font(font) {
 }
 
 /**
- * This function permits you to go to any room in your game project,. You supply the room index (stored in the variable for the room name). Note that the room will not change until the end of the event where the function was called, so any code after this has been called will still run if in the same event. This function will also trigger the Room End event. 
- * WARNING: This function takes the room name as a string (so instead of room_menu itd be "room_menu" with the quotes).
+ * This function permits you to go to any room in your game project. You supply the room index (stored in the variable for the room name). Note that the room will not change until the end of the event where the function was called, so any code after this has been called will still run if in the same event. This function will also trigger the Room End event.  WARNING: This function takes the room name as a string (so instead of room_menu itd be "room_menu" with the quotes).
  * 
  * @param {string} index 
  */
 function room_goto(index) {
-  const cleanedName = index.startsWith('room_') ? index.slice(5) : index;
-  window.location.href = `/room/${cleanedName}/`;
+  if (global.eventDone = true) {
+    window.location.href = `/room/${index.slice(5)}/`;
+  } else {
+    global.eventDone = false;
+    room_goto(index);
+  }
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto };
+/**
+ * This is the instance_create() description.
+ * TODO: document
+ * 
+ * @param {number} x The x position the object will be created at
+ * @param {number} y The y position the object will be created at
+ * @param {string} obj The object index of the object to create an instance of
+ */
+function instance_create(x, y, obj) {
+
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create };
