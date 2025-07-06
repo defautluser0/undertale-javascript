@@ -50,8 +50,7 @@
 
       if (elapsed >= FRAME_DURATION) {
         lastFrameTime = currentTime;
-
-        updateCamera(0, 0);
+        
         control_update();
         introimage.updateGamemakerFunctions.call(introimageInstance);
         introimage.beginStep.call(introimageInstance);
