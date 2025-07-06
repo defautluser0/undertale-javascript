@@ -1,1 +1,5 @@
-console.log("introtangle");
+function create() {
+	console.log("introtangle")
+}
+
+export { create };
