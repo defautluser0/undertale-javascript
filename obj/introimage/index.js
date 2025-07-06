@@ -32,7 +32,6 @@ function create() {
     visible: true,
     x: 0,
     y: 0,
-    instanceID: 0,
 
     alarm: alarm,
 
