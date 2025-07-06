@@ -29,6 +29,11 @@
     const introimageInstance = introimage.create()
     const unfaderInstance = unfader.create()
     const unfaderInstance2 = unfader2.create()
+    
+    unfader.step.call(unfaderInstance);
+    unfader2.step.call(unfaderInstance2);
+    unfader.roomStart.call(unfaderInstance);
+    unfader2.roomStart.call(unfaderInstance2);
 
     // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above

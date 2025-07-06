@@ -5,20 +5,26 @@ import {
   caster_free,
   caster_set_volume,
 } from "/imports/customFunctions.js";
-import { mus_story } from "/imports/assets.js";
+import { mus_story, spr_introimage } from "/imports/assets.js";
 import {
   instance_create,
   instance_destroy,
   instance_exists,
+  draw_sprite,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
 import { control_check_pressed } from "/imports/input.js";
+import * as OBJ_WRITER from '/obj/writer/index.js';
+import * as obj_introtangle from '/obj/introtangle/index.js';
+import * as obj_introfader from '/obj/introfader/index.js';
+import * as obj_unfader from '/obj/unfader/index.js'
 
-/**
- * Creates a new introimage instance with its own state.
- */
+// create
 function create() {
+  const alarm = new Array(12).fill(-1);
+  alarm[2] = 4;
   return {
+    sprite_index: spr_introimage,
     image_index: 0,
     image_speed: 0,
     image_number: 11,
@@ -27,7 +33,7 @@ function create() {
     y: 0,
     instanceID: 0,
 
-    alarm: new Array(12).fill(-1),
+    alarm: alarm,
 
     act: 0,
     skip: 0,
@@ -36,31 +42,39 @@ function create() {
     dongs: undefined,
 
     intromusic: caster_load(mus_story),
+    updateGamemakerFunctions,
+    beginStep,
+    step,
+    alarm0,
+    alarm1,
+    alarm2,
   };
 }
 
-/**
- * Update alarms for this instance and call alarm handlers when timers reach 0.
- */
-function updateGamemakerFunctions() {
+function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
-        if (typeof handler === "function") handler.call(this);
+        if (typeof handler === "function") handler.call(this); // call with instance context
       }
     }
   }
+}
 
-  // Update image animation frame
+// alarm and image_index
+function updateGamemakerFunctions() {
+  updateAlarms.call(this);
+
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+
+  draw_sprite(this.sprite_index, this.image_index, this.x, this.y);
 }
 
-// Alarm 2 handler - start intro sequence
 function alarm2() {
   this.act = 1;
   this.dongs = 0;
@@ -70,21 +84,17 @@ function alarm2() {
   global.typer = 11;
   global.faceemotion = 0;
   global.msc = 0;
-  instance_create(0, 0, "obj_introtangle"); // pass object name as string or object reference
+  instance_create(0, 0, obj_introtangle); // pass object name as string or object reference
   this.fadercreator = 0;
   this.skip = 0;
 
-  global.msg[0] =
-    "Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^6. \\E1 ^1 %";
+  global.msg[0] = "Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^6. \\E1 ^1 %";
   global.msg[1] = "One day^1, war broke&out between the two&races^6. \\E0 ^1 %";
-  global.msg[2] =
-    "After a long battle^1,&the humans were&victorious^6. \\E1 ^1 %";
-  global.msg[3] =
-    "They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %";
+  global.msg[2] = "After a long battle^1,&the humans were&victorious^6. \\E1 ^1 %";
+  global.msg[3] = "They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %";
   global.msg[4] = "Many years later^2.^2.^5.  \\E1 ^1 %";
   global.msg[5] = "      MT. EBOTT&         201X^9 \\E0 %";
-  global.msg[6] =
-    "Legends say that those&who climb the mountain&never return^5.^3 \\E1 %";
+  global.msg[6] = "Legends say that those&who climb the mountain&never return^5.^3 \\E1 %";
   global.msg[7] = " \\E1 %";
   global.msg[8] = " ^9 ^5 \\E0 %";
   global.msg[9] = " ^9 ^5 ^2 \\E1 %";
@@ -94,34 +104,33 @@ function alarm2() {
   global.msg[13] = " ^9 ^9 ^9 ^9 ^9 ^9 \\E0 %";
   global.msg[14] = " %%";
 
-  instance_create(40, 140, "OBJ_WRITER");
+  instance_create(40, 140, OBJ_WRITER);
   this.alarm[0] = 5;
 }
 
-// Alarm 1 handler - stop music and free sound
 function alarm1() {
   caster_stop(this.intromusic);
   caster_free(this.intromusic);
-  // room_goto_next() - implement your room transition here if needed
+  room_goto("room_introimage");
 }
 
-// Alarm 0 handler - handle fader creation and reset alarm 0
 function alarm0() {
   if (this.fadercreator !== global.faceemotion) {
-    instance_create(0, 0, "obj_introfader");
+    instance_create(0, 0, obj_introfader);
   }
   this.alarm[0] = 3;
   this.fadercreator = global.faceemotion;
 }
+
 
 /**
  * Called every frame in the Begin Step event
  */
 function beginStep() {
   if (this.act === 1) {
-    if (!instance_exists("OBJ_WRITER") && this.skip === 0) {
+    if (!instance_exists(OBJ_WRITER) && this.skip === 0) {
       this.skip = 1;
-      const fader = instance_create(0, 0, "obj_unfader");
+      const fader = instance_create(0, 0, obj_unfader);
       fader.tspeed = 0.05;
       this.alarm[1] = 30;
     }
@@ -146,10 +155,10 @@ function step() {
     if (control_check_pressed(0)) {
       if (this.skip === 0) {
         this.skip = 1;
-        const fader = instance_create(0, 0, "obj_unfader");
+        const fader = instance_create(0, 0, obj_unfader);
         fader.tspeed = 0.05;
         this.alarm[1] = 30;
-        instance_destroy("OBJ_WRITER");
+        instance_destroy(OBJ_WRITER);
       }
     }
   }
@@ -157,10 +166,11 @@ function step() {
 
 export {
   create,
-  updateGamemakerFunctions,
+  updateAlarms,
   alarm0,
   alarm1,
   alarm2,
+  updateGamemakerFunctions,
   beginStep,
   step,
 };
