@@ -11,6 +11,7 @@ import {
   instance_destroy,
   instance_exists,
   draw_sprite,
+  room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
 import { control_check_pressed } from "/imports/input.js";
