@@ -295,4 +295,57 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale = sprite.xscale, yscale = 
   // If the image is already cached, onload fires immediately.
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext };
+/**
+ * You can use this function to return a specific character at a specific position within a string, with the index starting at 1 for the first character. If no character is found or the string is shorter than the given index value, an empty string "" is returned, however if the given index is equal to or smaller than 0, then the first character of the string is returned.
+ * 
+ * @param {string} str The string to check.
+ * @param {number} index The position to get the character from.
+ * @returns {string}
+ */
+function string_char_at(str, index) {
+  return str.charAt(index) ?? "";
+}
+
+/**
+ * This function takes any real number and rounds it up to the nearest integer. Care should be taken with this function as one common mistake is to use it round up a random value and expect it always to be greater than 1, ie: "let int = ceil(random(5));" Now, you would expect this code to always give an integer between 1 and 5, but this may not always be the case as there is a very small possibility that the random function will return 0, and rounding up 0 still gives you 0. This is a remote possibility but should be taken into account when using this function.
+ * 
+ * @param {number} x The number to change.
+ * @returns {number}
+ */
+function ceil(x) {
+  return Math.ceil(x);
+}
+
+/**
+ * Returns the floor of n, that is, n rounded down to an integer. This is similar to the round() function, but it only rounds down, no matter what the decimal value, so floor(5.99999) will return 5, as will floor(5.2), floor(5.6457) etc...
+ * 
+ * @param {number} n The number to floor.
+ * @returns {number}
+ */
+function floor(n) {
+  return Math.floor(n);
+}
+
+/**
+ * Just as it says, round() takes a number and rounds it up or down to the nearest integer. In the special case where the number supplied is exactly a half-integer (1.5, 17.5, -2.5, etc), the number will be rounded to the nearest even value, for example, 2.5 would be rounded to 2, while 3.5 will be rounded to 4. This type of rounding is called bankers rounding and over large numbers of iterations or when using floating point maths, it gives a statistically better rounding than the more traditional "round up if over .5 and round down otherwise" approach. What this means is that if the fraction of a value is 0.5, then the rounded result is the even integer nearest to the input value. So, for example, 23.5 becomes 24, as does 24.5, while -23.5 becomes -24, as does -24.5. This method treats positive and negative values symmetrically, so is therefore free of sign bias, and, more importantly, for reasonable distributions of values, the expected (average) value of the rounded numbers is the same as that of the original numbers.
+ * 
+ * @param {number} n The number to round
+ * @returns {number}
+ */
+function round(n) {
+  let number = n;
+  let floorNumber = Math.floor(number);
+  let roundNumber = Math.round(number);
+
+  if (floorNumber % 2 === 0 && roundNumber % 2 !== 0 && Math.abs(number) - Math.abs(floorNumber) === 0.5) {
+    return floorNumber;
+  } else {
+    return roundNumber;
+  }
+}
+
+function random(n) {
+  return Math.random * n;
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random };
