@@ -16,19 +16,22 @@ const mus_story = new Howl({
 	src: ["/imports/assets/mus/story.ogg"]
 });
 const SND_TXT1 = new Howl({
-	src: ["/imports/assets/snd/txt1.ogg"]
+	src: ["/imports/assets/snd/txt1.wav"]
 })
 const SND_TXT2 = new Howl({
-	src: ["/imports/assets/snd/txt2.ogg"]
+	src: ["/imports/assets/snd/txt2.wav"]
 })
 const snd_txttor = new Howl({
-	src: ["/imports/assets/snd/txttor.ogg"]
+	src: ["/imports/assets/snd/txttor.wav"]
 })
 const snd_floweytalk1 = new Howl({
-  src:["/imports/assets/snd/floweytalk1.ogg"]
+  src:["/imports/assets/snd/floweytalk1.wav"]
 })
 const snd_floweytalk2 = new Howl({
-  src:["/imports/assets/snd/floweytalk2.ogg"]
+  src:["/imports/assets/snd/floweytalk2.wav"]
+})
+const snd_nosound = new Howl({
+  src:[""]
 })
 
 //// playing
@@ -45,5 +48,6 @@ export {
   snd_txttor,
   snd_floweytalk1,
   snd_floweytalk2,
+  snd_nosound,
   playingSounds,
 };
