@@ -24,6 +24,12 @@ const SND_TXT2 = new Howl({
 const snd_txttor = new Howl({
 	src: ["/imports/assets/snd/txttor.ogg"]
 })
+const snd_floweytalk1 = new Howl({
+  src:["/imports/assets/snd/floweytalk1.ogg"]
+})
+const snd_floweytalk2 = new Howl({
+  src:["/imports/assets/snd/floweytalk2.ogg"]
+})
 
 //// playing
 const playingSounds = new Map();
