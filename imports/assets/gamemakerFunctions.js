@@ -221,7 +221,7 @@ function instance_destroy(index) {
     }
   }
 
-  instances.delete(obj);
+  instances.delete(index);
 }
 
 /**
