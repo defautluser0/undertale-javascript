@@ -243,7 +243,7 @@ function instance_exists(obj) {
  * @param {number} y The y coordinate of where to draw the sprite
  */
 function draw_sprite(sprite, subimg, x, y) {
-  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, "#ffffff", 1)
+  draw_sprite_ext(sprite, subimg, x + sprite.xoffset, y + sprite.yoffset, 1 * sprite.height, 1 * sprite.width, 0, "#ffffff", 1)
 }
 
 /**
@@ -260,7 +260,7 @@ function draw_sprite(sprite, subimg, x, y) {
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  * @returns {void}
  */
-function draw_sprite_ext(sprite, subimg, x, y, xscale = 1, yscale = 1, rot = 0, colour = c_white, alpha = 1) {
+function draw_sprite_ext(sprite, subimg, x, y, xscale = sprite.xscale, yscale = sprite.yscale, rot = 0, colour = c_white, alpha = 1) {
   if (!sprite || !sprite.path) return;
 
   // Normalize subimg to valid frame index
@@ -279,7 +279,7 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale = 1, yscale = 1, rot = 0, 
     ctx.rotate(rot * Math.PI / 180);
 
     // Scale
-    ctx.scale(xscale, yscale);
+    ctx.scale(xscale * sprite.xscale, yscale * sprite.yscale);
 
     // Apply alpha
     ctx.globalAlpha = alpha;
