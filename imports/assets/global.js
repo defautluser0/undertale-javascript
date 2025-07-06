@@ -7,6 +7,7 @@ const global = {
   roomEnd: false,
   eventDone: true,
   nextRoom: null,
+  msg: [],
 }
 
 export default global;
