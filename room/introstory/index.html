@@ -21,6 +21,7 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
+    import { updateCamera } from "/imports/view.js";
     import * as introimage from '/obj/introimage/index.js'
     import * as unfader from '/obj/unfader/index.js'
     import * as unfader2 from '/obj/unfader/index.js'
@@ -50,6 +51,7 @@
       if (elapsed >= FRAME_DURATION) {
         lastFrameTime = currentTime;
 
+        updateCamera(0, 0);
         control_update();
         introimage.updateGamemakerFunctions.call(introimageInstance);
         introimage.beginStep.call(introimageInstance);
