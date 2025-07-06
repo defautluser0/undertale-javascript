@@ -140,7 +140,7 @@ function caster_stop(sound) {
 }
 
 function caster_free(sound) {
-  if (sound != all) {
+  if (sound !== "all") {
     audio_stop_sound(sound);
   } else {
     audio_stop_all();
