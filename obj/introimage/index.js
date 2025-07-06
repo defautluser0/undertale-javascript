@@ -14,7 +14,10 @@ import {
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
+import { ogCanvas, ogCtx, canvas } from "/imports/canvasSetup.js"
+import { view_current, view_hview, view_wview, view_xview, view_yview, updateCamera } from "/imports/view.js"
 import { control_check_pressed } from "/imports/input.js";
+import roomSize from "/imports/assets/roomSize.js";
 import * as OBJ_WRITER from '/obj/writer/index.js';
 import * as obj_introtangle from '/obj/introtangle/index.js';
 import * as obj_introfader from '/obj/introfader/index.js';
@@ -65,6 +68,18 @@ function updateAlarms() {
 
 // alarm and image_index
 function updateGamemakerFunctions() {
+  ogCtx.clearRect(0, 0, ogCanvas.width, ogCanvas.height);
+  ogCtx.drawImage(
+    canvas,
+    view_xview[view_current],
+    view_yview[view_current],
+    roomSize.width,
+    roomSize.height,
+    0,
+    0,
+    view_wview[view_current],
+    view_hview[view_current],
+  );
   updateAlarms.call(this);
 
   this.image_index += this.image_speed;
