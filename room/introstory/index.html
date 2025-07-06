@@ -26,9 +26,13 @@
     import * as unfader2 from '/obj/unfader/index.js'
     import global from '/imports/assets/global.js'
 
-    const introimageInstance = introimage.create()
-    const unfaderInstance = unfader.create()
-    const unfaderInstance2 = unfader2.create()
+    const introimageInstance = introimage.create();
+    const unfaderInstance = unfader.create();
+    const unfaderInstance2 = unfader2.create();
+
+    // setup x and y for instances (no setup is theyre both 0)
+    unfaderInstance2.x = 288;
+    unfaderInstance2.y = 176;
     
     unfader.step.call(unfaderInstance);
     unfader2.step.call(unfaderInstance2);
