@@ -1,7 +1,28 @@
-import { audio_play_sound, audio_sound_gain, audio_sound_pitch, audio_stop_all, audio_stop_sound } from '/imports/assets/gamemakerFunctions.js';
-import { draw_text, draw_text_transformed, draw_set_font, fnt_main, fnt_maintext, fnt_plain } from '/imports/assets.js'
-import global from '/imports/assets/global.js'
-import { ctx } from '/imports/canvasSetup.js'
+import {
+  audio_play_sound,
+  audio_sound_gain,
+  audio_sound_pitch,
+  audio_stop_all,
+  audio_stop_sound,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_text,
+  draw_text_transformed,
+  draw_set_font,
+  fnt_main,
+  fnt_maintext,
+  fnt_plain,
+  c_white,
+  c_black,
+  SND_TXT1,
+  SND_TXT2,
+  snd_txttor,
+  snd_floweytalk1,
+  snd_floweytalk2,
+  snd_nosound,
+} from "/imports/assets.js";
+import global from "/imports/assets/global.js";
+import { ctx } from "/imports/canvasSetup.js";
 
 function scr_replace_buttons_pc(str) {
   return str
@@ -16,10 +37,10 @@ function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale) {
   var display_scale = 1; // No view/application surface scaling emulated here
   var fontSize = 24; // Match GML font size
   var lineheight = Math.round(fontSize * yscale);
-  
+
   // Simulate line splitting by '#'
   var eol = text.indexOf("#");
-  
+
   // Fix yy position rounded as in GML
   yy = Math.round(yy * display_scale) / display_scale;
 
@@ -110,8 +131,9 @@ function scr_drawtext_centered(xx, yy, text) {
 
 // scr_setfont
 function scr_setfont(newfont) {
-  if (global.language === "ja") /* this will never happen rn */ {
-    if (newfont === fnt_main) newfont = fnt_main;
+  if (global.language === "ja") {
+    /* this will never happen rn */ if (newfont === fnt_main)
+      newfont = fnt_main;
     if (newfont === fnt_maintext) newfont = fnt_maintext;
     if (newfont === fnt_plain) newfont = fnt_plain;
   }
@@ -151,4 +173,100 @@ function caster_set_volume(sound, vol) {
   audio_sound_gain(sound, vol, 0);
 }
 
-export { scr_drawtext_icons, scr_drawtext_icons_multiline, scr_drawtext_centered, scr_drawtext_centered_scaled, scr_setfont, caster_load, caster_play, caster_stop, caster_free, caster_set_volume }
+function SCR_TEXTSETUP(myfont, mycolor, writingx, writingy, writingxend, shake, textspeed, txtsound, spacing, vspacing) {
+  return {
+    myfont,
+    mycolor,
+    writingx,
+    writingy,
+    writingxend,
+    writingxend_base: writingxend,
+    shake,
+    textspeed,
+    txtsound,
+    spacing,
+    vspacing,
+    vtext: 0,
+    htextscale: 1,
+    vtextscale: 1,
+  };
+}
+
+function SCR_TEXTTYPE(typer, x, y) {
+  let TEXTSETUP = undefined;
+  
+  if (typer !== 0) {
+    global.typer = typer;
+  }
+
+  switch (global.typer) {
+    case 0:
+      console.error("whys global.typer 0 wtf");
+      break;
+    
+    case 1:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_main, c_white, x + 20, y + 20, x + (global.idealborder[1] - 55), 1, 1, SND_TXT2, 16, 32);
+      break;
+
+    case 2:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_plain, c_black, x, y, x + 190, 43, 2, SND_TXT1, 9, 20);
+      break;
+    
+    case 3:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_curs, c_teal, x, y, x + 100, 39, 3, SND_TXT1, 10, 10);
+      break;
+
+    case 4:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_maintext, c_white, x + 20, y + 20, 290, 0, 1, snd_txttor, 8, 18);
+      break;
+    
+    case 5:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_maintext, c_white, x + 20, y + 20, 290, 0, 1, SND_TXT1, 8, 18);
+      break;
+
+    case 6:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_plain, c_black, x, y, x + 200, 0, 1, snd_floweytalk1, 9, 20);
+      break;
+
+    case 7:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_plain, c_black, x, y, x + 200, 2, 2, snd_floweytalk2, 9, 20);
+      break;
+
+    case 8:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_plain, c_black, x, y, x + 200, 0, 1, snd_txttor, 9, 20);
+      break;
+
+    case 9:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_maintext, c_white, x + 20, y + 20, 290, 0, 1, snd_floweytalk1, 8, 18);
+      break;
+
+    case 10:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_maintext, c_white, x + 20, y + 20, 290, 0, 1, snd_nosound, 8, 18);
+      break;
+
+    case 11:
+      TEXTSETUP = SCR_TEXTSETUP(fnt_maintext, c_white, x + 20, y + 20, 290, 0, 2, SND_TXT2, 9, 18);
+      break;
+  }
+
+  if (global.typer === 11 || global.typer === 112) {
+    TEXTSETUP.textspeed += 1;
+  }
+  return TEXTSETUP;
+}
+
+export {
+  scr_replace_buttons_pc,
+  scr_drawtext_icons,
+  scr_drawtext_icons_multiline,
+  scr_drawtext_centered,
+  scr_drawtext_centered_scaled,
+  scr_setfont,
+  caster_load,
+  caster_play,
+  caster_stop,
+  caster_free,
+  caster_set_volume,
+  SCR_TEXTSETUP,
+  SCR_TEXTTYPE,
+};
