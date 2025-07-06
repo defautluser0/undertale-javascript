@@ -5,7 +5,7 @@ import global from '/imports/assets/global.js';
 
 let currentDrawColor = null;
 let currentFontName = null;
-const instances = {};
+const instances = new Map();
 
 /**
  * With this function you can play any sound asset in your game. You provide the sound asset and assign it a priority, which is then used to determine how sounds are dealt with when the number of sounds playing is over the limit set by the function audio_channel_num(). Lower priority sounds will be stopped in favour of higher priority sounds, and the priority value can be any real number (the actual value is arbitrary, and can be from 0 to 1 or 0 to 100, as GameMaker will prioritize them the same). The higher the number the higher the priority, so a sound with priority 100 will be favoured over a sound with priority 1. The third argument is for making the sound loop and setting it to true will make the sound repeat until it's stopped manually, and setting it to false will play the sound once only.
@@ -194,10 +194,14 @@ function instance_create(x, y, obj) {
     y,
     visible: true,
     alarm: new Array(12).fill(-1),
-    ...obj
+    ...obj.create?.(),
   }
 
-  instances.push(instance)
+  if (!instances.has(obj)) {
+    instances.set(obj, []);
+  }
+
+  instances.get(obj).push(instance);
   return instance;
 }
 
@@ -208,11 +212,16 @@ function instance_create(x, y, obj) {
  * @returns {void}
  */
 function instance_destroy(index) {
-  const arr = instances[index];
+  const arr = instances.get(index);
   if (!arr) return;
+
   for (const inst of arr.slice()) {
-    inst.instance_destroy(executeEvent);
+    if (typeof inst.instance_destroy === "function") {
+      inst.instance_destroy();
+    }
   }
+
+  instances.delete(obj);
 }
 
 /**
@@ -222,7 +231,7 @@ function instance_destroy(index) {
  * @returns {boolean}
  */
 function instance_exists(obj) {
-  return instances[obj] && instances[obj].length > 0;
+  return instances.has(obj) && instances.get(obj).length > 0;
 }
 
 /**
@@ -234,7 +243,7 @@ function instance_exists(obj) {
  * @param {number} y The y coordinate of where to draw the sprite
  */
 function draw_sprite(sprite, subimg, x, y) {
-  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, 1, "#ffffff")
+  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, "#ffffff", 1)
 }
 
 /**
@@ -247,7 +256,7 @@ function draw_sprite(sprite, subimg, x, y) {
  * @param {number} xscale The horizontal scaling of the sprite, as a multiplier: 1 = normall scaling, 0.5 is half etc...
  * @param {number} yscale The vertical scaling of the sprite as a multiplier: 1 = normal scaling, 0.5 is half etc...
  * @param {number} rot The rotation of the sprite. 0=right way up, 90=rotated 90 degrees counter-clockwise etc...
- * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally. Currently unused until coloring sprites is added
+ * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally. Currently unused
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  * @returns {void}
  */
