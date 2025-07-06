@@ -56,8 +56,6 @@ function updateGamemakerFunctions() {
     ogCanvas.height
   );
   updateCamera(100, 0);
-
-  console.log(`cam: ${canvas}, ${view_xview[view_current]}, ${view_yview[view_current]}, ${view_wview[view_current]}, ${view_hview[view_current]}`)
 }
 
 function step() {
