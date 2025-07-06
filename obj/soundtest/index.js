@@ -16,7 +16,7 @@ import {
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import { canvas, ctx, ogCanvas, ogCtx } from "/imports/canvasSetup.js";
-import { view_current, view_hview, view_wview, view_xview, view_yview } from "/imports/view.js"
+import { view_current, view_hview, view_wview, view_xview, view_yview, updateCamera } from "/imports/view.js"
 // asset imports
 import {
   c_white,
@@ -55,6 +55,9 @@ function updateGamemakerFunctions() {
     ogCanvas.width,
     ogCanvas.height
   );
+  updateCamera(100, 0);
+
+  console.log(`cam: ${canvas}, ${view_xview[view_current]}, ${view_yview[view_current]}, ${view_wview[view_current]}, ${view_hview[view_current]}`)
 }
 
 function step() {

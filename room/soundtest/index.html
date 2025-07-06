@@ -38,7 +38,6 @@
       if (elapsed >= FRAME_DURATION) {
         lastFrameTime = currentTime;
 
-        updateCamera();
         control_update();
         soundtest.updateGamemakerFunctions();
         soundtest.step.call(instance);
