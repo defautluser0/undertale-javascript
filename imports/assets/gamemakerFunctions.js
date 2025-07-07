@@ -1,10 +1,14 @@
 import { _key_prev_state, _key_state } from '/imports/input.js';
-import { playingSounds } from '/imports/assets.js'
+import { playingSounds, c_white } from '/imports/assets.js'
 import { ctx, ogCanvas } from '/imports/canvasSetup.js';
 import global from '/imports/assets/global.js';
 
-let currentDrawColor = null;
-let currentFontName = null;
+const offCanvas = document.createElement("canvas");
+const offCtx = offCanvas.getContext("2d");
+offCtx.imageSmoothingEnabled = false;
+
+let currentDrawColor = c_white;
+let currentFont = null;
 const instances = new Map();
 
 /**
@@ -89,8 +93,8 @@ function audio_stop_sound(index) {
  * @returns {string | -1} The font name, or -1 if none.
  */
 function draw_get_font() {
-  if (currentFontName === null) return -1;
-  return currentFontName;
+  if (currentFont === null) return -1;
+  return currentFont;
 }
 
 /**
@@ -112,8 +116,7 @@ function draw_set_color(col) {
  * @returns {void}
  */
 function draw_text(x, y, string) {
-  ctx.fillStyle =  currentDrawColor;
-  ctx.fillText(string, x, y);
+  draw_text_transformed(x, y, string, 1, 1, 0);
 }
 
 /**
@@ -127,14 +130,60 @@ function draw_text(x, y, string) {
  * @param {number} angle The angle of the text.
  * @returns {void}
  */
-function draw_text_transformed(x, y, string, xscale, yscale, angle) {
-  ctx.fillStyle =  currentDrawColor;
+function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0) {
+  if (currentFont.image === null || currentFont.loading === true) {
+    console.warn("Font not set or loaded.");
+    return;
+  } else {
   ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate((angle * Math.PI) / 180);
-  ctx.scale(xscale, yscale);
-  ctx.fillText(string, 0, 0);
+
+  for (const char of String(string)) {
+    const glyph = currentFont.glyphs[char];
+    if (!glyph) {
+      x += currentFont.size * xscale;
+      continue;
+    }
+
+    const offsetX = (glyph.offset || 0) * xscale;
+    const drawX = x + offsetX;
+    const drawY = y;
+
+    // Setup offscreen canvas size for this glyph
+    offCanvas.width = glyph.w * xscale;
+    offCanvas.height = glyph.h * yscale;
+
+    offCtx.clearRect(0, 0, offCanvas.width, offCanvas.height);
+
+    // Draw glyph on offscreen canvas
+    offCtx.drawImage(
+      currentFont.image,
+      glyph.x, glyph.y, glyph.w, glyph.h,
+      0, 0,
+      offCanvas.width, offCanvas.height
+    );
+
+    // Apply tint if currentDrawColor isn't white (c_white)
+    if (currentDrawColor.toUpperCase() !== c_white.toUpperCase()) {
+      offCtx.globalCompositeOperation = "source-in";
+      offCtx.fillStyle = currentDrawColor;
+      offCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
+      offCtx.globalCompositeOperation = "source-over";
+    }
+
+    ctx.save();
+    ctx.translate(drawX, drawY);
+    ctx.rotate((angle * Math.PI) / 180);
+
+    // Draw tinted glyph from offscreen canvas
+    ctx.drawImage(offCanvas, 0, 0);
+
+    ctx.restore();
+
+    x += (glyph.w + (glyph.offset || 0) + (glyph.shift - glyph.w || 0)) * xscale;
+  }
+
   ctx.restore();
+  }
 }
 
 /** 
@@ -165,8 +214,18 @@ function keyboard_check(key) {
  * @param {object} font The name of the font to use.
  */
 function draw_set_font(font) {
-  currentFontName = font.name;
-  ctx.font = `${font.size}px '${currentFontName}'`;
+  currentFont = font;
+
+  if (!currentFont.image && !currentFont.loading) {
+    currentFont.loading = true;
+    const img = new Image();
+    img.src = currentFont.file;
+    img.onload = () => {
+      currentFont.image = img;
+      currentFont.loading = false;
+      console.log(`Font image loaded: ${currentFont.file}`);
+    };
+  }
 }
 
 /**
@@ -201,6 +260,11 @@ function instance_create(x, y, obj) {
   // Override x/y *only if explicitly passed*
   instance.x = x;
   instance.y = y;
+  
+  if (instance.name = "obj_writer") {
+    instance.writingx = instance.x + instance.writingx;
+    instance.writingy = instance.y + instance.writingy;
+  }
 
   obj.roomStart?.call(instance);
 
@@ -292,10 +356,15 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale = sprite.xscale, yscale = 
     // Draw image centered on (0, 0)
     ctx.drawImage(img, -img.width / 2, -img.height / 2);
 
+    if (colour && colour !== c_white) {
+      ctx.globalCompositeOperation = "source-in";
+      ctx.fillStyle = colour;
+      ctx.fillRect(-width / 2, -height / 2, width, height);
+      ctx.globalCompositeOperation = "source-over";
+    }
+
     ctx.restore();
   };
-
-  // If the image is already cached, onload fires immediately.
 }
 
 /**
@@ -408,4 +477,14 @@ function draw_rectangle(x1, y1, x2, y2, outline) {
   }
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle };
+/**
+ * This function takes a single character input string and returns the Unicode (UTF16) value for that character. Note that when used with the keyboard_check* functions, the input string can only be one character in length and can only be a number from 0 to 9 or a capitalised Roman character from A to Z.
+ * 
+ * @param {string} string The string with which to find the Unicode value
+ * @returns {number}
+ */
+function ord(string) {
+  return string.codePointAt(0);
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord };

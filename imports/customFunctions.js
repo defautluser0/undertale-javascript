@@ -4,6 +4,10 @@ import {
   audio_sound_pitch,
   audio_stop_all,
   audio_stop_sound,
+  round,
+  currentFont,
+  surface_get_width,
+  real,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -22,6 +26,7 @@ import {
   snd_nosound,
 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
+import { view_current, view_wview } from "/imports/view.js"
 import { ctx } from "/imports/canvasSetup.js";
 
 function scr_replace_buttons_pc(str) {
@@ -34,22 +39,22 @@ function scr_replace_buttons_pc(str) {
 }
 
 function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale) {
-  var display_scale = 1; // No view/application surface scaling emulated here
-  var fontSize = 24; // Match GML font size
-  var lineheight = Math.round(fontSize * yscale);
+  var fontSize = currentFont.size;
+  var display_scale = surface_get_width("application_surface") / view_wview[view_current];
+  var lineheight = round(fontSize * yscale);
 
   // Simulate line splitting by '#'
   var eol = text.indexOf("#");
 
   // Fix yy position rounded as in GML
-  yy = Math.round(yy * display_scale) / display_scale;
+  yy = round(yy * display_scale) / display_scale;
 
   while (eol !== -1) {
     var line = text.substring(0, eol);
     text = text.substring(eol + 1);
 
     var width = ctx.measureText(line).width * xscale;
-    var line_x = Math.round((xx - width / 2) * display_scale) / display_scale;
+    var line_x = round((xx - width / 2) * display_scale) / display_scale;
 
     draw_text_transformed(line_x, yy, line, xscale, yscale, 0);
 
@@ -59,14 +64,14 @@ function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale) {
 
   // Draw last line
   var width = ctx.measureText(text).width * xscale;
-  var line_x = Math.round((xx - width / 2) * display_scale) / display_scale;
+  var line_x = round((xx - width / 2) * display_scale) / display_scale;
   draw_text_transformed(line_x, yy, text, xscale, yscale, 0);
 }
 
 function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1) {
   str = scr_replace_buttons_pc(str);
   const len = str.length;
-  const lineHeight = parseInt(ctx.font) + 8;
+  const lineHeight = real(currentFont.size) + 8;
   let outstr = "";
   let xx = x0;
   let yy = y0;

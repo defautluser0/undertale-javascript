@@ -1,10 +1,11 @@
 import { SCR_TEXTTYPE, snd_play, scr_replace_buttons_pc, snd_stop, scr_setfont, SCR_NEWLINE } from '/imports/customFunctions.js';
 import { control_check_pressed } from '/imports/input.js'
-import { string_char_at, floor, random, round, draw_set_color, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy } from "/imports/assets/gamemakerFunctions.js"
+import { string_char_at, floor, random, round, draw_set_color, draw_set_font, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy, ord } from "/imports/assets/gamemakerFunctions.js"
 import { view_wview, view_current } from '/imports/view.js'
-import { fnt_comicsans, fnt_papyrus, spr_punchcard } from '/imports/assets.js'
+import { fnt_comicsans, fnt_papyrus, spr_punchcard, fnt_main } from '/imports/assets.js'
 import global from '/imports/assets/global.js';
 import * as obj_choicer from "/obj/choicer/index.js"
+import { draw_text } from '../../imports/assets/gamemakerFunctions.js';
 
 function create() {
 	const mystring = [];
@@ -386,6 +387,8 @@ function parent_user1() {
 function parent_draw() {
 	let myx = 0;
 	let myy = 0;
+	let offsetx = 0;
+	let offsety = 0;
 
 	if (this.vtext)
     myx = this.writingxend - this.vspacing;
@@ -649,7 +652,16 @@ function parent_draw() {
 		}
 		else if (this.ch == "&")
 		{
-				script_execute.call(this, SCR_NEWLINE);
+				if (this.vtext)
+				{
+					myx -= this.vspacing;
+					myy = this.writingy;
+				}
+				else
+				{
+					myx = this.writingx;
+					myy += this.vspacing;
+				}
 		}
 		else if (this.ch == "/")
 		{
@@ -692,8 +704,8 @@ function parent_draw() {
 						script_execute.call(this, SCR_NEWLINE);
 				
 				var letterx = myx;
-				var offsetx = 0;
-				var offsety = 0;
+				offsetx = 0;
+				offsety = 0;
 				var halfscale = 1;
 				
 				if (halfsize)
@@ -705,7 +717,7 @@ function parent_draw() {
 						else
 								offsety += (this.vspacing * 0.33);
 				}
-				
+
 				if (global.language == "en")
 				{
 						if (global.typer == 18)
@@ -809,10 +821,15 @@ function parent_draw() {
 								direction -= (30 * n);
 						}
 				}
-				else
+				else if (this.shake !== 0)
 				{
 						offsetx += (random(this.shake) - (this.shake / 2));
 						offsety += (random(this.shake) - (this.shake / 2));
+				}
+				else
+				{
+						offsetx = 0;
+						offsety = 0;
 				}
 				
 				var display_scale = surface_get_width("application_surface") / view_wview[view_current];

@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UNDERTALE</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="/imports/assets/font.css">
 </head>
 
 <body>
@@ -60,18 +59,8 @@
           fpsCounter = 0;
           lastFpsUpdate = now;
         }
-
-        if (global.debug === 1) {
-          draw_set_font(fnt_maintext)
-          draw_text(15, 15, currentFps);
-        }
         
         control_update();
-        for (const [obj, instanceList] of instances) {
-          for (const instance of instanceList) {
-            obj.updateGamemakerFunctions?.call(instance);
-          }
-        }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.beginStep?.call(instance);
@@ -102,6 +91,18 @@
 
         for (const { obj,  instance } of allInstances) {
           obj.draw?.call(instance);
+        }
+
+        if (global.debug === 1) {
+          draw_set_font(fnt_maintext);
+          draw_text(15, 15, currentFps);
+          console.log(instances);
+        }
+        
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateGamemakerFunctions?.call(instance);
+          }
         }
 
         input_update();

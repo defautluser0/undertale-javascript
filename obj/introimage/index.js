@@ -14,8 +14,8 @@ import {
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
-import { ogCanvas, ogCtx, canvas, ctx } from "/imports/canvasSetup.js"
-import { view_current, view_hview, view_wview, view_xview, view_yview, updateCamera } from "/imports/view.js"
+import { ogCanvas, ogCtx, canvas } from "/imports/canvasSetup.js"
+import { view_current, view_hview, view_wview, view_xview, view_yview } from "/imports/view.js"
 import { control_check_pressed } from "/imports/input.js";
 import roomSize from "/imports/assets/roomSize.js";
 import * as OBJ_WRITER from '/obj/writer/index.js';
@@ -104,17 +104,17 @@ function alarm2() {
   global.typer = 11;
   global.faceemotion = 0;
   global.msc = 0;
-  // instance_create(0, 0, obj_introtangle);
+  instance_create(0, 0, obj_introtangle);
   this.fadercreator = 0;
   this.skip = 0;
 
-  global.msg[0] = "Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^6. \\E1 ^1 %";
-  global.msg[1] = "One day^1, war broke&out between the two&races^6. \\E0 ^1 %";
-  global.msg[2] = "After a long battle^1,&the humans were&victorious^6. \\E1 ^1 %";
-  global.msg[3] = "They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %";
-  global.msg[4] = "Many years later^2.^2.^5.  \\E1 ^1 %";
+  global.msg[0] = " Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^6. \\E1 ^1 %";
+  global.msg[1] = " One day^1, war broke&out between the two&races^6. \\E0 ^1 %";
+  global.msg[2] = " After a long battle^1,&the humans were&victorious^6. \\E1 ^1 %";
+  global.msg[3] = " They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %";
+  global.msg[4] = " Many years later^2.^2.^5.  \\E1 ^1 %";
   global.msg[5] = "      MT. EBOTT&         201X^9 \\E0 %";
-  global.msg[6] = "Legends say that those&who climb the mountain&never return^5.^3 \\E1 %";
+  global.msg[6] = " Legends say that those&who climb the mountain&never return^5.^3 \\E1 %";
   global.msg[7] = " \\E1 %";
   global.msg[8] = " ^9 ^5 \\E0 %";
   global.msg[9] = " ^9 ^5 ^2 \\E1 %";
@@ -149,7 +149,6 @@ function alarm0() {
 function beginStep() {
   if (this.act === 1) {
     if (!instance_exists(OBJ_WRITER) && this.skip === 0) {
-      console.log("obj_writer not detected")
       this.skip = 1;
       const fader = instance_create(0, 0, obj_unfader);
       fader.tspeed = 0.05;

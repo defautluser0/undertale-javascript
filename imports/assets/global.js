@@ -148,4 +148,8 @@ for (let i = 0; i < 3; i += 1) {
   global.hurtanim[i] = 0;
 }
 
+if (window.navigator.userAgent === "MEOW Debugger") {
+  global.debug = 1;
+}
+
 export default global;
