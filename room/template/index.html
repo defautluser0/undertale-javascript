@@ -21,11 +21,19 @@
   </script>
   <script src="/imports/howler.js"></script>
   <script type="module">
-    import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-    import global from '/imports/assets/global.js'
+    import { control_update, input_update } from "/imports/input.js";
+    import * as objectname from '/obj/objectname/index.js'
 
-    // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
-    // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
+    const objectnameInstance = objectname.create();
+
+    objectnameInstance.x = 0; // edit as necessary
+    objectnameInstance.y = 0; // edit as necessary
+
+    // room start
+    objectname.roomStart.call(objectnameInstance);
+
+    // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
+    // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/objectname/index.js as seen above
     const FPS = 30;
     const FRAME_DURATION = 1000 / FPS;
     let lastFrameTime = 0;
@@ -36,12 +44,18 @@
         lastFrameTime = currentTime;
 
         control_update();
-        objectname_step();
-        objectname_draw();
+        // object functions that run every frame go here
+        objectname.beginStep.call(objectnameInstance);
+        objectname.step.call(objectnameInstance);
+        objectname.endStep.call(objectnameInstance);
+        objectname.draw.call(objectnameInstance);
+        // end of object functions section
         input_update();
 
         if (global.roomEnd && !global.eventDone) {
           global.eventDone = true;
+          // roomEnd() code
+          objectname.roomEnd.call(objectnameinstance);
         }
 
         if (global.roomEnd && global.eventDone) {
@@ -52,14 +66,6 @@
 
       requestAnimationFrame(game_loop);
     }
-    window.addEventListener("keydown", e => {
-      keyboard[e.code] = true;
-      _key_state[e.key] = true;
-    });
-    window.addEventListener("keyup", e => {
-      keyboard[e.code] = false;
-      _key_state[e.key] = false;
-    });
 
     // room code (object positioning and such) goes here
 
