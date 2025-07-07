@@ -31,7 +31,7 @@ const snd_floweytalk2 = new Howl({
   src:["/imports/assets/snd/floweytalk2.wav"]
 })
 const snd_nosound = new Howl({
-  src:[""]
+  src:["/imports/assets/snd/nosound.wav"]
 })
 
 //// playing

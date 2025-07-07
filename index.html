@@ -1,4 +1,26 @@
 <title>UNDERTALE</title>
 <link rel="stylesheet" href="/room/template/style.css">
 <img src="/spr/splash/0.png" width="640" height="480">
+<script src="/imports/howler.js"></script>
+<script>function testAutoplay() {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio();
+    audio.src = '/imports/assets/snd/nosound.wav'; // Use a small, silent audio file
+    audio.muted = true;
+    audio.play()
+      .then(() => {resolve(true)})  // Autoplay works
+      .catch(() => {reject(false)}); // Autoplay blocked
+  });
+}
+
+testAutoplay()
+  .then(() => {
+    const meow = new Howl({
+      src: ["/imports/assets/snd/nosound.wav"],
+    });
+    meow.play();
+  })
+  .catch(() => {
+    alert("Please enable autoplay in your browser for audio to work properly. Do not open an issue if you dont follow this step.");
+  });</script>
 <script>setTimeout(()=>{window.location="/room/introstory/"},2500);</script>
