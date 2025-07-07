@@ -8,7 +8,7 @@ const global = {
   eventDone: true,
   nextRoom: null,
   msg: [],
-  debug: 0,
+  debug: 1,
   hp: 20,
   maxhp: 20,
   en: 20,

@@ -347,21 +347,65 @@ function round(n) {
   }
 }
 
+/**
+ * This function returns a random floating-point (decimal) number between 0.0 (inclusive) and the specified upper limit (inclusive). For example, random(100) will return a value from 0 to 100.00, but that value can be 22.56473! You can also use real numbers and not integers in this function like this - random(0.5), which will return a value between 0 and 0.500.
+ * 
+ * @param {number} n The upper range from which the random number will be selected
+ * @returns {number}
+ */
 function random(n) {
   return Math.random * n;
 }
 
+/**
+ * This function simply returns the width, in pixels, of the indexed surface. It should be noted that if you call this to check the application_surface immediately after having changed its size using surface_resize() it will not return the new value as the change needs a step or two to be fully processed. After waiting a step it should return the new size correctly.
+ * 
+ * @param {string} surface 
+ * @returns {number}
+ */
 function surface_get_width(surface) {
-  console.warn("STUB: surface_get_width", surface, ". returning gameCanvas.width instead");
+  console.warn(`STUB: surface_get_width(${surface}). returning gameCanvas.width instead`);
   return ogCanvas.width;
 }
 
+/**
+ * This function calls a Script Function or Method with the given arguments.
+ * 
+ * @param {function} scr  	The function/script or method that you want to call.
+ * @param  {...any} args OPTIONAL The different arguments that you want to pass through to the function/script
+ * @returns {any}
+ */
 function script_execute(scr, ...args) {
   return scr.call(this, ...args);
 } 
 
+/**
+ * This function can be used to turn a value into a number. When using this function on a string, numbers, minus signs, decimal points and exponential parts in the string are taken into account, while other characters (such as letters) will cause an error to be thrown.
+ * 
+ * @param {string} n The string to be converted to a number.
+ * @returns {number}
+ */
 function real(n) {
   return parseInt(n);
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real };
+/**
+ * This function draws either an outline of a rectangle or a filled rectangle where the (x1,y1) position is the top left corner and the (x2,y2) position is the bottom right corner.
+ * 
+ * @param {number} x1 The x coordinate of the top left corner of the rectangle
+ * @param {number} y1 The y coordinate of the top left corner of the rectangle
+ * @param {number} x2 The x coordinate of the bottom right corner of the rectangle
+ * @param {number} y2 The y coordinate of the bottom right corner of the rectangle
+ * @param {boolean} outline Whether the rectangle is drawn filled (false) or as a one pixel wide outline (true)
+ */
+function draw_rectangle(x1, y1, x2, y2, outline) {
+  ctx.fillStyle = currentDrawColor;
+  ctx.rect(x1, y1, x2 + x1, y2 + y1)
+  if (outline) {
+    ctx.stroke()
+  } else {
+    ctx.fill()
+  }
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle };

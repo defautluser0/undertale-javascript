@@ -24,8 +24,11 @@
     import { updateCamera } from "/imports/view.js";
     import * as introimage from '/obj/introimage/index.js';
     import * as unfader from '/obj/unfader/index.js';
-    import { instances, instance_create } from '/imports/assets/gamemakerFunctions.js';
+    import { instances, instance_create, draw_text, draw_set_font } from '/imports/assets/gamemakerFunctions.js';
+    import { fnt_maintext } from '/imports/assets.js'
     import global from '/imports/assets/global.js';
+    
+    const allInstances = [];
     
     instance_create(0, 0, introimage);
     instance_create(0, 0, unfader);
@@ -35,12 +38,33 @@
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
     const FPS = 30;
     const FRAME_DURATION = 1000 / FPS;
+
     let lastFrameTime = 0;
+    let fpsCounter = 0;
+    let lastFpsUpdate = performance.now();
+    let currentFps = 0;
+
     function game_loop(currentTime) {
       const elapsed = currentTime - lastFrameTime;
 
+      allInstances.length = 0;
+
       if (elapsed >= FRAME_DURATION) {
         lastFrameTime = currentTime;
+
+        fpsCounter++;
+
+        const now = currentTime;
+        if (now - lastFpsUpdate >= 1000) {
+          currentFps = fpsCounter;
+          fpsCounter = 0;
+          lastFpsUpdate = now;
+        }
+
+        if (global.debug === 1) {
+          draw_set_font(fnt_maintext)
+          draw_text(15, 15, currentFps);
+        }
         
         control_update();
         for (const [obj, instanceList] of instances) {
@@ -70,9 +94,16 @@
         }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.draw?.call(instance);
+            allInstances.push({ obj, instance });
           }
         }
+
+        allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
+
+        for (const { obj,  instance } of allInstances) {
+          obj.draw?.call(instance);
+        }
+
         input_update();
 
         if (global.roomEnd && !global.eventDone) {

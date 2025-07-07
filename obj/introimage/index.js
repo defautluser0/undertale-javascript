@@ -14,7 +14,7 @@ import {
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
-import { ogCanvas, ogCtx, canvas } from "/imports/canvasSetup.js"
+import { ogCanvas, ogCtx, canvas, ctx } from "/imports/canvasSetup.js"
 import { view_current, view_hview, view_wview, view_xview, view_yview, updateCamera } from "/imports/view.js"
 import { control_check_pressed } from "/imports/input.js";
 import roomSize from "/imports/assets/roomSize.js";
@@ -37,6 +37,7 @@ function create() {
     visible: true,
     x: 0,
     y: 0,
+    depth: 0,
 
     alarm: alarm,
 
@@ -103,7 +104,7 @@ function alarm2() {
   global.typer = 11;
   global.faceemotion = 0;
   global.msc = 0;
-  instance_create(0, 0, obj_introtangle); // pass object name as string or object reference
+  // instance_create(0, 0, obj_introtangle);
   this.fadercreator = 0;
   this.skip = 0;
 
@@ -130,7 +131,7 @@ function alarm2() {
 function alarm1() {
   caster_stop(this.intromusic);
   caster_free(this.intromusic);
-  //room_goto("room_introimage");
+  room_goto("room_introimage");
 }
 
 function alarm0() {

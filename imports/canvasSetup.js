@@ -13,7 +13,7 @@ ctx.imageSmoothingEnabled = false;
 ctx.textBaseline = "top";
 if (global.debug === 1) {
 	document.getElementsByTagName("body")[0].appendChild(canvas);
-	canvas.style.border = "12px dashed red";
+	canvas.style.border = "8px dashed red";
 	canvas.style.position = "absolute";
 }
 
