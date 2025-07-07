@@ -395,6 +395,19 @@ function snd_stop(snd) {
   audio_stop_sound(snd);
 }
 
+function SCR_NEWLINE() {
+  if (this.vtext)
+  {
+    this.myx -= this.vspacing;
+    this.myy = this.writingy;
+  }
+  else
+  {
+    this.myx = this.writingx;
+    this.myy += this.vspacing;
+  }
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -411,4 +424,5 @@ export {
   snd_stop,
   SCR_TEXTSETUP,
   SCR_TEXTTYPE,
+  SCR_NEWLINE,
 };

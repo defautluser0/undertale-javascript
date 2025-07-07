@@ -1,6 +1,6 @@
 import { _key_prev_state, _key_state } from '/imports/input.js';
 import { playingSounds } from '/imports/assets.js'
-import { ctx } from '/imports/canvasSetup.js';
+import { ctx, ogCanvas } from '/imports/canvasSetup.js';
 import global from '/imports/assets/global.js';
 
 let currentDrawColor = null;
@@ -189,6 +189,10 @@ function room_goto(index) {
  * @param {string} obj The object index of the object to create an instance of
  */
 function instance_create(x, y, obj) {
+  if (obj === null || !Number.isFinite(x) || !Number.isFinite(y)) {
+    console.error("instance_create called with invalid parameters", { x, y, obj })
+    throw new Error("instance_create: parameters are invalid")
+  }
   const instance = {
     ...obj.create?.(), // get default vars (including x/y defaulting to 0)
     _object: obj,
@@ -347,4 +351,17 @@ function random(n) {
   return Math.random * n;
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random };
+function surface_get_width(surface) {
+  console.warn("STUB: surface_get_width", surface, ". returning gameCanvas.width instead");
+  return ogCanvas.width;
+}
+
+function script_execute(scr, ...args) {
+  return scr.call(this, ...args);
+} 
+
+function real(n) {
+  return parseInt(n);
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFontName, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real };

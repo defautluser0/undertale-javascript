@@ -21,13 +21,15 @@ import roomSize from "/imports/assets/roomSize.js";
 import * as OBJ_WRITER from '/obj/writer/index.js';
 import * as obj_introtangle from '/obj/introtangle/index.js';
 import * as obj_introfader from '/obj/introfader/index.js';
-import * as obj_unfader from '/obj/unfader/index.js'
+import * as obj_unfader from '/obj/unfader/index.js';
+import * as obj_introlast from '/obj/introlast/index.js';
 
 // create
 function create() {
   const alarm = new Array(12).fill(-1);
   alarm[2] = 4;
   return {
+    name: "introimage",
     sprite_index: spr_introimage,
     image_index: 0,
     image_speed: 0,
@@ -46,6 +48,7 @@ function create() {
 
     intromusic: caster_load(mus_story),
     updateGamemakerFunctions,
+    updateAlarms,
     beginStep,
     step,
     alarm0,
@@ -62,6 +65,8 @@ function updateAlarms() {
         const handler = this[`alarm${i}`];
         if (typeof handler === "function") handler.call(this); // call with instance context
       }
+    } else if (this.alarm[i] === 0) {
+      this.alarm[i]--;
     }
   }
 }
@@ -80,7 +85,6 @@ function updateGamemakerFunctions() {
     view_wview[view_current],
     view_hview[view_current],
   );
-  updateAlarms.call(this);
 
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
@@ -126,7 +130,7 @@ function alarm2() {
 function alarm1() {
   caster_stop(this.intromusic);
   caster_free(this.intromusic);
-  room_goto("room_introimage");
+  //room_goto("room_introimage");
 }
 
 function alarm0() {
@@ -144,6 +148,7 @@ function alarm0() {
 function beginStep() {
   if (this.act === 1) {
     if (!instance_exists(OBJ_WRITER) && this.skip === 0) {
+      console.log("obj_writer not detected")
       this.skip = 1;
       const fader = instance_create(0, 0, obj_unfader);
       fader.tspeed = 0.05;
@@ -157,7 +162,7 @@ function beginStep() {
 
     if (global.faceemotion === 2 && this.dongs === 0) {
       this.dongs = 1;
-      instance_create(/* pass appropriate params here */);
+      instance_create(this.x, this.y, obj_introlast);
     }
   }
 }

@@ -22,23 +22,14 @@
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
     import { updateCamera } from "/imports/view.js";
-    import * as introimage from '/obj/introimage/index.js'
-    import * as unfader from '/obj/unfader/index.js'
-    import * as unfader2 from '/obj/unfader/index.js'
-    import global from '/imports/assets/global.js'
-
-    const introimageInstance = introimage.create();
-    const unfaderInstance = unfader.create();
-    const unfaderInstance2 = unfader2.create();
-
-    // setup x and y for instances (no setup is theyre both 0)
-    unfaderInstance2.x = 288;
-    unfaderInstance2.y = 176;
+    import * as introimage from '/obj/introimage/index.js';
+    import * as unfader from '/obj/unfader/index.js';
+    import { instances, instance_create } from '/imports/assets/gamemakerFunctions.js';
+    import global from '/imports/assets/global.js';
     
-    unfader.step.call(unfaderInstance);
-    unfader2.step.call(unfaderInstance2);
-    unfader.roomStart.call(unfaderInstance);
-    unfader2.roomStart.call(unfaderInstance2);
+    instance_create(0, 0, introimage);
+    instance_create(0, 0, unfader);
+    instance_create(288, 176, unfader);
 
     // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
@@ -52,15 +43,45 @@
         lastFrameTime = currentTime;
         
         control_update();
-        introimage.updateGamemakerFunctions.call(introimageInstance);
-        introimage.beginStep.call(introimageInstance);
-        introimage.step.call(introimageInstance);
-        unfader.step.call(unfaderInstance);
-        unfader2.step.call(unfaderInstance2);
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateGamemakerFunctions?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.beginStep?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateAlarms?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.step?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.endStep?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.draw?.call(instance);
+          }
+        }
         input_update();
 
         if (global.roomEnd && !global.eventDone) {
           global.eventDone = true;
+          for (const [obj, instanceList] of instances) {
+            for (const instance of instanceList) {
+              obj.roomEnd?.call(instance);
+            }
+          }
         }
 
         if (global.roomEnd && global.eventDone) {

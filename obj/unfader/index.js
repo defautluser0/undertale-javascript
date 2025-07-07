@@ -3,6 +3,7 @@ import roomSize from '/imports/assets/roomSize.js'
 
 function create() {
 	return {
+		name: "unfader",
 		image_xscale: roomSize.width * 2,
 		image_yscale: roomSize.height,
 		image_alpha: 0,
