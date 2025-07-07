@@ -190,12 +190,15 @@ function room_goto(index) {
  */
 function instance_create(x, y, obj) {
   const instance = {
-    x,
-    y,
-    visible: true,
-    alarm: new Array(12).fill(-1),
-    ...obj.create?.(),
-  }
+    ...obj.create?.(), // get default vars (including x/y defaulting to 0)
+    _object: obj,
+  };
+
+  // Override x/y *only if explicitly passed*
+  instance.x = x;
+  instance.y = y;
+
+  obj.roomStart?.call(instance);
 
   if (!instances.has(obj)) {
     instances.set(obj, []);
@@ -212,17 +215,13 @@ function instance_create(x, y, obj) {
  * @returns {void}
  */
 function instance_destroy(index) {
-  const arr = instances.get(index);
-  if (!arr) return;
-
-  for (const inst of arr.slice()) {
-    if (typeof inst.instance_destroy === "function") {
-      inst.instance_destroy();
-    }
+  const list = instances.get(index._object);
+  if (list) {
+    const i = list.indexOf(index);
+    if (i !== -1) list.splice(i, 1);
   }
-
-  instances.delete(index);
 }
+
 
 /**
  * This function can be used in two ways depending on what you wish to check. You can give it an object_index to check for, in which case this function will return true if any active instances of the specified object exist in the current room, or you can also supply it with an instance id, in which case this function will return true if that specific instance exists and is active in the current room.
@@ -231,7 +230,7 @@ function instance_destroy(index) {
  * @returns {boolean}
  */
 function instance_exists(obj) {
-  return instances.has(obj) && instances.get(obj).length > 0;
+  return instances.has(obj) && instances.get(obj).length > 0; // true if its in the instances map and if its length is greater than 0
 }
 
 /**
@@ -333,11 +332,11 @@ function floor(n) {
  * @returns {number}
  */
 function round(n) {
-  let number = n;
-  let floorNumber = Math.floor(number);
-  let roundNumber = Math.round(number);
+  let floorNumber = Math.floor(n);
+  let roundNumber = Math.round(n);
 
-  if (floorNumber % 2 === 0 && roundNumber % 2 !== 0 && Math.abs(number) - Math.abs(floorNumber) === 0.5) {
+  // if the floor of the number is divisible by two and rounding the number is not divisible by two and (removing or adding 0.5 from the number is equal to the floor of the number) then return the floor of the number, else return the number rounded
+  if (floorNumber % 2 === 0 && roundNumber % 2 !== 0 && (n - 0.5 === floorNumber || n + 0.5 === floorNumber)) {
     return floorNumber;
   } else {
     return roundNumber;
