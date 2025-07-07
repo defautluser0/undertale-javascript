@@ -1,11 +1,13 @@
 import roomSize from "/imports/assets/roomSize.js";
-import { spr_pixblk } from "/imports/assets.js";
-import { instance_destroy, instances, draw_sprite } from "/imports/assets/gamemakerFunctions.js";
+import { spr_pixblk, c_white } from "/imports/assets.js";
+import { instance_destroy, instances, draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
 import * as obj_introimage from "/obj/introimage/index.js"
 
 function create() {
 	const alarm = new Array(12).fill(-1);
 	return {
+		name: "introfader",
+		depth: -99999,
 		image_xscale: roomSize.width,
 		image_yscale: 70,
 		x: 0,
@@ -13,6 +15,7 @@ function create() {
 		image_alpha: 0,
 		image_index: 0,
 		image_speed: 0,
+		image_number: 1,
 		sprite_index: spr_pixblk,
 
 		tpseed: 0.1,
@@ -48,7 +51,7 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-	draw_sprite(this.sprite_index, this.image_index, this.x, this.y);
+	draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha);
 }
 
 function alarm3() {
@@ -64,7 +67,9 @@ function alarm3() {
 function alarm2() {
 	this.alarm[3] = 2;
 	
-	instances.get(obj_introimage).image_index += 1;
+	let introimage = instances.get(obj_introimage)
+	console.log(introimage);
+	introimage.image_index += 1;
 }
 
 function step() {

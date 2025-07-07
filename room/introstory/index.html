@@ -99,6 +99,10 @@
           console.log(instances);
         }
         
+        for (const { obj,  instance } of allInstances) {
+          obj.updateSprite?.call(instance);
+        }
+
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateGamemakerFunctions?.call(instance);

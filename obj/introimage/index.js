@@ -10,7 +10,7 @@ import {
   instance_create,
   instance_destroy,
   instance_exists,
-  draw_sprite,
+  draw_sprite_ext,
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
@@ -34,12 +34,17 @@ function create() {
     image_index: 0,
     image_speed: 0,
     image_number: 11,
+    image_xscale: 320,
+    image_yscale: 240,
     visible: true,
     x: 0,
     y: 0,
     depth: 0,
 
     alarm: alarm,
+
+    mywriter: null,
+    fader: null,
 
     act: 0,
     skip: 0,
@@ -92,7 +97,7 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  draw_sprite(this.sprite_index, this.image_index, this.x, this.y);
+  draw_sprite_ext(this.sprite_index, this.image_index, this.x + this.sprite_index.xoffset, this.y + this.sprite_index.yoffset, this.image_xscale, this.image_yscale);
 }
 
 function alarm2() {
@@ -113,7 +118,7 @@ function alarm2() {
   global.msg[2] = " After a long battle^1,&the humans were&victorious^6. \\E1 ^1 %";
   global.msg[3] = " They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %";
   global.msg[4] = " Many years later^2.^2.^5.  \\E1 ^1 %";
-  global.msg[5] = "       MT. EBOTT&         201X^9 \E0 %";
+  global.msg[5] = "       MT. EBOTT&         201X^9 \\E0 %";
   global.msg[6] = " Legends say that those&who climb the mountain&never return^5.^3 \\E1 %";
   global.msg[7] = "  \\E1 %";
   global.msg[8] = "  ^9 ^5 \\E0 %";
@@ -124,7 +129,7 @@ function alarm2() {
   global.msg[13] = "  ^9 ^9 ^9 ^9 ^9 ^9 \\E0 %";
   global.msg[14] = "  %%";
 
-  instance_create(40, 140, OBJ_WRITER);
+  this.mywriter = instance_create(40, 140, OBJ_WRITER);
   this.alarm[0] = 5;
 }
 
@@ -150,8 +155,7 @@ function beginStep() {
   if (this.act === 1) {
     if (!instance_exists(OBJ_WRITER) && this.skip === 0) {
       this.skip = 1;
-      const fader = instance_create(0, 0, obj_unfader);
-      fader.tspeed = 0.05;
+      this.fader.tspeed = 0.05;
       this.alarm[1] = 30;
     }
 
@@ -175,10 +179,10 @@ function step() {
     if (control_check_pressed(0)) {
       if (this.skip === 0) {
         this.skip = 1;
-        const fader = instance_create(0, 0, obj_unfader);
-        fader.tspeed = 0.05;
+        this.fader = instance_create(0, 0, obj_unfader);
+        this.fader.tspeed = 0.05;
         this.alarm[1] = 30;
-        instance_destroy(OBJ_WRITER);
+        instance_destroy(this.mywriter);
       }
     }
   }

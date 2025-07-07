@@ -323,7 +323,7 @@ function draw_sprite(sprite, subimg, x, y) {
  * @param {number} xscale The horizontal scaling of the sprite, as a multiplier: 1 = normall scaling, 0.5 is half etc...
  * @param {number} yscale The vertical scaling of the sprite as a multiplier: 1 = normal scaling, 0.5 is half etc...
  * @param {number} rot The rotation of the sprite. 0=right way up, 90=rotated 90 degrees counter-clockwise etc...
- * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally. Currently unused
+ * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  * @returns {void}
  */
@@ -350,8 +350,6 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale = sprite.xscale, yscale = 
 
     // Apply alpha
     ctx.globalAlpha = alpha;
-
-    // TODO: Implement tinting with colour if needed — canvas doesn't support direct tinting easily
 
     // Draw image centered on (0, 0)
     ctx.drawImage(img, -img.width / 2, -img.height / 2);
