@@ -113,16 +113,16 @@ function alarm2() {
   global.msg[2] = " After a long battle^1,&the humans were&victorious^6. \\E1 ^1 %";
   global.msg[3] = " They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %";
   global.msg[4] = " Many years later^2.^2.^5.  \\E1 ^1 %";
-  global.msg[5] = "      MT. EBOTT&         201X^9 \\E0 %";
+  global.msg[5] = "       MT. EBOTT&         201X^9 \E0 %";
   global.msg[6] = " Legends say that those&who climb the mountain&never return^5.^3 \\E1 %";
-  global.msg[7] = " \\E1 %";
-  global.msg[8] = " ^9 ^5 \\E0 %";
-  global.msg[9] = " ^9 ^5 ^2 \\E1 %";
-  global.msg[10] = " ^9 ^5 ^2 \\E2 %";
-  global.msg[11] = " ^9 ^9 ^9 ^9 ^9 ^9 \\E2 %%";
-  global.msg[12] = " ^9 ^9 ^9 ^9 ^9  \\E0 %%";
-  global.msg[13] = " ^9 ^9 ^9 ^9 ^9 ^9 \\E0 %";
-  global.msg[14] = " %%";
+  global.msg[7] = "  \\E1 %";
+  global.msg[8] = "  ^9 ^5 \\E0 %";
+  global.msg[9] = "  ^9 ^5 ^2 \\E1 %";
+  global.msg[10] = "  ^9 ^5 ^2 \\E2 %";
+  global.msg[11] = "  ^9 ^9 ^9 ^9 ^9 ^9 \\E2 %%";
+  global.msg[12] = "  ^9 ^9 ^9 ^9 ^9  \\E0 %%";
+  global.msg[13] = "  ^9 ^9 ^9 ^9 ^9 ^9 \\E0 %";
+  global.msg[14] = "  %%";
 
   instance_create(40, 140, OBJ_WRITER);
   this.alarm[0] = 5;
