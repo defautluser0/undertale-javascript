@@ -20,7 +20,7 @@
   </script>
   <script src="/imports/howler.js"></script>
   <script type="module">
-    import { control_update, input_update } from "/imports/input.js";
+    import { control_update, input_update, keyboard, _key_state} from "/imports/input.js";
 		import { instance_create, instances, currentFont } from "/imports/assets/gamemakerFunctions.js"
 		import global from "/imports/assets/global.js"
     import * as obj_objectname from '/obj/objectname/index.js'
@@ -123,6 +123,15 @@
 
       requestAnimationFrame(game_loop);
     }
+
+		window.addEventListener("keydown", e => {
+      keyboard[e.code] = true;
+      _key_state[e.code] = true;
+    });
+    window.addEventListener("keyup", e => {
+      keyboard[e.code] = false;
+      _key_state[e.code] = false;
+    });
 
     // room code (object positioning and such) goes here
 

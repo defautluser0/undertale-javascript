@@ -135,7 +135,7 @@ function draw_text(x, y, string) {
  */
 function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0) {
   if (!currentFont.image || currentFont.loading) {
-    console.warn("Font not set or loaded.");
+    console.warn("Font not set or loaded. Drawing skipped for this frame.");
     return;
   }
 
@@ -213,6 +213,38 @@ function get_tinted_glyph(glyph, tintColor, char) {
  * @returns {boolean}
  */
 function keyboard_check_pressed(key) {
+  // If numeric, convert to character
+  if (typeof key === "number") {
+    key = String.fromCharCode(key);
+  }
+
+  // If a single character, map to key code
+  if (typeof key === "string" && key.length === 1) {
+    const code = key.toUpperCase();
+
+    if (code >= "A" && code <= "Z") {
+      key = "Key" + code;
+    } else if (code >= "0" && code <= "9") {
+      key = "Digit" + code;
+    } else {
+      // Map symbols to their KeyboardEvent.code equivalents
+      key = {
+        " ": "Space",
+        "-": "Minus",
+        "=": "Equal",
+        "[": "BracketLeft",
+        "]": "BracketRight",
+        "\\": "Backslash",
+        ";": "Semicolon",
+        "'": "Quote",
+        ",": "Comma",
+        ".": "Period",
+        "/": "Slash",
+        "`": "Backquote"
+      }[key] || key; // fallback to raw key if unknown
+    }
+  }
+
   return !!_key_state[key] && !_key_prev_state[key];
 }
 

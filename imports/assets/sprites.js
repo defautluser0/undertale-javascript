@@ -25,6 +25,15 @@ const spr_introlast = {
 	height: 350,
 }
 
+const spr_undertaletitle = {
+	path: '/spr/undertaletitle/',
+	frameCount: 1,
+	xoffset: 160,
+	yoffset: 120,
+	width: 320,
+	height: 240,
+}
+
 const spr_punchcard = {
 	path: '/spr/punchcard/',
 	frameCount: 1,
@@ -34,4 +43,4 @@ const spr_punchcard = {
 	height: 240,
 }
 
-export { spr_introimage, spr_pixblk, spr_introlast, spr_punchcard };
+export { spr_introimage, spr_pixblk, spr_introlast, spr_punchcard, spr_undertaletitle };
