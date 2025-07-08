@@ -19,7 +19,6 @@ import { view_current, view_hview, view_wview, view_xview, view_yview } from "/i
 import { control_check_pressed } from "/imports/input.js";
 import roomSize from "/imports/assets/roomSize.js";
 import * as OBJ_WRITER from '/obj/writer/index.js';
-import * as obj_introtangle from '/obj/introtangle/index.js';
 import * as obj_introfader from '/obj/introfader/index.js';
 import * as obj_unfader from '/obj/unfader/index.js';
 import * as obj_introlast from '/obj/introlast/index.js';
@@ -34,8 +33,8 @@ function create() {
     image_index: 0,
     image_speed: 0,
     image_number: 11,
-    image_xscale: 320,
-    image_yscale: 240,
+    image_xscale: 1,
+    image_yscale: 1,
     visible: true,
     x: 0,
     y: 0,
@@ -109,7 +108,6 @@ function alarm2() {
   global.typer = 11;
   global.faceemotion = 0;
   global.msc = 0;
-  instance_create(0, 0, obj_introtangle);
   this.fadercreator = 0;
   this.skip = 0;
 
@@ -155,6 +153,7 @@ function beginStep() {
   if (this.act === 1) {
     if (!instance_exists(OBJ_WRITER) && this.skip === 0) {
       this.skip = 1;
+      this.fader = instance_create(0, 0, obj_unfader);
       this.fader.tspeed = 0.05;
       this.alarm[1] = 30;
     }

@@ -7,7 +7,6 @@ import {
   round,
   currentFont,
   surface_get_width,
-  real,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -27,7 +26,6 @@ import {
 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 import { view_current, view_wview } from "/imports/view.js"
-import { ctx } from "/imports/canvasSetup.js";
 
 function scr_replace_buttons_pc(str) {
   return str
@@ -38,101 +36,112 @@ function scr_replace_buttons_pc(str) {
     .replaceAll("*D", "[RIGHT]");
 }
 
+function measure_text_width_bitmap(text, xscale = 1) {
+  let width = 0;
+  for (const char of text) {
+    const glyph = currentFont.glyphs[char];
+    if (glyph) {
+      // glyph.shift is the advance, fallback to glyph.w + glyph.offset if missing
+      const advance = glyph.shift ?? (glyph.w + (glyph.offset || 0));
+      width += advance * xscale;
+    } else {
+      width += currentFont.size * xscale; // fallback width
+    }
+  }
+  return width;
+}
+
 function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale) {
-  var fontSize = currentFont.size;
-  var display_scale = surface_get_width("application_surface") / view_wview[view_current];
-  var lineheight = round(fontSize * yscale);
+  const fontSize = currentFont.size;
+  const display_scale = surface_get_width("application_surface") / view_wview[view_current];
+  const lineheight = Math.round(fontSize * yscale);
 
-  // Simulate line splitting by '#'
-  var eol = text.indexOf("#");
+  // Fix vertical position rounding similar to GML
+  yy = Math.round(yy * display_scale) / display_scale;
 
-  // Fix yy position rounded as in GML
-  yy = round(yy * display_scale) / display_scale;
+  let lines = text.split("#");
 
-  while (eol !== -1) {
-    var line = text.substring(0, eol);
-    text = text.substring(eol + 1);
-
-    var width = ctx.measureText(line).width * xscale;
-    var line_x = round((xx - width / 2) * display_scale) / display_scale;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const width = measure_text_width_bitmap(line, xscale);
+    const line_x = Math.round((xx - width / 2) * display_scale) / display_scale;
 
     draw_text_transformed(line_x, yy, line, xscale, yscale, 0);
 
     yy += lineheight;
-    eol = text.indexOf("#");
   }
-
-  // Draw last line
-  var width = ctx.measureText(text).width * xscale;
-  var line_x = round((xx - width / 2) * display_scale) / display_scale;
-  draw_text_transformed(line_x, yy, text, xscale, yscale, 0);
 }
 
 function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1) {
   str = scr_replace_buttons_pc(str);
-  const len = str.length;
-  const lineHeight = real(currentFont.size) + 8;
-  let outstr = "";
+  const lineHeight = (currentFont.glyphs[" "].h);
   let xx = x0;
   let yy = y0;
+  let outstr = "";
 
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < str.length; i++) {
     if (str[i] === "#") {
-      if (outstr !== "") {
+      if (outstr.length > 0) {
         draw_text(xx, yy, outstr);
         outstr = "";
       }
       xx = x0;
-      yy += lineHeight;
-    } else if (str[i] === "*" && str[i + 2]) {
-      if (outstr !== "") {
+      yy += lineHeight;  // scaled line height now
+    } else if (str[i] === "\\" && str[i + 2] === "*") {
+      if (outstr.length > 0) {
         draw_text(xx, yy, outstr);
-        xx += ctx.measureText(outstr).width;
+        xx += round(measure_text_width_bitmap(outstr, icon_scale));
         outstr = "";
       }
       i += 2;
       const ch = str[i];
-      const keyLabel = scr_replace_buttons_pc("*" + ch); // will be like [Z], [X], etc.
-      draw_text(xx, yy, keyLabel);
-      xx += ctx.measureText(keyLabel).width;
+      const keyLabel = scr_replace_buttons_pc("*" + ch);
+      draw_text_transformed(xx, yy, keyLabel, icon_scale, icon_scale, 0);
+      xx += measure_text_width_bitmap(keyLabel, icon_scale);
     } else {
       outstr += str[i];
     }
   }
-
-  if (outstr !== "") {
+  if (outstr.length > 0) {
     draw_text(xx, yy, outstr);
   }
 }
 
 function scr_drawtext_icons(xx, yy, str, icon_scale = 1) {
   str = scr_replace_buttons_pc(str);
-  let i = str.indexOf("*");
 
-  while (i !== -1) {
+  while (true) {
+    let i = str.indexOf("*");
+    if (i === -1) break;
+
     if (i > 0) {
       const s = str.substring(0, i);
-      draw_text(xx, yy, s);
-      xx += ctx.measureText(s).width;
+      draw_text_transformed(xx, yy, s, icon_scale, icon_scale, 0);
+      xx += measure_text_width_bitmap(s, icon_scale);
+      str = str.substring(i);
     }
 
-    const ch = str[i + 2];
-    const keyLabel = scr_replace_buttons_pc("*" + ch); // e.g., [X]
-    draw_text(xx, yy, keyLabel);
-    xx += ctx.measureText(keyLabel).width;
-
-    str = str.substring(i + 3);
-    i = str.indexOf("*");
+    if (str.length >= 3 && str[0] === "*" && str[2]) {
+      const ch = str[2];
+      const keyLabel = scr_replace_buttons_pc("*" + ch);
+      draw_text_transformed(xx, yy, keyLabel, icon_scale, icon_scale, 0);
+      xx += measure_text_width_bitmap(keyLabel, icon_scale);
+      str = str.substring(3);
+    } else {
+      // Invalid format fallback
+      break;
+    }
   }
 
   if (str.length > 0) {
-    draw_text(xx, yy, str);
+    draw_text_transformed(xx, yy, str, icon_scale, icon_scale, 0);
   }
 }
 
 function scr_drawtext_centered(xx, yy, text) {
   scr_drawtext_centered_scaled(xx, yy, text, 1, 1);
 }
+
 
 // scr_setfont
 function scr_setfont(newfont) {
@@ -387,7 +396,7 @@ function SCR_TEXTTYPE(typer, x, y) {
   }
 
   if (global.typer === 11 || global.typer === 112) {
-    TEXTSETUP.textspeed += 1;
+    TEXTSETUP.textspeed = 2;
   }
   return TEXTSETUP;
 }
@@ -413,6 +422,10 @@ function SCR_NEWLINE() {
   }
 }
 
+function SCR_TEXT() {
+  console.log("not doing allat yet")
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -430,4 +443,5 @@ export {
   SCR_TEXTSETUP,
   SCR_TEXTTYPE,
   SCR_NEWLINE,
+  SCR_TEXT,
 };

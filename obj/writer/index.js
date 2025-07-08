@@ -1,11 +1,10 @@
 import { SCR_TEXTTYPE, snd_play, scr_replace_buttons_pc, snd_stop, scr_setfont, SCR_NEWLINE } from '/imports/customFunctions.js';
 import { control_check_pressed } from '/imports/input.js'
-import { string_char_at, floor, random, round, draw_set_color, draw_set_font, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy, ord } from "/imports/assets/gamemakerFunctions.js"
+import { string_char_at, floor, random, round, draw_set_color, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy, ord } from "/imports/assets/gamemakerFunctions.js"
 import { view_wview, view_current } from '/imports/view.js'
 import { fnt_comicsans, fnt_papyrus, spr_punchcard, fnt_main } from '/imports/assets.js'
 import global from '/imports/assets/global.js';
 import * as obj_choicer from "/obj/choicer/index.js"
-import { draw_text } from '../../imports/assets/gamemakerFunctions.js';
 
 function create() {
 	const mystring = [];

@@ -76,7 +76,7 @@ function draw() {
       120,
       50,
       "Welcome to the Sound Test!#Listen to all your favorites.#Press Left or Right to select.#Press *Z to play a song.#",
-      2
+      2,
     );
     this.buffer++;
 

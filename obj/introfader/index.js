@@ -9,7 +9,7 @@ function create() {
 		name: "introfader",
 		depth: -99999,
 		image_xscale: roomSize.width,
-		image_yscale: 70,
+		image_yscale: 140,
 		x: 0,
 		y: 0,
 		image_alpha: 0,
@@ -18,7 +18,7 @@ function create() {
 		image_number: 1,
 		sprite_index: spr_pixblk,
 
-		tpseed: 0.1,
+		tspeed: 0.1,
 		over: 0,
 
 		alarm: alarm,
@@ -28,6 +28,7 @@ function create() {
 		step,
 		updateAlarms,
 		updateGamemakerFunctions,
+		updateSprite
 	}
 }
 
@@ -50,7 +51,9 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+}
 
+function updateSprite() {
 	draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha);
 }
 
@@ -68,8 +71,7 @@ function alarm2() {
 	this.alarm[3] = 2;
 	
 	let introimage = instances.get(obj_introimage)
-	console.log(introimage);
-	introimage.image_index += 1;
+	introimage[0].image_index += 1;
 }
 
 function step() {
@@ -82,4 +84,4 @@ function step() {
 	}
 }
 
-export { create, alarm3, alarm2, step, updateAlarms, updateGamemakerFunctions };
+export { create, alarm3, alarm2, step, updateAlarms, updateGamemakerFunctions, updateSprite };

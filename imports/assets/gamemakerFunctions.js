@@ -11,6 +11,9 @@ let currentDrawColor = c_white;
 let currentFont = null;
 const instances = new Map();
 
+const spriteCache = {};
+const globalTintCache = new Map();
+
 /**
  * With this function you can play any sound asset in your game. You provide the sound asset and assign it a priority, which is then used to determine how sounds are dealt with when the number of sounds playing is over the limit set by the function audio_channel_num(). Lower priority sounds will be stopped in favour of higher priority sounds, and the priority value can be any real number (the actual value is arbitrary, and can be from 0 to 1 or 0 to 100, as GameMaker will prioritize them the same). The higher the number the higher the priority, so a sound with priority 100 will be favoured over a sound with priority 1. The third argument is for making the sound loop and setting it to true will make the sound repeat until it's stopped manually, and setting it to false will play the sound once only.
  * 
@@ -104,7 +107,7 @@ function draw_get_font() {
  * @returns {void}
  */
 function draw_set_color(col) {
-  currentDrawColor = col;
+  currentDrawColor = col.toUpperCase();
 }
 
 /**
@@ -131,60 +134,76 @@ function draw_text(x, y, string) {
  * @returns {void}
  */
 function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0) {
-  if (currentFont.image === null || currentFont.loading === true) {
+  if (!currentFont.image || currentFont.loading) {
     console.warn("Font not set or loaded.");
     return;
-  } else {
+  }
+
   ctx.save();
 
   for (const char of String(string)) {
     const glyph = currentFont.glyphs[char];
     if (!glyph) {
-      x += currentFont.size * xscale;
+      x += currentFont.size * xscale; // fallback spacing
       continue;
     }
 
     const offsetX = (glyph.offset || 0) * xscale;
-    const drawX = x + offsetX;
-    const drawY = y;
-
-    // Setup offscreen canvas size for this glyph
-    offCanvas.width = glyph.w * xscale;
-    offCanvas.height = glyph.h * yscale;
-
-    offCtx.clearRect(0, 0, offCanvas.width, offCanvas.height);
-
-    // Draw glyph on offscreen canvas
-    offCtx.drawImage(
-      currentFont.image,
-      glyph.x, glyph.y, glyph.w, glyph.h,
-      0, 0,
-      offCanvas.width, offCanvas.height
-    );
-
-    // Apply tint if currentDrawColor isn't white (c_white)
-    if (currentDrawColor.toUpperCase() !== c_white.toUpperCase()) {
-      offCtx.globalCompositeOperation = "source-in";
-      offCtx.fillStyle = currentDrawColor;
-      offCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
-      offCtx.globalCompositeOperation = "source-over";
-    }
+    const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
 
     ctx.save();
-    ctx.translate(drawX, drawY);
+    ctx.translate(x + offsetX, y - offsetY);
     ctx.rotate((angle * Math.PI) / 180);
+    ctx.scale(xscale, yscale);
 
-    // Draw tinted glyph from offscreen canvas
-    ctx.drawImage(offCanvas, 0, 0);
+    if (currentDrawColor !== c_white) {
+      // Use tinted glyph canvas
+      const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char);
+      ctx.drawImage(tintedGlyphCanvas, 0, 0);
+    } else {
+      ctx.drawImage(
+        currentFont.image,
+        glyph.x, glyph.y, glyph.w, glyph.h,
+        0, 0, glyph.w, glyph.h,
+      )
+    }
 
     ctx.restore();
 
-    x += (glyph.w + (glyph.offset || 0) + (glyph.shift - glyph.w || 0)) * xscale;
+    x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
   }
 
   ctx.restore();
-  }
 }
+
+// draw_text_transformed helper
+function get_tinted_glyph(glyph, tintColor, char) {
+  const cacheKey = `${char}_${tintColor}`;
+  if (globalTintCache.has(cacheKey)) {
+    return globalTintCache.get(cacheKey);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = glyph.w;
+  canvas.height = glyph.h;
+  const gctx = canvas.getContext("2d");
+
+  gctx.drawImage(
+    currentFont.image,
+    glyph.x, glyph.y, glyph.w, glyph.h,
+    0, 0, glyph.w, glyph.h
+  );
+
+  gctx.globalCompositeOperation = "source-in";
+  gctx.fillStyle = tintColor;
+  gctx.fillRect(0, 0, glyph.w, glyph.h);
+  gctx.globalCompositeOperation = "source-over";
+
+  globalTintCache.set(cacheKey, canvas);
+  return canvas;
+}
+
+
 
 /** 
  * With this function you can check to see if a key has been pressed or not. Unlike the keyboard_check() function, this function will only run once for every time the key is pressed down, so for it to trigger again, the key must be first released and then pressed again. The function will take a keycode value as returned by any of the vk_* constants listed far above.
@@ -223,7 +242,6 @@ function draw_set_font(font) {
     img.onload = () => {
       currentFont.image = img;
       currentFont.loading = false;
-      console.log(`Font image loaded: ${currentFont.file}`);
     };
   }
 }
@@ -261,7 +279,7 @@ function instance_create(x, y, obj) {
   instance.x = x;
   instance.y = y;
   
-  if (instance.name = "obj_writer") {
+  if (instance.name === "obj_writer") {
     instance.writingx = instance.x + instance.writingx;
     instance.writingy = instance.y + instance.writingy;
   }
@@ -310,7 +328,7 @@ function instance_exists(obj) {
  * @param {number} y The y coordinate of where to draw the sprite
  */
 function draw_sprite(sprite, subimg, x, y) {
-  draw_sprite_ext(sprite, subimg, x + sprite.xoffset, y + sprite.yoffset, 1 * sprite.height, 1 * sprite.width, 0, "#ffffff", 1)
+  draw_sprite_ext(sprite, subimg, x + sprite.xoffset, y + sprite.yoffset, 1, 1, 0, c_white, 1)
 }
 
 /**
@@ -327,43 +345,52 @@ function draw_sprite(sprite, subimg, x, y) {
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  * @returns {void}
  */
-function draw_sprite_ext(sprite, subimg, x, y, xscale = sprite.xscale, yscale = sprite.yscale, rot = 0, colour = c_white, alpha = 1) {
+function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha) {
   if (!sprite || !sprite.path) return;
 
-  // Normalize subimg to valid frame index
   const frame = subimg < 0 ? 0 : subimg % sprite.frameCount;
+  const key = `${sprite.path}${frame}.png`;
 
-  const img = new Image();
-  img.src = `${sprite.path}${frame}.png`; // e.g. "/spr/introimage/3.png"
+  // Cache image
+  if (!spriteCache[key]) {
+    const img = new Image();
+    img.src = key;
+    spriteCache[key] = { img, loaded: false };
+    img.onload = () => {
+      spriteCache[key].loaded = true;
+    };
+  }
 
-  img.onload = () => {
-    ctx.save();
+  const cached = spriteCache[key];
 
-    // Translate to position
-    ctx.translate(x, y);
+  if (!cached.loaded) {
+    // Image not loaded yet, skip drawing this frame
+    return;
+  }
 
-    // Rotate (convert degrees to radians)
-    ctx.rotate(rot * Math.PI / 180);
+  const img = cached.img;
 
-    // Scale
-    ctx.scale(xscale * sprite.xscale, yscale * sprite.yscale);
+  ctx.save();
 
-    // Apply alpha
-    ctx.globalAlpha = alpha;
+  ctx.translate(x, y);
+  ctx.rotate(rot * Math.PI / 180);
+  ctx.scale(xscale, yscale);
 
-    // Draw image centered on (0, 0)
-    ctx.drawImage(img, -img.width / 2, -img.height / 2);
+  ctx.globalAlpha = alpha;
 
-    if (colour && colour !== c_white) {
-      ctx.globalCompositeOperation = "source-in";
-      ctx.fillStyle = colour;
-      ctx.fillRect(-width / 2, -height / 2, width, height);
-      ctx.globalCompositeOperation = "source-over";
-    }
+  // Draw image centered
+  ctx.drawImage(img, -img.width / 2, -img.height / 2);
 
-    ctx.restore();
-  };
+  if (colour && colour.toUpperCase() !== "#FFFFFF" && colour.toUpperCase() !== "WHITE") {
+    ctx.globalCompositeOperation = "source-in";
+    ctx.fillStyle = colour;
+    ctx.fillRect(-img.width / 2, -img.height / 2, img.width, img.height);
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  ctx.restore();
 }
+
 
 /**
  * You can use this function to return a specific character at a specific position within a string, with the index starting at 1 for the first character. If no character is found or the string is shorter than the given index value, an empty string "" is returned, however if the given index is equal to or smaller than 0, then the first character of the string is returned.

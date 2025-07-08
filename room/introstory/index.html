@@ -23,15 +23,13 @@
     import { updateCamera } from "/imports/view.js";
     import * as introimage from '/obj/introimage/index.js';
     import * as unfader from '/obj/unfader/index.js';
-    import { instances, instance_create, draw_text, draw_set_font } from '/imports/assets/gamemakerFunctions.js';
+    import { instances, instance_create, draw_text, draw_set_font, currentFont } from '/imports/assets/gamemakerFunctions.js';
     import { fnt_maintext } from '/imports/assets.js'
     import global from '/imports/assets/global.js';
     
     const allInstances = [];
     
     instance_create(0, 0, introimage);
-    instance_create(0, 0, unfader);
-    instance_create(288, 176, unfader);
 
     // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
@@ -92,15 +90,14 @@
         for (const { obj,  instance } of allInstances) {
           obj.draw?.call(instance);
         }
-
-        if (global.debug === 1) {
-          draw_set_font(fnt_maintext);
-          draw_text(15, 15, currentFps);
-          console.log(instances);
-        }
         
         for (const { obj,  instance } of allInstances) {
           obj.updateSprite?.call(instance);
+        }
+
+        if (global.debug === 1 && currentFont) {
+          draw_text(15, 15, currentFps);
+          console.log(instances);
         }
 
         for (const [obj, instanceList] of instances) {
