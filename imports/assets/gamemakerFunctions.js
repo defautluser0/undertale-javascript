@@ -9,6 +9,7 @@ offCtx.imageSmoothingEnabled = false;
 
 let currentDrawColor = c_white;
 let currentFont = null;
+let secondFont = null;
 const instances = new Map();
 
 const spriteCache = {};
@@ -118,8 +119,8 @@ function draw_set_color(col) {
  * @param {string} string The string to draw.
  * @returns {void}
  */
-function draw_text(x, y, string) {
-  draw_text_transformed(x, y, string, 1, 1, 0);
+function draw_text(x, y, string, second) {
+  draw_text_transformed(x, y, string, 1, 1, 0, second);
 }
 
 /**
@@ -133,51 +134,94 @@ function draw_text(x, y, string) {
  * @param {number} angle The angle of the text.
  * @returns {void}
  */
-function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0) {
-  if (!currentFont.image || currentFont.loading) {
-    console.warn("Font not set or loaded. Drawing skipped for this frame.");
-    return;
-  }
-
-  ctx.save();
-
-  for (const char of String(string)) {
-    const glyph = currentFont.glyphs[char];
-    if (!glyph) {
-      x += currentFont.size * xscale; // fallback spacing
-      continue;
+function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, second) {
+  if (second !== 1) {
+    if (!currentFont.image || currentFont.loading) {
+      console.warn("Font not set or loaded. Drawing skipped for this frame.");
+      return;
     }
 
-    const offsetX = (glyph.offset || 0) * xscale;
-    const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
-
     ctx.save();
-    ctx.translate(x + offsetX, y - offsetY);
-    ctx.rotate((angle * Math.PI) / 180);
-    ctx.scale(xscale, yscale);
 
-    if (currentDrawColor !== c_white) {
-      // Use tinted glyph canvas
-      const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char);
-      ctx.drawImage(tintedGlyphCanvas, 0, 0);
-    } else {
-      ctx.drawImage(
-        currentFont.image,
-        glyph.x, glyph.y, glyph.w, glyph.h,
-        0, 0, glyph.w, glyph.h,
-      )
+    for (const char of String(string)) {
+      const glyph = currentFont.glyphs[char];
+      if (!glyph) {
+        x += currentFont.size * xscale; // fallback spacing
+        continue;
+      }
+
+      const offsetX = (glyph.offset || 0) * xscale;
+      const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
+
+      ctx.save();
+      ctx.translate(x + offsetX, y - offsetY);
+      ctx.rotate((angle * Math.PI) / 180);
+      ctx.scale(xscale, yscale);
+
+      if (currentDrawColor !== c_white) {
+        // Use tinted glyph canvas
+        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char);
+        ctx.drawImage(tintedGlyphCanvas, 0, 0);
+      } else {
+        ctx.drawImage(
+          currentFont.image,
+          glyph.x, glyph.y, glyph.w, glyph.h,
+          0, 0, glyph.w, glyph.h,
+        )
+      }
+
+      ctx.restore();
+
+      x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
     }
 
     ctx.restore();
+  } else {
+    if (!secondFont.image || secondFont.loading) {
+      console.warn("Font not set or loaded. Drawing skipped for this frame.");
+      return;
+    }
 
-    x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
+    ctx.save();
+
+    for (const char of String(string)) {
+      const glyph = secondFont.glyphs[char];
+      if (!glyph) {
+        x += secondFont.size * xscale; // fallback spacing
+        continue;
+      }
+
+      const offsetX = (glyph.offset || 0) * xscale;
+      const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
+
+      ctx.save();
+      ctx.translate(x + offsetX, y - offsetY);
+      ctx.rotate((angle * Math.PI) / 180);
+      ctx.scale(xscale, yscale);
+
+      if (currentDrawColor !== c_white) {
+        // Use tinted glyph canvas
+        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
+        ctx.drawImage(tintedGlyphCanvas, 0, 0);
+      } else {
+        ctx.drawImage(
+          secondFont.image,
+          glyph.x, glyph.y, glyph.w, glyph.h,
+          0, 0, glyph.w, glyph.h,
+        )
+      }
+
+      ctx.restore();
+
+      x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
+    }
+
+    ctx.restore();
   }
-
-  ctx.restore();
 }
 
 // draw_text_transformed helper
-function get_tinted_glyph(glyph, tintColor, char) {
+function get_tinted_glyph(glyph, tintColor, char, second) {
   const cacheKey = `${char}_${tintColor}`;
   if (globalTintCache.has(cacheKey)) {
     return globalTintCache.get(cacheKey);
@@ -188,11 +232,19 @@ function get_tinted_glyph(glyph, tintColor, char) {
   canvas.height = glyph.h;
   const gctx = canvas.getContext("2d");
 
-  gctx.drawImage(
-    currentFont.image,
-    glyph.x, glyph.y, glyph.w, glyph.h,
-    0, 0, glyph.w, glyph.h
-  );
+  if (second === 1) {
+    gctx.drawImage(
+      secondFont.image,
+      glyph.x, glyph.y, glyph.w, glyph.h,
+      0, 0, glyph.w, glyph.h
+    );
+  } else {
+    gctx.drawImage(
+      currentFont.image,
+      glyph.x, glyph.y, glyph.w, glyph.h,
+      0, 0, glyph.w, glyph.h
+    );
+  }
 
   gctx.globalCompositeOperation = "source-in";
   gctx.fillStyle = tintColor;
@@ -264,17 +316,31 @@ function keyboard_check(key) {
  * 
  * @param {object} font The name of the font to use.
  */
-function draw_set_font(font) {
-  currentFont = font;
+function draw_set_font(font, second) {
+  if (second === 1) {
+    secondFont = font;
 
-  if (!currentFont.image && !currentFont.loading) {
-    currentFont.loading = true;
-    const img = new Image();
-    img.src = currentFont.file;
-    img.onload = () => {
-      currentFont.image = img;
-      currentFont.loading = false;
-    };
+    if (!secondFont.image && !secondFont.loading) {
+      secondFont.loading = true;
+      const img = new Image();
+      img.src = secondFont.file;
+      img.onload = () => {
+        secondFont.image = img;
+        secondFont.loading = false;
+      };
+    }
+  } else {
+    currentFont = font;
+
+    if (!currentFont.image && !currentFont.loading) {
+      currentFont.loading = true;
+      const img = new Image();
+      img.src = currentFont.file;
+      img.onload = () => {
+        currentFont.image = img;
+        currentFont.loading = false;
+      };
+    }
   }
 }
 
@@ -463,12 +529,14 @@ function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
 function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xscale = 1, yscale = 1, colour = "#FFFFFF", alpha = 1) {
   if (!sprite) return;
 
-  const frame = subimg < 0 ? 0 : subimg % sprite.frameCount;
+  subimg = floor(subimg);
 
   const img = new Image();
-  img.src = `${sprite.path}${frame}.png`;
+  img.src = `/spr/${sprite}/${sprite}_${subimg}.png`;
 
   img.onload = () => {
+    x = x + img.width / 2;
+    y = y + img.height / 2;
     ctx.save();
 
     ctx.translate(x, y);
@@ -555,7 +623,7 @@ function round(n) {
  * @returns {number}
  */
 function random(n) {
-  return Math.random * n;
+  return Math.random() * n;
 }
 
 /**
@@ -578,7 +646,7 @@ function surface_get_width(surface) {
  */
 function script_execute(scr, ...args) {
   return scr.call(this, ...args);
-} 
+}
 
 /**
  * This function can be used to turn a value into a number. When using this function on a string, numbers, minus signs, decimal points and exponential parts in the string are taken into account, while other characters (such as letters) will cause an error to be thrown.
@@ -619,6 +687,14 @@ function ord(string) {
   return string.codePointAt(0);
 }
 
+/**
+ * This is the draw_background() help.
+ * 
+ * @param {string} background The background to draw.
+ * @param {number} x The x position to draw the background at.
+ * @param {number} y The y position to draw the background at.
+ * @returns {void}
+ */
 function draw_background(background, x, y) {
   if (!background) return;
 
@@ -630,4 +706,22 @@ function draw_background(background, x, y) {
   }
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background };
+/**
+ * This function is used to remove a part of the given string. You supply the input string, the starting position within that string to remove characters from (the index starts at 1) and the number of characters to remove. The function will return a new string without that part in it.
+ * 
+ * @param {string} str The string to copy and delete from.
+ * @param {number} index The position of the first character to remove (from 1).
+ * @param {number} count The number of characters to remove.
+ * @returns {string}
+ */
+function string_delete(str, index, count) {
+    if (index < 1 || count < 1) return str; // GameMaker-style: index starts at 1
+
+    // Convert from 1-based to 0-based index
+    let start = index - 1;
+
+    return str.slice(0, start) + str.slice(start + count);
+}
+
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete };

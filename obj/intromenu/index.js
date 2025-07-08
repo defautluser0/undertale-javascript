@@ -1,7 +1,7 @@
 import global from "/imports/assets/global.js";
-import { caster_loop, scr_namingscreen_setup, scr_drawtext_centered, scr_setfont } from "/imports/customFunctions.js";
+import { caster_loop, scr_namingscreen_setup, scr_namingscreen_check, scr_drawtext_centered, scr_setfont, scr_namingscreen } from "/imports/customFunctions.js";
 import { mus_menu0, mus_menu1, mus_menu2, mus_menu3, mus_menu4, mus_menu5, mus_menu6, c_white, c_gray, fnt_small } from "/imports/assets.js"
-import { draw_sprite_ext, draw_sprite, draw_background, draw_set_color } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, draw_sprite, draw_background, draw_set_color, script_execute } from "/imports/assets/gamemakerFunctions.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -17,13 +17,13 @@ function create() {
 		global.charname = name;
 	}
 
-	const m2 = 1;
-	const m3 = 1;
-	const m4 = 1;
-	const pd = 1;
-	const ud = 1;
-	const ad = 1;
-	const fd = 1;
+	const m2 = 0;
+	const m3 = 0;
+	const m4 = 0;
+	const pd = 0;
+	const ud = 0;
+	const ad = 0;
+	const fd = 0;
 	const fk = 0;
 	const truereset = 0;
 	let mlevel = 0;
@@ -98,7 +98,7 @@ function create() {
 	const namingscreen_setup = scr_namingscreen_setup(truereset)
 
 	return {
-		name: "intromenu", // sprite name
+		objName: "intromenu", // sprite name
 		depth: 0, // object depth
 		image_xscale: 1, // sprite scale
 		image_yscale: 1, // sprite scale
@@ -138,11 +138,35 @@ function create() {
 		kills: 0,
 		roome: 0,
 
-		namingscreen_setup, // scr_namingscreen_setup
+		// scr_namingscreen_setup
+		ascii_rows: namingscreen_setup.ascii_rows,
+    ascii_cols: namingscreen_setup.ascii_cols,
+    ascii_x: namingscreen_setup.ascii_x,
+    ascii_y: namingscreen_setup.ascii_y,
+    ascii_charmap: namingscreen_setup.ascii_charmap,
+
+    selected_charmap: namingscreen_setup.ascii_charmap,
+    selected_row: namingscreen_setup.selected_row,
+    selected_col: namingscreen_setup.selected_col,
+    selected3: namingscreen_setup.selected3,
+
+    title_y: namingscreen_setup.title_y,
+    name_y: namingscreen_setup.name_y,
+    charset_y: namingscreen_setup.charset_y,
+    menu_y: namingscreen_setup.menu_y,
+    name_x: namingscreen_setup.name_x,
+    menu_x0: namingscreen_setup.menu_x0,
+    menu_x1: namingscreen_setup.menu_x1,
+    menu_x2: namingscreen_setup.menu_x2,
+    continue_x: namingscreen_setup.continue_x,
+    reset_x: namingscreen_setup.reset_x,
+
+		namingscreen_setup,
 
 		// any variables needed for scripts
 		allow: 1,
 		spec_m: "Is this name correct?",
+		selected2: 0,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
@@ -238,15 +262,15 @@ function draw() {
     }
 	}
 
-	//scr_namingscreen();
+	script_execute.call(this, scr_namingscreen);
 
 	if (this.naming === 3) {
 		const version = "1.08";
 
 		draw_set_color(c_gray);
-		scr_setfont(fnt_small);
-		scr_drawtext_centered(160, 224, "UNDERTALE v"+ version+ " (C) Toby Fox 2015-2017")
-		scr_drawtext_centered(160, 232, "JS port made by defautluser0")
+		scr_setfont(fnt_small, 1);
+		scr_drawtext_centered(160, 224, "UNDERTALE v"+ version+ " (C) Toby Fox 2015-2017", 1)
+		scr_drawtext_centered(160, 232, "JS port made by defautluser0", 1)
 	}
 }
 

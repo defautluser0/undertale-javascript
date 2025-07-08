@@ -10,9 +10,12 @@ function create() {
 		sprite_index: "spr_introlast",
 		image_index: 0,
 		image_speed: 0,
+		image_number: 0,
 		sprite_height: 320,
 		sprite_width: 350,
 		visible: false,
+		x: 0,
+		y: 0,
 
 		h: 10,
 		go: 0,

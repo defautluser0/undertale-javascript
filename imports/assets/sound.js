@@ -44,8 +44,9 @@ const mus_menu5 = new Howl({
 const mus_menu6 = new Howl({
   src: ["/imports/assets/mus/menu6.ogg"]
 })
-
-
+const mus_cymbal = new Howl({
+  src: ["/imports/assets/mus/cymbal.ogg"]
+})
 
 // snd_*
 const SND_TXT1 = new Howl({
@@ -89,6 +90,7 @@ export {
   mus_menu4,
   mus_menu5,
   mus_menu6,
+  mus_cymbal,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,
