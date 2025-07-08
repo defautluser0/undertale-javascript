@@ -1,5 +1,5 @@
 import roomSize from "/imports/assets/roomSize.js";
-import { spr_pixblk, c_white } from "/imports/assets.js";
+import { c_white } from "/imports/assets.js";
 import { instance_destroy, instances, draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
 import * as obj_introimage from "/obj/introimage/index.js"
 
@@ -16,7 +16,7 @@ function create() {
 		image_index: 0,
 		image_speed: 0,
 		image_number: 1,
-		sprite_index: spr_pixblk,
+		sprite_index: "spr_pixblk",
 
 		tspeed: 0.1,
 		over: 0,

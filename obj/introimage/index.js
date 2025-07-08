@@ -5,7 +5,7 @@ import {
   caster_free,
   caster_set_volume,
 } from "/imports/customFunctions.js";
-import { mus_story, spr_introimage } from "/imports/assets.js";
+import { mus_story } from "/imports/assets.js";
 import {
   instance_create,
   instance_destroy,
@@ -29,7 +29,7 @@ function create() {
   alarm[2] = 4;
   return {
     name: "introimage",
-    sprite_index: spr_introimage,
+    sprite_index: "spr_introimage",
     image_index: 0,
     image_speed: 0,
     image_number: 11,
@@ -97,7 +97,7 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  draw_sprite_ext(this.sprite_index, this.image_index, this.x + this.sprite_index.xoffset, this.y + this.sprite_index.yoffset, this.image_xscale, this.image_yscale);
+  draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale);
 }
 
 function alarm2() {

@@ -2,7 +2,7 @@ import { SCR_TEXTTYPE, snd_play, scr_replace_buttons_pc, snd_stop, scr_setfont, 
 import { control_check_pressed } from '/imports/input.js'
 import { string_char_at, floor, random, round, draw_set_color, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy, ord } from "/imports/assets/gamemakerFunctions.js"
 import { view_wview, view_current } from '/imports/view.js'
-import { fnt_comicsans, fnt_papyrus, spr_punchcard, fnt_main } from '/imports/assets.js'
+import { fnt_comicsans, fnt_papyrus, fnt_main } from '/imports/assets.js'
 import global from '/imports/assets/global.js';
 import * as obj_choicer from "/obj/choicer/index.js"
 
@@ -542,7 +542,7 @@ function parent_draw() {
 				
 				if (sym == 4)
 				{
-					var sym_s = spr_punchcard;
+					var sym_s = "spr_punchcard";
 					draw_sprite_ext(sym_s, 0, myx + (random(this.shake) - (this.shake / 2)), myy + 10 + (random(this.shake) - (this.shake / 2)), 2, 2, 0, c_white, 1);
 				}
 			}

@@ -1,5 +1,5 @@
 import { caster_load, caster_play, caster_free, scr_setfont, snd_play } from "/imports/customFunctions.js"
-import { mus_intronoise, spr_undertaletitle, c_gray, c_white, fnt_small, fnt_maintext, snd_ballchime } from "/imports/assets.js"
+import { mus_intronoise, c_gray, c_white, fnt_small, fnt_maintext, snd_ballchime } from "/imports/assets.js"
 import { room_goto, draw_sprite, draw_sprite_ext, draw_set_color, draw_text, keyboard_check_pressed, ord } from "/imports/assets/gamemakerFunctions.js";
 import { control_check_pressed } from "/imports/input.js"
 
@@ -16,15 +16,15 @@ function create() {
 	return {
 		name: "titleimage",
 		depth: 0,
-		image_xscale: spr_undertaletitle.width,
-		image_yscale: spr_undertaletitle.height,
+		image_xscale: 320,
+		image_yscale: 240,
 		x: 0,
 		y: 0,
 		image_alpha: 0,
 		image_index: 0,
 		image_speed: 0,
 		image_number: 1,
-		sprite_index: spr_undertaletitle,
+		sprite_index: "spr_undertaletitle",
 
 		ballammount: 0,
 		d: 0,

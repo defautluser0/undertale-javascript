@@ -1,4 +1,3 @@
-import { spr_introlast } from "/imports/assets.js"
 import { draw_sprite_part } from "/imports/assets/gamemakerFunctions.js"
 
 function create() {
@@ -8,11 +7,11 @@ function create() {
 	alarm[2] = 20;
 	
 	return {
-		sprite_index: spr_introlast,
+		sprite_index: "spr_introlast",
 		image_index: 0,
 		image_speed: 0,
-		sprite_height: spr_introlast.height,
-		sprite_width: spr_introlast.width,
+		sprite_height: 320,
+		sprite_width: 350,
 		visible: false,
 
 		h: 10,

@@ -1,4 +1,4 @@
-import { spr_tobdogl, spr_tobdog_sleep_trash, mus_dance_of_dog, mus_sigh_of_dog, c_white } from "/imports/assets.js"
+import { mus_dance_of_dog, mus_sigh_of_dog, c_white } from "/imports/assets.js"
 import { floor, random, draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js"
 import { caster_free, caster_load, caster_loop } from "/imports/customFunctions.js"
 import roomSize from "/imports/assets/roomSize.js"
@@ -14,14 +14,12 @@ function create() {
 		image_xscale: 1,
 		image_yscale: 1,
 		x: 0,
-		oldx: 0,
 		y: 0,
-		oldy: 0,
 		image_alpha: 1,
 		image_index: 0,
 		image_speed: 0,
 		image_number: 2,
-		sprite_index: spr_tobdogl,
+		sprite_index: "spr_tobdogl",
 		visible: true,
 
 		alarm: alarm,
@@ -42,18 +40,14 @@ function alarm0() {
 
 	if (type === 7) {
 		this.x = roomSize.width / 2;
-		this.oldx = roomSize.width / 2;
 		this.y = roomSize.height / 2;
-		this.oldy = roomSize.height / 2;
-		this.sprite_index = spr_tobdog_sleep_trash;
+		this.sprite_index = "spr_tobdog_sleep_trash";
 		let thissong = caster_load(mus_sigh_of_dog);
 		caster_loop(thissong, 1, 0.8 + random(0.2));
 		this.image_speed = 0.05
 	} else {
-		this.x = roomSize.width / 2 - this.sprite_index.width / 2;
-		this.oldx = roomSize.width / 2 - this.sprite_index.width / 2;
-		this.y = roomSize.height / 2 - this.sprite_index.height / 2;
-		this.oldy = roomSize.height / 2 - this.sprite_index.height / 2;
+		this.x = roomSize.width / 2 - 27 / 2;
+		this.y = roomSize.height / 2 - 19 / 2;
 		let thissong = caster_load(mus_dance_of_dog);
 		caster_loop(thissong, 1, 0.95 + random(0.1));
 		this.image_speed = 0.15;
@@ -83,18 +77,6 @@ function updateGamemakerFunctions() {
 }
 
 function updateSprite() {
-	this.x = this.oldx;
-	this.y = this.oldy
-	if (Math.floor(this.image_index) === 1 && this.sprite_index !== spr_tobdog_sleep_trash) {
-		this.oldx = this.x;
-		this.x += 2;
-	}
-	if (Math.floor(this.image_index) === 1 && this.sprite_index === spr_tobdog_sleep_trash) {
-		this.oldx = this.x;
-		this.oldy = this.y
-		this.x -= 1;
-		this.y += 1;
-	}
 	draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha)
 }
 

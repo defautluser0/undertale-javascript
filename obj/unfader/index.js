@@ -1,6 +1,6 @@
 import { draw_sprite_ext } from '/imports/assets/gamemakerFunctions.js'
 import roomSize from '/imports/assets/roomSize.js'
-import { c_white, spr_pixblk } from '/imports/assets.js'
+import { c_white,  } from '/imports/assets.js'
 
 function create() {
 	return {
@@ -8,7 +8,7 @@ function create() {
 		depth: -99999,
 		image_xscale: roomSize.width * 2,
 		image_yscale: roomSize.height,
-		sprite_index: spr_pixblk,
+		sprite_index: "spr_pixblk",
 		image_speed: 0,
 		image_index: 0,
 		image_number: 1,

@@ -360,7 +360,7 @@ function instance_exists(obj) {
  * @param {number} y The y coordinate of where to draw the sprite
  */
 function draw_sprite(sprite, subimg, x, y) {
-  draw_sprite_ext(sprite, subimg, x + sprite.xoffset, y + sprite.yoffset, 1, 1, 0, c_white, 1)
+  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, c_white, 1)
 }
 
 /**
@@ -378,12 +378,12 @@ function draw_sprite(sprite, subimg, x, y) {
  * @returns {void}
  */
 function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha) {
-  if (!sprite || !sprite.path) return;
+  if (!sprite) return;
 
   subimg = Math.floor(subimg);
 
-  const frame = subimg < 0 ? 0 : subimg % sprite.frameCount;
-  const key = `${sprite.path}${frame}.png`;
+  const frame = subimg;
+  const key = `/spr/${sprite}/${sprite}_${frame}.png`;
 
   // Cache image
   if (!spriteCache[key]) {
@@ -403,6 +403,9 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
   }
 
   const img = cached.img;
+
+  x = x + img.width / 2;
+  y = y + img.height / 2;
 
   ctx.save();
 
@@ -458,7 +461,7 @@ function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  */
 function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xscale = 1, yscale = 1, colour = "#FFFFFF", alpha = 1) {
-  if (!sprite || !sprite.path) return;
+  if (!sprite) return;
 
   const frame = subimg < 0 ? 0 : subimg % sprite.frameCount;
 
@@ -472,8 +475,8 @@ function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xs
     ctx.scale(xscale, yscale);
     ctx.globalAlpha = alpha;
 
-    const ox = sprite.xoffset || 0;
-    const oy = sprite.yoffset || 0;
+    const ox = img.height / 2;
+    const oy = img.width / 2;
 
     if (colour.toUpperCase() !== "#FFFFFF") {
       const offscreen = document.createElement("canvas");
@@ -616,4 +619,15 @@ function ord(string) {
   return string.codePointAt(0);
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext };
+function draw_background(background, x, y) {
+  if (!background) return;
+
+  const img = new Image();
+  img.src = `/bg/${background}/${background}_0.png`;
+
+  img.onload = () => {
+    ctx.drawImage(img, x, y)
+  }
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background };

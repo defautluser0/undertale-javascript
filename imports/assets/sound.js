@@ -23,6 +23,29 @@ const mus_dance_of_dog = new Howl({
 const mus_sigh_of_dog = new Howl({
   src: ["/imports/assets/mus/sigh_of_dog.ogg"]
 })
+const mus_menu0 = new Howl({
+  src: ["/imports/assets/mus/menu0.ogg"]
+})
+const mus_menu1 = new Howl({
+  src: ["/imports/assets/mus/menu1.ogg"]
+})
+const mus_menu2 = new Howl({
+  src: ["/imports/assets/mus/menu2.ogg"]
+})
+const mus_menu3 = new Howl({
+  src: ["/imports/assets/mus/menu3.ogg"]
+})
+const mus_menu4 = new Howl({
+  src: ["/imports/assets/mus/menu4.ogg"]
+})
+const mus_menu5 = new Howl({
+  src: ["/imports/assets/mus/menu5.ogg"]
+})
+const mus_menu6 = new Howl({
+  src: ["/imports/assets/mus/menu6.ogg"]
+})
+
+
 
 // snd_*
 const SND_TXT1 = new Howl({
@@ -59,6 +82,13 @@ export {
   mus_intronoise,
   mus_dance_of_dog,
   mus_sigh_of_dog,
+  mus_menu0,
+  mus_menu1,
+  mus_menu2,
+  mus_menu3,
+  mus_menu4,
+  mus_menu5,
+  mus_menu6,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,

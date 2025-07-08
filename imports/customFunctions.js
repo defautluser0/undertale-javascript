@@ -23,6 +23,7 @@ import {
   snd_floweytalk1,
   snd_floweytalk2,
   snd_nosound,
+  room_goto,
 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 import { view_current, view_wview } from "/imports/view.js"
@@ -433,6 +434,201 @@ function SCR_TEXT() {
   console.log("not doing allat yet")
 }
 
+function scr_namingscreen_setup(truereset) {
+  const ascii_rows = 8;
+  const ascii_cols = 7;
+
+  const ascii_x = new Array(ascii_cols).fill(0).map((_, i) => 60 + (i * 32));
+  const ascii_y = new Array(ascii_rows).fill(0);
+  const ascii_charmap = Array.from({ length: ascii_rows }, () => new Array(ascii_cols).fill(""));
+
+  for (let i = 0; i < ascii_rows / 2; i++) {
+    ascii_y[i] = 75 + (i * 14);
+    ascii_y[i + ascii_rows / 2] = 135 + (i * 14);
+
+    for (let j = 0; j < ascii_cols; j++) {
+      const index = (i * ascii_cols) + j;
+      if (index < 26) {
+        ascii_charmap[i][j] = String.fromCharCode(65 + index); // A-Z
+        ascii_charmap[i + ascii_rows / 2][j] = String.fromCharCode(97 + index); // a-z
+      }
+    }
+  }
+
+  const selected_charmap = 0;
+  const selected_row = 0;
+  const selected_col = 0;
+  const selected3 = 0;
+
+  const title_y = 30;
+  const name_y = 55;
+  const charset_y = 999;
+  const menu_y = 200;
+  const name_x = 140;
+  const menu_x0 = 60;
+  const menu_x1 = 120;
+  const menu_x2 = 220;
+  const continue_x = 85;
+  const reset_x = truereset !== 0 ? 175 : 195;
+
+  return {
+    ascii_rows,
+    ascii_cols,
+    ascii_x,
+    ascii_y,
+    ascii_charmap,
+
+    selected_charmap,
+    selected_row,
+    selected_col,
+    selected3,
+
+    title_y,
+    name_y,
+    charset_y,
+    menu_y,
+    name_x,
+    menu_x0,
+    menu_x1,
+    menu_x2,
+    continue_x,
+    reset_x
+  };
+}
+
+function scr_namingscreen_check(charname) {
+  const demonx = "...";
+  const l_char = charname.toLowerCase();
+  let allow = 1;
+  let spec_m = "Is this name correct?";
+  
+  switch (l_char) {
+    case "aaaaaa":
+      allow = 1
+      spec_m = "Not very creative...?"
+      break;
+
+    case "asgore":
+      allow = 0;
+      spec_m = "You cannot."
+      break;
+    
+    case "toriel":
+      allow = 0,
+      spec_m = "I think you should#think of your own#name, my child."
+      break;
+
+    case "sans":
+      allow = 0;
+      spec_m = "nope."
+      break;
+
+    case "undyne":
+      allow = 0;
+      spec_m = "Get your OWN name!";
+      break;
+    
+    case "flowey":
+      allow = 0;
+      spec_m = "I already CHOSE#that name.";
+      break;
+
+    case "chara":
+      allow = 1;
+      spec_m = "The true name."
+      break;
+
+    case "alphys":
+      allow = 0;
+      spec_m = "D-don't do that."
+      break;
+
+    case "alphy":
+      allow = 1;
+      spec_m = "Uh... OK?";
+      break;
+
+    case "papyru":
+      allow = 1;
+      spec_m = "I'ILL ALLOW IT!!!!";
+      break;
+
+    case "napsta" || "blooky":
+      allow = 1;
+      spec_m = "...........#(They're powerless to#stop you)";
+      break;
+
+    case "murder" || "mercy":
+      allow = 1;
+      spec_m = "That's a little on-#the nose, isn't it...?"
+      break;
+
+    case "asriel":
+      allow = 0;
+      spec_m = "...";
+      break;
+
+    case "catty":
+      allow = 1;
+      spec_m = "Bratty! Bratty!#That's MY name!";
+      break;
+
+    case "bratty":
+      allow = 1;
+      spec_m = "Like, OK I guess.";
+      break;
+
+    case "mtt" || "metta" || "mett":
+      allow = 1;
+      spec_m = "OOOOH!!! ARE YOU#PROMOTING MY BRAND?";
+      break;
+
+    case "gerson":
+      allow = 1;
+      spec_m = "Wah ha ha! Why not?";
+      break;
+
+    case "shyren":
+      allow = 1;
+      spec_m = "...?";
+      break;
+
+    case "aaron":
+      allow = 1;
+      spec_m = "Is this name correct? ; )";
+      break;
+
+    case "temmie":
+      allow = 1;
+      spec_m = "hOI!";
+      break;
+
+    case "woshua":
+      allow = 1;
+      spec_m = "Clean name.";
+      break;
+
+    case "jerry":
+      allow = 1;
+      spec_m = "Jerry.";
+      break;
+
+    case "bpants":
+      allow = 1;
+      spec_m = "You are really scraping the#bottom of the barrel."
+      break;
+
+    case "gaster":
+      room_goto("room_introstory");
+      break;
+  }
+
+  return {
+    allow,
+    spec_m,
+  }
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -452,4 +648,6 @@ export {
   SCR_TEXTTYPE,
   SCR_NEWLINE,
   SCR_TEXT,
+  scr_namingscreen_setup,
+  scr_namingscreen_check,
 };
