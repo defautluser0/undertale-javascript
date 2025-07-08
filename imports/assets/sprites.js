@@ -43,4 +43,22 @@ const spr_punchcard = {
 	height: 240,
 }
 
-export { spr_introimage, spr_pixblk, spr_introlast, spr_punchcard, spr_undertaletitle };
+const spr_tobdogl = {
+	path: '/spr/tobdogl/',
+	frameCount: 2,
+	xoffset: 0,
+	yoffset: 0,
+	width: 27,
+	height: 19,
+}
+
+const spr_tobdog_sleep_trash = {
+	path: '/spr/tobdog_sleep_trash/',
+	frameCount: 2,
+	xoffset: 0,
+	yoffset: 0,
+	width: 27,
+	height: 12,
+}
+
+export { spr_introimage, spr_pixblk, spr_introlast, spr_punchcard, spr_undertaletitle, spr_tobdogl, spr_tobdog_sleep_trash };

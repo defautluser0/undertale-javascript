@@ -187,6 +187,13 @@ function caster_set_volume(sound, vol) {
   audio_sound_gain(sound, vol, 0);
 }
 
+function caster_loop(song, gain, pitch) {
+  let this_song_i = audio_play_sound(song, 120, true);
+  audio_sound_pitch(song, pitch);
+  audio_sound_gain(song, gain);
+  return this_song_i;
+}
+
 function SCR_TEXTSETUP(
   myfont,
   mycolor,
@@ -438,6 +445,7 @@ export {
   caster_stop,
   caster_free,
   caster_set_volume,
+  caster_loop,
   snd_play,
   snd_stop,
   SCR_TEXTSETUP,

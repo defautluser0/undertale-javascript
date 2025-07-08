@@ -380,6 +380,8 @@ function draw_sprite(sprite, subimg, x, y) {
 function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha) {
   if (!sprite || !sprite.path) return;
 
+  subimg = Math.floor(subimg);
+
   const frame = subimg < 0 ? 0 : subimg % sprite.frameCount;
   const key = `${sprite.path}${frame}.png`;
 

@@ -17,6 +17,12 @@ const mus_story = new Howl({
 const mus_intronoise = new Howl({
   src: ["/imports/assets/mus/intronoise.ogg"]
 })
+const mus_dance_of_dog = new Howl({
+  src: ["/imports/assets/mus/dance_of_dog.ogg"]
+})
+const mus_sigh_of_dog = new Howl({
+  src: ["/imports/assets/mus/sigh_of_dog.ogg"]
+})
 
 // snd_*
 const SND_TXT1 = new Howl({
@@ -51,6 +57,8 @@ export {
   mus_st_troubledingle,
   mus_story,
   mus_intronoise,
+  mus_dance_of_dog,
+  mus_sigh_of_dog,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,
