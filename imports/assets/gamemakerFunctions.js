@@ -391,6 +391,76 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
   ctx.restore();
 }
 
+/**
+ * With this function you can draw part of any sprite at a given position within the room. As with draw_sprite() you can specify a sprite and a sub-image for drawing, then you must give the relative coordinates within the sprite of the area to select for drawing. This means that a left position of 0 and a top position of 0 would be the top left corner of the sprite and all further coordinates should be taken from that position.
+ * 
+ * @param {object} sprite The index of the sprite to draw.
+ * @param {number} subimg The subimg (frame) of the sprite to draw (image_index or -1 correlate to the current frame of animation in the object).
+ * @param {number} left The x position on the sprite of the top left corner of the area to draw.
+ * @param {number} top The y position on the sprite of the top left corner of the area to draw.
+ * @param {number} width The width of the area to draw.
+ * @param {number} height The height of the area to draw.
+ * @param {number} x The x coordinate of where to draw the sprite.
+ * @param {number} y The y coordinate of where to draw the sprite.
+ */
+function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
+  draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, 1, 1, c_white, 1);
+}
+
+/**
+ * This function will draw a part of the chosen sprite at the given position following the same rules as per draw_sprite_part(), only now you can scale the part, blend a colour with it, or change its alpha when drawing it to the screen (the same as when drawing a sprite with draw_sprite_ext()).
+ * 
+ * @param {object} sprite The index of the sprite to draw.
+ * @param {number} subimg The subimg (frame) of the sprite to draw (image_index or -1 correlate to the current frame of animation in the object).
+ * @param {number} left The x position on the sprite of the top left corner of the area to draw.
+ * @param {number} top The y position on the sprite of the top left corner of the area to draw.
+ * @param {number} width The width of the area to draw.
+ * @param {number} height The height of the area to draw.
+ * @param {number} x The x coordinate of where to draw the sprite.
+ * @param {number} y The y coordinate of where to draw the sprite.
+ * @param {number} xscale The horizontal scaling of the sprite, as a multiplier: 1 = normal scaling, 0.5 is half etc...
+ * @param {number} yscale The vertical scaling of the sprite, as a multiplier: 1 = normal scaling, 0.5 is half etc...
+ * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally.
+ * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
+ */
+function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xscale = 1, yscale = 1, colour = "#FFFFFF", alpha = 1) {
+  if (!sprite || !sprite.path) return;
+
+  const frame = subimg < 0 ? 0 : subimg % sprite.frameCount;
+
+  const img = new Image();
+  img.src = `${sprite.path}${frame}.png`;
+
+  img.onload = () => {
+    ctx.save();
+
+    ctx.translate(x, y);
+    ctx.scale(xscale, yscale);
+    ctx.globalAlpha = alpha;
+
+    const ox = sprite.xoffset || 0;
+    const oy = sprite.yoffset || 0;
+
+    if (colour.toUpperCase() !== "#FFFFFF") {
+      const offscreen = document.createElement("canvas");
+      offscreen.width = width;
+      offscreen.height = height;
+      const offctx = offscreen.getContext("2d");
+
+      offctx.drawImage(img, left, top, width, height, 0, 0, width, height);
+
+      offctx.globalCompositeOperation = "source-in";
+      offctx.fillStyle = colour;
+      offctx.fillRect(0, 0, width, height);
+
+      ctx.drawImage(offscreen, -ox, -oy);
+    } else {
+      ctx.drawImage(img, left, top, width, height, -ox, -oy, width, height);
+    }
+
+    ctx.restore();
+  };
+}
 
 /**
  * You can use this function to return a specific character at a specific position within a string, with the index starting at 1 for the first character. If no character is found or the string is shorter than the given index value, an empty string "" is returned, however if the given index is equal to or smaller than 0, then the first character of the string is returned.
@@ -512,4 +582,4 @@ function ord(string) {
   return string.codePointAt(0);
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord };
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext };

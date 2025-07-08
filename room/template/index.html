@@ -21,40 +21,98 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update } from "/imports/input.js";
-    import * as objectname from '/obj/objectname/index.js'
+		import { instance_create, instances, currentFont } from "/imports/assets/gamemakerFunctions.js"
+		import global from "/imports/assets/global.js"
+    import * as obj_objectname from '/obj/objectname/index.js'
+		import * as screenUpdater from '/obj/screen/index.js'
 
-    const objectnameInstance = objectname.create();
+		const allInstances = [];
 
-    objectnameInstance.x = 0; // edit as necessary
-    objectnameInstance.y = 0; // edit as necessary
-
-    // room start
-    objectname.roomStart.call(objectnameInstance);
+    instance_create(0, 0, obj_objectname);
 
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
-    // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/objectname/index.js as seen above
+    // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
     const FPS = 30;
     const FRAME_DURATION = 1000 / FPS;
     let lastFrameTime = 0;
+    let fpsCounter = 0;
+    let lastFpsUpdate = performance.now();
+    let currentFps = 0;
     function game_loop(currentTime) {
       const elapsed = currentTime - lastFrameTime;
+
+      allInstances.length = 0;
 
       if (elapsed >= FRAME_DURATION) {
         lastFrameTime = currentTime;
 
+        fpsCounter++;
+
+        const now = currentTime;
+        if (now - lastFpsUpdate >= 1000) {
+          currentFps = fpsCounter;
+          fpsCounter = 0;
+          lastFpsUpdate = now;
+        }
+        
         control_update();
-        // object functions that run every frame go here
-        objectname.beginStep.call(objectnameInstance);
-        objectname.step.call(objectnameInstance);
-        objectname.endStep.call(objectnameInstance);
-        objectname.draw.call(objectnameInstance);
-        // end of object functions section
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.beginStep?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateAlarms?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.step?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.endStep?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            allInstances.push({ obj, instance });
+          }
+        }
+
+        allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
+
+        for (const { obj,  instance } of allInstances) {
+          obj.draw?.call(instance);
+        }
+        
+        for (const { obj,  instance } of allInstances) {
+          obj.updateSprite?.call(instance);
+        }
+
+        if (global.debug === 1 && currentFont) {
+          draw_text(15, 15, currentFps);
+        }
+
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateGamemakerFunctions?.call(instance);
+          }
+        }
+
+        screenUpdater.updateScreen();
+
         input_update();
 
         if (global.roomEnd && !global.eventDone) {
           global.eventDone = true;
-          // roomEnd() code
-          objectname.roomEnd.call(objectnameinstance);
+          for (const [obj, instanceList] of instances) {
+            for (const instance of instanceList) {
+              obj.roomEnd?.call(instance);
+            }
+          }
         }
 
         if (global.roomEnd && global.eventDone) {

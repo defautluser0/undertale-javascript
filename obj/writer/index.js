@@ -311,7 +311,7 @@ function parent_alarm0() {
     } else {
         this.ch = string_char_at(this.originalstring, this.stringpos);
         
-        if (this.ch !== " " && this.ch !== "　")
+        if (this.ch !== " " && this.ch !== "　" && this.ch !== "%" && this.ch !== "&")
         {
 					snd_stop(this.txtsound);
 					snd_play(this.txtsound);

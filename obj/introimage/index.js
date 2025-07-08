@@ -14,7 +14,7 @@ import {
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
-import { ogCanvas, ogCtx, canvas } from "/imports/canvasSetup.js"
+import { ogCanvas, ogCtx, canvas, ctx } from "/imports/canvasSetup.js"
 import { view_current, view_hview, view_wview, view_xview, view_yview } from "/imports/view.js"
 import { control_check_pressed } from "/imports/input.js";
 import roomSize from "/imports/assets/roomSize.js";
@@ -90,6 +90,7 @@ function updateGamemakerFunctions() {
     view_wview[view_current],
     view_hview[view_current],
   );
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
