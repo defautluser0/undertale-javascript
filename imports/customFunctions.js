@@ -726,8 +726,8 @@ function scr_namingscreen() {
         this.allow = 1;
       }
       else if (this.charname.toLowerCase() === "shayy") {
-          this.spec_m = "Shayy, its late. Go to bed."
-          this.allow = 1;
+          this.spec_m = "shayy it's late, go to bed"
+          this.allow = 0;
       }
       else
       {
