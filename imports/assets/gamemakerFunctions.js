@@ -141,9 +141,16 @@ function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, 
       return;
     }
 
+    let ogX = x;
+
     ctx.save();
 
     for (const char of String(string)) {
+      if (char === "#" || char === "\n" || char === "\\n") {
+        y += currentFont.glyphs[" "].h;
+        x = ogX;
+        continue;
+      }
       const glyph = currentFont.glyphs[char];
       if (!glyph) {
         x += currentFont.size * xscale; // fallback spacing
@@ -186,6 +193,11 @@ function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, 
 
     for (const char of String(string)) {
       const glyph = secondFont.glyphs[char];
+      if (char === "#" || char === "\n" || char === "\\n") {
+        y += secondFont.glyphs[" "].h;
+        x = ogX;
+        continue;
+      }
       if (!glyph) {
         x += secondFont.size * xscale; // fallback spacing
         continue;
@@ -699,7 +711,7 @@ function draw_background(background, x, y) {
   if (!background) return;
 
   const img = new Image();
-  img.src = `/bg/${background}/${background}_0.png`;
+  img.src = `/bg/${background}.png`;
 
   img.onload = () => {
     ctx.drawImage(img, x, y)
