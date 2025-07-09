@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UNDERTALE</title>
-  <link rel="stylesheet" href="/room/dogcheck/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -14,21 +14,64 @@
   <script type="module">
     import roomSize from '/imports/assets/roomSize.js'
 
-    roomSize.width = 320;  // room width in px
-    roomSize.height = 240; // room height in px
+    roomSize.width = 680;  // room width in px
+    roomSize.height = 260; // room height in px
 
   </script>
   <script src="/imports/howler.js"></script>
   <script type="module">
-    import { control_update, input_update, keyboard, _key_state} from "/imports/input.js";
-		import { instance_create, instances, currentFont } from "/imports/assets/gamemakerFunctions.js"
-		import global from "/imports/assets/global.js"
-    import * as obj_roomofdog from '/obj/roomofdog/index.js'
-		import * as screenUpdater from '/obj/screen/index.js'
+    import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
+		import { instance_create, instances, secondFont, draw_text, draw_background, draw_set_font } from "/imports/assets/gamemakerFunctions.js";
+    import { updateCamera } from "/imports/view.js"
+    import { fnt_maintext } from "/imports/assets.js"
+		import global from "/imports/assets/global.js";
+    import * as obj_solidtall from '/obj/solidtall/index.js';
+    import * as obj_sur from '/obj/sur/index.js';
+    import * as obj_sul from '/obj/sul/index.js';
+    import * as obj_mainchara from '/obj/mainchara/index.js';
+    import * as obj_sdr from '/obj/sdr/index.js';
+    import * as obj_solidsmall from '/obj/solidsmall/index.js';
+    import * as obj_readable_flowers1 from '/obj/readable_flowers1/index.js';
+    import * as obj_markerB from '/obj/markerB/index.js';
+    import * as obj_doorA from '/obj/doorA/index.js';
+    import * as obj_torinteractable7 from '/obj/torinteractable7/index.js';
+    import * as obj_solidlong from '/obj/solidlong/index.js';
+    import * as obj_unfader from '/obj/unfader/index.js';
+    import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js';
+    import * as obj_sdl from '/obj/sdl/index.js';
+		import * as screenUpdater from '/obj/screen/index.js';
+
+    draw_set_font(fnt_maintext, 1)
 
 		const allInstances = [];
 
-    instance_create(144, 96, obj_roomofdog);
+    instance_create(660, 60, obj_solidtall);
+    instance_create(0, 56, obj_solidtall);
+    instance_create(240, 60, obj_sur);
+    instance_create(40, 60, obj_sul);
+    instance_create(280, 140, obj_sur);
+    instance_create(140, 120, obj_mainchara);
+    instance_create(280, 120, obj_solidsmall);
+    instance_create(280, 100, obj_solidsmall);
+    instance_create(240, 200, obj_sdr);
+    instance_create(220, 220, obj_sdr);
+    instance_create(40, 200, obj_sdl);
+    instance_create(20, 180, obj_sdl);
+    instance_create(60, 220, obj_sdl);
+    instance_create(300, 140, obj_solidsmall);
+    instance_create(280, 80, obj_solidsmall);
+    instance_create(129, 124, obj_readable_flowers1);
+    instance_create(610, 152, obj_markerB);
+    instance_create(610, 140, obj_doorA);
+    instance_create(175, 90, obj_torinteractable7);
+    instance_create(0, 240, obj_solidlong);
+    instance_create(60, 40, obj_solidlong);
+    instance_create(260, 200, obj_solidlong);
+    instance_create(320, 140, obj_solidlong);
+    instance_create(16, 14, obj_overworldcontroller);
+    //instance_create(375, 90, obj_unfader);
+    instance_create(20, 60, obj_solidsmall);
+    instance_create(260, 60, obj_solidsmall);
 
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
@@ -55,6 +98,7 @@
           lastFpsUpdate = now;
         }
         
+        screenUpdater.beginStep()
         control_update();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
@@ -66,6 +110,7 @@
             obj.updateAlarms?.call(instance);
           }
         }
+        screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.step?.call(instance);
@@ -76,6 +121,9 @@
             obj.endStep?.call(instance);
           }
         }
+
+        draw_background("bg_firstroom", 0, 0);
+
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             allInstances.push({ obj, instance });
@@ -92,8 +140,8 @@
           obj.updateSprite?.call(instance);
         }
 
-        if (global.debug === 1 && currentFont) {
-          draw_text(15, 15, currentFps);
+        if (global.debug === 1 && secondFont) {
+          draw_text(15, 15, currentFps, 1);
         }
 
         for (const [obj, instanceList] of instances) {
@@ -102,6 +150,7 @@
           }
         }
 
+        updateCamera(instances.get(obj_mainchara)[0]);
         screenUpdater.updateScreen();
 
         input_update();

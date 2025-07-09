@@ -5,12 +5,14 @@ import {
   audio_stop_all,
   audio_stop_sound,
   round,
+  floor,
   currentFont,
   surface_get_width,
   random,
   keyboard_check_pressed,
   string_delete,
   instance_create,
+  draw_rectangle,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -645,9 +647,8 @@ function scr_namingscreen_check(charname) {
 }
 
 function scr_namingscreen() {
-  let q = 0;
-  let r = 0;
-  let alerm = 0;
+  let r = 0.5;
+  let q = this.q;
   let rows = 8;
   let cols = 7;
   let xmap = [60, 92, 124, 156, 188, 220, 252];
@@ -672,33 +673,33 @@ function scr_namingscreen() {
     global.charname = this.charname;
     instance_create(0, 0, obj_whitefader);
     caster_free("all");
-    alerm = 0;
+    this.alerm = 0;
     this.naming = 5;
     caster_play(cy, 0.8, 0.95);
   }
 
   if (this.naming === 5) {
-    alerm += 1
+    this.alerm += 1
 
-    if (q < 120) {
-      q += 1;
+    if (this.q < 120) {
+      this.q += 1;
     }
 
     var xx = this.name_x - (q / 3);
 
     draw_text_transformed(xx + random(r * 2), (q / 2) + this.name_y + random(r * 2), this.charname, 1 + (q / 50), 1 + (q / 50), random_ranger((-r * q) / 60, (r * q) / 60));
 
-    if (alerm > 179)
+    if (this.alerm > 179)
     {
       instance_create(0, 0, obj_persistentfader);
       
-      if (truereset > 0)
+      if (this.truereset > 0)
       {
         // TODO: save file
       }
       
       caster_free(cy);
-      global.flag[5] = floor(random(100)) + 1;
+      global.flag[5] = floor(random(100)) + 1; // fun value
       
       if (scr_hardmodename(this.charname)) {
         global.flag[6] = 1;
@@ -757,8 +758,8 @@ function scr_namingscreen() {
       
       draw_set_color(c_white);
       
-      if (q < 120)
-          q += 1;
+      if (this.q < 120)
+          this.q += 1;
       
       var xx = this.name_x - (q / 3);
       
@@ -800,7 +801,7 @@ function scr_namingscreen() {
   }
   if (this.naming == 1)
   {
-      q = 0;
+      this.q = 0;
       r = 0.5;
       
       for (var row = 0; row < rows; row++)
@@ -1211,21 +1212,21 @@ function scr_namingscreen() {
           {
               caster_free(all);
               
-              if (ossafe_file_exists("file0") == 0)
-                  room_goto_next();
+              if (0 === 0)
+                  room_goto("room_area1");
               else
                   script_execute(scr_load);
           }
           
           if (action == 1)
           {
-              if (this.hasname == 0 || scr_hardmodename(global.this.charname) || truereset > 0)
+              if (this.hasname == 0 || scr_hardmodename(global.charname) || truereset > 0)
               {
                   this.naming = 1;
               }
               else
               {
-                  this.charname = global.this.charname;
+                  this.charname = global.charname;
                   this.naming = 2;
                   alerm = 0;
                   r = 0.5;
@@ -1238,7 +1239,7 @@ function scr_namingscreen() {
           if (action == 2)
           {
               caster_free(all);
-              room_goto(room_settings);
+              room_goto("room_settings");
           }
       }
       else
@@ -1307,6 +1308,24 @@ function random_ranger(arg0, arg1) {
   return random(Math.abs(arg1 - arg0) + Math.min(arg1, arg0));
 }
 
+function ossafe_fill_rectangle(x1, y1, x2, y2) {
+  if (x1 > x2)
+  {
+      var temp = x1;
+      x1 = x2;
+      x2 = temp;
+  }
+
+  if (y1 > y2)
+  {
+      var temp = y1;
+      y1 = y2;
+      y2 = temp;
+  }
+
+  draw_rectangle(x1, y1, x2, y2, false);
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -1329,5 +1348,7 @@ export {
   scr_namingscreen_setup,
   scr_namingscreen_check,
   scr_namingscreen,
+  scr_hardmodename,
   random_ranger,
+  ossafe_fill_rectangle,
 };

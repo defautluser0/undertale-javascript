@@ -167,6 +167,7 @@ function create() {
 		allow: 1,
 		spec_m: "Is this name correct?",
 		selected2: 0,
+		alerm: 0,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,

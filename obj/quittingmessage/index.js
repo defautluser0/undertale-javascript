@@ -1,36 +1,36 @@
 import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
-import roomSize from "/imports/assets/roomSize.js"
-import { c_white } from "/imports/assets.js"
+import { c_white } from "/imports/assets.js";
+import { view_wview, view_xview, view_yview, view_current } from "/imports/view.js"
+import global from "/imports/assets/global.js";
+import { instance_destroy } from "/imports/assets/gamemakerFunctions.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
 
 	// create code
+
 	return {
-		name: "whitefader", // sprite name
-		depth: -99999, // object depth
-		image_xscale: roomSize.width, // sprite scale
-		image_yscale: roomSize.height, // sprite scale
+		name: "quittingmessage", // sprite name
+		depth: -999999, // object depth
+		image_xscale: 1, // sprite scale
+		image_yscale: 1, // sprite scale
 		x: 0, // object x. this is set by room
 		y: 0, // object y. this is set by room
 		image_alpha: 0, // sprite alpha
 		image_index: 0, // sprite frame index
-		image_speed: 0, // sprite frame speed
-		image_number: 1, // sprite frame number
-		sprite_index: "spr_whitefader", // sprite object
+		image_speed: 0.1, // sprite frame speed
+		image_number: 0, // sprite frame number
+		sprite_index: "spr_quittingmessage", // sprite object
 		visible: true, // sprite visibility
 
 		alarm: alarm, // alarm array
 
 		// any variables assigned inside create code
-		tspeed: 0.006,
-		over: 0,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
 		updateGamemakerFunctions,
-		updateSprite,
-		step,
+		draw,
 	}
 }
 
@@ -55,12 +55,18 @@ function updateGamemakerFunctions() {
 	}
 }
 
-function updateSprite() {
-	draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha)
+function draw() {
+	const scale = view_wview[view_current] / 640;
+
+	if (global.quit > 0) {
+		draw_sprite_ext(this.sprite_index, this.image_index, view_xview[view_current], view_yview[view_current], scale, scale, 0, c_white, this.image_alpha);
+	} else {
+		instance_destroy(this);
+	}
+
+	if (this.image_alpha < 0.9) {
+		this.image_alpha += 0.1;
+	}
 }
 
-function step() {
-	this.image_alpha += this.tspeed;
-}
-
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, step };
+export { create, updateAlarms, updateGamemakerFunctions, draw };

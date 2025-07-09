@@ -22,6 +22,7 @@
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
     import { updateCamera } from "/imports/view.js"
     import * as soundtest from '/obj/soundtest/index.js'
+    import global from "/imports/assets/global.js"
 
     // create
     const instance = soundtest.create();
@@ -42,6 +43,12 @@
         soundtest.step.call(instance);
         soundtest.draw.call(instance);
         input_update();
+      }
+
+      if (global.nextRoom !== null) {
+        let nextRoom = global.nextRoom
+        global.nextRoom = null;
+        window.location.href = nextRoom;
       }
 
       requestAnimationFrame(game_loop);

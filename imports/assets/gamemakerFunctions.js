@@ -10,6 +10,7 @@ offCtx.imageSmoothingEnabled = false;
 let currentDrawColor = c_white;
 let currentFont = null;
 let secondFont = null;
+let thirdFont = null;
 const instances = new Map();
 
 const spriteCache = {};
@@ -28,7 +29,7 @@ const globalTintCache = new Map();
  * @returns {string}
  */
 function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1) {
-  if (!index) return;
+  if (!index || typeof(index) !== "object") return;
   if (!loop && playingSounds.has(index)) {
     playingSounds.get(index).stop();
   }
@@ -135,7 +136,7 @@ function draw_text(x, y, string, second) {
  * @returns {void}
  */
 function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, second) {
-  if (second !== 1) {
+  if (second !== 1 && second !== 2) {
     if (!currentFont.image || currentFont.loading) {
       console.warn("Font not set or loaded. Drawing skipped for this frame.");
       return;
@@ -167,11 +168,59 @@ function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, 
 
       if (currentDrawColor !== c_white) {
         // Use tinted glyph canvas
-        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char);
+        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
         ctx.drawImage(tintedGlyphCanvas, 0, 0);
       } else {
         ctx.drawImage(
           currentFont.image,
+          glyph.x, glyph.y, glyph.w, glyph.h,
+          0, 0, glyph.w, glyph.h,
+        )
+      }
+
+      ctx.restore();
+
+      x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
+    }
+
+    ctx.restore();
+  } else if (second !== 0 && second !== 1) {
+    if (!thirdFont.image || thirdFont.loading) {
+      console.warn("Font not set or loaded. Drawing skipped for this frame.");
+      return;
+    }
+
+    let ogX = x;
+
+    ctx.save();
+
+    for (const char of String(string)) {
+      if (char === "#" || char === "\n" || char === "\\n") {
+        y += thirdFont.glyphs[" "].h;
+        x = ogX;
+        continue;
+      }
+      const glyph = thirdFont.glyphs[char];
+      if (!glyph) {
+        x += thirdFont.size * xscale; // fallback spacing
+        continue;
+      }
+
+      const offsetX = (glyph.offset || 0) * xscale;
+      const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
+
+      ctx.save();
+      ctx.translate(x + offsetX, y - offsetY);
+      ctx.rotate((angle * Math.PI) / 180);
+      ctx.scale(xscale, yscale);
+
+      if (currentDrawColor !== c_white) {
+        // Use tinted glyph canvas
+        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
+        ctx.drawImage(tintedGlyphCanvas, 0, 0);
+      } else {
+        ctx.drawImage(
+          thirdFont.image,
           glyph.x, glyph.y, glyph.w, glyph.h,
           0, 0, glyph.w, glyph.h,
         )
@@ -247,6 +296,12 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
   if (second === 1) {
     gctx.drawImage(
       secondFont.image,
+      glyph.x, glyph.y, glyph.w, glyph.h,
+      0, 0, glyph.w, glyph.h
+    );
+  } else if (second === 2) {
+    gctx.drawImage(
+      thirdFont.image,
       glyph.x, glyph.y, glyph.w, glyph.h,
       0, 0, glyph.w, glyph.h
     );
@@ -339,6 +394,24 @@ function draw_set_font(font, second) {
       img.onload = () => {
         secondFont.image = img;
         secondFont.loading = false;
+        if (global.debug === 1 && img) {
+          document.getElementsByTagName("body")[0].appendChild(img)
+        }
+      };
+    }
+  } else if (second === 2) {
+    thirdFont = font;
+
+    if (!thirdFont.image && !thirdFont.loading) {
+      thirdFont.loading = true;
+      const img = new Image();
+      img.src = thirdFont.file;
+      img.onload = () => {
+        thirdFont.image = img;
+        thirdFont.loading = false;
+        if (global.debug === 1 && img) {
+          document.getElementsByTagName("body")[0].appendChild(img)
+        }
       };
     }
   } else {
@@ -351,6 +424,9 @@ function draw_set_font(font, second) {
       img.onload = () => {
         currentFont.image = img;
         currentFont.loading = false;
+        if (global.debug === 1 && img) {
+          document.getElementsByTagName("body")[0].appendChild(img)
+        }
       };
     }
   }
@@ -455,7 +531,7 @@ function draw_sprite(sprite, subimg, x, y) {
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  * @returns {void}
  */
-function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha) {
+function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha, returnImg = 0) {
   if (!sprite) return;
 
   subimg = Math.floor(subimg);
@@ -504,6 +580,10 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
   }
 
   ctx.restore();
+
+  if (returnImg === 1 && img) {
+    return img;
+  }
 }
 
 /**
@@ -681,7 +761,7 @@ function real(n) {
  */
 function draw_rectangle(x1, y1, x2, y2, outline) {
   ctx.fillStyle = currentDrawColor;
-  ctx.rect(x1, y1, x2 + x1, y2 + y1)
+  ctx.rect(x1, y1, x2 - x1, y2 - y1);
   if (outline) {
     ctx.stroke()
   } else {
@@ -735,5 +815,44 @@ function string_delete(str, index, count) {
     return str.slice(0, start) + str.slice(start + count);
 }
 
+/**
+ * With this function you can take two colours and then merge them together to make a new colour. The amount of each of the component colours can be defined by changing the "amount" argument, where a value of 0 will return the first colour (col1), a value of 1 will return the second colour (col2) and a value in between will return the corresponding mix. For example, a value of 0.5 will mix the two colours equally. The following image illustrates how this works by merging the colours red and blue together:
+ * 
+ * @param {string} col1 The first colour to merge
+ * @param {string} col2 The second colour to merge
+ * @param {number} amount How much of each colour should be merged. For example, 0 will return col1, 1 will return col2, and 0.5 would return a merge of both colours equally
+ * @returns {string}
+ */
+function merge_color(col1, col2, amount) {
+  // Parse hex colors like "#RRGGBB"
+  const c1 = hexToRgb(col1);
+  const c2 = hexToRgb(col2);
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete };
+  const r = Math.round(c1.r + (c2.r - c1.r) * amount);
+  const g = Math.round(c1.g + (c2.g - c1.g) * amount);
+  const b = Math.round(c1.b + (c2.b - c1.b) * amount);
+
+  return rgbToHex(r, g, b);
+}
+function hexToRgb(hex) {
+  hex = hex.replace("#", "");
+  if (hex.length === 3) {
+    hex = hex.split("").map(c => c + c).join("");
+  }
+  const bigint = parseInt(hex, 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255
+  };
+}
+function rgbToHex(r, g, b) {
+  return (
+    "#" +
+    [r, g, b]
+      .map(x => x.toString(16).padStart(2, "0"))
+      .join("")
+  );
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont };

@@ -116,9 +116,11 @@
           }
         }
 
-        if (global.roomEnd && global.eventDone) {
+        if (global.roomEnd && global.eventDone && global.nextRoom !== null) {
           global.eventDone = false;
-          window.location.href = global.nextRoom;
+          let nextRoom = global.nextRoom
+          global.nextRoom = null;
+          window.location.href = nextRoom;
         }
       }
 

@@ -5,6 +5,7 @@ const vk_left = "ArrowLeft";
 const vk_right = "ArrowRight";
 const vk_up = "ArrowUp";
 const vk_down = "ArrowDown";
+const vk_escape = "Escape";
 const keyboard = {}
 const _key_state = {};
 const _key_prev_state = {};
@@ -42,4 +43,4 @@ function input_update() {
   }
 }
 
-export { vk_down, vk_left, vk_right, vk_up, control_check,  control_check_pressed, control_clear, control_update, input_update, keyboard, _key_prev_state, _key_state }
+export { vk_down, vk_left, vk_right, vk_up, vk_escape, control_check,  control_check_pressed, control_clear, control_update, input_update, keyboard, _key_prev_state, _key_state }
