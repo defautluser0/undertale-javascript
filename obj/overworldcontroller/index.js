@@ -267,10 +267,10 @@ function draw() {
 					}
 					
 					draw_text(stat_x, armor_y, "ARMOR: " + armorname, 0);
-					draw_text(stat_x, gold_y, "GOLD: ", String(global.gold), 0)
+					draw_text(stat_x, gold_y, "GOLD: " + String(global.gold), 0)
 					
 					if (global.kills > 20)
-							draw_text(kills_x, kills_y, "KILLS: ", String(global.kills));
+							draw_text(kills_x, kills_y, "KILLS: " + String(global.kills));
 					
 					if (global.charname.length >= 7)
 					{

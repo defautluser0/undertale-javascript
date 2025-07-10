@@ -115,6 +115,7 @@ if (localStorage.getItem("global") !== null) {
     msc: 0,
     hardmode: 0,
     menuchoice: [],
+    gold: 0,
   }
 
   for (let i = 0; i < 8; i += 1) {

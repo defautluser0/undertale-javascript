@@ -489,7 +489,7 @@ function step() {
 function user0() {
 		if (global.interact == 0 && this.uncan == 0)
 		{
-				if (instance_exists(obj_itemswapper) == 0)
+				if (instance_exists("obj_itemswapper") !== false)
 				{
 						if (global.facing == 1)
 						{
