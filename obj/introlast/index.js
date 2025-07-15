@@ -36,7 +36,7 @@ function draw() {
 		this.h += 1;
 	}
 
-	if (this.h > 240) {
+	if (this.h > 220) {
 		this.h -= 1;
 	}
 }

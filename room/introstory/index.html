@@ -22,7 +22,7 @@
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
     import { updateCamera } from "/imports/view.js";
     import * as introimage from '/obj/introimage/index.js';
-    import * as unfader from '/obj/unfader/index.js';
+    import * as obj_introtangle from '/obj/introtangle/index.js';
     import { instances, instance_create, draw_text, draw_set_font, currentFont } from '/imports/assets/gamemakerFunctions.js';
     import { fnt_maintext } from '/imports/assets.js'
     import global from '/imports/assets/global.js';
@@ -30,6 +30,7 @@
     const allInstances = [];
     
     instance_create(0, 0, introimage);
+    instance_create(0, 0, obj_introtangle);
 
     // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
