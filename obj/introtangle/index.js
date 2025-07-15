@@ -1,8 +1,5 @@
-import { draw_sprite_ext, instance_create, instance_exists } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
-
-import * as parent from "/obj/interactable/index.js"
-import * as obj_dialoguer from "/obj/dialoguer/index.js"
+import { draw_sprite_ext, draw_set_color, draw_rectangle } from "/imports/assets/gamemakerFunctions.js";
+import { c_white, c_black } from "/imports/assets.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -10,8 +7,8 @@ function create() {
 	// create code
 
 	return {
-		name: "readablesolid", // sprite name
-		depth: 0, // object depth
+		name: "introtangle", // sprite name
+		depth: -400, // object depth
 		image_xscale: 1, // sprite scale
 		image_yscale: 1, // sprite scale
 		x: 0, // object x. this is set by room
@@ -21,20 +18,18 @@ function create() {
 		image_speed: 0, // sprite frame speed
 		image_number: 0, // sprite frame number
 		sprite_index: null, // sprite object
-		visible: true, // sprite visibility
+		visible: false, // sprite visibility
 		parent: parent,
 
 		alarm: alarm, // alarm array
 
 		// any variables assigned inside create code
-		myinteract: 0,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
 		updateGamemakerFunctions,
 		updateSprite,
-		alarm0,
-		step,
+		draw,
 	}
 }
 
@@ -65,28 +60,12 @@ function updateSprite() {
 	}
 }
 
-function alarm0() {
-	this.myinteract = 3;
-	global.msc = 9999;
-	global.typer = 5;
-	global.facechoice = 0;
-	global.faceemotion = 0;
-	this.mydialoguer = instance_create(0, 0, obj_dialoguer)
+function draw() {
+	draw_set_color(c_black);
+	draw_rectangle(0, 0, 60, 240);
+	draw_rectangle(260, 0, 320, 240);
+	draw_rectangle(60, 140, 260, 240);
+	draw_rectangle(0, 0, 320, 30)
 }
 
-function step() {
-	if (this.myinteract === 1) {
-		global.interact = 1;
-		alarm[0] = 1;
-		this.myinteract = 2
-	}
-
-	if (this.myinteract === 3) {
-		if (instance_exists(this.mydialoguer) === false) {
-			global.interact = 0;
-			this.myinteract = 0;
-		}
-	}
-}
-
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, alarm0, step, parent };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, draw };

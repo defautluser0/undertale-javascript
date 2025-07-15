@@ -1,8 +1,7 @@
-import { draw_sprite_ext, instance_create, instance_exists } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as parent from "/obj/interactable/index.js"
-import * as obj_dialoguer from "/obj/dialoguer/index.js"
+const parent = null;
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -10,7 +9,7 @@ function create() {
 	// create code
 
 	return {
-		name: "readablesolid", // sprite name
+		name: "interactable", // sprite name
 		depth: 0, // object depth
 		image_xscale: 1, // sprite scale
 		image_yscale: 1, // sprite scale
@@ -27,14 +26,11 @@ function create() {
 		alarm: alarm, // alarm array
 
 		// any variables assigned inside create code
-		myinteract: 0,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
 		updateGamemakerFunctions,
 		updateSprite,
-		alarm0,
-		step,
 	}
 }
 
@@ -65,28 +61,4 @@ function updateSprite() {
 	}
 }
 
-function alarm0() {
-	this.myinteract = 3;
-	global.msc = 9999;
-	global.typer = 5;
-	global.facechoice = 0;
-	global.faceemotion = 0;
-	this.mydialoguer = instance_create(0, 0, obj_dialoguer)
-}
-
-function step() {
-	if (this.myinteract === 1) {
-		global.interact = 1;
-		alarm[0] = 1;
-		this.myinteract = 2
-	}
-
-	if (this.myinteract === 3) {
-		if (instance_exists(this.mydialoguer) === false) {
-			global.interact = 0;
-			this.myinteract = 0;
-		}
-	}
-}
-
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, alarm0, step, parent };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent };

@@ -1,7 +1,8 @@
-import { draw_sprite_ext, instance_create } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_create, instance_exists } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
+import * as parent from "/obj/interactable/index.js"
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
 
 function create() {
@@ -22,6 +23,7 @@ function create() {
 		image_number: 0, // sprite frame number
 		sprite_index: null, // sprite object
 		visible: true, // sprite visibility
+		parent: parent,
 
 		alarm: alarm, // alarm array
 
@@ -33,6 +35,7 @@ function create() {
 		updateGamemakerFunctions,
 		updateSprite,
 		alarm0,
+		step,
 	}
 }
 
@@ -72,4 +75,22 @@ function alarm0() {
 	this.mydialoguer = instance_create(0, 0, obj_dialoguer);
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, alarm0 };
+function step() {
+	if (this.myinteract == 1)
+	{
+		global.interact = 1;
+		this.alarm[0] = 1;
+		this.myinteract = 2;
+	}
+
+	if (this.myinteract == 3)
+	{
+		if (instance_exists(this.mydialoguer) == 0)
+		{
+			global.interact = 0;
+			this.myinteract = 0;
+		}
+	}
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, alarm0, step, parent };
