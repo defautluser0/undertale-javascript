@@ -1,5 +1,5 @@
 import { draw_sprite_ext, draw_sprite, instances, draw_set_color, draw_text, draw_text_transformed, keyboard_check_pressed } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, c_black, fnt_small, fnt_maintext, c_gray } from "/imports/assets.js";
+import { c_white, c_black, fnt_small, fnt_maintext, c_gray, snd_save, snd_select, snd_squeak } from "/imports/assets.js";
 import global from "/imports/assets/global.js"
 import { view_current, view_xview, view_yview } from "/imports/view.js"
 import * as obj_maincharaReal from "/obj/mainchara/index.js"
@@ -69,7 +69,7 @@ function updateSprite() {
 }
 
 function draw() {
-		this.buffer += 1;
+	this.buffer += 1;
 
 	if (global.interact == 5)
 	{
@@ -456,7 +456,7 @@ function draw() {
 					
 					if (control_check_pressed(0) && global.menucoord[4] == 0)
 					{
-							snd_play("snd_save");
+							snd_play(snd_save);
 							script_execute(scr_save);
 							global.menucoord[4] = 2;
 							control_clear(0);
@@ -814,12 +814,12 @@ function draw() {
 			
 			if (this.currentmenu < global.menuno && global.menuno != 9)
 			{
-					snd_play("snd_select");
+					snd_play(snd_select);
 			}
 			else if (global.menuno >= 0 && global.menuno < 6)
 			{
 					if (this.currentspot != global.menucoord[global.menuno])
-							snd_play("snd_squeak");
+							snd_play(snd_squeak);
 			}
 	}
 
