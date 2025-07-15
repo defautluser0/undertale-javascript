@@ -7,7 +7,7 @@ function create() {
 	// create code
 
 	return {
-		name: "objectname", // sprite name
+		name: "markerB", // sprite name
 		depth: 0, // object depth
 		image_xscale: 1, // sprite scale
 		image_yscale: 1, // sprite scale
@@ -17,8 +17,8 @@ function create() {
 		image_index: 0, // sprite frame index
 		image_speed: 0, // sprite frame speed
 		image_number: 0, // sprite frame number
-		sprite_index: null, // sprite object
-		visible: true, // sprite visibility
+		sprite_index: "spr_markerB", // sprite object
+		visible: false, // sprite visibility
 
 		alarm: alarm, // alarm array
 
@@ -53,7 +53,9 @@ function updateGamemakerFunctions() {
 }
 
 function updateSprite() {
-	draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha)
+	if (this.visible === true) {
+		draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha);
+	}
 }
 
 export { create, updateAlarms, updateGamemakerFunctions, updateSprite };
