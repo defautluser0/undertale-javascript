@@ -10,6 +10,8 @@ canvas.width = roomSize.width;
 canvas.height = roomSize.height;
 const ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
+ctx.mozImageSmoothingEnabled = false;
+ctx.webkitImageSmoothingEnabled = false;
 ctx.textBaseline = "top";
 if (global.debug === 1) {
 	document.getElementsByTagName("body")[0].appendChild(canvas);
