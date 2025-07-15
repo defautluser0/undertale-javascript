@@ -1,11 +1,13 @@
-import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, c_gray, c_black } from "/imports/assets.js";
+import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, script_execute } from "/imports/assets/gamemakerFunctions.js";
+import { c_white, c_gray, c_black, snd_splash, snd_squeak } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
-import { scr_hardmodename, snd_play } from "/imports/customFunctions.js"
+import { scr_hardmodename, snd_play, scr_interact } from "/imports/customFunctions.js"
 import { view_xview, view_yview, view_wview, view_hview } from "/imports/view.js"
+import { control_check_pressed, control_clear } from "/imports/input.js"
+
 import * as obj_shaker from "/obj/shaker/index.js"
 import * as obj_markerB from "/obj/markerB/index.js"
-import { control_check_pressed, control_clear } from "/imports/input.js"
+import * as obj_interactable from "/obj/interactable/index.js"
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -25,7 +27,7 @@ function create() {
 
 	global.phasing = 0;
 
-	global.currentroom = `${window.location.href.slice(35,39)}_${window.location.href.slice(40).split("/")[0]}`;
+	global.currentroom = `${window.location.href.slice(3,39)}_${window.location.href.slice(40).split("/")[0]}`;
 
 	let dsprite = "";
 	let rsprite = "";
@@ -139,7 +141,7 @@ function updateSprite() {
 			
 			if (this.image_index == 1 || this.image_index == 3)
 			{
-					snd_play("snd_splash");
+					snd_play(snd_splash);
 					this.mp = 0;
 			}
 			
@@ -489,64 +491,63 @@ function step() {
 function user0() {
 		if (global.interact == 0 && this.uncan == 0)
 		{
-				if (instance_exists("obj_itemswapper") !== false)
+				if (instance_exists("obj_itemswapper") === false)
 				{
 						if (global.facing == 1)
 						{
-								if (collision_rectangle(x + (sprite_width / 2), y + 19, x + sprite_width + 15, y + sprite_height, obj_interactable, 0, 1))
+								if (collision_rectangle.call(this, this.x + (this.sprite_width / 2), this.y + 19, this.x + this.sprite_width + 15, this.y + this.sprite_height, obj_interactable, 0, 1))
 								{
-										interactedobject = collision_rectangle(x + (sprite_width / 2), y + (sprite_height / 2), x + sprite_width + 15, y + sprite_height, obj_interactable, 0, 1);
+										this.interactedobject = collision_rectangle.call(this, this.x + (this.sprite_width / 2), this.y + (this.sprite_height / 2), this.x + this.sprite_width + 15, this.y + this.sprite_height, obj_interactable, 0, 1);
 										
-										if (interactedobject != -4)
+										if (this.interactedobject != -4)
 										{
-												interactedobject.facing = 3;
+												this.interactedobject.facing = 3;
 												
-												script_execute.call(interactedobject, scr_interact);
+												script_execute.call(this.interactedobject, scr_interact);
 										}
 								}
 						}
 						
 						if (global.facing == 3)
 						{
-								if (collision_rectangle(x + (sprite_width / 2), y + 19, x - 15, y + sprite_height, obj_interactable, 0, 1))
-								{
-										interactedobject = collision_rectangle(x + (sprite_width / 2), y + 3 + (sprite_height / 2), x - 15, y + sprite_height + 3, obj_interactable, 0, 1);
-										
-										if (interactedobject != -4)
+								this.interactedobject = collision_rectangle.call(this, this.x + (this.sprite_width / 2), this.y + 3 + (this.sprite_height / 2), this.x - 15, this.y + this.sprite_height + 3, obj_interactable, 0, 1);
+								if (this.interactedobject)
+								{										
+										if (this.interactedobject != -4)
 										{
-												interactedobject.facing = 1;
+												this.interactedobject.facing = 1;
 												
-												script_execute(interactedobject, scr_interact);
+												script_execute.call(this.interactedobject, scr_interact);
 										}
 								}
 						}
 						
 						if (global.facing == 0)
 						{
-								if (collision_rectangle(x + 4, y + 20, (x + sprite_width) - 4, y + sprite_height + 15, obj_interactable, 0, 1))
+								if (collision_rectangle.call(this, this.x + 4, this.y + 20, (this.x + this.sprite_width) - 4, this.y + this.sprite_height + 15, obj_interactable, 0, 1))
 								{
-										interactedobject = collision_rectangle(x + 4, y + 20, (x + sprite_width) - 4, y + sprite_height + 15, obj_interactable, 0, 1);
+										this.interactedobject = collision_rectangle.call(this, this.x + 4, this.y + 20, (this.x + this.sprite_width) - 4, this.y + this.sprite_height + 15, obj_interactable, 0, 1);
 										
-										if (interactedobject != -4)
+										if (this.interactedobject != -4)
 										{
-												interactedobject.facing = 2;
+												this.interactedobject.facing = 2;
 												
-												script_execute.call(interactedobject, scr_interact);
+												script_execute.call(this.interactedobject, scr_interact);
 										}
 								}
 						}
 						
 						if (global.facing == 2)
 						{
-								if (collision_rectangle(x + 4, (y + sprite_height) - 5, (x + sprite_width) - 4, y + 5, obj_interactable, 0, 1))
+								if (collision_rectangle.call(this, this.x + 4, (this.y + this.sprite_height) - 5, (this.x + this.sprite_width) - 4, this.y + 5, obj_interactable, 0, 1))
 								{
-										interactedobject = collision_rectangle(x + 4, (y + sprite_height) - 5, (x + sprite_width) - 4, y + 8, obj_interactable, 0, 1);
+										this.interactedobject = collision_rectangle.call(this, this.x + 4, (this.y + this.sprite_height) - 5, (this.x + this.sprite_width) - 4, this.y + 8, obj_interactable, 0, 1);
 										
-										if (interactedobject != -4)
+										if (this.interactedobject != -4)
 										{
-												interactedobject.facing = 0;
+												this.interactedobject.facing = 0;
 												
-												script_execute.call(interactedobject, scr_interact);
+												script_execute.call(this.interactedobject, scr_interact);
 										}
 								}
 						}
@@ -557,7 +558,7 @@ function user0() {
 function user2() {
 		if (global.interact == 0 && global.flag[17] == 0)
 		{
-				snd_play("snd_squeak");
+				snd_play(snd_squeak);
 				global.interact = 5;
 				global.menuno = 0;
 				control_clear(2);
