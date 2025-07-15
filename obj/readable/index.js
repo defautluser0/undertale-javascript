@@ -1,4 +1,4 @@
-import { draw_sprite_ext, instance_create, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_create } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
@@ -10,18 +10,18 @@ function create() {
 	// create code
 
 	return {
-		name: "readable_flowers1", // sprite name
+		name: "readable", // sprite name
 		depth: 0, // object depth
-		image_xscale: 2, // sprite scale
-		image_yscale: 1.5, // sprite scale
+		image_xscale: 1, // sprite scale
+		image_yscale: 1, // sprite scale
 		x: 0, // object x. this is set by room
 		y: 0, // object y. this is set by room
 		image_alpha: 1, // sprite alpha
 		image_index: 0, // sprite frame index
 		image_speed: 0, // sprite frame speed
 		image_number: 0, // sprite frame number
-		sprite_index: "spr_interactable", // sprite object
-		visible: false, // sprite visibility
+		sprite_index: null, // sprite object
+		visible: true, // sprite visibility
 
 		alarm: alarm, // alarm array
 
@@ -32,7 +32,6 @@ function create() {
 		updateAlarms,
 		updateGamemakerFunctions,
 		updateSprite,
-		roomStart,
 		alarm0,
 	}
 }
@@ -59,24 +58,18 @@ function updateGamemakerFunctions() {
 }
 
 function updateSprite() {
-	if (this.visible) {
-		draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha)
-	}
-}
-
-function roomStart() {
-	if (global.plot === 0) {
-		instance_destroy(this);
+	if (this.visible === true) { 
+		draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha);
 	}
 }
 
 function alarm0() {
 	this.myinteract = 3;
-	global.msc = 500;
+	global.msc = 9999;
 	global.typer = 5;
 	global.facechoice = 0;
 	global.faceemotion = 0;
-	this.mydialoguer = instance_create(0, 0, obj_dialoguer)
+	this.mydialoguer = instance_create(0, 0, obj_dialoguer);
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, roomStart, alarm0 };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, alarm0 };
