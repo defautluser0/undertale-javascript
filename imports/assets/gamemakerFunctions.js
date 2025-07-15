@@ -1,5 +1,5 @@
 import { _key_prev_state, _key_state } from '/imports/input.js';
-import { playingSounds, c_white } from '/imports/assets.js'
+import { playingSounds, c_white, rooms } from '/imports/assets.js'
 import { ctx, ogCanvas } from '/imports/canvasSetup.js';
 import global from '/imports/assets/global.js';
 
@@ -109,7 +109,7 @@ function draw_get_font() {
  * @returns {void}
  */
 function draw_set_color(col) {
-  currentDrawColor = col.toUpperCase();
+  currentDrawColor = col.toLowerCase();
 }
 
 /**
@@ -121,7 +121,7 @@ function draw_set_color(col) {
  * @returns {void}
  */
 function draw_text(x, y, string, second) {
-  draw_text_transformed(x, y, string, 1, 1, 0, second);
+  draw_text_transformed(round(x), round(y), string, 1, 1, 0, second);
 }
 
 /**
@@ -135,155 +135,84 @@ function draw_text(x, y, string, second) {
  * @param {number} angle The angle of the text.
  * @returns {void}
  */
-function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, second) {
-  if (second !== 1 && second !== 2) {
-    if (!currentFont.image || currentFont.loading) {
-      console.warn("Font not set or loaded. Drawing skipped for this frame.");
-      return;
-    }
-
-    let ogX = x;
-
-    ctx.save();
-
-    for (const char of String(string)) {
-      if (char === "#" || char === "\n" || char === "\\n") {
-        y += currentFont.glyphs[" "].h;
-        x = ogX;
-        continue;
-      }
-      const glyph = currentFont.glyphs[char];
-      if (!glyph) {
-        x += currentFont.size * xscale; // fallback spacing
-        continue;
-      }
-
-      const offsetX = (glyph.offset || 0) * xscale;
-      const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
-
-      ctx.save();
-      ctx.translate(x + offsetX, y - offsetY);
-      ctx.rotate((angle * Math.PI) / 180);
-      ctx.scale(xscale, yscale);
-
-      if (currentDrawColor !== c_white) {
-        // Use tinted glyph canvas
-        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
-        ctx.drawImage(tintedGlyphCanvas, 0, 0);
-      } else {
-        ctx.drawImage(
-          currentFont.image,
-          glyph.x, glyph.y, glyph.w, glyph.h,
-          0, 0, glyph.w, glyph.h,
-        )
-      }
-
-      ctx.restore();
-
-      x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
-    }
-
-    ctx.restore();
-  } else if (second !== 0 && second !== 1) {
-    if (!thirdFont.image || thirdFont.loading) {
-      console.warn("Font not set or loaded. Drawing skipped for this frame.");
-      return;
-    }
-
-    let ogX = x;
-
-    ctx.save();
-
-    for (const char of String(string)) {
-      if (char === "#" || char === "\n" || char === "\\n") {
-        y += thirdFont.glyphs[" "].h;
-        x = ogX;
-        continue;
-      }
-      const glyph = thirdFont.glyphs[char];
-      if (!glyph) {
-        x += thirdFont.size * xscale; // fallback spacing
-        continue;
-      }
-
-      const offsetX = (glyph.offset || 0) * xscale;
-      const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
-
-      ctx.save();
-      ctx.translate(x + offsetX, y - offsetY);
-      ctx.rotate((angle * Math.PI) / 180);
-      ctx.scale(xscale, yscale);
-
-      if (currentDrawColor !== c_white) {
-        // Use tinted glyph canvas
-        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
-        ctx.drawImage(tintedGlyphCanvas, 0, 0);
-      } else {
-        ctx.drawImage(
-          thirdFont.image,
-          glyph.x, glyph.y, glyph.w, glyph.h,
-          0, 0, glyph.w, glyph.h,
-        )
-      }
-
-      ctx.restore();
-
-      x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
-    }
-
-    ctx.restore();
-  } else {
-    if (!secondFont.image || secondFont.loading) {
-      console.warn("Font not set or loaded. Drawing skipped for this frame.");
-      return;
-    }
-
-    ctx.save();
-
-    for (const char of String(string)) {
-      const glyph = secondFont.glyphs[char];
-      if (char === "#" || char === "\n" || char === "\\n") {
-        y += secondFont.glyphs[" "].h;
-        x = ogX;
-        continue;
-      }
-      if (!glyph) {
-        x += secondFont.size * xscale; // fallback spacing
-        continue;
-      }
-
-      const offsetX = (glyph.offset || 0) * xscale;
-      const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
-
-      ctx.save();
-      ctx.translate(x + offsetX, y - offsetY);
-      ctx.rotate((angle * Math.PI) / 180);
-      ctx.scale(xscale, yscale);
-
-      if (currentDrawColor !== c_white) {
-        // Use tinted glyph canvas
-        const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
-        ctx.drawImage(tintedGlyphCanvas, 0, 0);
-      } else {
-        ctx.drawImage(
-          secondFont.image,
-          glyph.x, glyph.y, glyph.w, glyph.h,
-          0, 0, glyph.w, glyph.h,
-        )
-      }
-
-      ctx.restore();
-
-      x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
-    }
-
-    ctx.restore();
+function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, second = 0) {
+  let font = {};
+  if (second === 0) {
+    font = currentFont;
+  } else if (second === 1) {
+    font = secondFont
+  } else if (second === 2) {
+    font = thirdFont
   }
+
+  if (!font.image || font.loading) {
+    console.warn("Font not set or loaded. Drawing skipped for this frame.");
+    return;
+  }
+
+  x = round(x);
+  y = round(y);
+
+  let ogX = x;
+
+  ctx.save();
+
+  for (const char of String(string)) {
+    if (char === "#" || char === "\n" || char === "\\n") {
+      y += font.glyphs[" "].h;
+      x = ogX;
+      continue;
+    }
+    const glyph = font.glyphs[char];
+    if (!glyph) {
+      x += font.size * xscale; // fallback spacing
+      continue;
+    }
+
+    const offsetX = (glyph.offset || 0) * xscale;
+    const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
+
+    ctx.save();
+    ctx.translate(x + offsetX, y - offsetY);
+    ctx.rotate((angle * Math.PI) / 180);
+    ctx.scale(xscale, yscale);
+
+    if (currentDrawColor !== c_white) {
+      // Use tinted glyph canvas
+      const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
+      ctx.drawImage(tintedGlyphCanvas, 0, 0);
+    } else {
+      ctx.drawImage(
+        font.image,
+        glyph.x, glyph.y, glyph.w, glyph.h,
+        0, 0, glyph.w, glyph.h,
+      )
+    }
+
+    ctx.restore();
+
+    x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
+  }
+
+  ctx.restore();
 }
 
 // draw_text_transformed helper
 function get_tinted_glyph(glyph, tintColor, char, second) {
-  const cacheKey = `${char}_${tintColor}`;
+  tintColor = tintColor.toLowerCase(); // normalize color case
+
+  let font;
+  if (second === 1) {
+    font = secondFont;
+  } else if (second === 2) {
+    font = thirdFont;
+  } else {
+    font = currentFont;
+  }
+
+  const fontId = font.file || "???";
+  const cacheKey = `${fontId}_${char}_${tintColor}`;
+
   if (globalTintCache.has(cacheKey)) {
     return globalTintCache.get(cacheKey);
   }
@@ -293,25 +222,11 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
   canvas.height = glyph.h;
   const gctx = canvas.getContext("2d");
 
-  if (second === 1) {
-    gctx.drawImage(
-      secondFont.image,
-      glyph.x, glyph.y, glyph.w, glyph.h,
-      0, 0, glyph.w, glyph.h
-    );
-  } else if (second === 2) {
-    gctx.drawImage(
-      thirdFont.image,
-      glyph.x, glyph.y, glyph.w, glyph.h,
-      0, 0, glyph.w, glyph.h
-    );
-  } else {
-    gctx.drawImage(
-      currentFont.image,
-      glyph.x, glyph.y, glyph.w, glyph.h,
-      0, 0, glyph.w, glyph.h
-    );
-  }
+  gctx.drawImage(
+    font.image,
+    glyph.x, glyph.y, glyph.w, glyph.h,
+    0, 0, glyph.w, glyph.h
+  );
 
   gctx.globalCompositeOperation = "source-in";
   gctx.fillStyle = tintColor;
@@ -321,8 +236,6 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
   globalTintCache.set(cacheKey, canvas);
   return canvas;
 }
-
-
 
 /** 
  * With this function you can check to see if a key has been pressed or not. Unlike the keyboard_check() function, this function will only run once for every time the key is pressed down, so for it to trigger again, the key must be first released and then pressed again. The function will take a keycode value as returned by any of the vk_* constants listed far above.
@@ -384,53 +297,33 @@ function keyboard_check(key) {
  * @param {object} font The name of the font to use.
  */
 function draw_set_font(font, second) {
+  let targetFont;
+
   if (second === 1) {
     secondFont = font;
-
-    if (!secondFont.image && !secondFont.loading) {
-      secondFont.loading = true;
-      const img = new Image();
-      img.src = secondFont.file;
-      img.onload = () => {
-        secondFont.image = img;
-        secondFont.loading = false;
-        if (global.debug === 1 && img) {
-          document.getElementsByTagName("body")[0].appendChild(img)
-        }
-      };
-    }
+    targetFont = secondFont;
   } else if (second === 2) {
     thirdFont = font;
-
-    if (!thirdFont.image && !thirdFont.loading) {
-      thirdFont.loading = true;
-      const img = new Image();
-      img.src = thirdFont.file;
-      img.onload = () => {
-        thirdFont.image = img;
-        thirdFont.loading = false;
-        if (global.debug === 1 && img) {
-          document.getElementsByTagName("body")[0].appendChild(img)
-        }
-      };
-    }
+    targetFont = thirdFont;
   } else {
     currentFont = font;
+    targetFont = currentFont;
+  }
 
-    if (!currentFont.image && !currentFont.loading) {
-      currentFont.loading = true;
-      const img = new Image();
-      img.src = currentFont.file;
-      img.onload = () => {
-        currentFont.image = img;
-        currentFont.loading = false;
-        if (global.debug === 1 && img) {
-          document.getElementsByTagName("body")[0].appendChild(img)
-        }
-      };
-    }
+  if (!targetFont.image && !targetFont.loading) {
+    targetFont.loading = true;
+    const img = new Image();
+    img.src = targetFont.file;
+    img.onload = () => {
+      targetFont.image = img;
+      targetFont.loading = false;
+      if (global.debug === 1 && img) {
+        document.body.appendChild(img);
+      }
+    };
   }
 }
+
 
 /**
  * This function permits you to go to any room in your game project. You supply the room index (stored in the variable for the room name). Note that the room will not change until the end of the event where the function was called, so any code after this has been called will still run if in the same event. This function will also trigger the Room End event.  WARNING: This function takes the room name as a string (so instead of room_menu itd be "room_menu" with the quotes).
@@ -470,13 +363,13 @@ function instance_create(x, y, obj) {
     instance.writingy = instance.y + instance.writingy;
   }
 
-  obj.roomStart?.call(instance);
-
   if (!instances.has(obj)) {
     instances.set(obj, []);
   }
-
   instances.get(obj).push(instance);
+
+  obj.roomStart?.call(instance);
+
   return instance;
 }
 
@@ -514,7 +407,7 @@ function instance_exists(obj) {
  * @param {number} y The y coordinate of where to draw the sprite
  */
 function draw_sprite(sprite, subimg, x, y) {
-  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, c_white, 1)
+  draw_sprite_ext(sprite, subimg, round(x), round(y), 1, 1, 0, c_white, 1)
 }
 
 /**
@@ -533,6 +426,9 @@ function draw_sprite(sprite, subimg, x, y) {
  */
 function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha, returnImg = 0) {
   if (!sprite) return;
+
+  x = round(x);
+  y = round(y);
 
   subimg = Math.floor(subimg);
 
@@ -558,9 +454,6 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
 
   const img = cached.img;
 
-  x = x + img.width / 2;
-  y = y + img.height / 2;
-
   ctx.save();
 
   ctx.translate(x, y);
@@ -570,12 +463,12 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
   ctx.globalAlpha = alpha;
 
   // Draw image centered
-  ctx.drawImage(img, -img.width / 2, -img.height / 2);
+  ctx.drawImage(img, 0, 0);
 
-  if (colour && colour.toUpperCase() !== "#FFFFFF" && colour.toUpperCase() !== "WHITE") {
+  if (colour && colour.toLowerCase() !== c_white) {
     ctx.globalCompositeOperation = "source-in";
     ctx.fillStyle = colour;
-    ctx.fillRect(-img.width / 2, -img.height / 2, img.width, img.height);
+    ctx.fillRect(0, 0, img.width, img.height);
     ctx.globalCompositeOperation = "source-over";
   }
 
@@ -599,7 +492,7 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
  * @param {number} y The y coordinate of where to draw the sprite.
  */
 function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
-  draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, 1, 1, c_white, 1);
+  draw_sprite_part_ext(sprite, subimg, left, top, width, height, round(x), round(y), 1, 1, c_white, 1);
 }
 
 /**
@@ -620,6 +513,9 @@ function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
  */
 function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xscale = 1, yscale = 1, colour = "#FFFFFF", alpha = 1) {
   if (!sprite) return;
+
+  x = round(x);
+  y = round(y);
 
   subimg = floor(subimg);
 
@@ -700,7 +596,7 @@ function round(n) {
   let floorNumber = Math.floor(n);
   let roundNumber = Math.round(n);
 
-  // if the floor of the number is divisible by two and rounding the number is not divisible by two and (removing or adding 0.5 from the number is equal to the floor of the number) then return the floor of the number, else return the number rounded
+  // if the floor of the number is divisible by two and rounding the number is not divisible by two and (removing or adding 0.5 from the number) is equal to the floor of the number then return the floor of the number, else return the number rounded
   if (floorNumber % 2 === 0 && roundNumber % 2 !== 0 && (n - 0.5 === floorNumber || n + 0.5 === floorNumber)) {
     return floorNumber;
   } else {
@@ -761,6 +657,11 @@ function real(n) {
  */
 function draw_rectangle(x1, y1, x2, y2, outline) {
   ctx.fillStyle = currentDrawColor;
+  x1 = round(x1);
+  x2 = round(x2);
+  y1 = round(y1);
+  y2 = round(y2);
+  ctx.beginPath();
   ctx.rect(x1, y1, x2 - x1, y2 - y1);
   if (outline) {
     ctx.stroke()
@@ -794,7 +695,7 @@ function draw_background(background, x, y) {
   img.src = `/bg/${background}.png`;
 
   img.onload = () => {
-    ctx.drawImage(img, x, y)
+    ctx.drawImage(img, round(x), round(y))
   }
 }
 
@@ -855,4 +756,18 @@ function rgbToHex(r, g, b) {
   );
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont };
+function room_next(room) {
+  if (typeof room !== "String") return;
+
+  let roomIndex = rooms.indexOf(room)
+
+  if (roomIndex === -1) return -1;
+
+  return rooms[roomIndex + 1];
+}
+
+function room_goto_next() {
+  room_goto(room_next(global.currentRoom));
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_goto_next };
