@@ -155,17 +155,18 @@ if (localStorage.getItem("global") !== null) {
     global.bulletpwr[i] = 0;
     global.hurtanim[i] = 0;
   }
-
-  localStorage.setItem("global", JSON.stringify(global));
   
   global.menuchoice[0] = 1;
   global.menuchoice[1] = 1;
   global.menuchoice[2] = 0;
   global.menuchoice[3] = 0;
+
+  localStorage.setItem("global", JSON.stringify(global));
 }
 
 if (window.navigator.userAgent === "MEOW Debugger") {
   global.debug = 1;
+  global.interact = 0;
 } else {
   global.debug = 0;
 }
