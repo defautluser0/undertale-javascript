@@ -5,7 +5,7 @@
 <script>function testAutoplay() {
   return new Promise((resolve, reject) => {
     const audio = new Audio();
-    audio.src = '/imports/assets/snd/nosound.wav'; // Use a small, silent audio file
+    audio.src = '/imports/assets/snd/nosound.wav'; // A small, silent audio file
     audio.muted = true;
     audio.play()
       .then(() => {resolve(true)})  // Autoplay works
