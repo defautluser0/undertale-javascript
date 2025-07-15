@@ -7,6 +7,8 @@ import {
   round,
   floor,
   currentFont,
+  secondFont,
+  thirdFont,
   surface_get_width,
   random,
   keyboard_check_pressed,
@@ -50,23 +52,36 @@ function scr_replace_buttons_pc(str) {
     .replaceAll("*D", "[RIGHT]");
 }
 
-function measure_text_width_bitmap(text, xscale = 1) {
+function measure_text_width_bitmap(text, xscale = 1, font) {
   let width = 0;
   for (const char of text) {
-    const glyph = currentFont.glyphs[char];
+    const glyph = font.glyphs[char];
     if (glyph) {
       // glyph.shift is the advance, fallback to glyph.w + glyph.offset if missing
       const advance = glyph.shift ?? (glyph.w + (glyph.offset || 0));
       width += advance * xscale;
     } else {
-      width += currentFont.size * xscale; // fallback width
+      width += font.size * xscale; // fallback width
     }
   }
   return width;
 }
 
 function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale, second = 0) {
-  const fontSize = currentFont.size;
+  let fontSize = currentFont.size;
+  if (second === 1) {
+    fontSize = secondFont.size
+  } else if (second === 2) {
+    fontSize = thirdFont.size;
+  }
+
+  let font = currentFont
+  if (second === 1) {
+    font = secondFont;
+  } else if (second === 2) {
+    font = thirdFont;
+  }
+
   const display_scale = surface_get_width("application_surface") / view_wview[view_current];
   const lineheight = Math.round(fontSize * yscale);
 
@@ -77,21 +92,28 @@ function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale, second = 0) 
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const width = measure_text_width_bitmap(line, xscale);
+    const width = measure_text_width_bitmap(line, xscale, font);
     const line_x = Math.round((xx - width / 2) * display_scale) / display_scale;
 
-    draw_text_transformed(line_x, yy, line, xscale, yscale, 0, second);
+    draw_text_transformed(round(line_x), yy, line, xscale, yscale, 0, second);
 
     yy += lineheight;
   }
 }
 
-function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1) {
+function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1, second = 0) {
   str = scr_replace_buttons_pc(str);
   const lineHeight = (currentFont.glyphs[" "].h);
   let xx = x0;
   let yy = y0;
   let outstr = "";
+
+  let font = currentFont
+  if (second === 1) {
+    font = secondFont;
+  } else if (second === 2) {
+    font = thirdFont;
+  }
 
   for (let i = 0; i < str.length; i++) {
     if (str[i] === "#") {
@@ -104,25 +126,32 @@ function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1) {
     } else if (str[i] === "\\" && str[i + 2] === "*") {
       if (outstr.length > 0) {
         draw_text(xx, yy, outstr);
-        xx += round(measure_text_width_bitmap(outstr, icon_scale));
+        xx += round(measure_text_width_bitmap(outstr, icon_scale, font));
         outstr = "";
       }
       i += 2;
       const ch = str[i];
       const keyLabel = scr_replace_buttons_pc("*" + ch);
-      draw_text_transformed(xx, yy, keyLabel, icon_scale, icon_scale, 0);
-      xx += measure_text_width_bitmap(keyLabel, icon_scale);
+      draw_text_transformed(round(xx), yy, keyLabel, icon_scale, icon_scale, second);
+      xx += measure_text_width_bitmap(keyLabel, icon_scale, font);
     } else {
       outstr += str[i];
     }
   }
   if (outstr.length > 0) {
-    draw_text(xx, yy, outstr);
+    draw_text(round(xx), yy, outstr, second);
   }
 }
 
-function scr_drawtext_icons(xx, yy, str, icon_scale = 1) {
+function scr_drawtext_icons(xx, yy, str, icon_scale = 1, second = 0) {
   str = scr_replace_buttons_pc(str);
+
+  let font = currentFont
+  if (second === 1) {
+    font = secondFont;
+  } else if (second === 2) {
+    font = thirdFont;
+  }
 
   while (true) {
     let i = str.indexOf("*");
@@ -130,16 +159,16 @@ function scr_drawtext_icons(xx, yy, str, icon_scale = 1) {
 
     if (i > 0) {
       const s = str.substring(0, i);
-      draw_text_transformed(xx, yy, s, icon_scale, icon_scale, 0);
-      xx += measure_text_width_bitmap(s, icon_scale);
+      draw_text_transformed(xx, yy, s, icon_scale, icon_scale, second);
+      xx += measure_text_width_bitmap(s, icon_scale, font);
       str = str.substring(i);
     }
 
     if (str.length >= 3 && str[0] === "*" && str[2]) {
       const ch = str[2];
       const keyLabel = scr_replace_buttons_pc("*" + ch);
-      draw_text_transformed(xx, yy, keyLabel, icon_scale, icon_scale, 0);
-      xx += measure_text_width_bitmap(keyLabel, icon_scale);
+      draw_text_transformed(round(xx), yy, keyLabel, icon_scale, icon_scale, second);
+      xx += measure_text_width_bitmap(keyLabel, icon_scale, font);
       str = str.substring(3);
     } else {
       // Invalid format fallback
@@ -148,7 +177,7 @@ function scr_drawtext_icons(xx, yy, str, icon_scale = 1) {
   }
 
   if (str.length > 0) {
-    draw_text_transformed(xx, yy, str, icon_scale, icon_scale, 0);
+    draw_text_transformed(round(xx), yy, str, icon_scale, icon_scale, second);
   }
 }
 
@@ -802,7 +831,7 @@ function scr_namingscreen() {
   if (this.naming == 1)
   {
       this.q = 0;
-      r = 0.5;
+      r = 0.6;
       
       for (var row = 0; row < rows; row++)
       {
@@ -1108,7 +1137,7 @@ function scr_namingscreen() {
       
       draw_set_color(c_white);
       draw_text(this.name_x, this.name_y, this.charname);
-      scr_drawtext_centered(160, this.title_y, "Name the fallen human."); // Name the fallen human.
+      scr_drawtext_centered(160, this.title_y, "Name the fallen human.");
   }
 
   if (this.naming === 3)
@@ -1326,6 +1355,50 @@ function ossafe_fill_rectangle(x1, y1, x2, y2) {
   draw_rectangle(x1, y1, x2, y2, false);
 }
 
+function scr_npcdir(argument0) {
+  if (this.myinteract == 0)
+  {
+      if (this.direction >= 225 && this.direction < 315)
+      {
+          this.facing = 0;
+          this.sprite_index = this.dsprite;
+      }
+      
+      if (this.direction >= 315 || this.direction < 45)
+      {
+          this.facing = 1;
+          this.sprite_index = this.rsprite;
+      }
+      
+      if (this.direction >= 45 && this.direction < 135)
+      {
+          this.facing = 2;
+          this.sprite_index = this.usprite;
+      }
+      
+      if (this.direction >= 135 && this.direction < 225)
+      {
+          this.facing = 3;
+          this.sprite_index = this.lsprite;
+      }
+  }
+
+  if (this.myinteract == (1 + argument0))
+  {
+      if (this.facing == 0)
+          this.sprite_index = this.dtsprite;
+      
+      if (this.facing == 1)
+          this.sprite_index = this.rtsprite;
+      
+      if (this.facing == 2)
+          this.sprite_index = this.utsprite;
+      
+      if (this.facing == 3)
+          this.sprite_index = this.ltsprite;
+  }
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -1351,4 +1424,5 @@ export {
   scr_hardmodename,
   random_ranger,
   ossafe_fill_rectangle,
+  scr_npcdir
 };
