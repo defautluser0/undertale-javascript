@@ -14,7 +14,32 @@ let thirdFont = null;
 const instances = new Map();
 
 const spriteCache = {};
+const maskCache = {};
 const globalTintCache = new Map();
+
+// image cache loader
+function loadImageCached(path, cache) {
+  if (cache[path]) {
+    return cache[path];
+  }
+  const img = new Image();
+  img.src = path;
+  cache[path] = { img, loaded: false, imageData: null };
+
+  img.onload = () => {
+    cache[path].loaded = true;
+
+    // create offscreen canvas to get pixel data
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    cache[path].imageData = ctx.getImageData(0, 0, img.width, img.height);
+  };
+
+  return cache[path];
+}
 
 /**
  * With this function you can play any sound asset in your game. You provide the sound asset and assign it a priority, which is then used to determine how sounds are dealt with when the number of sounds playing is over the limit set by the function audio_channel_num(). Lower priority sounds will be stopped in favour of higher priority sounds, and the priority value can be any real number (the actual value is arbitrary, and can be from 0 to 1 or 0 to 100, as GameMaker will prioritize them the same). The higher the number the higher the priority, so a sound with priority 100 will be favoured over a sound with priority 1. The third argument is for making the sound loop and setting it to true will make the sound repeat until it's stopped manually, and setting it to false will play the sound once only.
@@ -354,7 +379,6 @@ function instance_create(x, y, obj) {
     _object: obj,
   };
 
-  // Override x/y *only if explicitly passed*
   instance.x = x;
   instance.y = y;
   
@@ -435,17 +459,7 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
   const frame = subimg;
   const key = `/spr/${sprite}/${sprite}_${frame}.png`;
 
-  // Cache image
-  if (!spriteCache[key]) {
-    const img = new Image();
-    img.src = key;
-    spriteCache[key] = { img, loaded: false };
-    img.onload = () => {
-      spriteCache[key].loaded = true;
-    };
-  }
-
-  const cached = spriteCache[key];
+  const cached = loadImageCached(key, spriteCache);
 
   if (!cached.loaded) {
     // Image not loaded yet, skip drawing this frame
@@ -511,48 +525,63 @@ function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
  * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally.
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  */
-function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xscale = 1, yscale = 1, colour = "#FFFFFF", alpha = 1) {
+function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xscale = 1, yscale = 1, colour = c_white, alpha = 1) {
   if (!sprite) return;
+  if (left < 0) left = 0;
+  if (top < 0) top = 0;
 
-  x = round(x);
-  y = round(y);
+  x = Math.round(x);
+  y = Math.round(y);
+  subimg = Math.floor(subimg);
 
-  subimg = floor(subimg);
+  const key = `/spr/${sprite}/${sprite}_${subimg}.png`;
 
-  const img = new Image();
-  img.src = `/spr/${sprite}/${sprite}_${subimg}.png`;
+  // Cache image
+  if (!spriteCache[key]) {
+    const img = new Image();
+    img.src = key;
+    spriteCache[key] = { img, loaded: false };
+    img.onload = () => {
+      spriteCache[key].loaded = true;
+    };
+  }
 
-  img.onload = () => {
-    x = x + img.width / 2;
-    y = y + img.height / 2;
-    ctx.save();
+  const cached = spriteCache[key];
+  if (!cached.loaded) {
+    // Image not loaded yet, skip drawing this frame
+    return;
+  }
 
-    ctx.translate(x, y);
-    ctx.scale(xscale, yscale);
-    ctx.globalAlpha = alpha;
+  const img = cached.img;
 
-    const ox = img.height / 2;
-    const oy = img.width / 2;
+  // Calculate origin for centering
+  const ox = img.width / 2;
+  const oy = img.height / 2;
 
-    if (colour.toUpperCase() !== "#FFFFFF") {
-      const offscreen = document.createElement("canvas");
-      offscreen.width = width;
-      offscreen.height = height;
-      const offctx = offscreen.getContext("2d");
+  ctx.save();
 
-      offctx.drawImage(img, left, top, width, height, 0, 0, width, height);
+  ctx.translate(x, y);
+  ctx.scale(xscale, yscale);
+  ctx.globalAlpha = alpha;
 
-      offctx.globalCompositeOperation = "source-in";
-      offctx.fillStyle = colour;
-      offctx.fillRect(0, 0, width, height);
+  if (colour.toLowerCase() !== c_white) {
+    const offscreen = document.createElement("canvas");
+    offscreen.width = width;
+    offscreen.height = height;
+    const offctx = offscreen.getContext("2d");
 
-      ctx.drawImage(offscreen, -ox, -oy);
-    } else {
-      ctx.drawImage(img, left, top, width, height, -ox, -oy, width, height);
-    }
+    offctx.drawImage(img, left, top, width, height, 0, 0, width, height);
 
-    ctx.restore();
-  };
+    offctx.globalCompositeOperation = "source-in";
+    offctx.fillStyle = colour;
+    offctx.fillRect(0, 0, width, height);
+
+    ctx.drawImage(offscreen, -ox, -oy);
+  } else {
+    ctx.drawImage(img, left, top, width, height, -ox, -oy, width, height);
+  }
+
+  ctx.restore();
 }
 
 /**
@@ -770,4 +799,102 @@ function room_goto_next() {
   room_goto(room_next(global.currentRoom));
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_goto_next };
+function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
+  function isInstanceOf(inst, objToMatch) {
+    let currentObj = inst._object;
+    while (currentObj) {
+      if (currentObj === objToMatch) return true;
+      currentObj = currentObj.parent ?? null; // walk up using module's exported parent
+    }
+    return false;
+  }
+
+  for (const list of instances.values()) {
+    for (const inst of list) {
+      if (notme && inst === this) continue;
+
+      if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
+
+      if (!inst.visible || inst.image_alpha === 0) continue;
+
+      const bx = inst.x;
+      const by = inst.y;
+      let bw = 0;
+      let bh = 0;
+
+      const spritePath = `/spr/${inst.sprite_index}/${inst.sprite_index}_${Math.floor(inst.image_index) || 0}.png`;
+      const spriteCacheEntry = loadImageCached(spritePath, spriteCache);
+
+      if (!spriteCacheEntry.loaded) {
+        // Sprite not loaded yet, fallback to default size or skip this instance for now
+        bw = 32;
+        bh = 32;
+      } else {
+        bw = spriteCacheEntry.img.width * (inst.image_xscale ?? 1);
+        bh = spriteCacheEntry.img.height * (inst.image_yscale ?? 1);
+      }
+
+      if (!prec) {
+        // Bounding box collision (fast)
+        const hit = !(x2 < bx || x1 > bx + bw || y2 < by || y1 > by + bh);
+        if (hit) return inst;
+      } else {
+        // Precise pixel collision using mask cache
+        const sprite = inst.sprite_index;
+        const frame = Math.floor(inst.image_index) || 0;
+        const url = `/spr/masks/${sprite}_${frame}.png`;
+
+        const mask = loadImageCached(url, maskCache);
+
+        if (!mask.loaded || !mask.imageData) {
+          // If mask not loaded yet, skip this instance for now
+          continue;
+        }
+
+        const data = mask.imageData.data;
+        const width = mask.imageData.width;
+        const height = mask.imageData.height;
+
+        // Calculate overlap rectangle in mask coordinates
+        const scaleX = inst.image_xscale ?? 1;
+        const scaleY = inst.image_yscale ?? 1;
+
+        const maskWidth = mask.imageData.width;
+        const maskHeight = mask.imageData.height;
+
+        // Calculate overlap rectangle in world coords relative to instance position
+        const dx = Math.floor(bx);
+        const dy = Math.floor(by);
+
+        const sx_scaled = Math.max(0, Math.floor(x1 - dx));
+        const sy_scaled = Math.max(0, Math.floor(y1 - dy));
+        const ex_scaled = Math.min(bw * scaleX, Math.ceil(x2 - dx));
+        const ey_scaled = Math.min(bh * scaleY, Math.ceil(y2 - dy));
+
+        // Convert scaled overlap rectangle to mask pixel coordinates (unscaled)
+        const sx = Math.floor(sx_scaled / scaleX);
+        const sy = Math.floor(sy_scaled / scaleY);
+        const ex = Math.min(maskWidth, Math.ceil(ex_scaled / scaleX));
+        const ey = Math.min(maskHeight, Math.ceil(ey_scaled / scaleY));
+
+        let collisionFound = false;
+        outer: for (let y = sy; y < ey; y++) {
+          for (let x = sx; x < ex; x++) {
+            const idx = (y * width + x) * 4;
+            const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+            if (r === 255 && g === 255 && b === 255) {
+              collisionFound = true;
+              break outer;
+            }
+          }
+        }
+
+        if (collisionFound) return inst;
+      }
+    }
+  }
+
+  return null;
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_goto_next, collision_rectangle };
