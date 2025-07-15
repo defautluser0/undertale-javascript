@@ -22,6 +22,7 @@
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
 		import { instance_create, instances, currentFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
+    import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
 		import global from "/imports/assets/global.js"
     import * as obj_objectname from '/obj/objectname/index.js'
 		import * as screenUpdater from '/obj/screen/index.js'
@@ -92,8 +93,8 @@
           obj.updateSprite?.call(instance);
         }
 
-        if (global.debug === 1 && currentFont) {
-          draw_text(15, 15, currentFps);
+        if (global.debug === 1 && secondFont) {
+          draw_text(15 + view_xview[view_current], 15 + view_yview[view_current], currentFps, 1);
         }
 
         for (const [obj, instanceList] of instances) {
@@ -102,6 +103,7 @@
           }
         }
 
+        updateCamera(instances.get(obj_objectname)[0]) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
         screenUpdater.updateScreen();
 
         input_update();
