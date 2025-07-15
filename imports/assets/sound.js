@@ -70,6 +70,18 @@ const snd_nosound = new Howl({
 const snd_ballchime = new Howl({
   src: ["/imports/assets/snd/ballchime.ogg"]
 })
+const snd_squeak = new Howl({
+  src: ["/imports/assets/snd/squeak.wav"]
+})
+const snd_save = new Howl({
+  src: ["/imports/assets/snd/save.wav"]
+})
+const snd_splash = new Howl({
+  src: ["/imports/assets/snd/splash.wav"]
+})
+const snd_select = new Howl({
+  src: ["/imports/assets/snd/select.wav"]
+})
 
 // currently playing sounds map
 const playingSounds = new Map();
@@ -98,5 +110,9 @@ export {
   snd_floweytalk2,
   snd_nosound,
   snd_ballchime,
+  snd_squeak,
+  snd_save,
+  snd_splash,
+  snd_select,
   playingSounds,
 };
