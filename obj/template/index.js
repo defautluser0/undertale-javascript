@@ -1,6 +1,8 @@
 import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
+import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, delete this line and set parent: null,
+
 function create() {
 	const alarm = new Array(12).fill(-1);
 
@@ -19,6 +21,7 @@ function create() {
 		image_number: 0, // sprite frame number
 		sprite_index: null, // sprite object
 		visible: true, // sprite visibility
+		parent: parent,
 
 		alarm: alarm, // alarm array
 
@@ -53,7 +56,9 @@ function updateGamemakerFunctions() {
 }
 
 function updateSprite() {
-	draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha)
+	if (this.visible === true) { 
+		draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha);
+	}
 }
 
 export { create, updateAlarms, updateGamemakerFunctions, updateSprite };
