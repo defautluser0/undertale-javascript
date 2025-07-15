@@ -46,7 +46,7 @@ function create() {
 
 	return {
 		name: "mainchara", // sprite name
-		depth: 0, // object depth
+		depth: 100, // object depth
 		image_xscale: 1, // sprite scale
 		image_yscale: 1, // sprite scale
 		x: 0, // object x. this is set by room
@@ -114,10 +114,10 @@ function updateAlarms() {
 
 function updateGamemakerFunctions() {
 	this.image_index += this.image_speed;
-	if (this.image_index >= this.image_number_lr && (this.sprite_index === "spr_maincharal" || this.sprite_index === "spr_maincharar")) {
+	if (this.image_index >= this.image_number_lr && (this.sprite_index === "spr_maincharal" || this.sprite_index === "spr_maincharar" || this.sprite_index === "spr_maincharar_umbrella" || this.sprite_index === "spr_maincharal_umbrella")) {
 		this.image_index -= this.image_number_lr;
 	}
-	if (this.image_index >= this.image_number_ud && (this.sprite_index === "spr_maincharad" || this.sprite_index === "spr_maincharau")) {
+	if (this.image_index >= this.image_number_ud && (this.sprite_index === "spr_maincharad" || this.sprite_index === "spr_maincharau" || this.sprite_index === "spr_maincharad_umbrella" || this.sprite_index === "spr_maincharau_umbrella")) {
 		this.image_index -= this.image_number_ud;
 	}
 	this.previousx = this.x;
@@ -481,8 +481,8 @@ function step() {
 	{
 			this.depth = 50000 - ((this.y * 10) + (this.sprite_height * 10));
 			
-			if (global.flag[85] == 1 && dsprite == spr_maincharad_umbrella)
-					depth = 50000 - ((y * 10) + 300);
+			if (global.flag[85] == 1 && this.dsprite == "spr_maincharad_umbrella")
+					this.depth = 50000 - ((this.y * 10) + 300);
 	}
 }
 
