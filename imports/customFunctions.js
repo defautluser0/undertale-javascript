@@ -756,8 +756,72 @@ function scr_namingscreen() {
         this.allow = 1;
       }
       else if (this.charname.toLowerCase() === "shayy") {
-          this.spec_m = "shayy it's late, go to bed"
-          this.allow = 0;
+        switch (this.shayy) {
+          case 0:
+            this.spec_m = "shayy it's late, go to bed"
+            this.allow = 0;
+            this.raiseShayy = 1;
+            break;
+          case 1:
+            this.spec_m = "bed it's late, go to shayy";
+            this.allow = 0;
+            this.raiseShayy = 2;
+            break;
+          case 2:
+            this.spec_m = "you really are determined, arent you";
+            this.allow = 0;
+            this.raiseShayy = 3;
+            break;
+          case 3:
+            this.spec_m = `${this.charname}, don't you have anything better#to do?`
+            this.allow = 0;
+            this.raiseShayy = 4;
+            break;
+          case 4:
+            this.spec_m = "ok you can go but only this once"
+            this.allow = 1;
+            this.raiseShayy = 5;
+            break;
+          case 5:
+            this.spec_m = "YOU IDIOT WHY DID YOU PRESS NO??#youre not going back now";
+            this.allow = 0;
+            this.raiseShayy = 6;
+            break;
+          case 6:
+            this.spec_m = "trying forever wont get you#anywhere"
+            this.allow = 0;
+            this.raiseShayy = 7;
+            break;
+          case 7:
+            this.spec_m = "..."
+            this.allow = 0;
+            this.raiseShayy = 8;
+            break;
+          case 8:
+            this.spec_m = "..."
+            this.allow = 0;
+            this.raiseShayy = 9;
+            break;
+          case 9:
+            this.spec_m = "..."
+            this.allow = 0;
+            this.raiseShayy = 10;
+            break;
+          case 10:
+            this.spec_m = "..."
+            this.allow = 0;
+            this.raiseShayy = 11;
+            break;
+          case 11:
+            this.spec_m = "youre just annoying atp"
+            this.allow = 0;
+            this.raiseShayy = 12;
+            break;
+          case 12:
+            this.spec_m = "stop it"
+            this.allow = 0;
+            this.raiseShayy = 12;
+        }
       }
       else
       {
@@ -780,6 +844,8 @@ function scr_namingscreen() {
             this.naming = 3;
           else
             this.naming = 1;
+
+          if (this.raiseShayy > 0) this.shayy = this.raiseShayy
         }
           
         return;
@@ -1399,6 +1465,10 @@ function scr_npcdir(argument0) {
   }
 }
 
+function scr_interact() {
+  this.myinteract = 1;
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -1424,5 +1494,6 @@ export {
   scr_hardmodename,
   random_ranger,
   ossafe_fill_rectangle,
-  scr_npcdir
+  scr_npcdir,
+  scr_interact,
 };
