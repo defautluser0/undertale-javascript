@@ -14,7 +14,7 @@
   <script type="module">
     import roomSize from '/imports/assets/roomSize.js'
 
-    roomSize.width = 300;  // room width in px
+    roomSize.width = 320;  // room width in px
     roomSize.height = 420; // room height in px
 
   </script>
@@ -29,7 +29,7 @@
     import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js'
 		import * as screenUpdater from '/obj/screen/index.js'
     import * as obj_doorB from '/obj/doorB/index.js'
-    import * as obj_doorA from '/obj/doorA/index.js'
+    import * as obj_doorAmusicfade from '/obj/doorAmusicfade/index.js'
     import * as obj_markerA from '/obj/markerA/index.js'
     import * as obj_markerB from '/obj/markerB/index.js'
 
@@ -39,7 +39,9 @@
     instance_create(140, 410, obj_doorB);
     instance_create(160, 410, obj_doorB);
     instance_create(180, 410, obj_doorB);
-    instance_create(150, 378, obj_markerA);
+    instance_create(150, 379, obj_markerA);
+    instance_create(140, 150, obj_doorAmusicfade);
+    instance_create(160, 150, obj_doorAmusicfade);
     instance_create(170, 360, obj_mainchara);
     instance_create(0, 60, obj_overworldcontroller);
 

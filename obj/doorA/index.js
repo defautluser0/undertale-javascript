@@ -23,7 +23,7 @@ function create() {
 		image_speed: 0, // sprite frame speed
 		image_number: 0, // sprite frame number
 		sprite_index: "spr_doorA", // sprite object
-		visible: false, // sprite visibility
+		visible: true, // sprite visibility
 		parent: parent,
 
 		alarm: alarm, // alarm array

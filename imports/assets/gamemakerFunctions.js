@@ -23,16 +23,64 @@ function getBoundingBox() {
 
   const sprite = this.sprite_index;
   const frame = Math.round(this.image_index) || 0;
-  const path = `/spr/${sprite}/${sprite}_${frame}.png`;
-  const spriteData = loadImageCached(path, spriteCache);
 
-  const width = spriteData.img?.width ?? 32;
-  const height = spriteData.img?.height ?? 32;
+  // Try exact mask path first
+  let maskPath = `/spr/masks/${sprite}_${frame}.png`;
+  let mask = loadImageCached(maskPath, maskCache);
 
-  this.bbox_left = this.x;
-  this.bbox_top = this.y;
-  this.bbox_right = this.x + width * scaleX;
-  this.bbox_bottom = this.y + height * scaleY;
+  // If not loaded, try frame 0 mask
+  if (!mask.loaded || !mask.imageData) {
+    maskPath = `/spr/masks/${sprite}_0.png`;
+    mask = loadImageCached(maskPath, maskCache);
+
+    if (!mask.loaded || !mask.imageData) {
+      // Fallback to dummy bounds if still not loaded
+      const fallbackWidth = 32 * scaleX;
+      const fallbackHeight = 32 * scaleY;
+      this.bbox_left = this.x;
+      this.bbox_top = this.y;
+      this.bbox_right = this.x + fallbackWidth;
+      this.bbox_bottom = this.y + fallbackHeight;
+      return;
+    }
+  }
+
+  const data = mask.imageData.data;
+  const width = mask.imageData.width;
+  const height = mask.imageData.height;
+
+  // Find the bounding box of white (collision) pixels
+  let left = width, top = height, right = 0, bottom = 0;
+  let found = false;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+      if (r === 255 && g === 255 && b === 255) {
+        if (!found) found = true;
+        if (x < left) left = x;
+        if (y < top) top = y;
+        if (x > right) right = x;
+        if (y > bottom) bottom = y;
+      }
+    }
+  }
+
+  if (!found) {
+    // No white pixels — treat as empty hitbox
+    this.bbox_left = this.x;
+    this.bbox_top = this.y;
+    this.bbox_right = this.x;
+    this.bbox_bottom = this.y;
+    return;
+  }
+
+  // Apply position and scale
+  this.bbox_left = this.x + left * scaleX;
+  this.bbox_top = this.y + top * scaleY;
+  this.bbox_right = this.x + (right + 1) * scaleX;
+  this.bbox_bottom = this.y + (bottom + 1) * scaleY;
 }
 
 // image cache loader
@@ -861,9 +909,10 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       typeof this.bbox_right !== "number" ||
       typeof this.bbox_top !== "number" ||
       typeof this.bbox_bottom !== "number"
-    ) && this.name === "mainchara"
+    )
   ) {
-    return; // or call getBoundingBox.call(this) here
+    console.warn("bounding boxes not set. generating on", this);
+    getBoundingBox.call(this);
   }
   function isInstanceOf(inst, objToMatch) {
     let currentObj = inst._object;
@@ -876,12 +925,11 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
 
   for (const list of instances.values()) {
     for (const inst of list) {
+      if (typeof inst.bbox_left !== "number") getBoundingBox.call(inst);
       if (notme && inst === this) continue;
 
       if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
 
-      const bx = inst.x;
-      const by = inst.y;
       let bw = 0;
       let bh = 0;
 
@@ -897,9 +945,14 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
         bh = spriteCacheEntry.img.height * (inst.image_yscale ?? 1);
       }
 
+      const left = inst.bbox_left;
+      const right = inst.bbox_right;
+      const top = inst.bbox_top;
+      const bottom = inst.bbox_bottom;
+
       if (!prec) {
         // Bounding box collision (fast)
-        const hit = !(x2 < bx || x1 > bx + bw || y2 < by || y1 > by + bh);
+        const hit = !(x2 < left || x1 > right || y2 < top || y1 > bottom);
         if (hit) return inst;
       } else {
         // Precise pixel collision using mask cache
@@ -922,7 +975,6 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
 
         const data = mask.imageData.data;
         const width = mask.imageData.width;
-        const height = mask.imageData.height;
 
         // Calculate overlap rectangle in mask coordinates
         const scaleX = inst.image_xscale ?? 1;
@@ -932,8 +984,8 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
         const maskHeight = mask.imageData.height;
 
         // Calculate overlap rectangle in world coords relative to instance position
-        const dx = Math.floor(bx);
-        const dy = Math.floor(by);
+        const dx = Math.floor(inst.x);
+        const dy = Math.floor(inst.y);
 
         const sx_scaled = Math.max(0, Math.floor(x1 - dx));
         const sy_scaled = Math.max(0, Math.floor(y1 - dy));
@@ -966,12 +1018,12 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
   return null;
 }
 
-function collision_point(x, y, obj, prec = false, notme = false) {
+function collision_point(x, y, obj, notme = false) {
   function isInstanceOf(inst, objToMatch) {
-    let current = inst._object;
-    while (current) {
-      if (current === objToMatch) return true;
-      current = current.parent ?? null;
+    let currentObj = inst._object;
+    while (currentObj) {
+      if (currentObj === objToMatch) return true;
+      currentObj = currentObj.parent ?? null;
     }
     return false;
   }
@@ -980,43 +1032,50 @@ function collision_point(x, y, obj, prec = false, notme = false) {
     for (const inst of list) {
       if (notme && inst === this) continue;
       if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
-
-      const bx = inst.x;
-      const by = inst.y;
+      if (!inst.visible || inst.image_alpha === 0) continue;
 
       const sprite = inst.sprite_index;
       const frame = Math.round(inst.image_index) || 0;
-      const url = `/spr/${sprite}/${sprite}_${frame}.png`;
+      const spritePath = `/spr/${sprite}/${sprite}_${frame}.png`;
+      const spriteCacheEntry = loadImageCached(spritePath, spriteCache);
+
       const scaleX = inst.image_xscale ?? 1;
       const scaleY = inst.image_yscale ?? 1;
 
-      const spriteData = spriteCache[url];
-      if (!spriteData?.img?.width || !spriteData?.img?.height) continue;
+      let bw = 32, bh = 32;
+      if (spriteCacheEntry.loaded) {
+        bw = spriteCacheEntry.img.width * scaleX;
+        bh = spriteCacheEntry.img.height * scaleY;
+      }
 
-      const width = spriteData.img.width * scaleX;
-      const height = spriteData.img.height * scaleY;
+      // Bounding box check
+      if (x >= inst.x && x < inst.x + bw && y >= inst.y && y < inst.y + bh) {
+        // Load mask
+        let url = `/spr/masks/${sprite}_${frame}.png`;
+        let mask = loadImageCached(url, maskCache);
 
-      if (
-        x >= bx &&
-        y >= by &&
-        x < bx + width &&
-        y < by + height
-      ) {
-        if (!prec) return inst;
+        // Fallback to _0 if mask for this frame doesn't exist
+        if ((!mask.loaded || !mask.imageData) && frame !== 0) {
+          url = `/spr/masks/${sprite}_0.png`;
+          mask = loadImageCached(url, maskCache);
+        }
 
-        const maskUrl = `/spr/masks/${sprite}_${frame}.png`;
-        const mask = loadImageCached(maskUrl, maskCache);
-        if (!mask.loaded || !mask.imageData) continue;
+        if (!mask.loaded || !mask.imageData) {
+          // Fallback to bounding box hit
+          return inst;
+        }
 
-        const mx = Math.floor((x - bx) / scaleX);
-        const my = Math.floor((y - by) / scaleY);
+        // Convert to local pixel coordinate inside the mask
+        const localX = Math.floor((x - inst.x) / scaleX);
+        const localY = Math.floor((y - inst.y) / scaleY);
 
         if (
-          mx < 0 || my < 0 ||
-          mx >= mask.imageData.width || my >= mask.imageData.height
+          localX < 0 || localY < 0 ||
+          localX >= mask.imageData.width ||
+          localY >= mask.imageData.height
         ) continue;
 
-        const idx = (my * mask.imageData.width + mx) * 4;
+        const idx = (localY * mask.imageData.width + localX) * 4;
         const r = mask.imageData.data[idx];
         const g = mask.imageData.data[idx + 1];
         const b = mask.imageData.data[idx + 2];
@@ -1029,4 +1088,29 @@ function collision_point(x, y, obj, prec = false, notme = false) {
   return null;
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, getBoundingBox };
+function collision_line(x1, y1, x2, y2, obj, prec = false, notme = false) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const steps = Math.max(Math.abs(dx), Math.abs(dy));
+  if (steps === 0) return null; // zero-length line
+
+  const stepX = dx / steps;
+  const stepY = dy / steps;
+
+  for (let i = 0; i <= steps; i++) {
+    const px = x1 + stepX * i;
+    const py = y1 + stepY * i;
+
+    // Use collision_point for each step to test collisions
+    const hit = collision_point.call(this, px, py, obj, notme);
+    if (hit) {
+      if (!prec) return hit; // if not precise, return on first hit
+      // if precise, could add more checks or return immediately anyway
+      return hit;
+    }
+  }
+
+  return null;
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox };

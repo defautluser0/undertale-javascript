@@ -1,4 +1,4 @@
-import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, script_execute, getBoundingBox, instances } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, collision_line, script_execute, getBoundingBox, instances } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, c_gray, c_black, snd_splash, snd_squeak } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 import { scr_hardmodename, snd_play, scr_interact } from "/imports/customFunctions.js"
@@ -10,6 +10,12 @@ import * as obj_markerA from "/obj/markerA/index.js";
 import * as obj_markerB from "/obj/markerB/index.js";
 import * as obj_interactable from "/obj/interactable/index.js";
 import * as obj_doorparent from "/obj/doorparent/index.js";
+import * as obj_solidnpcparent from "/obj/solidnpcparent/index.js";
+import * as obj_solidparent from "/obj/solidparent/index.js";
+import * as obj_sdl from "/obj/sdl/index.js";
+import * as obj_sdr from "/obj/sdr/index.js";
+import * as obj_sul from "/obj/sul/index.js";
+import * as obj_sur from "/obj/sur/index.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -101,6 +107,7 @@ function create() {
 		step,
 		user0,
 		user2,
+		checkCol,
 	}
 }
 
@@ -126,12 +133,14 @@ function updateGamemakerFunctions() {
 	if (this.image_index >= this.image_number_ud && (this.sprite_index === "spr_maincharad" || this.sprite_index === "spr_maincharau" || this.sprite_index === "spr_maincharad_umbrella" || this.sprite_index === "spr_maincharau_umbrella")) {
 		this.image_index -= this.image_number_ud;
 	}
+	getBoundingBox.call(this);
+
+	this.checkCol()
+
 	this.previousx = this.x;
 	this.xprevious = this.x;
 	this.previousy = this.y;
 	this.yprevious = this.y;
-
-	getBoundingBox.call(this);
 }
 
 function updateSprite() {
@@ -578,4 +587,82 @@ function user2() {
 		}
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, roomStart, endStep, step, user0, user2 };
+function checkCol() {
+	let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_solidnpcparent, false, false);
+	if (other) {
+		console.log("npc")
+	}
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_solidparent, false, false)
+	if (other) {
+		if (global.phasing == 0 && other.phase == 0)
+		{
+			this.x = this.xprevious;
+			this.y = this.yprevious;
+			
+			if (global.interact == 0)
+			{
+				if (global.up)
+				{
+					if (collision_rectangle.call(this, this.x + 2, this.y + 15, this.x + 18, this.y + 19, obj_solidparent, 0, 1) !== null)
+					{
+						if (global.left && collision_line.call(this, this.bbox_left, this.bbox_top, this.bbox_left, this.bbox_top, obj_solidparent, false, true) === null)
+						{
+							this.x -= 3;
+							global.facing = 3;
+						}
+						
+						if (global.right && collision_line.call(this, this.bbox_right, this.bbox_top, this.bbox_right, this.bbox_top, obj_solidparent, false, true) === null)
+						{
+							this.x += 3;
+							global.facing = 1;
+						}
+					}
+					else
+					{
+						this.y -= 3;
+						global.facing = 2;
+					}
+				}
+
+				if (global.down)
+				{
+					if (collision_rectangle.call(this, this.x + 2, this.y + 30, this.x + 19, this.y + 33, obj_solidparent, 0, 1) !== null)
+					{
+						if (global.left && collision_line.call(this, this.bbox_left, this.bbox_bottom, this.bbox_left, this.bbox_bottom, obj_solidparent, false, true) === null)
+						{
+							this.x -= 3;
+							global.facing = 3;
+						}
+						
+						if (global.right && collision_line.call(this, this.bbox_right, this.bbox_bottom, this.bbox_right, this.bbox_bottom, obj_solidparent, false, true) === null)
+						{
+							this.x += 3;
+							global.facing = 1;
+						}
+					}
+					else
+					{
+						this.y += 3;
+						global.facing = 0;
+					}
+				}
+			}
+			
+			this.moving = 0;
+		}
+	}
+	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sur, false, false)) {
+		console.log("sur")
+	}
+	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sul, false, false)) {
+		console.log("sul")
+	}
+	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdr, false, false)) {
+		console.log("sdr")
+	}
+	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdl, false, false)) {
+		console.log("sdl")
+	}
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, roomStart, endStep, step, user0, user2, checkCol };

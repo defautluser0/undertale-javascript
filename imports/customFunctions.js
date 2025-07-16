@@ -226,10 +226,12 @@ function caster_play(sound, volume, pitch) {
 }
 
 function caster_stop(sound) {
+  if (sound === -1) return;
   caster_free(sound);
 }
 
 function caster_free(sound) {
+  if (sound === -1) return;
   if (sound !== "all") {
     audio_stop_sound(sound);
   } else {
@@ -238,7 +240,12 @@ function caster_free(sound) {
 }
 
 function caster_set_volume(sound, vol) {
+  if (sound === -1) return;
   audio_sound_gain(sound, vol, 0);
+}
+
+function caster_get_volume(sound) {
+  return sound.volume;
 }
 
 function caster_loop(song, gain, pitch) {
@@ -1510,6 +1517,7 @@ export {
   caster_stop,
   caster_free,
   caster_set_volume,
+  caster_get_volume,
   caster_loop,
   snd_play,
   snd_stop,

@@ -61,7 +61,7 @@
     instance_create(280, 80, obj_solidsmall);
     instance_create(129, 124, obj_readable_flowers1);
     instance_create(610, 152, obj_markerB);
-    instance_create(610, 124, obj_doorA);
+    instance_create(610, 141, obj_doorA);
     instance_create(175, 90, obj_torinteractable7);
     instance_create(400, 240, obj_solidlong);
     instance_create(60, 40, obj_solidlong);
@@ -121,6 +121,12 @@
           }
         }
 
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateGamemakerFunctions?.call(instance);
+          }
+        }
+
         draw_background("bg_firstroom", 0, 0);
 
         for (const [obj, instanceList] of instances) {
@@ -141,12 +147,6 @@
 
         if (global.debug === 1 && secondFont) {
           draw_text(15 + view_xview[view_current], 15 + view_yview[view_current], currentFps, 1);
-        }
-
-        for (const [obj, instanceList] of instances) {
-          for (const instance of instanceList) {
-            obj.updateGamemakerFunctions?.call(instance);
-          }
         }
 
         updateCamera(instances.get(obj_mainchara)[0]);

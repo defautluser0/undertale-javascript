@@ -2,7 +2,7 @@ import { draw_sprite_ext, instance_create, instance_exists } from "/imports/asse
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as parent from "/obj/interactable/index.js"
+import * as parent from "/obj/solidnpcparent/index.js"
 import * as obj_dialoguer from "/obj/dialoguer/index.js"
 
 function create() {

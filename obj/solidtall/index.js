@@ -1,6 +1,6 @@
 import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-import * as obj_solidparent from "/obj/solidparent/index.js"
+import * as parent from "/obj/solidparent/index.js"
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -19,6 +19,7 @@ function create() {
 		image_number: 0, // sprite frame number
 		sprite_index: "spr_solidtall", // sprite object
 		visible: false, // sprite visibility
+		parent: parent,
 
 		alarm: alarm, // alarm array
 
@@ -61,7 +62,7 @@ function updateSprite() {
 }
 
 function step() {
-	this.visible = obj_solidparent.step(this.visible);
+	this.visible = parent.step(this.visible);
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, step };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, step, parent };
