@@ -50,7 +50,6 @@
     instance_create(240, 60, obj_sur);
     instance_create(40, 60, obj_sul);
     instance_create(280, 140, obj_sur);
-    instance_create(140, 120, obj_mainchara);
     instance_create(280, 120, obj_solidsmall);
     instance_create(280, 100, obj_solidsmall);
     instance_create(240, 200, obj_sdr);
@@ -62,12 +61,13 @@
     instance_create(280, 80, obj_solidsmall);
     instance_create(129, 124, obj_readable_flowers1);
     instance_create(610, 152, obj_markerB);
-    instance_create(610, 140, obj_doorA);
+    instance_create(610, 124, obj_doorA);
     instance_create(175, 90, obj_torinteractable7);
     instance_create(400, 240, obj_solidlong);
     instance_create(60, 40, obj_solidlong);
     instance_create(260, 200, obj_solidlong);
     instance_create(320, 140, obj_solidlong);
+    instance_create(140, 120, obj_mainchara);
     instance_create(16, 14, obj_overworldcontroller);
     instance_create(20, 60, obj_solidsmall);
     instance_create(260, 60, obj_solidsmall);
@@ -163,7 +163,8 @@
           }
         }
 
-        if (global.roomEnd && global.eventDone && global.nextRoom !== null) {
+        if (global.roomEnd && global.eventDone && global.nextRoom !== null && global.nextRoom.slice(1,5) + "_" + global.nextRoom.slice(6).split("/")[0] !== global.currentRoom) {
+          global.roomEnd = false;
           global.eventDone = false;
           let nextRoom = global.nextRoom
           global.nextRoom = null;

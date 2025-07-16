@@ -40,8 +40,19 @@ import {
 import { vk_down, vk_up, vk_right, vk_left, control_check_pressed, control_clear } from "/imports/input.js"
 import global from "/imports/assets/global.js";
 import { view_current, view_wview } from "/imports/view.js"
+
 import * as obj_whitefader from "/obj/whitefader/index.js";
 import * as obj_persistentfader from "/obj/persistentfader/index.js";
+import * as obj_face_torieltalk from "/obj/face_torieltalk/index.js";
+import * as obj_torbody from "/obj/torbody/index.js";
+import * as obj_face_floweytalk from "/obj/face_floweytalk/index.js";
+import * as obj_face_sans from "/obj/face_sans/index.js";
+import * as obj_face_papyrus from "/obj/face_papyrus/index.js";
+import * as obj_face_undyne from "/obj/face_undyne/index.js";
+import * as obj_face_alphys from "/obj/face_alphys/index.js";
+import * as obj_face_asgore from "/obj/face_asgore/index.js";
+import * as obj_face_mettaton from "/obj/face_mettaton/index.js";
+import * as obj_face_asriel from "/obj/face_asriel/index.js";
 
 function scr_replace_buttons_pc(str) {
   return str
@@ -237,39 +248,24 @@ function caster_loop(song, gain, pitch) {
   return this_song_i;
 }
 
-function SCR_TEXTSETUP(
-  myfont,
-  mycolor,
-  writingx,
-  writingy,
-  writingxend,
-  shake,
-  textspeed,
-  txtsound,
-  spacing,
-  vspacing
-) {
-  return {
-    myfont,
-    mycolor,
-    writingx,
-    writingy,
-    writingxend,
-    writingxend_base: writingxend,
-    shake,
-    textspeed,
-    txtsound,
-    spacing,
-    vspacing,
-    vtext: 0,
-    htextscale: 1,
-    vtextscale: 1,
-  };
+function SCR_TEXTSETUP(myfont, mycolor, writingx, writingy, writingxend, shake, textspeed, txtsound, spacing, vspacing) {
+  this.myfont = myfont;
+  this.mycolor = mycolor;
+  this.writingx = writingx;
+  this.writingy = writingy;
+  this.writingxend = writingxend;
+  this.writingxend_base = writingxend;
+  this.shake = shake;
+  this.textspeed = textspeed;
+  this.txtsound = txtsound;
+  this.spacing = spacing;
+  this.vspacing = vspacing;
+  this.vtext = 0;
+  this.htextscale = 1;
+  this.vtextscale = 1;
 }
 
 function SCR_TEXTTYPE(typer, x, y) {
-  let TEXTSETUP = undefined;
-
   if (typer !== 0) {
     global.typer = typer;
   }
@@ -280,7 +276,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 1:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_main,
         c_white,
         x + 20,
@@ -295,7 +291,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 2:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_plain,
         c_black,
         x,
@@ -310,7 +306,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 3:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_curs,
         c_teal,
         x,
@@ -325,11 +321,11 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 4:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_maintext,
         c_white,
-        x + 20,
-        y + 20,
+        x + 30,
+        y + 15,
         290,
         0,
         1,
@@ -340,11 +336,11 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 5:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_maintext,
         c_white,
-        x + 20,
-        y + 20,
+        x + 30,
+        y + 15,
         290,
         0,
         1,
@@ -355,7 +351,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 6:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_plain,
         c_black,
         x,
@@ -370,7 +366,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 7:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_plain,
         c_black,
         x,
@@ -385,7 +381,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 8:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_plain,
         c_black,
         x,
@@ -400,7 +396,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 9:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_maintext,
         c_white,
         x + 20,
@@ -415,7 +411,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 10:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_maintext,
         c_white,
         x + 20,
@@ -430,7 +426,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 11:
-      TEXTSETUP = SCR_TEXTSETUP(
+      SCR_TEXTSETUP.call(this,
         fnt_maintext,
         c_white,
         x + 20,
@@ -446,9 +442,8 @@ function SCR_TEXTTYPE(typer, x, y) {
   }
 
   if (global.typer === 11 || global.typer === 112) {
-    TEXTSETUP.textspeed = 2;
+    this.textspeed = 2;
   }
-  return TEXTSETUP;
 }
 
 function snd_play(snd) {
@@ -1469,6 +1464,40 @@ function scr_interact() {
   this.myinteract = 1;
 }
 
+function scr_facechoice() {
+  if (!this.writer) return;
+  switch (global.facechoice) {
+    case 1:
+      instance_create(this.writer.x - 33, this.writer.y + 25, obj_face_torieltalk);
+      instance_create(0, 0, obj_torbody);
+      break;
+    case 2:
+      instance_create(this.writer.x - 36, this.writer.y + 25, obj_face_floweytalk);
+      break;
+    case 3:
+      instance_create(this.writer.x - 35, this.writer.y + 25, obj_face_sans);
+      break;
+    case 4:
+      instance_create(this.writer.x - 35, this.writer.y + 25, obj_face_papyrus);
+      break;
+    case 5:
+      instance_create(this.writer.x - 40, this.writer.y + 25, obj_face_undyne);
+      break;
+    case 6:
+      instance_create(this.writer.x - 39, this.writer.y + 25, obj_face_alphys);
+      break;
+    case 7:
+      instance_create(this.writer.x - 40, this.writer.y + 20, obj_face_asgore);
+      break;
+    case 8:
+      instance_create(this.writer.x - 18, this.writer.y + 45, obj_face_mettaton);
+      break;
+    case 9:
+      instance_create(this.writer.x - 30, this.writer.y + 30, obj_face_asriel);
+      break;
+  }
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -1496,4 +1525,5 @@ export {
   ossafe_fill_rectangle,
   scr_npcdir,
   scr_interact,
+  scr_facechoice,
 };

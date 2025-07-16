@@ -1,5 +1,5 @@
 import { SCR_TEXTTYPE, snd_play, scr_replace_buttons_pc, snd_stop, scr_setfont, SCR_NEWLINE } from '/imports/customFunctions.js';
-import { control_check_pressed } from '/imports/input.js'
+import { control_check_pressed, control_clear } from '/imports/input.js'
 import { string_char_at, floor, random, round, draw_set_color, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy, ord } from "/imports/assets/gamemakerFunctions.js"
 import { view_wview, view_current } from '/imports/view.js'
 import { fnt_comicsans, fnt_papyrus, fnt_main } from '/imports/assets.js'
@@ -17,12 +17,8 @@ function create() {
 		mystring[n] = global.msg[n];
 	}
 
-	const TEXTTYPE = SCR_TEXTTYPE(global.typer, 0, 0)
-
-	parent_alarm[0] = TEXTTYPE.textspeed;
-
 	return {
-		name: "obj_writer",
+		name: "writer",
 		sprite_index: null,
 		image_index: 0,
 		image_speed: 0,
@@ -35,25 +31,7 @@ function create() {
 		should_destroy: false,
 		depth: -500,
 
-		// SCR_TEXTTYPE
-
-		myfont: TEXTTYPE.myfont,
-		mycolor: TEXTTYPE.mycolor,
-		writingxend: TEXTTYPE.writingxend,
-		writingxend_base: TEXTTYPE.writingxend_base,
-		shake: TEXTTYPE.shake,
-		textspeed: TEXTTYPE.textspeed,
-		txtsound: TEXTTYPE.txtsound,
-		spacing: TEXTTYPE.spacing,
-		vspacing: TEXTTYPE.vspacing,
-		vtext: TEXTTYPE.vtext,
-		htextscale: TEXTTYPE.htextscale,
-		vtextscale: TEXTTYPE.vtextscale,
-
 		// obj_base_writer
-
-		writingx: round(TEXTTYPE.writingx),
-		writingy: round(TEXTTYPE.writingy),
 		stringno: 0,
 		stringpos: 0,
 		halt: 0,
@@ -79,6 +57,7 @@ function create() {
 		draw,
 		step,
 		beginStep,
+		roomStart,
 	}
 }
 
@@ -348,7 +327,7 @@ function parent_beginStep() {
 }
 
 function parent_step() {
-	if (control_check_pressed(0) === 1) {
+	if (control_check_pressed(0) === true) {
 		this.parent_user0();
 	}
 }
@@ -664,15 +643,15 @@ function parent_draw() {
 		}
 		else if (this.ch == "/")
 		{
-				halt = 1;
+				this.halt = 1;
 				var nextch = string_char_at(this.originalstring, n + 1);
 				
 				if (nextch == "%")
-						halt = 2;
+						this.halt = 2;
 				else if (nextch == "^" && string_char_at(this.originalstring, n + 2) != "0")
-						halt = 4;
+						this.halt = 4;
 				else if (nextch == "*")
-						halt = 6;
+						this.halt = 6;
 				
 				break;
 		}
@@ -967,4 +946,15 @@ function draw() {
 	this.parent_draw();
 }
 
-export { create, updateParentAlarms, updateGamemakerFunctions, parent_beginStep, beginStep, parent_step, step, parent_user0, parent_user1, parent_draw, draw }; 
+function roomStart() {
+	SCR_TEXTTYPE.call(this, global.typer, 0, 0);
+	this.writingx = round(this.writingx);
+	this.writingy = round(this.writingy);
+	this.x = round(this.x);
+	this.y = round(this.y);
+	this.parent_alarm[0] = this.textspeed;
+	this.writingx = this.x + this.writingx;
+	this.writingy = this.y + this.writingy;
+}
+
+export { create, updateParentAlarms, updateGamemakerFunctions, parent_beginStep, beginStep, parent_step, step, parent_user0, parent_user1, parent_draw, draw, roomStart }; 

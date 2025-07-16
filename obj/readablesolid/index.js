@@ -1,5 +1,6 @@
 import { draw_sprite_ext, instance_create, instance_exists } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
 import * as parent from "/obj/interactable/index.js"
 import * as obj_dialoguer from "/obj/dialoguer/index.js"
@@ -28,6 +29,9 @@ function create() {
 
 		// any variables assigned inside create code
 		myinteract: 0,
+
+		// objects
+		obj_dialoguer,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
@@ -77,12 +81,12 @@ function alarm0() {
 function step() {
 	if (this.myinteract === 1) {
 		global.interact = 1;
-		alarm[0] = 1;
+		this.alarm[0] = 1;
 		this.myinteract = 2
 	}
 
 	if (this.myinteract === 3) {
-		if (instance_exists(this.mydialoguer) === false) {
+		if (instance_exists(obj_dialoguer) === false) {
 			global.interact = 0;
 			this.myinteract = 0;
 		}

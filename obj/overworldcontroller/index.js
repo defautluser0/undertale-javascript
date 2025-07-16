@@ -823,7 +823,7 @@ function draw() {
 			}
 	}
 
-	if (global.menuno == 9 && instance_exists(obj_dialoguer) == 0)
+	if (global.menuno == 9 && instance_exists(obj_dialoguer) == false)
 	{
 			global.menuno = -1;
 			global.interact = 0;

@@ -68,7 +68,12 @@ function updateSprite() {
 
 function alarm0() {
 	this.myinteract = 3;
-	global.msc = 9999;
+	global.msg[0] = " MROWW /";
+	global.msg[1] = " HOW are you reading thios ???? /";
+	global.msg[2] = " wait are you reading the source /";
+	global.msg[3] = " cool /";
+	global.msg[4] = " no but seriously if this is actually ingame please report this error /%%";
+	global.msg[5] = " %%%"
 	global.typer = 5;
 	global.facechoice = 0;
 	global.faceemotion = 0;
@@ -85,7 +90,7 @@ function step() {
 
 	if (this.myinteract == 3)
 	{
-		if (instance_exists(this.mydialoguer) == 0)
+		if (instance_exists(obj_dialoguer) === false)
 		{
 			global.interact = 0;
 			this.myinteract = 0;

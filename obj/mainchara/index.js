@@ -1,13 +1,15 @@
-import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, script_execute } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, script_execute, getBoundingBox, instances } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, c_gray, c_black, snd_splash, snd_squeak } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 import { scr_hardmodename, snd_play, scr_interact } from "/imports/customFunctions.js"
 import { view_xview, view_yview, view_wview, view_hview } from "/imports/view.js"
 import { control_check_pressed, control_clear } from "/imports/input.js"
 
-import * as obj_shaker from "/obj/shaker/index.js"
-import * as obj_markerB from "/obj/markerB/index.js"
-import * as obj_interactable from "/obj/interactable/index.js"
+import * as obj_shaker from "/obj/shaker/index.js";
+import * as obj_markerA from "/obj/markerA/index.js";
+import * as obj_markerB from "/obj/markerB/index.js";
+import * as obj_interactable from "/obj/interactable/index.js";
+import * as obj_doorparent from "/obj/doorparent/index.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -27,7 +29,7 @@ function create() {
 
 	global.phasing = 0;
 
-	global.currentroom = `${window.location.href.slice(3,39)}_${window.location.href.slice(40).split("/")[0]}`;
+	global.currentRoom = `${window.location.href.slice(35,39)}_${window.location.href.slice(40).split("/")[0]}`;
 
 	let dsprite = "";
 	let rsprite = "";
@@ -87,6 +89,8 @@ function create() {
 		h_skip: 0,
 		uncan: 0,
 		m_override: 0,
+		delayStep: 1,
+
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
@@ -126,6 +130,8 @@ function updateGamemakerFunctions() {
 	this.xprevious = this.x;
 	this.previousy = this.y;
 	this.yprevious = this.y;
+
+	getBoundingBox.call(this);
 }
 
 function updateSprite() {
@@ -154,6 +160,80 @@ function updateSprite() {
 }
 
 function roomStart() {
+	if (global.interact == 3)
+	{
+		if (global.entrance > 0)
+		{
+			global.interact = 0;
+			
+			if (global.entrance == 1)
+			{
+				this.x = instances.get(obj_markerA)[0].x;
+				this.y = instances.get(obj_markerA)[0].y;
+			}
+			
+			if (global.entrance == 2)
+			{
+				this.x = instances.get(obj_markerB)[0].x;
+				this.y = instances.get(obj_markerB)[0].y;
+			}
+			
+			if (global.entrance == 4)
+			{
+				this.x = instances.get(obj_markerC)[0].x;
+				this.y = instances.get(obj_markerC)[0].y;
+			}
+			
+			if (global.entrance == 5)
+			{
+				this.x = instances.get(obj_markerD)[0].x;
+				this.y = instances.get(obj_markerD)[0].y;
+			}
+			
+			if (global.entrance == 18)
+			{
+				this.x = instances.get(obj_markerr)[0].x;
+				this.y = instances.get(obj_markerr)[0].y;
+			}
+			
+			if (global.entrance == 19)
+			{
+				this.x = instances.get(obj_markers)[0].x;
+				this.y = instances.get(obj_markers)[0].y;
+			}
+			
+			if (global.entrance == 20)
+			{
+				this.x = instances.get(obj_markert)[0].x;
+				this.y = instances.get(obj_markert)[0].y;
+			}
+			
+			if (global.entrance == 21)
+			{
+				this.x = instances.get(obj_markeru)[0].x;
+				this.y = instances.get(obj_markeru)[0].y;
+			}
+			
+			if (global.entrance == 22)
+			{
+				this.x = instances.get(obj_markerv)[0].x;
+				this.y = instances.get(obj_markerv)[0].y;
+			}
+			
+			if (global.entrance == 23)
+			{
+				this.x = instances.get(obj_markerw)[0].x;
+				this.y = instances.get(obj_markerw)[0].y;
+			}
+			
+			if (global.entrance == 24)
+			{
+				this.x = instances.get(obj_markerX)[0].x;
+				this.y = instances.get(obj_markerX)[0].y;
+			}
+		}
+	}
+
 	if (this.x % 3 === 2) {
 		this.x += 1;
 	}
@@ -168,80 +248,6 @@ function roomStart() {
 
 	if (this.y % 3 === 1) {
 		this.y -= 1;
-	}
-
-	if (global.interact == 3)
-	{
-		if (global.entrance > 0)
-		{
-			global.interact = 0;
-			
-			if (global.entrance == 1)
-			{
-					this.x = obj_markerA.x;
-					this.y = obj_markerA.y;
-			}
-			
-			if (global.entrance == 2)
-			{
-					this.x = obj_markerB.x;
-					this.y = obj_markerB.y;
-			}
-			
-			if (global.entrance == 4)
-			{
-					this.x = obj_markerC.x;
-					this.y = obj_markerC.y;
-			}
-			
-			if (global.entrance == 5)
-			{
-					this.x = obj_markerD.x;
-					this.y = obj_markerD.y;
-			}
-			
-			if (global.entrance == 18)
-			{
-					this.x = obj_markerr.x;
-					this.y = obj_markerr.y;
-			}
-			
-			if (global.entrance == 19)
-			{
-					this.x = obj_markers.x;
-					this.y = obj_markers.y;
-			}
-			
-			if (global.entrance == 20)
-			{
-					this.x = obj_markert.x;
-					this.y = obj_markert.y;
-			}
-			
-			if (global.entrance == 21)
-			{
-					this.x = obj_markeru.x;
-					this.y = obj_markeru.y;
-			}
-			
-			if (global.entrance == 22)
-			{
-					this.x = obj_markerv.x;
-					this.y = obj_markerv.y;
-			}
-			
-			if (global.entrance == 23)
-			{
-					this.x = obj_markerw.x;
-					this.y = obj_markerw.y;
-			}
-			
-			if (global.entrance == 24)
-			{
-					this.x = obj_markerX.x;
-					this.y = obj_markerX.y;
-			}
-		}
 	}
 	
 	if (global.facing === 0)
@@ -261,6 +267,7 @@ function roomStart() {
 	}
 
 	this.depth = 50000 - ((this.y * 10) + (this.sprite_height * 10));
+	getBoundingBox.call(this);
 }
 
 function endStep() {
@@ -478,6 +485,12 @@ function step() {
 
 	if (control_check_pressed(2))
 			this.user2();
+
+	this.door = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_doorparent, true, false)
+
+	if (this.door && this.delayStep-- > 0) {
+		this.door.user9();
+	}
 
 	if (instance_exists("obj_battler") === false)
 	{

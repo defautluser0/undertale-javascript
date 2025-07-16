@@ -1,4 +1,4 @@
-import { draw_sprite_ext, instance_create, room_goto, room_next, room_goto_next } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_create, room_goto, room_previous } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js"
 
@@ -12,7 +12,7 @@ function create() {
 	// create code
 
 	return {
-		name: "doorA", // sprite name
+		name: "doorB", // sprite name
 		depth: 0, // object depth
 		image_xscale: 1, // sprite scale
 		image_yscale: 1, // sprite scale
@@ -22,7 +22,7 @@ function create() {
 		image_index: 0, // sprite frame index
 		image_speed: 0, // sprite frame speed
 		image_number: 0, // sprite frame number
-		sprite_index: "spr_doorA", // sprite object
+		sprite_index: "spr_doorB", // sprite object
 		visible: false, // sprite visibility
 		parent: parent,
 
@@ -68,15 +68,11 @@ function updateSprite() {
 }
 
 function alarm2() {
-	global.entrance = 1;
+	global.entrance = 2;
 	instance_create(0, 0, obj_persistentfader)
 
 	if (global.currentRoom !== "room_castle_prebarrier") {
-		room_goto(room_next(global.currentRoom));
-	} else if (global.flag[7] === 1) {
-		room_goto("room_castle_trueexit");
-	} else {
-		room_goto_next();
+		room_goto(room_previous(global.currentRoom))
 	}
 }
 

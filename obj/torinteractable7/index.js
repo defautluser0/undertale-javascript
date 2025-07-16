@@ -4,6 +4,9 @@ import { scr_npcdir } from "/imports/customFunctions.js"
 import global from "/imports/assets/global.js"
 
 import * as parent from "/obj/readablesolid/index.js";
+import * as obj_dialoguer from "/obj/dialoguer/index.js"
+import * as obj_face_asriel from "/obj/face_asriel/index.js";
+import * as obj_face_torieltalk from "/obj/face_torieltalk/index.js"
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -42,6 +45,9 @@ function create() {
 		myinteract: 0,
 		facing: 1,
 		talkedto: 0,
+
+		// objects
+		obj_dialoguer,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
@@ -95,7 +101,7 @@ function roomStart() {
 	}
 
 	this.ex = 0;
-
+	
 	if (global.plot != 25)
 			this.ex = 1;
 
@@ -104,10 +110,9 @@ function roomStart() {
 
 	if (global.flag[7] == 1)
 			this.ex = 0;
-
+	
 	if (this.ex == 1)
 			instance_destroy(this);
-
 }
 
 function alarm0() {
@@ -254,13 +259,13 @@ function alarm0() {
 }
 
 function step() {
-	this.parent.step();
+	this.parent.step.call(this);
 }
 
 function beginStep() {
 	if (global.flag[7] == 0)
 	{
-			if (instance_exists("obj_face_torieltalk"))
+			if (instance_exists(obj_face_torieltalk))
 					this.image_index = obj_face_torieltalk.image_index;
 			else
 					this.image_index = 0;
@@ -268,7 +273,7 @@ function beginStep() {
 
 	if (global.flag[7] == 1)
 	{
-			if (instance_exists("obj_face_asriel"))
+			if (instance_exists(obj_face_asriel))
 					this.image_index = obj_face_asriel.image_index;
 			else
 					this.image_index = 0;
@@ -278,4 +283,4 @@ function beginStep() {
 
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, roomStart, alarm0, step, beginStep };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, roomStart, alarm0, step, beginStep, parent };

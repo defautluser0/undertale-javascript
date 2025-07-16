@@ -2,6 +2,7 @@ import { draw_sprite_ext, instance_create, instance_destroy } from "/imports/ass
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
+import * as parent from "/obj/readable/index.js"
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
 
 function create() {
@@ -22,6 +23,7 @@ function create() {
 		image_number: 0, // sprite frame number
 		sprite_index: "spr_interactable", // sprite object
 		visible: false, // sprite visibility
+		parent: parent,
 
 		alarm: alarm, // alarm array
 
@@ -34,6 +36,7 @@ function create() {
 		updateSprite,
 		roomStart,
 		alarm0,
+		step,
 	}
 }
 
@@ -65,18 +68,23 @@ function updateSprite() {
 }
 
 function roomStart() {
-	if (global.plot === 0) {
+	/*if (global.plot === 0) {
 		instance_destroy(this);
-	}
+	}*/
 }
 
 function alarm0() {
 	this.myinteract = 3;
-	global.msc = 500;
+	global.msg[0] = " * (Golden flowers.^1)&* (They must have&  broken your fall.)/%%"
+	global.msg[1] = " %%%"
 	global.typer = 5;
 	global.facechoice = 0;
 	global.faceemotion = 0;
 	this.mydialoguer = instance_create(0, 0, obj_dialoguer)
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, roomStart, alarm0 };
+function step() {
+	this.parent.step.call(this);
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, roomStart, alarm0, step, parent };

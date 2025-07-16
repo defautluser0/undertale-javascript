@@ -17,6 +17,24 @@ const spriteCache = {};
 const maskCache = {};
 const globalTintCache = new Map();
 
+function getBoundingBox() {
+  const scaleX = this.image_xscale ?? 1;
+  const scaleY = this.image_yscale ?? 1;
+
+  const sprite = this.sprite_index;
+  const frame = Math.round(this.image_index) || 0;
+  const path = `/spr/${sprite}/${sprite}_${frame}.png`;
+  const spriteData = loadImageCached(path, spriteCache);
+
+  const width = spriteData.img?.width ?? 32;
+  const height = spriteData.img?.height ?? 32;
+
+  this.bbox_left = this.x;
+  this.bbox_top = this.y;
+  this.bbox_right = this.x + width * scaleX;
+  this.bbox_bottom = this.y + height * scaleY;
+}
+
 // image cache loader
 function loadImageCached(path, cache) {
   if (cache[path]) {
@@ -381,11 +399,6 @@ function instance_create(x, y, obj) {
 
   instance.x = x;
   instance.y = y;
-  
-  if (instance.name === "obj_writer") {
-    instance.writingx = instance.x + instance.writingx;
-    instance.writingy = instance.y + instance.writingy;
-  }
 
   if (!instances.has(obj)) {
     instances.set(obj, []);
@@ -403,11 +416,39 @@ function instance_create(x, y, obj) {
  * @param {string} index The object asset to destroy instances of
  * @returns {void}
  */
-function instance_destroy(index) {
-  const list = instances.get(index._object);
-  if (list) {
-    const i = list.indexOf(index);
-    if (i !== -1) list.splice(i, 1);
+function instance_destroy(target) {
+  // Helper: is the instance of (or child of) obj?
+  function isInstanceOf(inst, objToMatch) {
+    let currentObj = inst._object;
+    while (currentObj) {
+      if (currentObj === objToMatch) return true;
+      currentObj = currentObj.parent ?? null;
+    }
+    return false;
+  }
+
+  // If `target` is a specific instance (has `_object`), just destroy it
+  if (target && typeof target === "object" && "_object" in target) {
+    target.destroy?.call(target);
+    target.cleanUp?.call(target);
+    const list = instances.get(target._object);
+    if (list) {
+      const i = list.indexOf(target);
+      if (i !== -1) list.splice(i, 1);
+    }
+    return;
+  }
+
+  // Otherwise, assume it's an object module: destroy all matching instances (including children)
+  for (const list of instances.values()) {
+    // Make a copy so we can safely remove while iterating
+    const toDestroy = list.filter(inst => isInstanceOf(inst, target));
+    for (const inst of toDestroy) {
+      inst.destroy?.call(inst);
+      inst.cleanUp?.call(inst);
+      const i = list.indexOf(inst);
+      if (i !== -1) list.splice(i, 1);
+    }
   }
 }
 
@@ -786,7 +827,7 @@ function rgbToHex(r, g, b) {
 }
 
 function room_next(room) {
-  if (typeof room !== "String") return;
+  if (typeof room !== "string") return;
 
   let roomIndex = rooms.indexOf(room)
 
@@ -795,11 +836,35 @@ function room_next(room) {
   return rooms[roomIndex + 1];
 }
 
+function room_previous(room) {
+  if (typeof room !== "string") return;
+
+  let roomIndex = rooms.indexOf(room)
+
+  if (roomIndex === -1) return -1;
+
+  return rooms[roomIndex - 1];
+}
+
 function room_goto_next() {
   room_goto(room_next(global.currentRoom));
 }
 
+function room_goto_previous() {
+  room_goto(room_previous(global.currentRoom));
+}
+
 function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
+  if (
+    (
+      typeof this.bbox_left !== "number" ||
+      typeof this.bbox_right !== "number" ||
+      typeof this.bbox_top !== "number" ||
+      typeof this.bbox_bottom !== "number"
+    ) && this.name === "mainchara"
+  ) {
+    return; // or call getBoundingBox.call(this) here
+  }
   function isInstanceOf(inst, objToMatch) {
     let currentObj = inst._object;
     while (currentObj) {
@@ -814,8 +879,6 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       if (notme && inst === this) continue;
 
       if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
-
-      if (!inst.visible || inst.image_alpha === 0) continue;
 
       const bx = inst.x;
       const by = inst.y;
@@ -841,13 +904,19 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       } else {
         // Precise pixel collision using mask cache
         const sprite = inst.sprite_index;
-        const frame = Math.floor(inst.image_index) || 0;
-        const url = `/spr/masks/${sprite}_${frame}.png`;
+        const frame = Math.round(inst.image_index) || 0;
+        let url = `/spr/masks/${sprite}_${frame}.png`;
 
-        const mask = loadImageCached(url, maskCache);
+        let mask = loadImageCached(url, maskCache);
 
+        // Fallback to frame 0 mask if current frame's mask isn't available
+        if (!mask.loaded && frame !== 0) {
+          url = `/spr/masks/${sprite}_0.png`;
+          mask = loadImageCached(url, maskCache);
+        }
+
+        // Still skip if fallback mask not ready
         if (!mask.loaded || !mask.imageData) {
-          // If mask not loaded yet, skip this instance for now
           continue;
         }
 
@@ -897,4 +966,67 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
   return null;
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_goto_next, collision_rectangle };
+function collision_point(x, y, obj, prec = false, notme = false) {
+  function isInstanceOf(inst, objToMatch) {
+    let current = inst._object;
+    while (current) {
+      if (current === objToMatch) return true;
+      current = current.parent ?? null;
+    }
+    return false;
+  }
+
+  for (const list of instances.values()) {
+    for (const inst of list) {
+      if (notme && inst === this) continue;
+      if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
+
+      const bx = inst.x;
+      const by = inst.y;
+
+      const sprite = inst.sprite_index;
+      const frame = Math.round(inst.image_index) || 0;
+      const url = `/spr/${sprite}/${sprite}_${frame}.png`;
+      const scaleX = inst.image_xscale ?? 1;
+      const scaleY = inst.image_yscale ?? 1;
+
+      const spriteData = spriteCache[url];
+      if (!spriteData?.img?.width || !spriteData?.img?.height) continue;
+
+      const width = spriteData.img.width * scaleX;
+      const height = spriteData.img.height * scaleY;
+
+      if (
+        x >= bx &&
+        y >= by &&
+        x < bx + width &&
+        y < by + height
+      ) {
+        if (!prec) return inst;
+
+        const maskUrl = `/spr/masks/${sprite}_${frame}.png`;
+        const mask = loadImageCached(maskUrl, maskCache);
+        if (!mask.loaded || !mask.imageData) continue;
+
+        const mx = Math.floor((x - bx) / scaleX);
+        const my = Math.floor((y - by) / scaleY);
+
+        if (
+          mx < 0 || my < 0 ||
+          mx >= mask.imageData.width || my >= mask.imageData.height
+        ) continue;
+
+        const idx = (my * mask.imageData.width + mx) * 4;
+        const r = mask.imageData.data[idx];
+        const g = mask.imageData.data[idx + 1];
+        const b = mask.imageData.data[idx + 2];
+
+        if (r === 255 && g === 255 && b === 255) return inst;
+      }
+    }
+  }
+
+  return null;
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, getBoundingBox };
