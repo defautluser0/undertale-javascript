@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNDERTALE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <canvas id="gameCanvas" width="640" height="480"></canvas>
+  <script type="module">
+    import roomSize from '/imports/assets/roomSize.js'
+
+    roomSize.width = 300;  // room width in px
+    roomSize.height = 420; // room height in px
+
+  </script>
+  <script src="/imports/howler.js"></script>
+  <script type="module">
+    import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
+		import { instance_create, instances, secondFont, draw_text, draw_background } from "/imports/assets/gamemakerFunctions.js"
+    import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
+		import global from "/imports/assets/global.js"
+
+    import * as obj_mainchara from '/obj/mainchara/index.js'
+    import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js'
+		import * as screenUpdater from '/obj/screen/index.js'
+    import * as obj_doorB from '/obj/doorB/index.js'
+    import * as obj_doorA from '/obj/doorA/index.js'
+    import * as obj_markerA from '/obj/markerA/index.js'
+    import * as obj_markerB from '/obj/markerB/index.js'
+
+		const allInstances = [];
+
+    instance_create(120, 410, obj_doorB);
+    instance_create(140, 410, obj_doorB);
+    instance_create(160, 410, obj_doorB);
+    instance_create(180, 410, obj_doorB);
+    instance_create(150, 378, obj_markerA);
+    instance_create(170, 360, obj_mainchara);
+    instance_create(0, 60, obj_overworldcontroller);
+
+    // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
+    // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
+    const FPS = 30;
+    const FRAME_DURATION = 1000 / FPS;
+    let lastFrameTime = 0;
+    let fpsCounter = 0;
+    let lastFpsUpdate = performance.now();
+    let currentFps = 0;
+    function game_loop(currentTime) {
+      const elapsed = currentTime - lastFrameTime;
+
+      allInstances.length = 0;
+
+      if (elapsed >= FRAME_DURATION) {
+        lastFrameTime = currentTime;
+
+        fpsCounter++;
+
+        const now = currentTime;
+        if (now - lastFpsUpdate >= 1000) {
+          currentFps = fpsCounter;
+          fpsCounter = 0;
+          lastFpsUpdate = now;
+        }
+        
+        screenUpdater.beginStep();
+        control_update();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.beginStep?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateAlarms?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.step?.call(instance);
+          }
+        }
+        screenUpdater.endStep();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.endStep?.call(instance);
+          }
+        }
+        draw_background("bg_floweyglow", 0, 0)
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            allInstances.push({ obj, instance });
+          }
+        }
+
+        allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
+
+        for (const { obj,  instance } of allInstances) {
+          obj.draw?.call(instance);
+        }
+        
+        for (const { obj,  instance } of allInstances) {
+          obj.updateSprite?.call(instance);
+        }
+
+        if (global.debug === 1 && secondFont) {
+          draw_text(15 + view_xview[view_current], 15 + view_yview[view_current], currentFps, 1);
+        }
+
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateGamemakerFunctions?.call(instance);
+          }
+        }
+
+        updateCamera(instances.get(obj_mainchara)[0]) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
+        screenUpdater.updateScreen();
+
+        input_update();
+
+        if (global.roomEnd && !global.eventDone) {
+          global.eventDone = true;
+          for (const [obj, instanceList] of instances) {
+            for (const instance of instanceList) {
+              obj.roomEnd?.call(instance);
+            }
+          }
+        }
+
+        if (global.roomEnd && global.eventDone && global.nextRoom !== null && global.nextRoom.slice(1,5) + "_" + global.nextRoom.slice(6).split("/")[0] !== global.currentRoom) {
+          global.eventDone = false;
+          let nextRoom = global.nextRoom
+          global.nextRoom = null;
+          window.location.href = nextRoom;
+        }
+      }
+
+      requestAnimationFrame(game_loop);
+    }
+
+		window.addEventListener("keydown", e => {
+      keyboard[e.code] = true;
+      _key_state[e.code] = true;
+    });
+    window.addEventListener("keyup", e => {
+      keyboard[e.code] = false;
+      _key_state[e.code] = false;
+    });
+
+    // room code (object positioning and such) goes here
+
+    // starts the game loop once everything has been defined
+    window.addEventListener('load', () => {
+      requestAnimationFrame(game_loop);
+    })
+  </script>
+</body>
+
+</html>
