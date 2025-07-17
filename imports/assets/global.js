@@ -171,4 +171,78 @@ if (window.navigator.userAgent === "MEOW Debugger") {
   global.debug = 0;
 }
 
+if (!global.maskCache) {
+  global.maskCache = {};
+
+  const requiredMasks = {
+    "/spr/masks/spr_maincharau_0.png": "/spr/masks/spr_maincharau_0.png",
+    "/spr/masks/spr_maincharau_1.png": "/spr/masks/spr_maincharau_0.png",
+    "/spr/masks/spr_maincharau_2.png": "/spr/masks/spr_maincharau_0.png",
+    "/spr/masks/spr_maincharau_3.png": "/spr/masks/spr_maincharau_0.png",
+    "/spr/masks/spr_maincharad_0.png": "/spr/masks/spr_maincharad_0.png",
+    "/spr/masks/spr_maincharad_1.png": "/spr/masks/spr_maincharad_0.png",
+    "/spr/masks/spr_maincharad_2.png": "/spr/masks/spr_maincharad_0.png",
+    "/spr/masks/spr_maincharad_3.png": "/spr/masks/spr_maincharad_0.png",
+    "/spr/masks/spr_maincharal_0.png": "/spr/masks/spr_maincharal_0.png",
+    "/spr/masks/spr_maincharal_1.png": "/spr/masks/spr_maincharal_0.png",
+    "/spr/masks/spr_maincharar_0.png": "/spr/masks/spr_maincharar_0.png",
+    "/spr/masks/spr_maincharar_1.png": "/spr/masks/spr_maincharar_0.png",
+    "/spr/masks/spr_doorA_0.png": "/spr/masks/spr_doorA_0.png",
+    "/spr/masks/spr_doorB_0.png": "/spr/masks/spr_doorB_0.png",
+    "/spr/masks/spr_doorC_0.png": "/spr/masks/spr_doorC_0.png",
+    "/spr/masks/spr_doorD_0.png": "/spr/masks/spr_doorD_0.png",
+    "/spr/masks/spr_doorX_0.png": "/spr/masks/spr_doorX_0.png"
+  };
+
+  for (const [path, filename] of Object.entries(requiredMasks)) {
+    if (!global.maskCache[path]) {
+      const img = new Image();
+      img.src = `${filename}`;
+
+      img.onload = () => {
+        // Draw on canvas to get base64
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, img.width, img.height)
+        const base64 = canvas.toDataURL("image/png");
+
+        // Store base64 and meta info in global.maskCache
+        global.maskCache[path] = {
+          loaded: true,
+          base64,
+          img,
+          imageData,
+        };
+      };
+
+      // Set a placeholder to avoid duplicate loading
+      global.maskCache[path] = { loaded: false, base64: null };
+    }
+  }
+}
+
+
+
+for (const [, entry] of Object.entries(global.maskCache)) {
+  if (entry.base64) {
+    const img = new Image();
+    img.src = entry.base64;
+
+    img.onload = () => {
+      entry.loaded = true;
+      entry.img = img;
+      const imgCanvas = document.createElement("canvas");
+      imgCanvas.width = img.width;
+      imgCanvas.height = img.height;
+      const imgCtx = imgCanvas.getContext("2d");
+      imgCtx.drawImage(img, 0, 0);
+      entry.imageData = imgCtx.getImageData(0, 0, img.width, img.height)
+    };
+  }
+}
+
+
 export default global;

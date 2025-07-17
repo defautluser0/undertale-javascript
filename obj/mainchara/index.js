@@ -16,6 +16,7 @@ import * as obj_sdl from "/obj/sdl/index.js";
 import * as obj_sdr from "/obj/sdr/index.js";
 import * as obj_sul from "/obj/sul/index.js";
 import * as obj_sur from "/obj/sur/index.js";
+import { draw_rectangle, draw_set_color } from "../../imports/assets/gamemakerFunctions.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -135,6 +136,7 @@ function updateGamemakerFunctions() {
 	}
 	getBoundingBox.call(this);
 
+
 	this.checkCol()
 
 	this.previousx = this.x;
@@ -144,6 +146,7 @@ function updateGamemakerFunctions() {
 }
 
 function updateSprite() {
+	if (this.visible) {
 	if (this.inwater == 0)
     this.img = draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, this.image_blend, this.image_alpha, 1);
 		if (this.img) {
@@ -165,7 +168,7 @@ function updateSprite() {
 
 	if (global.currentroom === "room_water_waterfall3")
 			draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, 1, 1, 0, c_black, this.image_alpha);
-	
+	}
 }
 
 function roomStart() {
@@ -590,7 +593,12 @@ function user2() {
 function checkCol() {
 	let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_solidnpcparent, false, false);
 	if (other) {
-		console.log("npc")
+		if (global.phasing === 0) {
+			this.x = this.xprevious;
+			this.y = this.yprevious;
+			getBoundingBox.call(this);
+			this.moving = 0;
+		}
 	}
 	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_solidparent, false, false)
 	if (other) {
@@ -598,6 +606,8 @@ function checkCol() {
 		{
 			this.x = this.xprevious;
 			this.y = this.yprevious;
+
+			getBoundingBox.call(this);
 			
 			if (global.interact == 0)
 			{
@@ -605,13 +615,13 @@ function checkCol() {
 				{
 					if (collision_rectangle.call(this, this.x + 2, this.y + 15, this.x + 18, this.y + 19, obj_solidparent, 0, 1) !== null)
 					{
-						if (global.left && collision_line.call(this, this.bbox_left, this.bbox_top, this.bbox_left, this.bbox_top, obj_solidparent, false, true) === null)
+						if (global.left && collision_line.call(this, this.bbox_left + 3, this.bbox_top, this.bbox_left, this.bbox_top, obj_solidparent, false, true) === null)
 						{
 							this.x -= 3;
 							global.facing = 3;
 						}
 						
-						if (global.right && collision_line.call(this, this.bbox_right, this.bbox_top, this.bbox_right, this.bbox_top, obj_solidparent, false, true) === null)
+						if (global.right && collision_line.call(this, this.bbox_right - 3, this.bbox_top, this.bbox_right, this.bbox_top + 15, obj_solidparent, false, true) === null)
 						{
 							this.x += 3;
 							global.facing = 1;
@@ -628,13 +638,13 @@ function checkCol() {
 				{
 					if (collision_rectangle.call(this, this.x + 2, this.y + 30, this.x + 19, this.y + 33, obj_solidparent, 0, 1) !== null)
 					{
-						if (global.left && collision_line.call(this, this.bbox_left, this.bbox_bottom, this.bbox_left, this.bbox_bottom, obj_solidparent, false, true) === null)
+						if (global.left && collision_line.call(this, this.bbox_left + 3, this.bbox_bottom, this.bbox_left, this.bbox_bottom, obj_solidparent, false, true) === null)
 						{
 							this.x -= 3;
 							global.facing = 3;
 						}
 						
-						if (global.right && collision_line.call(this, this.bbox_right, this.bbox_bottom, this.bbox_right, this.bbox_bottom, obj_solidparent, false, true) === null)
+						if (global.right && collision_line.call(this, this.bbox_right - 3, this.bbox_bottom, this.bbox_right, this.bbox_bottom, obj_solidparent, false, true) === null)
 						{
 							this.x += 3;
 							global.facing = 1;

@@ -117,7 +117,7 @@
           }
         }
 
-        if (global.roomEnd && global.eventDone && global.nextRoom !== null) {
+        if (global.roomEnd && global.eventDone && global.nextRoom !== null && global.nextRoom.slice(1,5) + "_" + global.nextRoom.slice(6).split("/")[0] !== window.location.href.slice(1,5) + "_" + window.location.href.slice(6).split("/")[0]) {
           global.eventDone = false;
           let nextRoom = global.nextRoom
           global.nextRoom = null;

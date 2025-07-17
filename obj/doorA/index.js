@@ -1,4 +1,4 @@
-import { draw_sprite_ext, instance_create, room_goto, room_next, room_goto_next } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_create, room_goto, room_next, room_goto_next, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js"
 
@@ -23,7 +23,7 @@ function create() {
 		image_speed: 0, // sprite frame speed
 		image_number: 0, // sprite frame number
 		sprite_index: "spr_doorA", // sprite object
-		visible: true, // sprite visibility
+		visible: false, // sprite visibility
 		parent: parent,
 
 		alarm: alarm, // alarm array
@@ -59,6 +59,13 @@ function updateGamemakerFunctions() {
 	if (this.image_index >= this.image_number) {
 		this.image_index -= this.image_number;
 	}
+
+	getBoundingBox.call(this);
+
+	this.xprevious = this.x;
+	this.yprevious = this.y;
+	this.previousx = this.x;
+	this.previousy = this.y;
 }
 
 function updateSprite() {

@@ -88,6 +88,9 @@ function loadImageCached(path, cache) {
   if (cache[path]) {
     return cache[path];
   }
+  if (global.maskCache[path]) {
+    return global.maskCache[path];
+  }
   const img = new Image();
   img.src = path;
   cache[path] = { img, loaded: false, imageData: null };
@@ -565,7 +568,6 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
 
   ctx.globalAlpha = alpha;
 
-  // Draw image centered
   ctx.drawImage(img, 0, 0);
 
   if (colour && colour.toLowerCase() !== c_white) {
@@ -911,8 +913,8 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       typeof this.bbox_bottom !== "number"
     )
   ) {
-    console.warn("bounding boxes not set. generating on", this);
-    getBoundingBox.call(this);
+    console.warn(`${this.name}'s bounding boxes not set.`);
+    return null;
   }
   function isInstanceOf(inst, objToMatch) {
     let currentObj = inst._object;
@@ -925,7 +927,14 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
 
   for (const list of instances.values()) {
     for (const inst of list) {
-      if (typeof inst.bbox_left !== "number") getBoundingBox.call(inst);
+      if (
+        typeof inst.bbox_left !== "number" ||
+        typeof inst.bbox_right !== "number" ||
+        typeof inst.bbox_top !== "number" ||
+        typeof inst.bbox_bottom !== "number"
+      ) {
+        continue;
+      }
       if (notme && inst === this) continue;
 
       if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
@@ -951,9 +960,15 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       const bottom = inst.bbox_bottom;
 
       if (!prec) {
-        // Bounding box collision (fast)
-        const hit = !(x2 < left || x1 > right || y2 < top || y1 > bottom);
-        if (hit) return inst;
+        const hit =
+          x1 < right &&
+          x2 > left &&
+          y1 < bottom &&
+          y2 > top;
+
+        if (hit) {
+          return inst;
+        }
       } else {
         // Precise pixel collision using mask cache
         const sprite = inst.sprite_index;
@@ -1032,7 +1047,6 @@ function collision_point(x, y, obj, notme = false) {
     for (const inst of list) {
       if (notme && inst === this) continue;
       if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
-      if (!inst.visible || inst.image_alpha === 0) continue;
 
       const sprite = inst.sprite_index;
       const frame = Math.round(inst.image_index) || 0;
