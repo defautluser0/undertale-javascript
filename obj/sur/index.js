@@ -1,4 +1,4 @@
-import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
 function create() {
@@ -50,6 +50,13 @@ function updateGamemakerFunctions() {
 	if (this.image_index >= this.image_number) {
 		this.image_index -= this.image_number;
 	}
+
+	getBoundingBox.call(this);
+
+	this.xprevious = this.x;
+	this.yprevious = this.y;
+	this.previousx = this.x;
+	this.previousy = this.y;
 }
 
 function updateSprite() {

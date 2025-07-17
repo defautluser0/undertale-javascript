@@ -1,4 +1,4 @@
-import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, collision_line, script_execute, getBoundingBox, instances } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, collision_line, collision_point, script_execute, getBoundingBox, instances } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, c_gray, c_black, snd_splash, snd_squeak } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 import { scr_hardmodename, snd_play, scr_interact } from "/imports/customFunctions.js"
@@ -661,17 +661,221 @@ function checkCol() {
 			this.moving = 0;
 		}
 	}
-	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sur, false, false)) {
-		console.log("sur")
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sul, false, false)
+	if (other) {
+		if (global.phasing === 0 && global.interact === 0) {
+			switch (global.facing) {
+				case 3:
+					if (collision_point.call(this, this.bbox_left - 3, this.bbox_bottom + 3, obj_solidparent, 0, 1) === null) {
+						this.x = this.xprevious - 3;
+						this.y = this.yprevious + 3;
+					} else {
+						this.x = this.xprevious;
+					}
+					break;
+				case 2:
+					if (collision_point.call(this, this.bbox_right + 3, this.bbox_top - 3, obj_solidparent, 0, 0) === null) {
+						this.x = this.xprevious + 3;
+						this.y = this.yprevious - 3;
+					} else {
+						this.y = this.yprevious;
+					}
+					break;
+				case 1:
+					this.y = this.yprevious;
+					this.x = this.xprevious + 3;
+					break;
+				case 0:
+					this.x = this.xprevious;
+					this.y = this.yprevious + 3;
+					break;
+			}
+
+			if (global.up && global.left) {
+				this.x = this.xprevious;
+				this.y = this.yprevious;
+			}
+
+			if ((this.x % 3) !== 0) {
+				this.x += 1;
+			}
+
+			if ((this.y % 3) !== 0) {
+				this.y += 1;
+			}
+
+			this.moving = 0;
+
+			getBoundingBox.call(this);
+		}
+
+		if (global.interact === 5 || global.interact === 1 || (global.interact === 3 && global.phasing === 0)) {
+			this.x = this.xprevious;
+			this.y = this.yprevious;
+			getBoundingBox.call(this);
+		}
 	}
-	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sul, false, false)) {
-		console.log("sul")
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sur, false, false)
+	if (other) {
+		if (global.phasing === 0 && global.interact === 0) {
+			switch (global.facing) {
+				case 1:
+					if (collision_point.call(this, this.bbox_left + 3, this.bbox_bottom + 3, obj_solidparent, 0, 1) === null) {
+						this.x = this.xprevious + 3;
+						this.y = this.yprevious + 3;
+					} else {
+						this.x = this.xprevious;
+					}
+					break;
+				case 2:
+					if (collision_point.call(this, this.bbox_right - 3, this.bbox_top - 3, obj_solidparent, 0, 0) === null) {
+						this.x = this.xprevious - 3;
+						this.y = this.yprevious - 3;
+					} else {
+						this.y = this.yprevious;
+					}
+					break;
+				case 0:
+					this.y = this.yprevious;
+					this.x = this.xprevious + 3;
+					break;
+				case 3:
+					this.x = this.xprevious;
+					this.y = this.yprevious - 3;
+					break;
+			}
+
+			if (global.up && global.right) {
+				this.x = this.xprevious;
+				this.y = this.yprevious;
+			}
+
+			if ((this.x % 3) !== 0) {
+				this.x -= 1;
+			}
+
+			if ((this.y % 3) !== 0) {
+				this.y += 1;
+			}
+
+			this.moving = 0;
+
+			getBoundingBox.call(this);
+		}
+
+		if (global.interact === 5 || global.interact === 1 || (global.interact === 3 && global.phasing === 0)) {
+			this.x = this.xprevious;
+			this.y = this.yprevious;
+			getBoundingBox.call(this);
+		}
 	}
-	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdr, false, false)) {
-		console.log("sdr")
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdl, false, false)
+	if (other) {
+		if (global.phasing === 0 && global.interact === 0) {
+			switch (global.facing) {
+				case 3:
+					if (collision_point.call(this, this.bbox_left - 2, this.bbox_bottom - 2, obj_solidparent, 0, 1) === null) {
+						this.x = this.xprevious - 3;
+						this.y = this.yprevious - 3;
+					} else {
+						this.x = this.xprevious;
+					}
+					break;
+				case 0:
+					if (collision_point.call(this, this.bbox_right + 3, this.bbox_top + 3, obj_solidparent, 0, 0) === null) {
+						this.x = this.xprevious + 3;
+						this.y = this.yprevious + 3;
+					} else {
+						this.y = this.yprevious;
+					}
+					break;
+				case 2:
+					this.y = this.yprevious;
+					this.x = this.xprevious - 3;
+					break;
+				case 1:
+					this.x = this.xprevious;
+					this.y = this.yprevious + 3;
+					break;
+			}
+
+			if (global.down && global.left) {
+				this.x = this.xprevious;
+				this.y = this.yprevious;
+			}
+
+			if ((this.x % 3) !== 0) {
+				this.x += 1;
+			}
+
+			if ((this.y % 3) !== 0) {
+				this.y -= 1;
+			}
+
+			this.moving = 0;
+
+			getBoundingBox.call(this);
+		}
+
+		if (global.interact === 5 || global.interact === 1 || (global.interact === 3 && global.phasing === 0)) {
+			this.x = this.xprevious;
+			this.y = this.yprevious;
+			getBoundingBox.call(this);
+		}
 	}
-	if (collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdl, false, false)) {
-		console.log("sdl")
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdr, false, false)
+	if (other) {
+		if (global.phasing === 0 && global.interact === 0) {
+			switch (global.facing) {
+				case 1:
+					if (collision_point.call(this, this.bbox_right + 2, this.bbox_top - 2, obj_solidparent, 0, 1) === null) {
+						this.x = this.xprevious + 3;
+						this.y = this.yprevious - 3;
+					} else {
+						this.x = this.xprevious;
+					}
+					break;
+				case 0:
+					if (collision_point.call(this, this.bbox_left - 3, this.bbox_bottom + 3, obj_solidparent, 0, 1) === null) {
+						this.x = this.xprevious - 3;
+						this.y = this.yprevious + 3;
+					} else {
+						this.y = this.yprevious;
+					}
+					break;
+				case 2:
+					this.y = this.yprevious;
+					this.x = this.xprevious - 3;
+					break;
+				case 3:
+					this.x = this.xprevious;
+					this.y = this.yprevious - 3;
+					break;
+			}
+
+			if (global.down && global.right) {
+				this.x = this.xprevious;
+				this.y = this.yprevious;
+			}
+
+			if ((this.x % 3) !== 0) {
+				this.x += 1;
+			}
+
+			if ((this.y % 3) !== 0) {
+				this.y -= 1;
+			}
+
+			this.moving = 0;
+
+			getBoundingBox.call(this);
+		}
+
+		if (global.interact === 5 || global.interact === 1 || (global.interact === 3 && global.phasing === 0)) {
+			this.x = this.xprevious;
+			this.y = this.yprevious;
+			getBoundingBox.call(this);
+		}
 	}
 }
 
