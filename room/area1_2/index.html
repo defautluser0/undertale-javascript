@@ -32,18 +32,56 @@
     import * as obj_doorAmusicfade from '/obj/doorAmusicfade/index.js'
     import * as obj_markerA from '/obj/markerA/index.js'
     import * as obj_markerB from '/obj/markerB/index.js'
+    import * as obj_solidtall from '/obj/solidtall/index.js'
+    import * as obj_solidsmall from '/obj/solidsmall/index.js'
+    import * as obj_solidlong from '/obj/solidlong/index.js'
+    import * as obj_floweytalker1 from '/obj/floweytalker1/index.js'
+    import * as obj_floweytrigger from '/obj/floweytrigger/index.js'
 
 		const allInstances = [];
 
+    instance_create(0, 100, obj_solidtall);
+    instance_create(300, 80, obj_solidtall);
+    instance_create(0, 200, obj_solidsmall);
+    instance_create(40, 180, obj_solidsmall);
+    instance_create(20, 180, obj_solidsmall);
+    instance_create(260, 180, obj_solidsmall);
+    instance_create(280, 180, obj_solidsmall);
+    instance_create(300, 200, obj_solidsmall);
+    instance_create(300, 300, obj_solidsmall);
+    instance_create(280, 320, obj_solidsmall);
+    instance_create(260, 340, obj_solidsmall);
+    instance_create(200, 380, obj_solidsmall);
+    instance_create(200, 400, obj_solidsmall);
+    instance_create(100, 400, obj_solidsmall);
+    instance_create(100, 380, obj_solidsmall);
+    instance_create(80, 360, obj_solidsmall);
+    instance_create(40, 340, obj_solidsmall);
+    instance_create(20, 320, obj_solidsmall);
+    instance_create(0, 300, obj_solidsmall);
+    instance_create(60, 360, obj_solidsmall);
+    instance_create(220, 360, obj_solidsmall);
+    instance_create(240, 360, obj_solidsmall);
+    instance_create(60, 160, obj_solidsmall);
+    instance_create(120, 150, obj_solidsmall);
+    instance_create(100, 150, obj_solidsmall);
+    instance_create(80, 160, obj_solidsmall);
+    instance_create(240, 160, obj_solidsmall);
+    instance_create(220, 160, obj_solidsmall);
     instance_create(120, 410, obj_doorB);
     instance_create(140, 410, obj_doorB);
     instance_create(160, 410, obj_doorB);
     instance_create(180, 410, obj_doorB);
     instance_create(150, 379, obj_markerA);
+    instance_create(148, 285, obj_floweytalker1);
+    instance_create(40, 330, obj_floweytrigger);
     instance_create(140, 150, obj_doorAmusicfade);
     instance_create(160, 150, obj_doorAmusicfade);
+    instance_create(150, 175, obj_markerB);
+    instance_create(180, 150, obj_solidlong);
     instance_create(170, 360, obj_mainchara);
     instance_create(0, 60, obj_overworldcontroller);
+    instance_create(180, 150, obj_solidlong);
 
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
