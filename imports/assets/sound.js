@@ -53,6 +53,18 @@ const mus_ruins = new Howl({
 const mus_flowey = new Howl({
   src: ["/imports/assets/mus/flowey.ogg"]
 })
+const mus_harpnoise = new Howl({
+  src: ["/imports/assets/mus/harpnoise.ogg"]
+})
+const mus_options_fall = new Howl({
+  src: ["/imports/assets/mus/options_fall.ogg"]
+})
+const mus_options_summer = new Howl({
+  src: ["/imports/assets/mus/options_summer.ogg"]
+})
+const mus_options_winter = new Howl({
+  src: ["/imports/assets/mus/options_winter.ogg"]
+})
 
 // snd_*
 const SND_TXT1 = new Howl({
@@ -111,6 +123,10 @@ export {
   mus_cymbal,
   mus_ruins,
   mus_flowey,
+  mus_harpnoise,
+  mus_options_winter,
+  mus_options_fall,
+  mus_options_summer,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,

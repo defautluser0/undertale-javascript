@@ -1,4 +1,4 @@
-import { draw_sprite_ext, instance_destroy, instance_exists, instance_create, getBoundingBox, collision_rectangle, instances } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_destroy, instance_exists, instance_create, getBoundingBox, collision_rectangle, instances, ini_open, ini_read_real, ini_write_real, ini_close } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, mus_flowey } from "/imports/assets.js";
 import { caster_load, caster_loop } from "/imports/customFunctions.js";
 import global from "/imports/assets/global.js";
@@ -118,10 +118,11 @@ function updateCol() {
 			global.interact = 1;
 
 			if (this.alter === 0) {
-				this.g = /*ini_read_real("Flowey", "Met1", 0)*/0;
-				this.truename = /*ini_read_real("Flowey", "truename", 0)*/0;
-				this.IK = /*ini_read_real("Flowey", "IK", 0)*/0;
-				this.NK = /*ini_read_real("Flowey", "NK", 0)*/0;
+				ini_open("undertale.ini")
+				this.g = ini_read_real("Flowey", "Met1", 0);
+				this.truename = ini_read_real("Flowey", "truename", 0);
+				this.IK = ini_read_real("Flowey", "IK", 0);
+				this.NK = ini_read_real("Flowey", "NK", 0);
 				caster_load(mus_flowey);
 				caster_loop(mus_flowey, 1, 1);
 				global.typer = 9;
@@ -139,7 +140,7 @@ function updateCol() {
 
 				if (this.g === 1) {
 					global.msc = 0;
-					global.msg[0] = " \\W* Howdy^2!&* I'm\\Y FLOWEY\\W.^2& * \\YFLOWEY\\W the  \\YFLOWER\\W!/"
+					global.msg[0] = " \\W* Howdy^2!&* I'm\\Y FLOWEY\\W.^2&* \\YFLOWEY\\W the \\YFLOWER\\W!/"
 					global.msg[1] = " * Hee hee hee.../"
 					global.msg[2] = " * Why'd you make me&  introduce myself?/"
 					global.msg[3] = " * It's rude to act&  like you don't&  know who I am./"
@@ -157,7 +158,7 @@ function updateCol() {
 
 				if (this.spec === 1) {
 					global.msc = 0;
-					// ini_write_real("Flowey", "Alter", 1);
+					ini_write_real("Flowey", "Alter", 1);
 					global.msg[0] = " * Error/%%";
 					if (this.truename === 1) {
 						global.msg[0] = " * Really^1, \\[C]?/"
@@ -186,7 +187,8 @@ function updateCol() {
 					this.alarm[4] = 5;
 				}
 
-				// ini_write_real("Flowey", "Met1", g + 1);
+				ini_write_real("Flowey", "Met1", this.g + 1);
+				ini_close();
 				if (!instance_exists(obj_dialoguer)) {
 					instance_create(0, 0, obj_dialoguer)
 				}

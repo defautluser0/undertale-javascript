@@ -1,14 +1,26 @@
 import global from "/imports/assets/global.js";
 import { caster_loop, scr_namingscreen_setup, scr_namingscreen_check, scr_drawtext_centered, scr_setfont, scr_namingscreen } from "/imports/customFunctions.js";
 import { mus_menu0, mus_menu1, mus_menu2, mus_menu3, mus_menu4, mus_menu5, mus_menu6, c_white, c_gray, fnt_small } from "/imports/assets.js"
-import { draw_sprite_ext, draw_sprite, draw_background, draw_set_color, script_execute } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, draw_sprite, draw_background, draw_set_color, script_execute, ini_read_string, ini_read_real, ini_open, ini_close, file_exists } from "/imports/assets/gamemakerFunctions.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
 
 	// create code
-	let name = "";
+	ini_open("undertale.ini")
+	let name = ini_read_string("General", "Name", "");
+	let love = ini_read_real("General", "Love", 0);
+	let time = ini_read_real("General", "Time", 0);
+	let kills = ini_read_real("General", "Kills", 0);
+	let roome = ini_read_real("General", "Room", 0);
+	ini_close()
 	let hasname = 0;
+	if (name !== "") {
+		hasname = 1;
+	}
+	if (hasname === 1) {
+		global.charname = name;
+	}
 	let menusong = 0;
 	if (name !== "") {
 		hasname = 1;
@@ -17,18 +29,20 @@ function create() {
 		global.charname = name;
 	}
 
-	const m2 = 0;
-	const m3 = 0;
-	const m4 = 0;
-	const pd = 0;
-	const ud = 0;
-	const ad = 0;
-	const fd = 0;
-	const fk = 0;
-	const truereset = 0;
+	ini_open("undertale.ini")
+	const m2 = file_exists("file0");
+	const m3 = ini_read_real("Toriel", "TK", 0);
+	const m4 = ini_read_real("Toriel", "TS", 0);
+	const pd = ini_read_real("Papyrus", "PD", 0);
+	const ud = ini_read_real("Undyne", "UD", 0);
+	const ad = ini_read_real("Alphys", "AD", 0);
+	const fd = ini_read_real("F7", "F7", 0);
+	const fk = ini_read_real("Flowey", "K", 0);
+	const truereset = ini_read_real("EndF", "EndF", 0);
+	ini_close()
 	let mlevel = 0;
 
-	if (m2 > 0) {
+	if (m2 === true) {
 		if (m3 > 0) {
 			mlevel = 1;
 		}
@@ -133,10 +147,10 @@ function create() {
 		fd,
 		fk,
 		truereset,
-		love: 0,
-		time: 0,
-		kills: 0,
-		roome: 0,
+		love,
+		time,
+		kills,
+		roome,
 
 		// scr_namingscreen_setup
 		ascii_rows: namingscreen_setup.ascii_rows,

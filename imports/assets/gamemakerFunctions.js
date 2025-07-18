@@ -3,6 +3,23 @@ import { playingSounds, c_white, rooms } from '/imports/assets.js'
 import { ctx, ogCanvas } from '/imports/canvasSetup.js';
 import global from '/imports/assets/global.js';
 
+let ini_filename = null;
+let ini_data = {};
+let ini_loaded = false;
+const __ds_map_store = {};
+let __ds_map_next_id = 0;
+
+const spriteOffsets = {
+  "spr_tobdog_summer": {
+    xoffset: 15,
+    yoffset: 22,
+  },
+  "spr_tobdog_sleep_trash": {
+    xoffset: 13,
+    yoffset: 6,
+  }
+}
+
 const offCanvas = document.createElement("canvas");
 const offCtx = offCanvas.getContext("2d");
 offCtx.imageSmoothingEnabled = false;
@@ -215,7 +232,7 @@ function draw_set_color(col) {
  * @returns {void}
  */
 function draw_text(x, y, string, second) {
-  draw_text_transformed(round(x), round(y), string, 1, 1, 0, second);
+  draw_text_transformed(x, y, string, 1, 1, 0, second);
 }
 
 /**
@@ -230,65 +247,84 @@ function draw_text(x, y, string, second) {
  * @returns {void}
  */
 function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, second = 0) {
-  let font = {};
-  if (second === 0) {
-    font = currentFont;
-  } else if (second === 1) {
-    font = secondFont
-  } else if (second === 2) {
-    font = thirdFont
-  }
-
-  if (!font.image || font.loading) {
-    console.warn("Font not set or loaded. Drawing skipped for this frame.");
-    return;
-  }
-
-  x = round(x);
-  y = round(y);
-
-  let ogX = x;
-
-  ctx.save();
-
-  for (const char of String(string)) {
-    if (char === "#" || char === "\n" || char === "\\n") {
-      y += font.glyphs[" "].h;
-      x = ogX;
-      continue;
-    }
-    const glyph = font.glyphs[char];
-    if (!glyph) {
-      x += font.size * xscale; // fallback spacing
-      continue;
+  try {
+    let font = {};
+    if (second === 0) {
+      font = currentFont;
+    } else if (second === 1) {
+      font = secondFont;
+    } else if (second === 2) {
+      font = thirdFont;
     }
 
-    const offsetX = (glyph.offset || 0) * xscale;
-    const offsetY = (glyph.yoffset || 0) * yscale; // optional vertical offset if you have it
+    if (!font) {
+      throw new Error(`draw_text_transformed(${x}, ${y}, "${string}", ${xscale}, ${yscale}, ${angle}): font not set. Please run draw_set_font(font_object);.`)
+    }
 
+    if (!font.image || font.loading) {
+      console.warn("Font not loaded. Drawing skipped for this frame.");
+      return;
+    }
+
+    const lines = String(string).split(/\n|#/); // Handle line breaks
+    const lineHeight = font.glyphs[" "]?.h || font.size;
+
+    // Approximate total text block size
+    const textWidths = lines.map(line => {
+      return Array.from(line).reduce((w, char) => {
+        const glyph = font.glyphs[char];
+        return w + ((glyph?.shift ?? (glyph?.w + (glyph?.offset || 0))) * xscale);
+      }, 0);
+    });
+
+    // Save context and apply global transform
     ctx.save();
-    ctx.translate(x + offsetX, y - offsetY);
-    ctx.rotate((angle * Math.PI) / 180);
+    ctx.translate(x, y);
+    ctx.rotate(-((angle * Math.PI) / 180));
     ctx.scale(xscale, yscale);
 
-    if (currentDrawColor !== c_white) {
-      // Use tinted glyph canvas
-      const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
-      ctx.drawImage(tintedGlyphCanvas, 0, 0);
-    } else {
-      ctx.drawImage(
-        font.image,
-        glyph.x, glyph.y, glyph.w, glyph.h,
-        0, 0, glyph.w, glyph.h,
-      )
+    let yOffset = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      let xOffset = 0;
+
+      for (const char of line) {
+        const glyph = font.glyphs[char];
+        if (!glyph) {
+          xOffset += font.size; // fallback spacing
+          continue;
+        }
+
+        const offsetX = glyph.offset || 0;
+        const offsetY = glyph.yoffset || 0;
+
+        ctx.save();
+        ctx.translate(xOffset + offsetX, yOffset - offsetY);
+
+        if (currentDrawColor !== c_white) {
+          const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
+          ctx.drawImage(tintedGlyphCanvas, 0, 0);
+        } else {
+          ctx.drawImage(
+            font.image,
+            glyph.x, glyph.y, glyph.w, glyph.h,
+            0, 0, glyph.w, glyph.h
+          );
+        }
+
+        ctx.restore();
+
+        xOffset += (glyph.shift ?? (glyph.w + (glyph.offset || 0)));
+      }
+
+      yOffset += lineHeight;
     }
 
     ctx.restore();
-
-    x += (glyph.shift ?? (glyph.w + (glyph.offset || 0))) * xscale;
+  } catch(error) {
+    console.error(error);
   }
-
-  ctx.restore();
 }
 
 // draw_text_transformed helper
@@ -543,38 +579,48 @@ function draw_sprite(sprite, subimg, x, y) {
 function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha, returnImg = 0) {
   if (!sprite) return;
 
-  x = round(x);
-  y = round(y);
-
   subimg = Math.floor(subimg);
 
   const frame = subimg;
   const key = `/spr/${sprite}/${sprite}_${frame}.png`;
 
   const cached = loadImageCached(key, spriteCache);
-
-  if (!cached.loaded) {
-    // Image not loaded yet, skip drawing this frame
-    return;
-  }
+  if (!cached.loaded) return;
 
   const img = cached.img;
+  
+  const offset = spriteOffsets[sprite] || { xoffset: 0, yoffset: 0 };
+  const ox = offset.xoffset || 0;
+  const oy = offset.yoffset || 0;
 
   ctx.save();
-
-  ctx.translate(x, y);
+  
+  ctx.translate(x - ox * xscale, y - oy * yscale);
   ctx.rotate(rot * Math.PI / 180);
   ctx.scale(xscale, yscale);
-
   ctx.globalAlpha = alpha;
 
-  ctx.drawImage(img, 0, 0);
-
   if (colour && colour.toLowerCase() !== c_white) {
-    ctx.globalCompositeOperation = "source-in";
-    ctx.fillStyle = colour;
-    ctx.fillRect(0, 0, img.width, img.height);
-    ctx.globalCompositeOperation = "source-over";
+    // Tinting logic using offscreen canvas
+    const tintCanvas = document.createElement("canvas");
+    tintCanvas.width = img.width;
+    tintCanvas.height = img.height;
+
+    const tintCtx = tintCanvas.getContext("2d");
+
+    // Draw the sprite image first
+    tintCtx.drawImage(img, 0, 0);
+
+    // Apply the color overlay with source-in
+    tintCtx.globalCompositeOperation = "source-in";
+    tintCtx.fillStyle = colour;
+    tintCtx.fillRect(0, 0, img.width, img.height);
+
+    // Draw the tinted canvas onto main canvas
+    ctx.drawImage(tintCanvas, 0, 0);
+  } else {
+    // No tint, just draw normal
+    ctx.drawImage(img, 0, 0);
   }
 
   ctx.restore();
@@ -777,6 +823,7 @@ function real(n) {
  */
 function draw_rectangle(x1, y1, x2, y2, outline) {
   ctx.fillStyle = currentDrawColor;
+  ctx.strokeStyle = currentDrawColor
   x1 = round(x1);
   x2 = round(x2);
   y1 = round(y1);
@@ -1127,4 +1174,153 @@ function collision_line(x1, y1, x2, y2, obj, prec = false, notme = false) {
   return null;
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox };
+function ini_open(filename) {
+  ini_filename = filename;
+  const raw = localStorage.getItem(filename);
+  ini_data = raw ? JSON.parse(raw) : {};
+  ini_loaded = true;
+}
+
+function ini_close() {
+  if (!ini_filename || !ini_loaded) return;
+  localStorage.setItem(ini_filename, JSON.stringify(ini_data));
+}
+
+function ini_read_string(section, key, defaultValue = "") {
+  return ini_data?.[section]?.[key] ?? defaultValue;
+}
+
+function ini_read_real(section, key, defaultValue = 0) {
+  return parseFloat(ini_read_string(section, key, defaultValue)) || 0;
+}
+
+function ini_write_string(section, key, value) {
+  if (!ini_data[section]) ini_data[section] = {};
+  ini_data[section][key] = String(value);
+}
+
+function ini_write_real(section, key, value) {
+  ini_write_string(section, key, value);
+}
+
+function ini_section_exists(section) {
+  return ini_data.hasOwnProperty(section);
+}
+
+function ini_key_exists(section, key) {
+  return ini_data?.[section]?.hasOwnProperty(key) ?? false;
+}
+
+function ini_key_delete(section, key) {
+  if (ini_data?.[section]) {
+    delete ini_data[section][key];
+  }
+}
+
+function ini_section_delete(section) {
+  delete ini_data[section];
+}
+
+function ini_export() {
+  if (!ini_filename || !ini_loaded) return;
+
+  const blob = new Blob([JSON.stringify(ini_data, null, 2)], {
+    type: "application/json",
+  });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${ini_filename}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function ini_import(file) {
+  if (!ini_filename || !ini_loaded) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (typeof data === "object") {
+        ini_data = data;
+        localStorage.setItem(ini_filename, JSON.stringify(ini_data));
+        console.log(`INI import successful for ${ini_filename}`);
+      } else {
+        console.error("Invalid INI format");
+      }
+    } catch (err) {
+      console.error("Failed to parse INI JSON:", err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function file_exists(filename) {
+  return localStorage.getItem(filename) !== null;
+}
+
+function choose(...args) {
+  if (args.length === 0) return undefined;
+  const index = Math.floor(Math.random() * args.length);
+  return args[index];
+}
+
+/**
+ * With this function you can draw either an outline of a circle or a filled circle.
+ * 
+ * @param {number} x The x coordinate of the center of the circle.
+ * @param {number} y The y coordinate of the center of the circle.
+ * @param {number} r The circle's radius (length from its center to its edge)
+ * @param {boolean} outline Whether the circle is drawn filled (false) or as a one pixel wide outline (true).
+ */
+function draw_circle(x, y, r, outline) {
+  ctx.fillStyle = currentDrawColor;
+  ctx.strokeStyle = currentDrawColor
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+  if (outline) {
+    ctx.stroke()
+  } else {
+    ctx.fill()
+  }
+}
+
+// Creates a new map and returns its ID
+function ds_map_create() {
+  const id = __ds_map_next_id++;
+  __ds_map_store[id] = {};
+  return id;
+}
+
+// Adds a key-value pair to a map
+function ds_map_add(map_id, key, value) {
+  if (__ds_map_store[map_id]) {
+    __ds_map_store[map_id][key] = value;
+  }
+}
+
+// Retrieves a value from a map by key
+function ds_map_find_value(map_id, key) {
+  const map = __ds_map_store[map_id];
+  if (map && key in map) return map[key];
+  return undefined;
+}
+
+function string_copy(str, index, count = 1) {
+  return str.substring(index - 1, index - 1 + count);
+}
+
+function string_length(str) {
+  return str.length;
+}
+
+function string(str) {
+  return String(str);
+}
+
+function room_get_name(index) {
+  return rooms[index] ?? "";
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name };

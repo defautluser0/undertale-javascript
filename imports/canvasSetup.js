@@ -1,6 +1,6 @@
 // setup
 import global from '/imports/assets/global.js';
-import roomSize from '/imports/assets/roomSize.js'
+import roomSize from '/imports/assets/roomSize.js';
 
 const ogCanvas = document.getElementById("gameCanvas");
 const ogCtx = ogCanvas.getContext("2d");

@@ -1,10 +1,10 @@
 import { ogCtx, ctx, ogCanvas, canvas } from "/imports/canvasSetup.js"
 import { view_xview, view_yview, view_current, view_hview, view_wview } from "/imports/view.js"
-import roomSize from "/imports/assets/roomSize.js"
 import global from "/imports/assets/global.js"
-import { keyboard_check, room_goto, ord, keyboard_check_pressed, instance_exists, instance_create } from "/imports/assets/gamemakerFunctions.js";
+import { keyboard_check, room_goto, ord, keyboard_check_pressed, instance_exists, instance_create, ini_open, ini_close, ini_read_real, ini_read_string } from "/imports/assets/gamemakerFunctions.js";
 import { vk_up, vk_down, vk_left, vk_right, vk_escape } from "/imports/input.js"
 import * as obj_quittingmessage from "/obj/quittingmessage/index.js"
+import { textdata_en } from "/imports/assets/text.js";
 
 function updateScreen() {
 	const viewX = view_xview[view_current];
@@ -34,6 +34,11 @@ function updateScreen() {
   localStorage.setItem("global", JSON.stringify(global));
 }
 
+function create() {
+  if (!global.textdata_en) {
+    textdata_en();
+  }
+}
 
 function beginStep() {
   global.up = keyboard_check(vk_up);
@@ -69,6 +74,15 @@ function beginStep() {
   {
     global.quit = 0;
   }
+  ini_open("config.ini")
+  global.lang = ini_read_string("General", "lang", "");
+  global.screen_border_id = ini_read_real("General", "sb", -1);
+  global.button0 = ini_read_real("joypad1", "b0", -1);
+  global.button1 = ini_read_real("joypad1", "b1", -1);
+  global.button2 = ini_read_real("joypad1", "b2", -1);
+  global.analog_sense = ini_read_real("joypad1", "as", -1);
+  global.joy_dir = ini_read_real("joypad1", "jd", -1);
+  ini_close();
 }
 
 function endStep() {
@@ -78,4 +92,4 @@ function endStep() {
   }
 }
 
-export { updateScreen, beginStep, endStep };
+export { updateScreen, create, beginStep, endStep };

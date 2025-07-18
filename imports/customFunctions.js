@@ -15,6 +15,11 @@ import {
   string_delete,
   instance_create,
   draw_rectangle,
+  ds_map_find_value,
+  string_copy,
+  string_length,
+  string,
+  room_get_name,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -474,10 +479,6 @@ function SCR_NEWLINE() {
   }
 }
 
-function SCR_TEXT() {
-  console.log("not doing allat yet")
-}
-
 function scr_hardmodename(string) {
   return string.toLowerCase() === "frisk";
 }
@@ -842,7 +843,7 @@ function scr_namingscreen() {
           
         if (this.selected2 == 0)
         {
-          if (this.hasname == 1 && truereset == 0)
+          if (this.hasname == 1 && this.truereset == 0)
             this.naming = 3;
           else
             this.naming = 1;
@@ -1212,18 +1213,18 @@ function scr_namingscreen() {
   {
       if (this.hasname == 1)
       {
-          minutes = floor(time / 1800);
-          seconds = round(((time / 1800) - minutes) * 60);
+          this.minutes = floor(this.time / 1800);
+          this.seconds = round(((this.time / 1800) - this.minutes) * 60);
           
-          if (seconds == 60)
-              seconds = 0;
+          if (this.seconds == 60)
+              this.seconds = 0;
           
-          if (seconds < 10)
-              seconds = "0" + string(seconds);
+          if (this.seconds < 10)
+              this.seconds = "0" + String(this.seconds);
           
-          var roomname = scr_roomname(roome);
-          var lvtext = "LOVE " + string(love);
-          var timetext = "TIME " + string(minutes) + string(seconds);
+          var roomname = scr_roomname(this.roome);
+          var lvtext = "LOVE " + String(this.love);
+          var timetext = "TIME " + String(this.minutes) + String(this.seconds);
           var namesize = substr(this.name, 1, 6).length;
           var lvsize = lvtext.length;
           var timesize = timetext.length;
@@ -1279,25 +1280,18 @@ function scr_namingscreen() {
                   this.namingscreen_setup.selected3 = 1;
               else if (this.namingscreen_setup.selected3 == 1)
                   this.namingscreen_setup.selected3 = 0;
-              
-              keyboard_clear(vk_left);
-              keyboard_clear(vk_right);
           }
           
           if (keyboard_check_pressed(vk_down))
           {
               if (this.namingscreen_setup.selected3 == 0 || this.namingscreen_setup.selected3 == 1)
                   this.namingscreen_setup.selected3 = 2;
-              
-              keyboard_clear(vk_down);
           }
           
           if (keyboard_check_pressed(vk_up))
           {
               if (this.namingscreen_setup.selected3 == 2)
                   this.namingscreen_setup.selected3 = 0;
-              
-              keyboard_clear(vk_down);
           }
           
           var action = -1;
@@ -1307,7 +1301,7 @@ function scr_namingscreen() {
           
           if (action == 0)
           {
-              caster_free(all);
+              caster_free("all");
               
               if (0 === 0)
                   room_goto("room_area1");
@@ -1317,7 +1311,7 @@ function scr_namingscreen() {
           
           if (action == 1)
           {
-              if (this.hasname == 0 || scr_hardmodename(global.charname) || truereset > 0)
+              if (this.hasname == 0 || scr_hardmodename(global.charname) || this.truereset > 0)
               {
                   this.naming = 1;
               }
@@ -1325,7 +1319,7 @@ function scr_namingscreen() {
               {
                   this.charname = global.charname;
                   this.naming = 2;
-                  alerm = 0;
+                  this.alerm = 0;
                   r = 0.5;
                   q = 0;
               }
@@ -1335,7 +1329,7 @@ function scr_namingscreen() {
           
           if (action == 2)
           {
-              caster_free(all);
+              caster_free("all");
               room_goto("room_settings");
           }
       }
@@ -1505,6 +1499,100 @@ function scr_facechoice() {
   }
 }
 
+function scr_gettext(text_id, one, two, three, four, five, six, seven, eight, nine) {
+  let text = ds_map_find_value(global.text_data_en, text_id);
+
+  if (text === undefined) {
+    text = "";
+  }
+
+  for (var i = 1; i <= (text.length - 3); i++) {
+    if (text[i] === "\\" && text[i+1] === "[" && text[i+3] === "]") {
+      let sel = text[i+2];
+      let replace = "";
+
+      switch (sel) {
+        case "C":
+          replace = global.charname;
+          break;
+        case "G":
+          replace = String(global.gold);
+          break;
+        case "I":
+          replace = global.itemname[global.menucoord[1]];
+          break;
+        case "1":
+          replace = one;
+          break;
+        case "2":
+          replace = two;
+          break;
+        case "3":
+          replace = three;
+          break;
+        case "4":
+          replace = four;
+          break;
+        case "5":
+          replace = five;
+          break;
+        case "6":
+          replace = six;
+          break;
+        case "7":
+          replace = seven;
+          break;
+        case "8":
+          replace = eight;
+          break;
+        case "9":
+          replace = nine;
+          break;
+      }
+      let before = text.substring(1 - 1, i - 1 - 1);
+      let after = text.substring(i + 4, i - 1 +text.length)
+      text = before + replace + after;
+    }
+  }
+
+  return text;
+}
+
+function scr_roomname(argument0) {
+  if (argument0 === 0) {
+    return scr_gettext("roomname_0"); // --
+  }
+
+  let roomid = room_get_name(argument0);
+
+  if (substr(roomid, 1, 5) === "room_") {
+    let roomname = scr_gettext("roomname" + substr(roomid, 6));
+    if (roomname !== "") {
+      return roomname;
+    }
+  }
+  return " ";
+}
+
+function substr(str, pos, len) {
+  if (pos < 0) {
+    pos = strlen(str) + 1 + pos;
+  }
+  if (!len) {
+    len = (strlen(str) - pos) + 1
+  }
+
+  if (len > 0) {
+    return string_copy(str, len, pos);
+  } else {
+    return "";
+  }
+}
+
+function strlen(str) {
+  return string_length(str);
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -1524,7 +1612,6 @@ export {
   SCR_TEXTSETUP,
   SCR_TEXTTYPE,
   SCR_NEWLINE,
-  SCR_TEXT,
   scr_namingscreen_setup,
   scr_namingscreen_check,
   scr_namingscreen,
@@ -1534,4 +1621,8 @@ export {
   scr_npcdir,
   scr_interact,
   scr_facechoice,
+  scr_gettext,
+  scr_roomname,
+  substr,
+  strlen,
 };

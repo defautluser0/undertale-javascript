@@ -1,5 +1,4 @@
 /// global
-
 let global = {};
 
 if (localStorage.getItem("global") !== null && localStorage.getItem("global") !== "") {
@@ -116,6 +115,7 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
     hardmode: 0,
     menuchoice: [],
     gold: 0,
+    screen_border_id: 0,
   }
 
   for (let i = 0; i < 8; i += 1) {
