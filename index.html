@@ -23,4 +23,4 @@ testAutoplay()
   .catch(() => {
     alert("Please enable autoplay in your browser for audio to work properly. Do not open an issue if you dont follow this step.");
   });</script>
-<script>setTimeout(()=>{window.location="/room/introstory/"},2500);</script>
+<script>localStorage.setItem("global", "");setTimeout(()=>{window.location="/room/introstory/"},2500);</script>
