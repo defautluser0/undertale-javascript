@@ -27,34 +27,9 @@ function create() {
 	// create code
 	let count = 0;
 	let side = 0;
-	let writer = {};
 	global.facechange = 0;
 	let xx = view_xview[view_current];
 	let yy = view_yview[view_current];
-
-	if (instance_exists(obj_mainchara)) {
-		const found = (instances.get(obj_mainchara)).find(inst => inst.y > (yy + 130));
-		if (found) {
-			side = 0;
-
-			if (global.facechoice !== 0) {
-				writer = instance_create(xx + 68, yy - 150, OBJ_WRITER);
-				script_execute.call(this, scr_facechoice);
-			} else {
-				writer = instance_create(xx + 10, yy - 150, OBJ_WRITER);
-			}
-		} else {
-			side = 1;
-
-			if (global.facechoice != 0)
-			{
-				writer = instance_create(xx + 68, yy + 5, OBJ_WRITER);
-				script_execute.call(this, scr_facechoice);
-			} else {
-				writer = instance_create(xx + 10, yy + 5, OBJ_WRITER);
-			}
-		}
-	}
 
 	return {
 		name: "dialoguer", // sprite name
@@ -78,7 +53,6 @@ function create() {
 		side: side,
 		xx: xx,
 		yy: yy,
-		writer: writer,
 
 		// object functions. add to here if you want them to be accessible from this. context
 		updateAlarms,
@@ -87,6 +61,7 @@ function create() {
 		destroy,
 		step,
 		draw,
+		roomStart,
 	}
 }
 
@@ -210,40 +185,66 @@ function draw() {
 		this.yy = view_yview[view_current];
 		
 		if (instance_exists(this.writer)) {
-			if (this.writer.writingy < (this.yy + 80)) {
-				this.writer.writingy += 155;
-			}
-		}
-		if (instance_exists(obj_face)) {
-			if (instances.get(obj_face).find(inst => inst.y < this.yy + 80)) {
-				obj_face.y += 155;
-			}
-		}
-
-		draw_set_color(c_white);
-    draw_rectangle(view_xview[view_current] + 16, view_yview[view_current] + 160, view_xview[view_current] + 304, view_yview[view_current] + 235, false);
-    draw_set_color(c_black);
-    draw_rectangle(view_xview[view_current] + 19, view_yview[view_current] + 163, view_xview[view_current] + 301, view_yview[view_current] + 232, false);
-	} else {
-		this.yy = view_yview[view_current];
-		
-		if (instance_exists(this.writer)) {
 			if (this.writer.writingy > (this.yy + 80)) {
 				this.writer.writingy -= 155;
 			}
 		}
 		if (instance_exists(obj_face)) {
 			if (instances.get(obj_face).find(inst => inst.y > this.yy + 80)) {
-				instances.get(obj_face).y -= 155;
+				obj_face.y -= 155;
 			}
 		}
 
 		draw_set_color(c_white);
-		draw_rectangle(view_xview[view_current] + 16, view_yview[view_current] + 5, view_xview[view_current] + 304, view_yview[view_current] + 80, false);
+    draw_rectangle(view_xview[view_current] + 16, view_yview[view_current] + 5, view_xview[view_current] + 304, view_yview[view_current] + 80, false);
     draw_set_color(c_black);
     draw_rectangle(view_xview[view_current] + 19, view_yview[view_current] + 8, view_xview[view_current] + 301, view_yview[view_current] + 77, false);
+	} else {
+		this.yy = view_yview[view_current];
+		
+		if (instance_exists(this.writer)) {
+			if (this.writer.writingy < (this.yy + 80)) {
+				this.writer.writingy += 155;
+			}
+		}
+		if (instance_exists(obj_face)) {
+			if (instances.get(obj_face).find(inst => inst.y < this.yy + 80)) {
+				instances.get(obj_face)[0].y += 155;
+			}
+		}
+
+		draw_set_color(c_white);
+		draw_rectangle(view_xview[view_current] + 16, view_yview[view_current] + 160, view_xview[view_current] + 304, view_yview[view_current] + 235, false);
+    draw_set_color(c_black);
+    draw_rectangle(view_xview[view_current] + 19, view_yview[view_current] + 163, view_xview[view_current] + 301, view_yview[view_current] + 232, false);
 	}
 	this.count = 1;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, destroy, step, draw };
+function roomStart() {
+	if (instance_exists(obj_mainchara)) {
+		const found = (instances.get(obj_mainchara)).find(inst => inst.y > (this.yy + 130));
+		if (found) {
+			this.side = 0;
+
+			if (global.facechoice !== 0) {
+				this.writer = instance_create(this.xx + 68, this.yy - 5, OBJ_WRITER);
+				script_execute.call(this, scr_facechoice);
+			} else {
+				writer = instance_create(this.xx + 10, this.yy - 5, OBJ_WRITER);
+			}
+		} else {
+			this.side = 1;
+
+			if (global.facechoice != 0)
+			{
+				this.writer = instance_create(this.xx + 68, this.yy + 150, OBJ_WRITER);
+				script_execute.call(this, scr_facechoice);
+			} else {
+				this.writer = instance_create(this.xx + 10, this.yy + 150, OBJ_WRITER);
+			}
+		}
+	}
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, destroy, step, draw, roomStart };
