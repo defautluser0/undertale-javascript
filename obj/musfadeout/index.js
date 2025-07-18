@@ -12,7 +12,7 @@ function create() {
   const mysong = global.currentsong;
 
   return {
-    name: "objectname", // sprite name
+    name: "musfadeout", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
