@@ -70,7 +70,6 @@ function updateAlarms() {
 
 function updateGamemakerFunctions() {
 	this.image_index += this.image_speed;
-	this.image_index = this.image_index;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
