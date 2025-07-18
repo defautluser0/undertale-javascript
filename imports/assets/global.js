@@ -2,7 +2,7 @@
 
 let global = {};
 
-if (localStorage.getItem("global") !== null) {
+if (localStorage.getItem("global") !== null && localStorage.getItem("global") !== "") {
   global = JSON.parse(localStorage.getItem("global"));
 } else {
   global = {
