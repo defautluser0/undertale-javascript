@@ -2,9 +2,13 @@ import { draw_sprite_ext, instance_destroy, instance_exists, instance_create, ge
 import { c_white, mus_flowey } from "/imports/assets.js";
 import { caster_load, caster_loop } from "/imports/customFunctions.js";
 import global from "/imports/assets/global.js";
+
 import * as obj_floweytalker1 from "/obj/floweytalker1/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js";
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
+import * as obj_fader from "/obj/fader/index.js";
+import * as obj_battlerflowey from "/obj/battlerflowey/index.js"
 
 const parent = null;
 
@@ -45,6 +49,11 @@ function create() {
     updateSprite,
 		roomStart,
 		updateCol,
+		alarm4,
+		alarm3,
+		alarm2,
+		alarm0,
+		step,
   };
 }
 
@@ -129,13 +138,6 @@ function updateCol() {
 				global.facechoice = 2;
 				global.faceemotion = 0;
 				global.msc = 200;
-				global.msg[0] = " \\W* Howdy^2!&* I'm\\Y FLOWEY\\W.^2&* \\YFLOWEY\\W the \\YFLOWER\\W!/"
-				global.msg[1] = " * Hmmm.../"
-				global.msg[2] = " * You're new to the&  UNDERGROUND^2, aren'tcha?/"
-				global.msg[3] = " * Golly^1, you must be&  so confused./"
-				global.msg[4] = " * Someone ought to teach&  you how things work&  around here!/"
-				global.msg[5] = " * I guess little old me&  will have to do./"
-				global.msg[6] = " * Ready^2?&* Here we go!/%%"
 				this.spec = 0;
 
 				if (this.g === 1) {
@@ -193,11 +195,138 @@ function updateCol() {
 					instance_create(0, 0, obj_dialoguer)
 				}
 			} else {
-				global.plot = 1;
+				global.plot = 0;
 				this.conversation = 23;
 			}
 		}
 	}
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, updateCol };
+function alarm4() {
+	this.conversation += 1;
+}
+
+function alarm3() {
+	global.interact = 0;
+}
+
+function alarm2() {
+	instance_create(146, 260, obj_toroverworld1);
+	global.msc = 201;
+	global.typer = 4;
+	global.interact = 1;
+	global.facechoice = 1;
+	this.conversation = 3;
+
+	if (this.faketor === 1) {
+		global.msc = 0;
+		global.msg[0] = scr_gettext("obj_floweytrigger_122");
+    global.msg[1] = scr_gettext("obj_floweytrigger_123");
+    global.msg[2] = scr_gettext("obj_floweytrigger_124");
+    global.msg[3] = scr_gettext("obj_floweytrigger_125");
+    global.msg[4] = scr_gettext("obj_floweytrigger_126");
+    global.msg[5] = scr_gettext("obj_floweytrigger_127");
+    global.msg[6] = scr_gettext("obj_floweytrigger_128");
+    global.msg[7] = scr_gettext("obj_floweytrigger_129");
+
+		instance_destroy(temptor)
+	}
+
+	instance_create(0, 0, obj_dialoguer);
+}
+
+function alarm0() {
+	global.room_persistent = window.location.href;
+	global.plot = 0;
+	this.alarm[2] = 42;
+	instance_create(0, 0, obj_battlerflowey);
+}
+
+function step() {
+	if (this.conversation == 1 && instance_exists(OBJ_WRITER) == 0)
+	{
+			global.interact = 3;
+			this.alarm[0] = 1;
+			this.conversation = 2;
+			instance_create(0, 0, obj_fader);
+	}
+
+	if (this.conversation == 3 && instance_exists(obj_torface))
+			this.conversation = 3.5;
+
+	if (this.conversation == 3.5 && instance_exists(obj_torface) == 0)
+	{
+			global.room_persistent = "";
+			global.specialbattle = 0;
+			instances.get(obj_toroverworld1)[0].direction = 90;
+			instances.get(obj_toroverworld1)[0].speed = 2;
+			this.alarm[3] = 15;
+			this.conversation = 4;
+	}
+
+	if (this.conversation == 20 && instance_exists(OBJ_WRITER) == 0)
+	{
+			mus = instance_create(0, 0, obj_musfadeout);
+			global.interact = 1;
+			this.visible = false;
+			flow = obj_floweytalker1;
+			
+			instances.get(obj_floweytalker1)[0].visible = false;
+			
+			flow_m = scr_marker(flow.x, flow.y, spr_floweysink);
+			
+			scr_depth.call(flow_m);
+			
+			flow_m.image_speed = 0.25;
+			conversation = 21;
+	}
+
+	if (this.conversation == 21 && instance_exists(OBJ_WRITER) == 0)
+	{
+			if (flow_m.image_index >= 5)
+			{
+					flow_m.visible = false;
+					this.conversation = 21.2;
+					this.alarm[4] = 50;
+			}
+	}
+
+	if (this.conversation == 22.2 && instance_exists(OBJ_WRITER) == 0)
+	{
+			global.plot = 0;
+			
+			instance_destroy(obj_npc_marker);
+			
+			instance_destroy(obj_musfadeout);
+			
+			caster_free(global.currentsong);
+			this.conversation = 23;
+	}
+
+	if (this.conversation == 23)
+	{
+			temptor = scr_marker(146, view_yview[0] - 60, spr_toriel_d);
+			temptor.image_speed = 0.25;
+			temptor.vspeed = 2;
+			global.currentsong = caster_load("music/toriel.ogg");
+			caster_loop(global.currentsong, 0.7, 0.86);
+			this.conversation = 24;
+	}
+
+	if (this.conversation == 24)
+	{
+			scr_depth.call(this.temptor);
+			
+			if (temptor.y >= 258)
+			{
+					this.faketor = 1;
+					temptor.image_index = 0;
+					temptor.speed = 0;
+					temptor.image_speed = 0;
+					this.conversation = 25;
+					this.alarm[2] = 30;
+			}
+	}
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, updateCol, alarm4, alarm3, alarm2, alarm0, step };
