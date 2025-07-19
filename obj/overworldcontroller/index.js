@@ -1,9 +1,9 @@
-import { draw_sprite_ext, draw_sprite, instances, draw_set_color, draw_text, draw_text_transformed, keyboard_check_pressed } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, draw_sprite, instances, draw_set_color, draw_text, draw_text_transformed, keyboard_check_pressed, string } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, c_black, fnt_small, fnt_maintext, c_gray, snd_save, snd_select, snd_squeak } from "/imports/assets.js";
 import global from "/imports/assets/global.js"
 import { view_current, view_xview, view_yview } from "/imports/view.js"
 import * as obj_maincharaReal from "/obj/mainchara/index.js"
-import { ossafe_fill_rectangle, scr_setfont, snd_play } from "/imports/customFunctions.js"
+import { ossafe_fill_rectangle, scr_setfont, snd_play, scr_gettext } from "/imports/customFunctions.js"
 import { control_clear, control_check_pressed, vk_up, vk_down, vk_right, vk_left } from "/imports/input.js"
 
 function create() {
@@ -137,11 +137,11 @@ function draw() {
 					scr_setfont(fnt_small, 1);
 					var numpos = 23 + this.xx + "LV    ".length;
 					draw_text(23 + this.xx, 40 + this.moveyy, "LV", 1);
-					draw_text(numpos, 40 + this.moveyy, "    " + String(global.lv), 1);
+					draw_text(numpos, 40 + this.moveyy, "    " + string(global.lv), 1);
 					draw_text(23 + this.xx, 49 + this.moveyy, "HP", 1);
-					draw_text(numpos, 49 + this.moveyy, "    " + String(global.hp) + "/" + String(global.maxhp), 1);
+					draw_text(numpos, 49 + this.moveyy, "    " + string(global.hp) + "/" + string(global.maxhp), 1);
 					draw_text(23 + this.xx, 58 + this.moveyy, "G", 1);
-					draw_text(numpos, 58 + this.moveyy, "    " + String(global.gold), 1);
+					draw_text(numpos, 58 + this.moveyy, "    " + string(global.gold), 1);
 					scr_setfont(fnt_maintext, 0);
 					var name0_x = 23 + this.xx;
 					var name0_y = 20 + this.moveyy;
@@ -165,24 +165,24 @@ function draw() {
 							draw_set_color(c_gray);
 					
 					if (global.menuchoice[0] == 1)
-							draw_text(42 + xx0, 84 + this.yy, "ITEM")
+							draw_text(42 + xx0, 84 + this.yy, scr_gettext("field_menu_item"))
 					
 					draw_set_color(c_white);
 					
 					if (global.menuchoice[1] == 1)
-							draw_text(42 + this.xx, 102 + this.yy, "STAT")
+							draw_text(42 + this.xx, 102 + this.yy, scr_gettext("field_menu_stat"))
 					
 					if (global.menuchoice[2] == 1)
-							draw_text(42 + this.xx, 120 + this.yy, "CELL")
+							draw_text(42 + this.xx, 120 + this.yy, scr_gettext("field_menu_cell"))
 					
 					if (global.menuno == 1 || global.menuno == 5)
 					{
 							for (i = 0; i < 8; i += 1)
 									draw_text(116 + this.xx, 30 + this.yy + (i * 16), global.itemname[i]);
 							
-							draw_text(116 + this.xx, 170 + this.yy, "USE")
-							draw_text(116 + this.xx + 48, 170 + this.yy, "INFO")
-							draw_text(116 + this.xx + 105, 170 + this.yy, "DROP")
+							draw_text(116 + this.xx, 170 + this.yy, scr_gettext("item_menu_use"))
+							draw_text(116 + this.xx + 48, 170 + this.yy, scr_gettext("item_menu_info"))
+							draw_text(116 + this.xx + 105, 170 + this.yy, scr_gettext("item_menu_drop"))
 					}
 			}
 			
@@ -234,43 +234,23 @@ function draw() {
 							kills_y += 2;
 					}
 					
-					draw_text(stat_x, name_y, "\"" + String(global.charname) + "\"")
-					draw_text(stat_x, lv_y, "LV " + String(global.lv), 0);
-					draw_text(stat_x, hp_y, "HP " + String(global.hp) + " / " + String(global.maxhp), 0);
-					draw_text(stat_x, at_y, "AT " + String(global.at - 10) + " (" + String(global.wstrength) + ")", 0);
-					draw_text(stat_x, df_y, "DF " + String(global.df - 10) + " (" + String(global.adef) + ")", 0);
-					var weaponname = ""
-					switch (global.weapon) {
-						case 3:
-							weaponname = "Stick";
-							break;
-						case 13:
-							weaponname = "Toy Knife";
-							break;
-						case 14:
-							weaponname = "Tough Glove";
-							break;
-					}
-					draw_text(stat_x, weapon_y, "WEAPON: " + weaponname);
-					var armorname = "";
-					
-					switch (global.armor) {
-						case 4:
-							armorname = "Bandage";
-							break;
-						case 12:
-							armorname = "Faded Ribbon";
-							break;
-						case 64:
-							armorname = "Temmie Armor"
-							break;
+					draw_text(stat_x, name_y, scr_gettext("stat_menu_name"))
+					draw_text(stat_x, lv_y, scr_gettext("stat_menu_lv", string(global.lv)));
+					draw_text(stat_x, hp_y, scr_gettext("stat_menu_hp", string(global.hp), string(global.maxhp)));
+					draw_text(stat_x, at_y, scr_gettext("stat_menu_at", string(global.at - 10), string(global.wstrength)));
+					draw_text(stat_x, df_y, scr_gettext("stat_menu_df", string(global.df - 10), string(global.adef)));
+					draw_text(stat_x, weapon_y, scr_gettext("stat_menu_weapon", scr_gettext("item_name_" + string(global.weapon))));
+					var armorname = string(global.armor)
+
+					if (global.armor === 64) {
+						armorname = scr_gettext("stat_armor_temmie")
 					}
 					
-					draw_text(stat_x, armor_y, "ARMOR: " + armorname, 0);
-					draw_text(stat_x, gold_y, "GOLD: " + String(global.gold), 0)
+				draw_text(stat_x, armor_y, scr_gettext("stat_menu_armor", scr_gettext("item_name_" + armorname)));
+        draw_text(stat_x, gold_y, scr_gettext("stat_menu_gold"));
 					
 					if (global.kills > 20)
-							draw_text(kills_x, kills_y, "KILLS: " + String(global.kills));
+							draw_text(kills_x, kills_y, scr_gettext("stat_menu_kills", string(global.kills)));
 					
 					if (global.charname.length >= 7)
 					{
@@ -350,7 +330,7 @@ function draw() {
 					if (global.lv >= 20)
 							this.nextlevel = 0;
 					
-					draw_text(exp_x, df_y, "NEXT: " + String(this.nextlevel), 0);
+					draw_text(exp_x, df_y, "NEXT: " + string(this.nextlevel), 0);
 			}
 			
 			if (global.menuno == 4)
@@ -457,7 +437,7 @@ function draw() {
 					if (control_check_pressed(0) && global.menucoord[4] == 0)
 					{
 							snd_play(snd_save);
-							script_execute(scr_save);
+							script_execute.call(this, scr_save);
 							global.menucoord[4] = 2;
 							control_clear(0);
 					}
@@ -553,14 +533,14 @@ function draw() {
 							if (global.menucoord[5] == 0)
 							{
 									global.menuno = 9;
-									script_execute(scr_itemuseb, global.menucoord[1], global.item[global.menucoord[1]]);
+									script_execute.call(this, scr_itemuseb, global.menucoord[1], global.item[global.menucoord[1]]);
 							}
 							
 							if (global.menucoord[5] == 1)
 							{
 									global.menuno = 9;
-									script_execute(scr_itemdesc, global.item[global.menucoord[1]]);
-									script_execute(scr_writetext, 0, "x", 0, 0);
+									script_execute.call(this, scr_itemdesc, global.item[global.menucoord[1]]);
+									script_execute.call(this, scr_writetext, 0, "x", 0, 0);
 							}
 							
 							if (global.menucoord[5] == 2)
@@ -570,16 +550,16 @@ function draw() {
 									
 									if (global.item[global.menucoord[1]] != 23 && global.item[global.menucoord[1]] != 27 && global.item[global.menucoord[1]] != 54 && global.item[global.menucoord[1]] != 56 && global.item[global.menucoord[1]] != 57)
 									{
-											script_execute(scr_writetext, 12, "x", 0, 0);
+											script_execute.call(this, scr_writetext, 12, "x", 0, 0);
 									}
 									else
 									{
 											if (global.item[global.menucoord[1]] == 23)
-													script_execute(scr_writetext, 23, "x", 0, 0);
+													script_execute.call(this, scr_writetext, 23, "x", 0, 0);
 											
 											if (global.item[global.menucoord[1]] == 27)
 											{
-													script_execute(scr_writetext, 0, "* (You put the dog on the&  ground.)/%%")
+													script_execute.call(this, scr_writetext, 0, "* (You put the dog on the&  ground.)/%%")
 													
 													if (instance_exists(obj_rarependant))
 													{
@@ -590,7 +570,7 @@ function draw() {
 											
 											if (global.item[global.menucoord[1]] == 54)
 											{
-													script_execute(scr_writetext, 0, "* (You threw the Bad Memory&  away.^1)&* (But it came back.)/%%")
+													script_execute.call(this, scr_writetext, 0, "* (You threw the Bad Memory&  away.^1)&* (But it came back.)/%%")
 													dontthrow = 1;
 											}
 											
@@ -598,64 +578,64 @@ function draw() {
 											{
 													if (!instance_exists(obj_undyne_friendc))
 													{
-															script_execute(scr_writetext, 0, "* (Despite what seems like&  common sense^1, you threw&  away the letter.)/%%")
+															script_execute.call(this, scr_writetext, 0, "* (Despite what seems like&  common sense^1, you threw&  away the letter.)/%%")
 															global.flag[494] = 1;
 													}
 													else
 													{
 															global.faceemotion = 1;
-															script_execute(scr_writetext, 0, "* Hey^1! Don't throw that&  away^1! Just deliver it!/%%")
+															script_execute.call(this, scr_writetext, 0, "* Hey^1! Don't throw that&  away^1! Just deliver it!/%%")
 															dontthrow = 1;
 													}
 											}
 											
 											if (global.item[global.menucoord[1]] == 57)
 											{
-													script_execute(scr_writetext, 0, "* (The letter is too powerful to&  throw away.^1)&* (It gets the better of you.)/%%")
+													script_execute.call(this, scr_writetext, 0, "* (The letter is too powerful to&  throw away.^1)&* (It gets the better of you.)/%%")
 													dontthrow = 1;
 											}
 									}
 									
 									if (dontthrow == 0)
-											script_execute(scr_itemshift, global.menucoord[1], 0);
+											script_execute.call(this, scr_itemshift, global.menucoord[1], 0);
 							}
 					}
 					
 					if (global.menuno == 3)
 					{
 							global.menuno = 9;
-							script_execute(scr_itemuseb, global.menucoord[3], global.phone[global.menucoord[3]]);
+							script_execute.call(this, scr_itemuseb, global.menucoord[3], global.phone[global.menucoord[3]]);
 					}
 					
 					if (global.menuno == 6)
 					{
 							global.menuno = 9;
-							script_execute(scr_storageget, global.item[global.menucoord[6]], 300);
+							script_execute.call(this, scr_storageget, global.item[global.menucoord[6]], 300);
 							
 							if (noroom == 0)
 							{
-									script_execute(scr_writetext, 16, "x", 0, 0);
-									script_execute(scr_itemshift, global.menucoord[6], 0);
+									script_execute.call(this, scr_writetext, 16, "x", 0, 0);
+									script_execute.call(this, scr_itemshift, global.menucoord[6], 0);
 							}
 							else
 							{
-									script_execute(scr_writetext, 19, "x", 0, 0);
+									script_execute.call(this, scr_writetext, 19, "x", 0, 0);
 							}
 					}
 					
 					if (global.menuno == 7)
 					{
 							global.menuno = 9;
-							script_execute(scr_itemget, global.flag[global.menucoord[7] + 300]);
+							script_execute.call(this, scr_itemget, global.flag[global.menucoord[7] + 300]);
 							
 							if (noroom == 0)
 							{
-									script_execute(scr_writetext, 17, "x", 0, 0);
+									script_execute.call(this, scr_writetext, 17, "x", 0, 0);
 									scr_storageshift(global.menucoord[7], 0, 300);
 							}
 							else
 							{
-									script_execute(scr_writetext, 18, "x", 0, 0);
+									script_execute.call(this, scr_writetext, 18, "x", 0, 0);
 							}
 					}
 					
@@ -670,7 +650,7 @@ function draw() {
 					
 					if (global.menuno == 3)
 					{
-							script_execute(scr_phonename);
+							script_execute.call(this, scr_phonename);
 							global.menucoord[3] = 0;
 					}
 					
@@ -679,7 +659,7 @@ function draw() {
 							if (global.item[0] != 0)
 							{
 									global.menucoord[1] = 0;
-									script_execute(scr_itemname);
+									script_execute.call(this, scr_itemname);
 							}
 							else
 							{
