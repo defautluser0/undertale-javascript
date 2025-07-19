@@ -25,6 +25,7 @@
     import { updateCamera, view_xview, view_yview, view_current } from "/imports/view.js"
     import { fnt_maintext } from "/imports/assets.js"
 		import global from "/imports/assets/global.js";
+
     import * as obj_solidtall from '/obj/solidtall/index.js';
     import * as obj_sur from '/obj/sur/index.js';
     import * as obj_sul from '/obj/sul/index.js';
@@ -45,6 +46,7 @@
 
 		const allInstances = [];
 
+    screenUpdater.create();
     instance_create(660, 60, obj_solidtall);
     instance_create(0, 56, obj_solidtall);
     instance_create(240, 60, obj_sur);
