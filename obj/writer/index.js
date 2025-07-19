@@ -3,19 +3,13 @@ import { control_check_pressed, control_clear } from '/imports/input.js'
 import { string_char_at, floor, random, round, draw_set_color, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy, ord } from "/imports/assets/gamemakerFunctions.js"
 import { view_wview, view_current } from '/imports/view.js'
 import { fnt_comicsans, fnt_papyrus, fnt_main } from '/imports/assets.js'
+import { SCR_TEXT } from "/imports/assets/text.js"
 import global from '/imports/assets/global.js';
+
 import * as obj_choicer from "/obj/choicer/index.js"
 
 function create() {
-	const mystring = [];
-
-	let ch = "";
-
 	const parent_alarm = new Array(12).fill(-1);
-
-	for (let n = 0; global.msg[n] !== "%%%"; n++) {
-		mystring[n] = global.msg[n];
-	}
 
 	return {
 		name: "writer",
@@ -37,9 +31,8 @@ function create() {
 		halt: 0,
 		dfy: 0,
 		sound_enable: 1,
-		originalstring: scr_replace_buttons_pc(mystring[0]),
-		mystring,
-		ch,
+		originalstring: "",
+		mystring: [],
 
 		// OBJ_WRITER
 
@@ -947,11 +940,23 @@ function draw() {
 }
 
 function roomStart() {
+	SCR_TEXT.call(this, global.msc);
 	SCR_TEXTTYPE.call(this, global.typer, 0, 0);
 	this.writingx = round(this.writingx);
 	this.writingy = round(this.writingy);
 	this.x = round(this.x);
 	this.y = round(this.y);
+	this.ch = "";
+
+	this.mystring = [];
+
+	for (let n = 0; global.msg[n] !== "%%%"; n++) {
+		this.mystring[n] = global.msg[n];
+	}
+
+	this.originalstring = scr_replace_buttons_pc(this.mystring[0]);
+
+
 	this.parent_alarm[0] = this.textspeed;
 	this.writingx = this.x + this.writingx;
 	this.writingy = this.y + this.writingy;
