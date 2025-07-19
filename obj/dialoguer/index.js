@@ -1,4 +1,4 @@
-import { draw_sprite_ext, instance_exists, instance_create, instance_destroy, instances, script_execute, draw_set_color, draw_rectangle } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_exists, instance_create, instance_destroy, instances, script_execute, draw_set_color, draw_rectangle, _with } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, c_black } from "/imports/assets.js";
 import { view_xview, view_yview, view_current } from "/imports/view.js";
 import { scr_facechoice } from "/imports/customFunctions.js";;
@@ -27,7 +27,7 @@ function create() {
 	// create code
 	let count = 0;
 	let side = 0;
-	global.facechange = 0;
+	global.facechange = 1;
 	let xx = view_xview[view_current];
 	let yy = view_yview[view_current];
 
@@ -116,21 +116,23 @@ function step() {
 	}
 	
 	if (global.facechange === 1 && global.facechoice === 0) {
-		if (instance_exists(this.writer)) {
+		if (instance_exists(OBJ_WRITER)) {
 			this.writer.x = this.xx + 30;
 			this.writer.writingx = this.writer.x;
 			this.writer.writingxend = this.writer.writingxend_base;
 		}
 
 		if (instance_exists(obj_face)) {
-			instance_destroy(obj_face);
+			_with (obj_face, () => {
+				instance_destroy(this);
+			})
 		}
 
 		global.facechange = 2;
 	}
 
 	if (global.facechange === 1) {
-		if (instance_exists(this.writer)) {
+		if (instance_exists(OBJ_WRITER)) {
 			this.writer.x = this.xx + 68;
 			this.writer.writingx = this.writer.x + 20;
 			this.writer.writingxend = this.writer.writingxend_base;
@@ -190,9 +192,9 @@ function draw() {
 			}
 		}
 		if (instance_exists(obj_face)) {
-			if (instances.get(obj_face).find(inst => inst.y > this.yy + 80)) {
-				obj_face.y -= 155;
-			}
+			_with (obj_face, () => {
+				this.y -= 155;
+			})
 		}
 
 		draw_set_color(c_white);
@@ -208,9 +210,9 @@ function draw() {
 			}
 		}
 		if (instance_exists(obj_face)) {
-			if (instances.get(obj_face).find(inst => inst.y < this.yy + 80)) {
-				instances.get(obj_face)[0].y += 155;
-			}
+			_with (obj_face, () => {
+				this.y += 155;
+			})
 		}
 
 		draw_set_color(c_white);
