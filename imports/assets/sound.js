@@ -100,6 +100,12 @@ const snd_splash = new Howl({
 const snd_select = new Howl({
   src: ["/imports/assets/snd/select.wav"]
 })
+const snd_noise = new Howl({
+  src: ["/imports/assets/snd/noise.wav"]
+})
+const snd_battlefall = new Howl({
+  src: ["/imports/assets/snd/battlefall.wav"]
+})
 
 // currently playing sounds map
 const playingSounds = new Map();
@@ -138,5 +144,7 @@ export {
   snd_save,
   snd_splash,
   snd_select,
+  snd_noise,
+  snd_battlefall,
   playingSounds,
 };
