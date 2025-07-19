@@ -1,3 +1,4 @@
+import { ogCanvas } from "/imports/canvasSetup.js";
 import roomSize from "/imports/assets/roomSize.js"
 
 let view_xview = [0];
@@ -7,8 +8,8 @@ let view_hview = [480];
 let view_current = 0;
 
 function updateCamera(target) {
-  const screenWidth = 640;
-  const screenHeight = 480;
+  const screenWidth = ogCanvas.width;
+  const screenHeight = ogCanvas.height;
 
   // Start with base view size
   let viewWidth = screenWidth;
