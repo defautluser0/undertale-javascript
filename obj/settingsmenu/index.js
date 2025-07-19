@@ -1,4 +1,4 @@
-import { draw_sprite_ext, ini_open, ini_read_real, ini_write_real, ini_write_string, ini_close, file_exists, room_goto, instance_create, draw_set_color, draw_text_transformed, draw_text, merge_color, choose, draw_circle, keyboard_check_pressed, draw_rectangle } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, ini_open, ini_read_real, ini_write_real, ini_write_string, ini_close, file_exists, room_goto, instance_create, draw_set_color, draw_text_transformed, draw_text, merge_color, choose, draw_circle, keyboard_check_pressed, draw_rectangle, ini_import, ini_export } from "/imports/assets/gamemakerFunctions.js";
 import { caster_free, caster_load, scr_setfont, scr_drawtext_centered_scaled, caster_play, caster_loop } from "/imports/customFunctions.js";
 import { c_white, c_yellow, c_orange, c_red, c_gray, c_black, mus_harpnoise, mus_options_winter, mus_options_fall, mus_options_summer, fnt_maintext } from "/imports/assets.js";
 import { vk_down, vk_up, vk_left, vk_right, control_check_pressed } from "/imports/input.js"
@@ -283,7 +283,7 @@ function draw() {
 		draw_text_transformed(220 + Math.sin(this.siner / 12), 120 + Math.cos(this.siner / 12), "sweep a leaf#sweep away a#troubles", 1, 1, -20);
 	}
 
-	this.menu_max = 2;
+	this.menu_max = 3;
 
 	if (this.menu_engage === 0) {
 		if (keyboard_check_pressed(vk_down)) {
@@ -303,11 +303,9 @@ function draw() {
 		}
 
 		if (this.buffer < 0 && control_check_pressed(0)) {
-			if (!(this.menu >= 2 && this.menu <= 4)) {
-				this.menu_engage = 1;
-				this.js_buffer = 1;
-				this.buffer = 4;
-			}
+			this.menu_engage = 1;
+			this.js_buffer = 1;
+			this.buffer = 4;
 		}
 
 		if (this.menu === 1) {
@@ -322,6 +320,34 @@ function draw() {
 
 		if (this.menu === 0 && this.menu_engage === 1) {
 			this.finish = 1;
+		}
+
+		if (this.menu === 3 && this.menu_engage === 1) {
+			ini_open("undertale.ini");
+			ini_export();
+			ini_close();
+			ini_open("options.ini");
+			ini_export();
+			ini_close();
+		}
+
+		if (this.menu === 2 && this.menu_engage === 1) {
+			const input = document.createElement("input")
+			input.type = "file";
+			input.addEventListener("change", (e) => {
+				const file = e.target.files[0];
+				if (!file) return;
+
+				const reader = new FileReader();
+
+				reader.onload = function () {
+					const iniText = reader.result;
+					ini_import(iniText, file.name);
+					window.location.reload();
+				}
+				reader.readAsText(file);
+			});
+			input.click();
 		}
 	}
 
@@ -347,12 +373,26 @@ function draw() {
 			draw_text(92, 70, "ENGLISH");
 			break;
 		case "ja":
-			draw_text(92, 70, "JAPANESE (not implemented)");
+			draw_text(92, 70, "JAPANESE (not made)");
 			break;
 		case "":
 			global.language = "en";
 			break;
 	}
+
+	if (this.menu != 2)
+    draw_set_color(c_white);
+	else
+		draw_set_color(c_yellow);
+
+	draw_text(20, 100, "IMPORT .INI");
+
+	if (this.menu != 3)
+    draw_set_color(c_white);
+	else
+		draw_set_color(c_yellow);
+
+	draw_text(20, 130, "EXPORT .INIS");
 
 	if (this.intro === 1) {
 		if (this.rectile === 16) {
