@@ -18,8 +18,10 @@ import {
   ds_map_find_value,
   string_copy,
   string_length,
+  string_char_at,
   string,
   room_get_name,
+  file_exists,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -753,7 +755,7 @@ function scr_namingscreen() {
           this.spec_m = "WARNING: This name will#make your life hell.#Proceed anyway?";
           this.allow = 1;
       }
-      else if (this.hasname == 1 && truereset == 0 && !scr_hardmodename(global.this.charname))
+      else if (this.hasname == 1 && this.truereset == 0 && !scr_hardmodename(global.charname))
       {
         this.spec_m = "A name has already#been chosen.";
         this.allow = 1;
@@ -1220,12 +1222,12 @@ function scr_namingscreen() {
               this.seconds = 0;
           
           if (this.seconds < 10)
-              this.seconds = "0" + String(this.seconds);
+              this.seconds = "0" + string(this.seconds);
           
           var roomname = scr_roomname(this.roome);
-          var lvtext = "LOVE " + String(this.love);
-          var timetext = "TIME " + String(this.minutes) + String(this.seconds);
-          var namesize = substr(this.name, 1, 6).length;
+          var lvtext = scr_gettext("save_menu_lv", string(this.love));
+          var timetext = scr_gettext("save_menu_time", string(this.minutes), string(this.seconds));
+          var namesize = string_length(substr(this.name, 1, 6));
           var lvsize = lvtext.length;
           var timesize = timetext.length;
           var x_center = 160;
@@ -1303,10 +1305,10 @@ function scr_namingscreen() {
           {
               caster_free("all");
               
-              if (0 === 0)
+              if (file_exists("file0") === 0)
                   room_goto("room_area1");
               else
-                  script_execute(scr_load);
+                  script_execute.call(this, scr_load);
           }
           
           if (action == 1)
@@ -1506,9 +1508,9 @@ function scr_gettext(text_id, one, two, three, four, five, six, seven, eight, ni
     text = "";
   }
 
-  for (var i = 1; i <= (text.length - 3); i++) {
-    if (text[i] === "\\" && text[i+1] === "[" && text[i+3] === "]") {
-      let sel = text[i+2];
+  for (var i = 1; i <= (string_length(text) - 3); i++) {
+    if (string_copy(text, i, 2) === "\\[" && string_char_at(text, i + 2) === "]") {
+      let sel = string_char_at(text, i + 1);
       let replace = "";
 
       switch (sel) {
@@ -1549,9 +1551,10 @@ function scr_gettext(text_id, one, two, three, four, five, six, seven, eight, ni
           replace = nine;
           break;
       }
-      let before = text.substring(1 - 1, i - 1 - 1);
-      let after = text.substring(i + 4, i - 1 +text.length)
+      let before =  string_copy(text, 1, i - 1);
+      let after = string_copy(text, i + 4, string_length(text))
       text = before + replace + after;
+      i += (string_length(replace) - 1);
     }
   }
 
@@ -1593,6 +1596,363 @@ function strlen(str) {
   return string_length(str);
 }
 
+function SCR_BORDERSETUP() {
+  if (global.border == 0)
+  {
+    global.idealborder[0] = 32;
+    global.idealborder[1] = 602;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 1)
+  {
+    global.idealborder[0] = 217;
+    global.idealborder[1] = 417;
+    global.idealborder[2] = 180;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 2)
+  {
+    global.idealborder[0] = 217;
+    global.idealborder[1] = 417;
+    global.idealborder[2] = 125;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 3)
+  {
+    global.idealborder[0] = 237;
+    global.idealborder[1] = 397;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 4)
+  {
+    global.idealborder[0] = 267;
+    global.idealborder[1] = 367;
+    global.idealborder[2] = 295;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 5)
+  {
+    global.idealborder[0] = 192;
+    global.idealborder[1] = 442;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 6)
+  {
+    global.idealborder[0] = 227;
+    global.idealborder[1] = 407;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 7)
+  {
+    global.idealborder[0] = 227;
+    global.idealborder[1] = 407;
+    global.idealborder[2] = 200;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 8)
+  {
+    global.idealborder[0] = 202;
+    global.idealborder[1] = 432;
+    global.idealborder[2] = 290;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 9)
+  {
+    global.idealborder[0] = 132;
+    global.idealborder[1] = 492;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 10)
+  {
+    global.idealborder[0] = 147;
+    global.idealborder[1] = 487;
+    global.idealborder[2] = 200;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 11)
+  {
+    global.idealborder[0] = 32;
+    global.idealborder[1] = 602;
+    global.idealborder[2] = 330;
+    global.idealborder[3] = 465;
+  }
+
+  if (global.border == 12)
+  {
+    global.idealborder[0] = (room_width / 2) - 40;
+    global.idealborder[1] = (room_width / 2) + 40;
+    global.idealborder[2] = (room_height / 2) - 40;
+    global.idealborder[3] = (room_height / 2) + 40;
+  }
+
+  if (global.border == 13)
+  {
+    global.idealborder[0] = (room_width / 2) - 40;
+    global.idealborder[1] = (room_width / 2) + 40;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 14)
+  {
+    global.idealborder[0] = (room_width / 2) - 35;
+    global.idealborder[1] = (room_width / 2) + 35;
+    global.idealborder[2] = 300;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 15)
+  {
+    global.idealborder[0] = (room_width / 2) - 50;
+    global.idealborder[1] = (room_width / 2) + 50;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 16)
+  {
+    global.idealborder[0] = (room_width / 2) - 50;
+    global.idealborder[1] = (room_width / 2) + 50;
+    global.idealborder[2] = 50;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 17)
+  {
+    global.idealborder[0] = 162;
+    global.idealborder[1] = 472;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 18)
+  {
+    global.idealborder[0] = 162;
+    global.idealborder[1] = 472;
+    global.idealborder[2] = 220;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 19)
+  {
+    global.idealborder[0] = (roomSize.width / 2) - 100;
+    global.idealborder[1] = (roomSize.width / 2) + 100;
+    global.idealborder[2] = 185;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 20)
+  {
+    global.idealborder[0] = 257;
+    global.idealborder[1] = 547;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 21)
+  {
+    global.idealborder[0] = 197;
+    global.idealborder[1] = 437;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 22)
+  {
+    offpurple = 0;
+    
+    if (instance_exists(obj_purpleheart))
+    {
+        offpurple = obj_purpleheart.yzero;
+        
+        if (offpurple > 250)
+            offpurple = 250;
+    }
+    
+    global.idealborder[0] = 197;
+    global.idealborder[1] = 437;
+    global.idealborder[2] = 250;
+    
+    if (offpurple != 0)
+        global.idealborder[2] = offpurple - 10;
+    
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 23)
+  {
+    offpurple = 0;
+    
+    if (instance_exists(obj_purpleheart))
+    {
+        offpurple = obj_purpleheart.yzero;
+        
+        if (offpurple > 250)
+            offpurple = 250;
+    }
+    
+    global.idealborder[0] = 197;
+    global.idealborder[1] = 537;
+    global.idealborder[2] = 250;
+    
+    if (offpurple != 0)
+        global.idealborder[2] = offpurple - 10;
+    
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 24)
+  {
+    global.idealborder[0] = 235;
+    global.idealborder[1] = 405;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 25)
+  {
+    global.idealborder[0] = 235;
+    global.idealborder[1] = 405;
+    global.idealborder[2] = 160;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 26)
+  {
+    global.idealborder[0] = 295;
+    global.idealborder[1] = 345;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 27)
+  {
+    global.idealborder[0] = 270;
+    global.idealborder[1] = 370;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 28)
+  {
+    global.idealborder[0] = 235;
+    global.idealborder[1] = 405;
+    global.idealborder[2] = 35;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 29)
+  {
+    global.idealborder[0] = 207;
+    global.idealborder[1] = 427;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 30)
+  {
+    global.idealborder[0] = 207;
+    global.idealborder[1] = 427;
+    global.idealborder[2] = 200;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 31)
+  {
+    global.idealborder[0] = 32;
+    global.idealborder[1] = 602;
+    global.idealborder[2] = 100;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 35)
+  {
+    global.idealborder[0] = 132;
+    global.idealborder[1] = 502;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 36)
+  {
+    global.idealborder[0] = 240;
+    global.idealborder[1] = 400;
+    global.idealborder[2] = 225;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 37)
+  {
+    global.idealborder[3] = 385;
+    global.idealborder[2] = global.idealborder[3] - 200;
+    global.idealborder[0] = 120;
+    global.idealborder[1] = 520;
+  }
+
+  if (global.border == 38)
+  {
+    global.idealborder[0] = 270;
+    global.idealborder[1] = 370;
+    global.idealborder[2] = 285;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 39)
+  {
+    global.idealborder[0] = 132;
+    global.idealborder[1] = 502;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+    global.idealborder[0] -= 20;
+    global.idealborder[1] += 40;
+    global.idealborder[2] -= 20;
+  }
+
+  if (global.border == 50)
+  {
+    global.idealborder[0] = 192;
+    global.idealborder[1] = 512;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 51)
+  {
+    global.idealborder[0] = 192;
+    global.idealborder[1] = 512;
+    global.idealborder[2] = 250;
+    
+    if (obj_heart.y < 270)
+        global.idealborder[2] = round((obj_heart.y - 20) / 5) * 5;
+    
+    global.idealborder[3] = 385;
+  }
+
+  if (global.border == 52)
+  {
+    global.idealborder[0] = 250;
+    global.idealborder[1] = 390;
+    global.idealborder[2] = 250;
+    global.idealborder[3] = 320;
+  }
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -1625,4 +1985,5 @@ export {
   scr_roomname,
   substr,
   strlen,
+  SCR_BORDERSETUP
 };
