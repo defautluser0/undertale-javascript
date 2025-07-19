@@ -475,26 +475,31 @@ function room_goto(index) {
  * @param {string} obj The object index of the object to create an instance of
  */
 function instance_create(x, y, obj) {
-  if (obj === null || !Number.isFinite(x) || !Number.isFinite(y)) {
-    console.error("instance_create called with invalid parameters", { x, y, obj })
-    throw new Error("instance_create: parameters are invalid")
+  try {
+    if (obj === null || !Number.isFinite(x) || !Number.isFinite(y)) {
+      throw new Error("instance_create: called with invalid parameters:", { x, y, obj })
+    }
+    const instance = {
+      ...obj.create?.(), // get default vars (including x/y defaulting to 0)
+      _object: obj,
+    };
+
+    instance.x = x;
+    instance.y = y;
+    instance.startx = x;
+    instance.starty = y;
+
+    if (!instances.has(obj)) {
+      instances.set(obj, []);
+    }
+    instances.get(obj).push(instance);
+
+    obj.roomStart?.call(instance);
+
+    return instance;
+  } catch(error) {
+    console.error(error);
   }
-  const instance = {
-    ...obj.create?.(), // get default vars (including x/y defaulting to 0)
-    _object: obj,
-  };
-
-  instance.x = x;
-  instance.y = y;
-
-  if (!instances.has(obj)) {
-    instances.set(obj, []);
-  }
-  instances.get(obj).push(instance);
-
-  obj.roomStart?.call(instance);
-
-  return instance;
 }
 
 /**
@@ -547,8 +552,19 @@ function instance_destroy(target) {
  * @returns {boolean}
  */
 function instance_exists(obj) {
-  return instances.has(obj) && instances.get(obj).length > 0; // true if its in the instances map and if its length is greater than 0
+  for (const [key, list] of instances) {
+    if (!Array.isArray(list) || list.length === 0) continue;
+
+    // Check if this key is exactly obj or inherits from obj
+    let current = key;
+    while (current) {
+      if (current === obj) return true;
+      current = current.parent;
+    }
+  }
+  return false;
 }
+
 
 /**
  * This function draws the given sprite and sub-image at a position within the game room. For the sprite you can use the instance variable sprite_index to get the current sprite that is assigned to the instance running the code, or you can use any other sprite asset. The same goes for the sub-image, as this can also be set to the instance variable image_index which will set the sub-image to that selected for the current instance sprite (note, that you can draw a different sprite and still use the sub-image value for the current instance), or you can use any other value for this to draw a specific sub-image of the chosen sprite. If the value is larger than the number of sub-images, then GameMaker will automatically loop the number to select the corresponding image (for example, if the sprite being drawn has 5 sub-images numbered 0 to 4 and we set the index value to 7, then the function will draw the third sub-image, numbered 2). Finally, the x and y position is the position within the room that the sprite will be drawn, and it is centered on the sprite x offset and y offset.
@@ -559,7 +575,7 @@ function instance_exists(obj) {
  * @param {number} y The y coordinate of where to draw the sprite
  */
 function draw_sprite(sprite, subimg, x, y) {
-  draw_sprite_ext(sprite, subimg, round(x), round(y), 1, 1, 0, c_white, 1)
+  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, c_white, 1)
 }
 
 /**
@@ -1224,37 +1240,65 @@ function ini_section_delete(section) {
 function ini_export() {
   if (!ini_filename || !ini_loaded) return;
 
-  const blob = new Blob([JSON.stringify(ini_data, null, 2)], {
-    type: "application/json",
-  });
+  let iniText = "";
+  for (const section in ini_data) {
+    iniText += `[${section}]\r\n`; // newline after section header
+
+    const entries = ini_data[section];
+    const keys = Object.keys(entries);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      iniText += `${key}=${entries[key]}\r\n`;
+    }
+
+    iniText += `\r\n`; // extra newline after last key in section
+  }
+
+  const blob = new Blob([iniText], { type: "text/plain" });
+  console.log(iniText);
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `${ini_filename}.json`;
+  a.download = `${ini_filename}`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
 }
 
-function ini_import(file) {
-  if (!ini_filename || !ini_loaded) return;
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (typeof data === "object") {
-        ini_data = data;
-        localStorage.setItem(ini_filename, JSON.stringify(ini_data));
-        console.log(`INI import successful for ${ini_filename}`);
-      } else {
-        console.error("Invalid INI format");
+function ini_import(iniText, filename) {
+  ini_open(filename);
+  const lines = iniText.split(/\r?\n/);
+  let currentSection = null;
+
+  if (!ini_data) ini_data = {};
+
+  for (let line of lines) {
+    line = line.trim();
+
+    if (!line || line.startsWith(";") || line.startsWith("#")) continue;
+
+    if (line.startsWith("[") && line.endsWith("]")) {
+      currentSection = line.slice(1, -1).trim();
+      ini_data[currentSection] = {};
+    } else if (currentSection && line.includes("=")) {
+      let [key, value] = line.split("=");
+      key = key.trim();
+      value = value.trim();
+
+      // Strip quotes if present
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
       }
-    } catch (err) {
-      console.error("Failed to parse INI JSON:", err);
+
+      ini_data[currentSection][key] = value;
     }
-  };
-  reader.readAsText(file);
+  }
+
+  // Save to localStorage
+  localStorage.setItem(String(filename), JSON.stringify(ini_data));
 }
+
+
 
 function file_exists(filename) {
   return localStorage.getItem(filename) !== null;
@@ -1323,4 +1367,36 @@ function room_get_name(index) {
   return rooms[index] ?? "";
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name };
+function point_distance(x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function distance_to_point(x, y) {
+  return point_distance(this.x, this.y, x, y)
+}
+
+function move_towards_point(x, y, sp) {
+  const dx = x - this.x;
+  const dy = y - this.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  if (dist === 0) {
+    this.hspeed = 0;
+    this.vpseed = 0;
+    return;
+  } else {
+    this.hspeed = (dx / dist) * sp;
+    this.vspeed = (dy / dist) * sp;
+  }
+}
+
+function _with(obj, fn) {
+  const instancesOfObj = instances.get(obj) || [];
+  for (const inst of instancesOfObj) {
+    fn.call(inst);
+  }
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with };
