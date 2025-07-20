@@ -1,7 +1,7 @@
-import { draw_sprite_ext, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, instance_destroy, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-import { view_current, view_xview, view_yview } from "/imports/view.js"
-import global from "/imports/assets/global.js";
+
+import * as obj_fakeheart from "/obj/fakeheart/index.js"
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -9,10 +9,11 @@ function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-	alarm[0] = 1;
+  alarm[0] = 90;
+
   return {
-    name: "shaker", // sprite name
-    depth: 0, // object depth
+    name: "guidearrows", // sprite name
+    depth: -4000, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     x: 0, // object x. this is set by room
@@ -21,26 +22,21 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
     image_number: 0, // sprite frame number
-    sprite_index: null, // sprite object
-    visible: true, // sprite visibility
+    sprite_index: "spr_guidearrows", // sprite object
+    visible: false, // sprite visibility
     parent: parent,
 
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-		hshake: global.hshake,
-		vshake: global.vshake,
-		shakespeed: global.shakespeed,
-		myview: view_current,
-		myx: view_xview[view_current],
-		myy: view_yview[view_current],
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		alarm0,
-		destroy,
+    updateCol,
+    alarm1,
+    alarm0,
   };
 }
 
@@ -63,6 +59,10 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+
+  getBoundingBox.call(this)
+
+  this.updateCol()
 }
 
 function updateSprite() {
@@ -81,40 +81,21 @@ function updateSprite() {
   }
 }
 
+function alarm1() {
+  this.visible = true;
+  this.alarm[0] = 40;
+}
+
 function alarm0() {
-	if (this.hshake !== 0) {
-		if (this.hshake < 0) {
-			view_xview[this.myview] += this.hshake;
-			this.hshake += 1;
-		}
-
-		if (this.hshake > 0)
-			view_xview[this.myview] += this.hshake;
-
-		this.hshake = -this.hshake;
-	}
-
-	if (this.vshake !== 0) {
-		if (this.vshake < 0) {
-			view_yview[this.myview] += this.vshake;
-			this.vshake += 1;
-		}
-
-		if (this.vshake > 0)
-			view_yview[this.myview] += this.vshake;
-
-		this.vshake = -this.vshake;
-	}
-
-	this.alarm[this.myview] = this.shakespeed;
-
-	if (this.hshake === 0 && this.vshake === 0)
-		instance_destroy(this);
+  this.visible = false;
+  this.alarm[1] = 8;
 }
 
-function destroy() {
-	view_xview[this.myview] = this.myx;
-	view_yview[this.myview] = this.myy;
+function updateCol() {
+  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_fakeheart, true, false)
+  if (other) {
+    instance_destroy(this);
+  }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm0, destroy };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm1, alarm0 };

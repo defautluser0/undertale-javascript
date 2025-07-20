@@ -1,4 +1,4 @@
-import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, round, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
 import global from "/imports/assets/global.js";
@@ -36,6 +36,7 @@ function create() {
     updateGamemakerFunctions,
     updateSprite,
     roomStart,
+    step,
   };
 }
 
@@ -58,6 +59,8 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+
+  getBoundingBox.call(this);
 }
 
 function updateSprite() {
@@ -82,4 +85,49 @@ function roomStart() {
   this.image_xscale = (global.idealborder[1] - global.idealborder[0]) / 5;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart };
+function step() {
+  if (this.x !== global.idealborder[0]) {
+    if (Math.abs(this.x - global.idealborder[0]) <= 15) {
+      this.x = global.idealborder[0]
+    } else if (this.x > global.idealborder[0]) {
+      this.x -= 15;
+    } else {
+      this.x += 15;
+    }
+  }
+
+  if (this.x == global.idealborder[0] || this.y < global.idealborder[2]) {
+    if (this.y != global.idealborder[2]) {
+      if (Math.abs(this.y - global.idealborder[2]) <= 15)
+        this.y = global.idealborder[2];
+      else if (this.y > global.idealborder[2])
+        this.y -= 15;
+      else
+        this.y += 15;
+    }
+  }
+  let size = round((global.idealborder[1] - global.idealborder[0]) / 5) + 1;
+
+  if (this.image_xscale !== size) {
+    if (Math.abs(size - this.image_xscale) <= 6)
+      this.image_xscale = size;
+    
+    if (this.image_xscale > size)
+      this.image_xscale -= 6;
+    
+    if (this.image_xscale < size)
+      this.image_xscale += 6;
+  }
+
+  if (this.instant === 1) {
+    this.y = global.idealborder[2];
+  }
+
+  if (this.instaborder === 1) {
+    this.x = global.idealborder[0];
+    this.y = global.idealborder[2];
+    this.image_xscale = 1 + ((global.idealborder[1] - global.idealborder[0]) / 5);
+  }
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, step };

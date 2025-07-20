@@ -23,6 +23,8 @@
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
 		import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
+    import { loadCurrentSong } from "/imports/assets/loadSong.js";
+    import roomSize from '/imports/assets/roomSize.js'
 		import global from "/imports/assets/global.js"
     import * as obj_floweydraw from '/obj/floweydraw/index.js'
     import * as obj_floweybattle1 from '/obj/floweybattle1/index.js'
@@ -35,6 +37,9 @@
 		import * as screenUpdater from '/obj/screen/index.js'
 
 		const allInstances = [];
+
+    loadCurrentSong("currentsong")
+    loadCurrentSong("currentsong2")
 
     screenUpdater.create()
     instance_create(21, 20, obj_floweydraw);
@@ -72,6 +77,7 @@
         }
         
         control_update();
+        screenUpdater.beginStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.beginStep?.call(instance);
@@ -87,6 +93,14 @@
             obj.step?.call(instance);
           }
         }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            if (instance.x > roomSize.width || instance.x < 0 || instance.y > roomSize.height || instance.y < 0) {
+              obj.outsideRoom?.call(instance);
+            }
+          }
+        }
+        screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.endStep?.call(instance);
@@ -131,8 +145,51 @@
 
         if (global.roomEnd && global.eventDone && global.nextRoom !== null) {
           global.eventDone = false;
-          let nextRoom = global.nextRoom
+          let nextRoom = global.nextRoom;
           global.nextRoom = null;
+
+          function extractNameFromSrc(src) {
+            // src expected: "/imports/assets/mus/xxx.ogg" or "/imports/assets/snd/yyy.ogg"
+            const parts = src.split('/');
+            if (parts.length < 4) return null; // safeguard
+
+            const folder = parts[3]; // 'mus' or 'snd'
+            const filename = parts[4]?.split('.')[0]; // 'xxx' or 'yyy'
+            if (!folder || !filename) return null;
+
+            return `${folder}_${filename}`;
+          }
+          
+          try {
+            localStorage.setItem("global", JSON.stringify(global));
+          } catch(_) {
+            if (global.currentsong !== -1) {
+              let currentsong = global.currentsong;
+              global.currentsong = {
+                name: extractNameFromSrc(currentsong._src) ?? "unknown",
+                rate: currentsong.rate?.() ?? 1,
+                volume: currentsong.volume?.() ?? 1,
+                paused: !currentsong.playing?.() ?? false,
+                pos: currentsong.seek?.() ?? 0,
+                loop: currentsong.loop?.() ?? false,
+              };
+              localStorage.setItem("global", JSON.stringify(global));
+              global.currentsong = currentsong;
+            }
+            if (global.currentsong2 !== -1) {
+              let currentsong2 = global.currentsong2;
+              global.currentsong2 = {
+                name: extractNameFromSrc(currentsong2._src) ?? "unknown",
+                rate: currentsong2.rate?.() ?? 1,
+                volume: currentsong2.volume?.() ?? 1,
+                paused: !currentsong2.playing?.() ?? false,
+                pos: currentsong2.seek?.() ?? 0,
+                loop: currentsong2.loop?.() ?? false,
+              };
+              localStorage.setItem("global", JSON.stringify(global));
+              global.currentsong2 = currentsong2;
+            }
+          }
           window.location.href = nextRoom;
         }
       }

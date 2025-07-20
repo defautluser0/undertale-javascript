@@ -132,7 +132,7 @@ function updateCol() {
 				this.truename = ini_read_real("Flowey", "truename", 0);
 				this.IK = ini_read_real("Flowey", "IK", 0);
 				this.NK = ini_read_real("Flowey", "NK", 0);
-				caster_load(mus_flowey);
+				global.currentsong = caster_load(mus_flowey);
 				caster_loop(mus_flowey, 1, 1);
 				global.typer = 9;
 				global.facechoice = 2;

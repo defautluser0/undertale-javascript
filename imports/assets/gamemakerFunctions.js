@@ -17,7 +17,11 @@ const spriteOffsets = {
   "spr_tobdog_sleep_trash": {
     xoffset: 13,
     yoffset: 6,
-  }
+  },
+  "spr_blconwdshrt": {
+    xoffset: 2,
+    yoffset: 2,
+  },
 }
 
 const offCanvas = document.createElement("canvas");
@@ -140,16 +144,29 @@ function loadImageCached(path, cache) {
  * @returns {string}
  */
 function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1) {
-  if (!index || typeof(index) !== "object") return;
-  if (!loop && playingSounds.has(index)) {
-    playingSounds.get(index).stop();
+  if (!index || typeof index !== "object") return null;
+
+  // Check if any instance of this sound is playing and compare priorities
+  for (const [id, data] of playingSounds.entries()) {
+    if (data.sound === index && !index.loop()) {
+      if (priority >= data.priority) {
+        index.stop(id);
+        playingSounds.delete(id);
+      } else {
+        return null;
+      }
+    }
   }
+
   index.loop(loop);
   index.volume(gain);
+  const id = index.play();
+  index.seek(offset, id);
+  index.rate(pitch, id);
 
-  index.play();
-  playingSounds.set(index, index);
-  return index;
+  playingSounds.set(id, { sound: index, priority });
+
+  return id;
 }
 /**
  * This function can be used to change the pitch of a given sound. The sound can either be one referenced from an index for an individual sound being played which has been stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions, or an actual sound asset from the Asset Browser. If it is an index of a playing sound, then only that instance will be changed, however when using a sound asset from the Asset Browser, all instances of that sound asset being played will be changed. The pitch argument is a pitch multiplier, in that the input value multiplies the current pitch by that amount, so the default value of 1 is no pitch change, while a value of less than 1 will lower the pitch and greater than 1 will raise the pitch. It is best to use small increments for this function as any value under 0 or over 5 may not be audible anyway. It is worth noting that the total pitch change permitted is clamped to (1/256) - 256 octaves, so any value over or under this will not be registered.
@@ -157,8 +174,8 @@ function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1
  * @param {string} index The index of the sound to change.
  * @param {number} pitch The pitch multiplier (default 1).
  */
-function audio_sound_pitch(index, pitch) {
-  index.rate(pitch)
+function audio_sound_pitch(index, pitch, id = null) {
+  index.rate(pitch, id ?? index._sounds[0]?._id);
 }
 
 /**
@@ -168,9 +185,13 @@ function audio_sound_pitch(index, pitch) {
  * @param {number} volume Value for the music volume.
  * @param {number} time The length for the change in gain in milliseconds.
  */
-function audio_sound_gain(index, volume, time) {
-  const id = index._sounds[0]?.id ?? null;
-  index.fade(index.volume(), volume, time, id)
+function audio_sound_gain(index, volume, time = 0, id = null) {
+  id = id ?? index._sounds[0]?._id;
+  if (id !== null) {
+    const currentVol = index.volume(id);
+    const fromVol = isFinite(currentVol) ? currentVol : index._volume || 1;
+    index.fade(fromVol, volume, time, id);
+  }
 }
 
 /**
@@ -180,8 +201,9 @@ function audio_sound_gain(index, volume, time) {
  * 
  * @returns {boolean}
  */
-function audio_is_playing(index) {
-  return index ? index.playing() : false
+function audio_is_playing(index, id = null) {
+  id = id ?? index._sounds[0]?._id;
+  return id !== null ? index.playing(id) : false;
 }
 
 /**
@@ -199,9 +221,11 @@ function audio_stop_all(){
  * 
  * @param {string} index The index of the sound to stop.
  */
-function audio_stop_sound(index) {
-  index.stop();
-} 
+
+function audio_stop_sound(index, id = null) {
+  id = id ?? index._sounds[0]?._id;
+  if (id !== null) index.stop(id);
+}
 
 /** 
  * This function will get the font currently assigned for drawing text. The function will return -1 if no font is set, or the name of the font assigned.
@@ -476,7 +500,7 @@ function room_goto(index) {
  */
 function instance_create(x, y, obj) {
   try {
-    if (obj === null || !Number.isFinite(x) || !Number.isFinite(y)) {
+    if (obj === null || typeof obj !== "object" || !Number.isFinite(x) || !Number.isFinite(y)) {
       throw new Error("instance_create: called with invalid parameters:", { x, y, obj })
     }
     const instance = {
@@ -488,6 +512,8 @@ function instance_create(x, y, obj) {
     instance.y = y;
     instance.startx = x;
     instance.starty = y;
+    instance.xstart = x;
+    instance.ystart = y;
 
     if (!instances.has(obj)) {
       instances.set(obj, []);
@@ -548,7 +574,7 @@ function instance_destroy(target) {
 /**
  * This function can be used in two ways depending on what you wish to check. You can give it an object_index to check for, in which case this function will return true if any active instances of the specified object exist in the current room, or you can also supply it with an instance id, in which case this function will return true if that specific instance exists and is active in the current room.
  * 
- * @param {string} obj The object or instance to check for the exsistence  of
+ * @param {object} obj The object or instance to check for the exsistence  of
  * @returns {boolean}
  */
 function instance_exists(obj) {
@@ -563,6 +589,32 @@ function instance_exists(obj) {
     }
   }
   return false;
+}
+
+/**
+ * With this function you can find out how many active instances of the specified object exists in the room. When checking using this function, if the object is a parent, then all child objects will also be included in the return value, and also note that those instances which have been deactivated with the instance deactivate functions will not be included in this check.
+ * 
+ * @param {object} obj 
+ * @returns {number}
+ */
+function instance_number(obj) {
+  let count = 0;
+
+  for (const [_, list] of instances.entries()) {
+    for (const inst of list) {
+      let current = inst._object;
+
+      while (current) {
+        if (current === obj) {
+          count++;
+          break;
+        }
+        current = current.parent ?? null; // walk up the parent chain
+      }
+    }
+  }
+
+  return count;
 }
 
 
@@ -594,6 +646,7 @@ function draw_sprite(sprite, subimg, x, y) {
  */
 function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha, returnImg = 0) {
   if (!sprite) return;
+  if (alpha < 0) alpha = 0;
 
   subimg = Math.floor(subimg);
 
@@ -1377,26 +1430,155 @@ function distance_to_point(x, y) {
   return point_distance(this.x, this.y, x, y)
 }
 
+/**
+ * Moves the instance towards a given point at a given speed.
+ * 
+ * @param {number} x The x position of the point to move towards.
+ * @param {number} y The y position of the point to move towards.
+ * @param {number} sp The speed to move at in pixels per second.
+ * @returns {void}
+ */
 function move_towards_point(x, y, sp) {
   const dx = x - this.x;
   const dy = y - this.y;
-  const dist = Math.sqrt(dx * dx + dy * dy);
+  const dist = Math.hypot(dx, dy);
 
-  if (dist === 0) {
+  if (dist === 0 || sp === 0) {
+    this.speed = 0;
     this.hspeed = 0;
-    this.vpseed = 0;
+    this.vspeed = 0;
     return;
-  } else {
-    this.hspeed = (dx / dist) * sp;
-    this.vspeed = (dy / dist) * sp;
   }
+
+  this.direction = Math.atan2(-dy, dx) * (180 / Math.PI); // invert Y to match canvas
+  this.speed = sp;
+
+  const rad = this.direction * (Math.PI / 180);
+  this.hspeed = Math.cos(rad) * sp;
+  this.vspeed = -Math.sin(rad) * sp;
+
+  // Optional: update position immediately if you want
+  // this.x += this.hspeed;
+  // this.y += this.vspeed;
 }
 
 function _with(obj, fn) {
-  const instancesOfObj = instances.get(obj) || [];
-  for (const inst of instancesOfObj) {
-    fn.call(inst);
+  try {
+    if (fn.prototype === undefined) {
+      throw new Error("_with: callback must not be an arrow function");
+    }
+
+    if (typeof obj !== "object") {
+      throw new Error("_with: object must be an object");
+    } 
+
+    if (obj._object) {
+      obj = obj._object;
+    }
+
+    const instancesOfObj = instances.get(obj) || [];
+    for (const inst of instancesOfObj) {
+      fn.call(inst);
+    }
+  } catch(error) {
+    console.error(`with() error on object ${obj?.name || '[unknown]'}`, error);
   }
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with };
+function abs(val) {
+  return Math.abs(val)
+}
+
+function action_move(direction, speed) {
+  const directions = [
+    225,
+    270,
+    315,
+    180,
+    null,
+    0,
+    135,
+    90,
+    45,
+  ];
+
+  const index = direction.indexOf("1");
+
+  if (index === -1 || directions[index] === null || speed === 0) {
+    this.speed = 0;
+    this.hspeed = 0;
+    this.vspeed = 0;
+    this.direction = 0;
+    return;
+  } else {
+    this.direction = directions[index];
+    this.speed = speed
+    const rad = (this.direction * Math.PI) / 180;
+    this.hspeed = Math.cos(rad) * speed;
+    this.vspeed = -Math.sin(rad) * speed;
+  }
+}
+
+/**
+ * With this function you can resume any sound that is currently paused (after using the function audio_pause_sound()). The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be re-started.
+ * 
+ * @param {object} index The index of the sound to resume.
+ * @returns {void}
+ */
+function audio_resume_sound(index, id = null) {
+  id = id ?? index._sounds[0]?._id;
+  if (id !== null) index.play(id);
+}
+
+/**
+ * With this function you can pause any sound that is currently playing. The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be paused.
+ * 
+ * @param {object} index The index of the sound to pause.
+ * @returns {void}
+ */
+function audio_pause_sound(index, id = null) {
+  id = id ?? index._sounds[0]?._id;
+  if (id !== null) index.pause(id);
+}
+
+/**
+ * All instances have a unique identifier (id) which can be used to modify and manipulate them while a game is running, but you may not always know what the id for a specific instance is and so this function can help as you can use it to iterate through all of them to find what you need. You specify the object that you want to find the instance of and a number, and if there is an instance at that position in the instance list then the function returns the id of that instance, and if not it returns the special keyword noone. You can also use the keyword all to iterate through all the instances in a room, as well as a parent object to iterate through all the instances that are part of that parent / child hierarchy, and you can even specify an instance (if you have its id) as a check to see if it actually exists in the current room. Please note that as instances are sorted in an arbitrary manner, there is no specific order to how the instances are checked by this function, and any instance can be in any position.
+ * 
+ * @param {object} obj The object to find the nth instance of
+ * @param {number} n The number of the instance to find
+ * @returns {object} The instance (or null if none)
+ */
+function instance_find(obj, n) {
+  try {
+    if (n < 0) {
+      throw new Error(`instance_find: number ${n} is less than 0.`)
+    }
+    if (obj === "all") {
+      const all = [];
+      for (const list of instances.values()) {
+        all.push(...list);
+      }
+
+      if (n >= 0 && n < all.length) {
+        return all[n];
+      } else {
+        throw new Error(`instance_find: index ${n} out of range for "all".`);
+      }
+    }
+
+    if (instances.get(obj)) {
+      if (instance_number(obj) >= n) {
+        return instances.get(obj)[n]
+      } else {
+        throw new Error("instance_find: number is greater than instance count of", obj)
+      }
+    } else {
+      return null;
+    }
+  } catch(error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with, abs, instance_number, action_move, audio_resume_sound, audio_pause_sound, instance_find };

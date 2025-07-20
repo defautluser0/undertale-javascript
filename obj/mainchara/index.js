@@ -1,7 +1,7 @@
-import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, collision_line, collision_point, script_execute, getBoundingBox, instances } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, merge_color, instance_exists, round, keyboard_check, draw_sprite, draw_sprite_part_ext, collision_rectangle, collision_line, collision_point, script_execute, getBoundingBox, instances, instance_create } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, c_gray, c_black, snd_splash, snd_squeak } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
-import { scr_hardmodename, snd_play, scr_interact } from "/imports/customFunctions.js"
+import { scr_hardmodename, snd_play, scr_interact, caster_resume } from "/imports/customFunctions.js"
 import { view_xview, view_yview, view_wview, view_hview } from "/imports/view.js"
 import { control_check_pressed, control_clear } from "/imports/input.js"
 
@@ -16,7 +16,7 @@ import * as obj_sdl from "/obj/sdl/index.js";
 import * as obj_sdr from "/obj/sdr/index.js";
 import * as obj_sul from "/obj/sul/index.js";
 import * as obj_sur from "/obj/sur/index.js";
-import { draw_rectangle, draw_set_color } from "../../imports/assets/gamemakerFunctions.js";
+import * as obj_musfadein from "/obj/musfadein/index.js";
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -661,7 +661,7 @@ function checkCol() {
 			this.moving = 0;
 		}
 	}
-	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sul, false, false)
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sul, true, false)
 	if (other) {
 		if (global.phasing === 0 && global.interact === 0) {
 			switch (global.facing) {
@@ -715,7 +715,7 @@ function checkCol() {
 			getBoundingBox.call(this);
 		}
 	}
-	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sur, false, false)
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sur, true, false)
 	if (other) {
 		if (global.phasing === 0 && global.interact === 0) {
 			switch (global.facing) {
@@ -728,7 +728,7 @@ function checkCol() {
 					}
 					break;
 				case 2:
-					if (collision_point.call(this, this.bbox_right - 3, this.bbox_top - 3, obj_solidparent, 0, 0) === null) {
+					if (collision_point.call(this, this.bbox_right - 3, this.bbox_top - 3, obj_solidparent, 0, 1) === null) {
 						this.x = this.xprevious - 3;
 						this.y = this.yprevious - 3;
 					} else {
@@ -769,7 +769,7 @@ function checkCol() {
 			getBoundingBox.call(this);
 		}
 	}
-	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdl, false, false)
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdl, true, false)
 	if (other) {
 		if (global.phasing === 0 && global.interact === 0) {
 			switch (global.facing) {
@@ -823,7 +823,7 @@ function checkCol() {
 			getBoundingBox.call(this);
 		}
 	}
-	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdr, false, false)
+	other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_sdr, true, false)
 	if (other) {
 		if (global.phasing === 0 && global.interact === 0) {
 			switch (global.facing) {

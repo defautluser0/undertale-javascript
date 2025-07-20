@@ -1,7 +1,8 @@
-import { draw_sprite_ext, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
-import { view_current, view_xview, view_yview } from "/imports/view.js"
-import global from "/imports/assets/global.js";
+import { draw_sprite_ext, instance_create, instance_destroy, _with } from "/imports/assets/gamemakerFunctions.js";
+import { c_white, snd_chug } from "/imports/assets.js";
+import { snd_play } from "/imports/customFunctions.js"
+
+import * as obj_fakepellet from "/obj/fakepellet/index.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -9,9 +10,10 @@ function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-	alarm[0] = 1;
+  alarm[0] = 61;
+
   return {
-    name: "shaker", // sprite name
+    name: "radialfakegen", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -24,23 +26,22 @@ function create() {
     sprite_index: null, // sprite object
     visible: true, // sprite visibility
     parent: parent,
+    friction: 0,
+    direction: 0,
+    speed: 11,
+    hspeed: 0,
+    vspeed: 0,
 
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-		hshake: global.hshake,
-		vshake: global.vshake,
-		shakespeed: global.shakespeed,
-		myview: view_current,
-		myx: view_xview[view_current],
-		myy: view_yview[view_current],
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		alarm0,
-		destroy,
+    step,
+    alarm0,
   };
 }
 
@@ -63,6 +64,21 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+
+  if (this.friction !== 0) {
+    if (this.speed > 0) {
+      this.speed -= this.friction;
+      if (this.speed < 0) this.speed = 0;
+    }
+  }
+
+  const dirRad = -(this.direction * Math.PI) / 180;
+  this.hspeed = Math.cos(dirRad) * this.speed;
+  this.vspeed = Math.sin(dirRad) * this.speed;
+
+	// Update position
+	this.x += this.hspeed;
+	this.y += this.vspeed;
 }
 
 function updateSprite() {
@@ -81,40 +97,16 @@ function updateSprite() {
   }
 }
 
+function step() {
+  this.direction += 6;
+  instance_create(this.x, this.y, obj_fakepellet);
+  snd_play(snd_chug);
+}
+
 function alarm0() {
-	if (this.hshake !== 0) {
-		if (this.hshake < 0) {
-			view_xview[this.myview] += this.hshake;
-			this.hshake += 1;
-		}
-
-		if (this.hshake > 0)
-			view_xview[this.myview] += this.hshake;
-
-		this.hshake = -this.hshake;
-	}
-
-	if (this.vshake !== 0) {
-		if (this.vshake < 0) {
-			view_yview[this.myview] += this.vshake;
-			this.vshake += 1;
-		}
-
-		if (this.vshake > 0)
-			view_yview[this.myview] += this.vshake;
-
-		this.vshake = -this.vshake;
-	}
-
-	this.alarm[this.myview] = this.shakespeed;
-
-	if (this.hshake === 0 && this.vshake === 0)
-		instance_destroy(this);
+  _with (this._object, function() {
+    instance_destroy(this);
+  })
 }
 
-function destroy() {
-	view_xview[this.myview] = this.myx;
-	view_yview[this.myview] = this.myy;
-}
-
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm0, destroy };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step, alarm0 };

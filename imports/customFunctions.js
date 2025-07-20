@@ -22,6 +22,15 @@ import {
   string,
   room_get_name,
   file_exists,
+  instance_exists,
+  _with,
+  audio_resume_sound,
+  audio_pause_sound,
+  ini_open,
+  ini_read_real,
+  ini_write_real,
+  ini_close,
+  audio_is_playing,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -31,13 +40,19 @@ import {
   fnt_main,
   fnt_maintext,
   fnt_plain,
+  fnt_plainbig,
+  fnt_comicsans,
+  fnt_papyrus,
   c_white,
   c_black,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,
+  snd_txttor2,
   snd_floweytalk1,
   snd_floweytalk2,
+  snd_txtpap,
+  snd_txtsans,
   snd_nosound,
   room_goto,
   c_ltgray,
@@ -46,7 +61,7 @@ import {
 } from "/imports/assets.js";
 import { vk_down, vk_up, vk_right, vk_left, control_check_pressed, control_clear } from "/imports/input.js"
 import global from "/imports/assets/global.js";
-import { view_current, view_wview } from "/imports/view.js"
+import { view_xview, view_current, view_wview } from "/imports/view.js"
 
 import * as obj_whitefader from "/obj/whitefader/index.js";
 import * as obj_persistentfader from "/obj/persistentfader/index.js";
@@ -60,14 +75,21 @@ import * as obj_face_alphys from "/obj/face_alphys/index.js";
 import * as obj_face_asgore from "/obj/face_asgore/index.js";
 import * as obj_face_mettaton from "/obj/face_mettaton/index.js";
 import * as obj_face_asriel from "/obj/face_asriel/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
+import * as obj_fakeheart from "/obj/fakeheart/index.js"
 
 function scr_replace_buttons_pc(str) {
-  return str
-    .replaceAll("*Z", "[Z]")
-    .replaceAll("*X", "[X]")
-    .replaceAll("*C", "[C]")
-    .replaceAll("*A", "[LEFT]")
-    .replaceAll("*D", "[RIGHT]");
+  try {
+    return str
+      .replaceAll("*Z", "[Z]")
+      .replaceAll("*X", "[X]")
+      .replaceAll("*C", "[C]")
+      .replaceAll("*A", "[LEFT]")
+      .replaceAll("*D", "[RIGHT]");
+  } catch(error) {
+    console.error(error);
+    return "";
+  }
 }
 
 function measure_text_width_bitmap(text, xscale = 1, font) {
@@ -225,7 +247,7 @@ function caster_load(sound) {
   return scr_getmusicindex(sound);
 }
 
-function caster_play(sound, volume, pitch) {
+function caster_play(sound, volume = 1, pitch = 1) {
   const this_song_i = audio_play_sound(sound, 100, false);
   audio_sound_pitch(sound, pitch);
   audio_sound_gain(sound, volume, 0);
@@ -255,10 +277,18 @@ function caster_get_volume(sound) {
   return sound.volume;
 }
 
+function caster_set_pitch(sound, pitch) {
+  audio_sound_pitch(sound, pitch);
+}
+
+function caster_get_pitch(sound) {
+  return sound.rate;
+}
+
 function caster_loop(song, gain, pitch) {
   let this_song_i = audio_play_sound(song, 120, true);
   audio_sound_pitch(song, pitch);
-  audio_sound_gain(song, gain);
+  audio_sound_gain(song, gain, 0);
   return this_song_i;
 }
 
@@ -340,7 +370,7 @@ function SCR_TEXTTYPE(typer, x, y) {
         c_white,
         x + 30,
         y + 15,
-        290,
+        view_xview[view_current] + 290,
         0,
         1,
         snd_txttor,
@@ -355,7 +385,7 @@ function SCR_TEXTTYPE(typer, x, y) {
         c_white,
         x + 30,
         y + 15,
-        290,
+        view_xview[view_current] + 290,
         0,
         1,
         SND_TXT1,
@@ -415,7 +445,7 @@ function SCR_TEXTTYPE(typer, x, y) {
         c_white,
         x + 20,
         y + 20,
-        290,
+        view_xview[view_current] + 290,
         0,
         1,
         snd_floweytalk1,
@@ -430,7 +460,7 @@ function SCR_TEXTTYPE(typer, x, y) {
         c_white,
         x + 20,
         y + 20,
-        290,
+        view_xview[view_current] + 290,
         0,
         1,
         snd_nosound,
@@ -445,18 +475,133 @@ function SCR_TEXTTYPE(typer, x, y) {
         c_white,
         x + 20,
         y + 20,
-        290,
+        view_xview[view_current] + 290,
         0,
-        2,
+        3,
         SND_TXT2,
         9,
         18
       );
       break;
+    
+    case 12:
+      SCR_TEXTSETUP.call(this,
+        fnt_plain,
+        c_black,
+        x,
+        y,
+        x + 200,
+        1,
+        3,
+        snd_txttor2,
+        10,
+        20,
+      );
+      break;
+    case 13:
+      SCR_TEXTSETUP.call(this,
+        fnt_plain,
+        c_black,
+        x,
+        y,
+        x + 200,
+        2,
+        4,
+        snd_txttor2,
+        11,
+        20,
+      );
+      break;
+    case 14:
+      SCR_TEXTSETUP.call(this,
+        fnt_plain,
+        c_black,
+        x,
+        y,
+        x + 200,
+        3,
+        5,
+        snd_txttor2,
+        14,
+        20
+      );
+      break;
+    case 15:
+      SCR_TEXTSETUP.call(this,
+        fnt_plain,
+        c_black,
+        x,
+        y,
+        x + 200,
+        0,
+        10,
+        snd_txttor2,
+        18,
+        20,
+      )
+      break;
+    case 16:
+      SCR_TEXTSETUP.call(this,
+        fnt_maintext,
+        c_white,
+        x + 20,
+        y + 20,
+        view_xview[view_current] + 290,
+        1.2,
+        2,
+        snd_floweytalk2,
+        8,
+        18,
+      )
+      break;
+    case 17:
+      SCR_TEXTSETUP.call(this,
+        fnt_comicsans,
+        c_white,
+        x + 20,
+        y + 20,
+        view_xview[view_current] + 290,
+        0,
+        1,
+        snd_txtsans,
+        8,
+        18,
+      )
+      break;
+    case 19:
+      global.typer = 18;
+    case 18:
+      SCR_TEXTSETUP.call(this,
+        fnt_papyrus,
+        c_white,
+        x + 20,
+        y + 20,
+        view_xview[view_current] + 290,
+        0,
+        1,
+        snd_txtpap,
+        11,
+        18,
+      )
+      break;
+    case 20:
+      SCR_TEXTSETUP.call(this,
+        fnt_plainbig,
+        c_black,
+        x,
+        y,
+        x + 200,
+        0,
+        2,
+        snd_floweytalk2,
+        25,
+        20,
+      )
+      break;
   }
 
   if (global.typer === 11 || global.typer === 112) {
-    this.textspeed = 2;
+    this.textspeed += 1;
   }
 }
 
@@ -1953,6 +2098,76 @@ function SCR_BORDERSETUP() {
   }
 }
 
+function scr_textskip() {
+  if (instance_exists(OBJ_WRITER))
+  {
+    if (control_check_pressed(1))
+    {
+      _with (OBJ_WRITER, function() {
+        this.stringpos = string_length(this.originalstring);
+      })
+      
+      control_clear(1);
+    }
+  }
+}
+
+function caster_resume(sound) {
+  audio_resume_sound(sound);
+}
+
+function caster_pause(sound) {
+  audio_pause_sound(sound);
+}
+
+function scr_gameoverb() {
+  global.hp = 0;
+
+  if (global.battlegroup === 22) {
+    _with("obj_torielboss", function() {
+      this.sprite_index = "spr_torielboss_mouthcover";
+    })
+  }
+
+  if (instance_exists("obj_asgoreb")) {
+    ini_open("undertale.ini");
+    const ky = ini_read_real("Asgore", "KillYou", 0);
+    ini_write_real("Asgore", "KillYou", ky + 1);
+    ini_close();
+  }
+
+  if (instance_exists("obj_spiderb")) {
+    global.tempvalue[11] += 1;
+  }
+
+  ini_open("undertale.ini");
+  const g_o = ini_read_real("General", "Gameover", 0);
+  ini_close();
+  audio_stop_all();
+  caster_stop("all");
+  caster_free("all");
+
+  if (instance_exists("obj_heart")) {
+    _with(obj_heart, function() {
+      global.myxb = this.x;
+      global.myyb = this.y;
+    })
+  }
+
+  if (instance_exists(obj_fakeheart)) {
+    _with(obj_fakeheart, function() {
+      global.myxb = this.x;
+      global.myyb = this.y;
+    })
+  }
+
+  room_goto("room_gameover")
+}
+
+function snd_isplaying(snd) {
+  return audio_is_playing(snd)
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -1966,9 +2181,12 @@ export {
   caster_free,
   caster_set_volume,
   caster_get_volume,
+  caster_set_pitch,
+  caster_get_pitch,
   caster_loop,
   snd_play,
   snd_stop,
+  snd_isplaying,
   SCR_TEXTSETUP,
   SCR_TEXTTYPE,
   SCR_NEWLINE,
@@ -1985,5 +2203,9 @@ export {
   scr_roomname,
   substr,
   strlen,
-  SCR_BORDERSETUP
+  SCR_BORDERSETUP,
+  scr_textskip,
+  caster_resume,
+  caster_pause,
+  scr_gameoverb,
 };

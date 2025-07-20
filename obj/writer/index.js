@@ -9,7 +9,7 @@ import global from '/imports/assets/global.js';
 import * as obj_choicer from "/obj/choicer/index.js"
 
 function create() {
-	const parent_alarm = new Array(12).fill(-1);
+	const alarm = new Array(12).fill(-1);
 
 	return {
 		name: "writer",
@@ -20,7 +20,7 @@ function create() {
 		visible: true,
 		x: 0,
 		y: 0,
-		parent_alarm: parent_alarm,
+		alarm: alarm,
 		speed: 0,
 		should_destroy: false,
 		depth: -500,
@@ -39,13 +39,13 @@ function create() {
 		doak: 0,
 
 		// functions
-		updateParentAlarms,
+		updateAlarms,
 		updateGamemakerFunctions,
-		parent_alarm0,
+		alarm0,
 		parent_beginStep,
 		parent_step,
-		parent_user0,
-		parent_user1,
+		user0,
+		user1,
 		parent_draw,
 		draw,
 		step,
@@ -54,19 +54,19 @@ function create() {
 	}
 }
 
-function updateParentAlarms() {
-  for (let i = 0; i < this.parent_alarm.length; i++) {
-    if (this.parent_alarm[i] > 0) {
-      this.parent_alarm[i]--;
-      if (this.parent_alarm[i] === 0) {
-        const handler = this[`parent_alarm${i}`];
+function updateAlarms() {
+  for (let i = 0; i < this.alarm.length; i++) {
+    if (this.alarm[i] > 0) {
+      this.alarm[i]--;
+      if (this.alarm[i] === 0) {
+        const handler = this[`alarm${i}`];
         if (typeof handler === "function") handler.call(this); // call with instance context
       }
     }
   }
 }
 
-function parent_alarm0() {
+function alarm0() {
 	if (this.stringpos >= this.originalstring.length) {
 		return;
 	}
@@ -153,7 +153,7 @@ function parent_alarm0() {
 		}
 	}
 
-	this.parent_alarm[0] = delay;
+	this.alarm[0] = delay;
 
 	if (dosound) {
 		if (this.txtsound === 56) {
@@ -293,7 +293,7 @@ function parent_alarm0() {
 }
 
 function updateGamemakerFunctions() {
-	updateParentAlarms.call(this);
+	updateAlarms.call(this);
 
 	this.image_index += this.image_speed;
 	if (this.image_index >= this.image_number) {
@@ -321,17 +321,17 @@ function parent_beginStep() {
 
 function parent_step() {
 	if (control_check_pressed(0) === true) {
-		this.parent_user0();
+		this.user0();
 	}
 }
 
-function parent_user0() {
+function user0() {
 	if (this.halt === 1) {
 		this.stringno++;
 		this.originalstring = scr_replace_buttons_pc(this.mystring[this.stringno]);
 		this.stringpos = 0;
 		this.halt = 0;
-		this.parent_alarm[0] = this.textspeed;
+		this.alarm[0] = this.textspeed;
 	} else if (this.halt === 2) {
 		control_clear(0);
 		instance_destroy(this);
@@ -343,7 +343,7 @@ function parent_user0() {
 	}
 }
 
-function parent_user1() {
+function user1() {
 	if (global.inbattle === 0) {
 		if (!instance_exists(obj_choicer))
 		{
@@ -427,7 +427,7 @@ function parent_draw() {
 			}
 			else if (this.ch == "C")
 			{
-				this.parent_user1();
+				this.user1();
 			}
 			else if (this.ch == "M")
 			{
@@ -661,7 +661,7 @@ function parent_draw() {
 				this.stringpos = 0;
 				myx = this.writingx;
 				myy = this.writingy;
-				this.parent_alarm[0] = this.textspeed;
+				this.alarm[0] = this.textspeed;
 				break;
 		}
 		else
@@ -940,7 +940,7 @@ function draw() {
 }
 
 function roomStart() {
-	SCR_TEXT.call(this, global.msc);
+	script_execute.call(this, SCR_TEXT, global.msc);
 	SCR_TEXTTYPE.call(this, global.typer, 0, 0);
 	this.writingx = round(this.writingx);
 	this.writingy = round(this.writingy);
@@ -957,9 +957,9 @@ function roomStart() {
 	this.originalstring = scr_replace_buttons_pc(this.mystring[0]);
 
 
-	this.parent_alarm[0] = this.textspeed;
+	this.alarm[0] = this.textspeed;
 	this.writingx = this.x + this.writingx;
 	this.writingy = this.y + this.writingy;
 }
 
-export { create, updateParentAlarms, updateGamemakerFunctions, parent_beginStep, beginStep, parent_step, step, parent_user0, parent_user1, parent_draw, draw, roomStart }; 
+export { create, updateAlarms, updateGamemakerFunctions, parent_beginStep, beginStep, parent_step, step, user0, user1, parent_draw, draw, roomStart }; 

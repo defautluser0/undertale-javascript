@@ -1,4 +1,4 @@
-import { draw_sprite_ext, instances, instance_create, instance_exists, instance_destroy, room_goto } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, draw_sprite, instances, instance_create, instance_exists, instance_destroy, room_goto, _with } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, snd_noise } from "/imports/assets.js";
 import { snd_play } from "/imports/customFunctions.js"
 import global from "/imports/assets/global.js"
@@ -148,7 +148,21 @@ function roomEnd() {
 }
 
 function draw() {
-
+  let mainchara;
+  if (instances.get(obj_mainchara)) {
+    mainchara = instances.get(obj_mainchara)[0];
+  }
+  if (this.clap < 3 && mainchara) {
+    mainchara.depth = this.depp;
+  }
+  if (instance_exists(obj_fader)) {
+    _with (obj_fader, function() {
+      instance_destroy(this);
+    })
+  }
+  if (this.heartdraw === 1 && mainchara) {
+    draw_sprite("spr_heartsmall", 0, mainchara.x + 5, mainchara.y + 17);
+  }
 }
 
 export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm4, alarm3, alarm2, roomEnd, draw, };

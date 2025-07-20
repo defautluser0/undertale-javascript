@@ -1,17 +1,18 @@
 import { draw_sprite_ext, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-import { view_current, view_xview, view_yview } from "/imports/view.js"
-import global from "/imports/assets/global.js";
+import { caster_get_volume, caster_set_volume } from "/imports/customFunctions.js"
+import global from "/imports/assets/global.js"
 
-const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
+const parent = null;
 
 function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-	alarm[0] = 1;
+  const mysong = global.currentsong;
+
   return {
-    name: "shaker", // sprite name
+    name: "musfadein", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -28,19 +29,15 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-		hshake: global.hshake,
-		vshake: global.vshake,
-		shakespeed: global.shakespeed,
-		myview: view_current,
-		myx: view_xview[view_current],
-		myy: view_yview[view_current],
+		mysong: mysong,
+		volume: caster_get_volume(mysong),
+		fadespeed: 0.1,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		alarm0,
-		destroy,
+		step,
   };
 }
 
@@ -81,40 +78,18 @@ function updateSprite() {
   }
 }
 
-function alarm0() {
-	if (this.hshake !== 0) {
-		if (this.hshake < 0) {
-			view_xview[this.myview] += this.hshake;
-			this.hshake += 1;
-		}
+function step() {
+	this.volume += this.fadespeed;
 
-		if (this.hshake > 0)
-			view_xview[this.myview] += this.hshake;
-
-		this.hshake = -this.hshake;
+	if (this.volume > 0.95) {
+		this.volume = 1;
 	}
 
-	if (this.vshake !== 0) {
-		if (this.vshake < 0) {
-			view_yview[this.myview] += this.vshake;
-			this.vshake += 1;
-		}
+	caster_set_volume(this.mysong, this.volume);
 
-		if (this.vshake > 0)
-			view_yview[this.myview] += this.vshake;
-
-		this.vshake = -this.vshake;
-	}
-
-	this.alarm[this.myview] = this.shakespeed;
-
-	if (this.hshake === 0 && this.vshake === 0)
+	if (this.volume === 1) {
 		instance_destroy(this);
+	}
 }
 
-function destroy() {
-	view_xview[this.myview] = this.myx;
-	view_yview[this.myview] = this.myy;
-}
-
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm0, destroy };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step };

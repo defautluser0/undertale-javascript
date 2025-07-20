@@ -123,7 +123,7 @@ function step() {
 		}
 
 		if (instance_exists(obj_face)) {
-			_with (obj_face, () => {
+			_with (obj_face, function() {
 				instance_destroy(this);
 			})
 		}
@@ -192,7 +192,7 @@ function draw() {
 			}
 		}
 		if (instance_exists(obj_face)) {
-			_with (obj_face, () => {
+			_with (obj_face, function() {
 				this.y -= 155;
 			})
 		}
@@ -210,7 +210,7 @@ function draw() {
 			}
 		}
 		if (instance_exists(obj_face)) {
-			_with (obj_face, () => {
+			_with (obj_face, function() {
 				this.y += 155;
 			})
 		}

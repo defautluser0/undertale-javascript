@@ -65,6 +65,9 @@ const mus_options_summer = new Howl({
 const mus_options_winter = new Howl({
   src: ["/imports/assets/mus/options_winter.ogg"]
 })
+const mus_toriel = new Howl({
+  src: ["/imports/assets/mus/toriel.ogg"]
+})
 
 // snd_*
 const SND_TXT1 = new Howl({
@@ -75,6 +78,12 @@ const SND_TXT2 = new Howl({
 })
 const snd_txttor = new Howl({
 	src: ["/imports/assets/snd/txttor.wav"]
+})
+const snd_txttor2 = new Howl({
+	src: ["/imports/assets/snd/txttor2.wav"]
+})
+const snd_txttor3 = new Howl({
+	src: ["/imports/assets/snd/txttor3.wav"]
 })
 const snd_floweytalk1 = new Howl({
   src: ["/imports/assets/snd/floweytalk1.wav"]
@@ -106,6 +115,33 @@ const snd_noise = new Howl({
 const snd_battlefall = new Howl({
   src: ["/imports/assets/snd/battlefall.wav"]
 })
+const snd_floweylaugh = new Howl({
+  src: ["/imports/assets/snd/floweylaugh.wav"]
+})
+const snd_hurt1 = new Howl({
+  src: ["/imports/assets/snd/hurt1.wav"]
+})
+const snd_chug = new Howl({
+  src: ["/imports/assets/snd/chug.wav"]
+})
+const snd_heal_c = new Howl({
+  src: ["/imports/assets/snd/heal_c.wav"]
+})
+const snd_power = new Howl({
+  src: ["/imports/assets/snd/power.wav"]
+})
+const snd_txtsans = new Howl({
+  src: ["/imports/assets/snd/txtsans.wav"]
+})
+const snd_txtsans2 = new Howl({
+  src: ["/imports/assets/snd/txtsans2.wav"]
+})
+const snd_txtpap = new Howl({
+  src: ["/imports/assets/snd/txtpap.wav"]
+})
+const snd_ehurt1 = new Howl({
+  src: ["/imports/assets/snd/ehurt1.wav"]
+})
 
 // currently playing sounds map
 const playingSounds = new Map();
@@ -133,9 +169,12 @@ export {
   mus_options_winter,
   mus_options_fall,
   mus_options_summer,
+  mus_toriel,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,
+  snd_txttor2,
+  snd_txttor3,
   snd_floweytalk1,
   snd_floweytalk2,
   snd_nosound,
@@ -146,5 +185,14 @@ export {
   snd_select,
   snd_noise,
   snd_battlefall,
+  snd_floweylaugh,
+  snd_hurt1,
+  snd_chug,
+  snd_heal_c,
+  snd_power,
+  snd_txtsans,
+  snd_txtsans2,
+  snd_txtpap,
+  snd_ehurt1,
   playingSounds,
 };

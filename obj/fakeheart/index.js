@@ -1,5 +1,12 @@
-import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, script_execute, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
+import { control_check } from "/imports/input.js"
+import { scr_gameoverb } from "/imports/customFunctions.js"
+
+import * as obj_dborder from "/obj/dborder/index.js";
+import * as obj_rborder from "/obj/rborder/index.js";
+import * as obj_uborder from "/obj/uborder/index.js";
+import * as obj_lborder from "/obj/lborder/index.js";
 
 import global from "/imports/assets/global.js";
 
@@ -12,21 +19,23 @@ function create() {
   global.sp = global.asp;
 
   return {
-    name: "fakeheart", // sprite name
-    depth: 0, // object depth
-    image_xscale: 1, // sprite scale
-    image_yscale: 1, // sprite scale
-    x: 0, // object x. this is set by room
-    y: 0, // object y. this is set by room
-    image_alpha: 1, // sprite alpha
-    image_index: 0, // sprite frame index
-    image_speed: 0, // sprite frame speed
-    image_number: 1, // sprite frame number
+    name: "fakeheart",         // sprite name
+    depth: 0,                  // object depth
+    image_xscale: 1,           // sprite scale
+    image_yscale: 1,           // sprite scale
+    x: 0,                      // object x. this is set by room
+    y: 0,                      // object y. this is set by room
+    image_alpha: 1,            // sprite alpha
+    image_index: 0,            // sprite frame index
+    image_speed: 0,            // sprite frame speed
+    image_number: 1,           // sprite frame number
+    image_width: 0,            // placeholder
+    image_height: 0,           // placeholder
     sprite_index: "spr_heart", // sprite object
-    visible: true, // sprite visibility
-    parent: parent,
+    visible: true,             // sprite visibility
+    parent: parent,            // object parent
 
-    alarm: alarm, // alarm array
+    alarm: alarm,              // alarm array
 
     // any variables assigned inside create code
     movement: 1,
@@ -37,6 +46,8 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
+    step,
+    updateCol,
   };
 }
 
@@ -59,11 +70,13 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+
+  getBoundingBox.call(this);
 }
 
 function updateSprite() {
   if (this.visible === true) {
-    draw_sprite_ext(
+    let img = draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -72,9 +85,83 @@ function updateSprite() {
       this.image_yscale,
       0,
       c_white,
-      this.image_alpha
+      this.image_alpha,
+      1,
     );
+    if (img) {
+      this.image_width = img.width;
+      this.image_height = img.height;
+    }
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent };
+function step() {
+  global.invc -= 1;
+  if (global.invc > 0) {
+    this.image_speed = 0.5;
+  } else {
+    this.image_index = 0;
+    this.image_speed = 0;
+  }
+
+  if (global.left) {
+    if (this.movement === 1) {
+      if (control_check(1) === true) {
+        this.x -= (global.sp / 2);
+      } else {
+        this.x -= global.sp;
+      }
+    }
+  }
+  if (global.right) {
+    if (this.movement === 1) {
+      if (control_check(1) === true) {
+        this.x += (global.sp / 2);
+      } else {
+        this.x += global.sp;
+      }
+    }
+  }
+  if (global.up) {
+    if (this.movement === 1) {
+      if (control_check(1) === true) {
+        this.y -= (global.sp / 2);
+      } else {
+        this.y -= global.sp;
+      }
+    }
+  }
+  if (global.down) {
+    if (this.movement === 1) {
+      if (control_check(1) === true) {
+        this.y += (global.sp / 2);
+      } else {
+        this.y += global.sp;
+      }
+    }
+  }
+  if (global.hp < 1) {
+    script_execute.call(this, scr_gameoverb);
+  }
+}
+
+function updateCol() {
+  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_dborder, false, false)
+  if (other) {
+    this.y = other.y - this.sprite_height;
+  }
+  other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_rborder, false, false)
+  if (other) {
+    this.x = other.x - this.sprite_width;
+  }
+  other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_uborder, false, false)
+  if (other) {
+    this.y = other.y + this.sprite_height;
+  }
+  other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_lborder, false, false)
+  if (other) {
+    this.x = other.x + this.sprite_width;
+  }
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step, updateCol };

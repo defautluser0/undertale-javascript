@@ -3,6 +3,7 @@ import { view_xview, view_yview, view_current, view_hview, view_wview } from "/i
 import global from "/imports/assets/global.js"
 import { keyboard_check, room_goto, ord, keyboard_check_pressed, instance_exists, instance_create, ini_open, ini_close, ini_read_real, ini_read_string } from "/imports/assets/gamemakerFunctions.js";
 import { vk_up, vk_down, vk_left, vk_right, vk_escape } from "/imports/input.js"
+import { snd_isplaying, snd_play } from "/imports/customFunctions.js"
 import * as obj_quittingmessage from "/obj/quittingmessage/index.js"
 import { textdata_en } from "/imports/assets/text.js";
 
@@ -30,8 +31,49 @@ function updateScreen() {
 		scaledWidth, ogCanvas.height
 	);
 
+  function extractNameFromSrc(src) {
+    // src expected: "/imports/assets/mus/xxx.ogg" or "/imports/assets/snd/yyy.ogg"
+    const parts = src.split('/');
+    if (parts.length < 4) return null; // safeguard
+
+    const folder = parts[3]; // 'mus' or 'snd'
+    const filename = parts[4]?.split('.')[0]; // 'xxx' or 'yyy'
+    if (!folder || !filename) return null;
+
+    return `${folder}_${filename}`;
+  }
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-  localStorage.setItem("global", JSON.stringify(global));
+  try {
+    localStorage.setItem("global", JSON.stringify(global));
+  } catch(_) {
+    if (global.currentsong !== -1) {
+      let currentsong = global.currentsong;
+      global.currentsong = {
+        name: extractNameFromSrc(currentsong._src) ?? "unknown",
+        rate: currentsong.rate?.() ?? 1,
+        volume: currentsong.volume?.() ?? 1,
+        paused: !currentsong.playing?.() ?? false,
+        pos: currentsong.seek?.() ?? 0,
+        loop: currentsong._loop
+      };
+      localStorage.setItem("global", JSON.stringify(global));
+      global.currentsong = currentsong;
+    }
+    if (global.currentsong2 !== -1) {
+      let currentsong2 = global.currentsong2;
+      global.currentsong2 = {
+        name: extractNameFromSrc(currentsong2._src) ?? "unknown",
+        rate: currentsong2.rate?.() ?? 1,
+        volume: currentsong2.volume?.() ?? 1,
+        paused: !currentsong2.playing?.() ?? false,
+        pos: currentsong2.seek?.() ?? 0,
+        loop: currentsong2._loop ?? false,
+      };
+      localStorage.setItem("global", JSON.stringify(global));
+      global.currentsong2 = currentsong2;
+    }
+  }
 }
 
 function create() {
