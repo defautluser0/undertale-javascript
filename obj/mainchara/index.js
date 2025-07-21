@@ -17,6 +17,7 @@ import * as obj_sdr from "/obj/sdr/index.js";
 import * as obj_sul from "/obj/sul/index.js";
 import * as obj_sur from "/obj/sur/index.js";
 import * as obj_musfadein from "/obj/musfadein/index.js";
+import * as obj_battler from "/obj/battler/index.js"
 
 function create() {
 	const alarm = new Array(12).fill(-1);
@@ -335,6 +336,15 @@ function step() {
 	if (global.facing == 3)
 		this.sprite_index = this.lsprite;
 
+	if (collision_point(this.bbox_left - 3, this.bbox_top - 3, obj_solidparent, 0, 1) === null) {
+		this.crumpet = 1;
+	} else {
+		this.crumpet = 2;
+	}
+
+	this.strumpet = this.bbox_top;
+	this.trumpet = this.bbox_left
+
 	if (global.inbattle == 1)
 	{
 		if (global.flag[15] == 0)
@@ -343,6 +353,7 @@ function step() {
 			caster_resume(global.currentsong);
 		}
 
+		global.room_persistent = "";
 		global.inbattle = 0;
 			
 		if (global.specialbattle == 0)
@@ -498,13 +509,13 @@ function step() {
 	if (control_check_pressed(2))
 			this.user2();
 
-	this.door = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_doorparent, true, false)
+	this.door = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_doorparent, false, false)
 
 	if (this.door && this.delayStep-- > 0) {
 		this.door.user9();
 	}
 
-	if (instance_exists("obj_battler") === false)
+	if (instance_exists(obj_battler) === false)
 	{
 			this.depth = 50000 - ((this.y * 10) + (this.sprite_height * 10));
 			

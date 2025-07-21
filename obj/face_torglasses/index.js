@@ -1,7 +1,9 @@
-import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, instance_destroy, instance_exists } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as obj_torbody from "/obj/torbody/index.js";
+
+import * as parent from "/obj/torface/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -9,8 +11,8 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "face_torglasses", // sprite name
+    depth: -557, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     x: 0, // object x. this is set by room
@@ -23,7 +25,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_face_torielglasses", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -38,6 +40,7 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
+    step,
   };
   
   self._hspeed = 0;
@@ -171,4 +174,10 @@ function updateSprite() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent };
+function step() {
+  if (instance_exists(obj_torbody) === false) {
+    instance_destroy(this);
+  }
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step };

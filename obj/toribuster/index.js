@@ -1,7 +1,7 @@
 import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -9,7 +9,7 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
+    name: "toribuster", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -23,7 +23,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_whitefader", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -117,8 +117,6 @@ function updateGamemakerFunctions() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
-
-		this.animationEnd?.();
   }
 
   // getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)

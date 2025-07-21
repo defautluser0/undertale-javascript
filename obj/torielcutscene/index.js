@@ -187,7 +187,7 @@ function roomStart() {
 
 function alarm2() {
   global.border = 0;
-  global.plot = 1;
+  global.plot = 0.5;
   global.interact = 1;
   global.specialbattle = 1;
   room_goto("room_area1_2");
@@ -214,7 +214,7 @@ function step() {
     if (instances.get(OBJ_WRITER.halt === 0)) {
       this.image_speed = 0.2;
     } else {
-      this.image_speed = 0.2;
+      this.image_speed = 0;
       this.image_index = 0;
     }
   }

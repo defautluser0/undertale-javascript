@@ -31,6 +31,7 @@ import {
   ini_write_real,
   ini_close,
   audio_is_playing,
+  abs,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -274,7 +275,7 @@ function caster_set_volume(sound, vol) {
 }
 
 function caster_get_volume(sound) {
-  return sound.volume;
+  return sound.volume();
 }
 
 function caster_set_pitch(sound, pitch) {
@@ -1608,6 +1609,50 @@ function scr_npcdir(argument0) {
   }
 }
 
+function scr_npcdirspeed() {
+  if (this.myinteract == 0)
+  {
+      if (this.vspeed > 0 && this.vspeed > abs(this.hspeed))
+      {
+          this.facing = 0;
+          this.sprite_index = this.dsprite;
+      }
+      
+      if (this.hspeed > 0 && this.hspeed > abs(this.vspeed))
+      {
+          this.facing = 1;
+          this.sprite_index = this.rsprite;
+      }
+      
+      if (this.vspeed < 0 && abs(this.vspeed) > abs(this.hspeed))
+      {
+          this.facing = 2;
+          this.sprite_index = this.usprite;
+      }
+      
+      if (this.hspeed < 0 && abs(this.hspeed) > abs(this.vspeed))
+      {
+          this.facing = 3;
+          this.sprite_index = this.lsprite;
+      }
+  }
+
+  if (this.myinteract == 1)
+  {
+      if (this.facing == 0)
+          this.sprite_index = this.dtsprite;
+      
+      if (this.facing == 1)
+          this.sprite_index = this.rtsprite;
+      
+      if (this.facing == 2)
+          this.sprite_index = this.utsprite;
+      
+      if (this.facing == 3)
+          this.sprite_index = this.ltsprite;
+  }
+}
+
 function scr_interact() {
   this.myinteract = 1;
 }
@@ -2168,6 +2213,10 @@ function snd_isplaying(snd) {
   return audio_is_playing(snd)
 }
 
+function scr_depth() {
+  this.depth = 50000 - ((this.y * 10) + (this.sprite_height * 10));
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -2197,6 +2246,7 @@ export {
   random_ranger,
   ossafe_fill_rectangle,
   scr_npcdir,
+  scr_npcdirspeed,
   scr_interact,
   scr_facechoice,
   scr_gettext,
@@ -2208,4 +2258,5 @@ export {
   caster_resume,
   caster_pause,
   scr_gameoverb,
+  scr_depth,
 };

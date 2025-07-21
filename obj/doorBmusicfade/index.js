@@ -1,18 +1,20 @@
-import { draw_sprite_ext, instance_exists, instances } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_exists, instance_create, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
+import { caster_free } from "/imports/customFunctions.js";
+import global from "/imports/assets/global.js"
 
-import * as obj_dialoguer from "/obj/dialoguer/index.js"
-
-const parent = null;
+import * as obj_unfader from "/obj/unfader/index.js";
+import * as obj_undyneachaser from "/obj/undyneachaser/index.js"
+import * as obj_musfadeout from "/obj/musfadeout/index.js"
+import * as parent from "/obj/doorB/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-	let visible = true;
 
   return {
-    name: "face", // sprite name
+    name: "doorBmusicfaade", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -22,20 +24,21 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
     image_number: 0, // sprite frame number
-    sprite_index: null, // sprite object
-    visible: visible, // sprite visibility
+    sprite_index: "spr_doorB", // sprite object
+    visible: false, // sprite visibility
     parent: parent,
 
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
+    touched: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		alarm9,
-    roomStart,
+    alarm2,
+    user9,
   };
 }
 
@@ -58,6 +61,13 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+
+	getBoundingBox.call(this);
+
+	this.xprevious = this.x;
+	this.yprevious = this.y;
+	this.previousx = this.x;
+	this.previousy = this.y;
 }
 
 function updateSprite() {
@@ -76,17 +86,35 @@ function updateSprite() {
   }
 }
 
-function alarm9() {
-	this.visible = true
+function alarm2() {
+  parent.alarm2.call(this)
 }
 
-function roomStart() {
-	if (instance_exists(obj_dialoguer)) {
-		if (instances.get(obj_dialoguer).find(inst => inst.count === 0)) {
-			this.visible = false;
-			this.alarm[9] = 1;
-		}
-	}
+function user9() {
+  global.interact = 3;
+  instance_create(0, 0, obj_unfader);
+  this.ok = 1;
+
+  if (global.currentroom = "room_fire1" && instance_exists(obj_undyneachaser) === true) {
+    this.ok = 0;
+  }
+
+  if (global.flag[7] === 0) {
+    if (this.ok === 1) {
+      instance_create(0, 0, obj_musfadeout);
+    }
+  }
+
+  if (this.touched === 0) {
+    this.alarm[2] = 13;
+    this.touched = 1;
+  }
+
+  if (global.flag[7] == 0)
+  {
+    if (room == room_torhouse1)
+      caster_free(global.currentsong2);
+  }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm9, roomStart };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm2, user9 };

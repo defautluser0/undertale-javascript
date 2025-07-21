@@ -962,4 +962,4 @@ function roomStart() {
 	this.writingy = this.y + this.writingy;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, parent_beginStep, beginStep, parent_step, step, user0, user1, parent_draw, draw, roomStart }; 
+export { create, updateAlarms, updateGamemakerFunctions, parent_beginStep, beginStep, parent_step, step, user0, user1, parent_draw, draw, roomStart, alarm0 }; 

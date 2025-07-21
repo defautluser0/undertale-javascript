@@ -15,7 +15,7 @@
     import roomSize from '/imports/assets/roomSize.js'
 
     roomSize.width = 320;  // room width in px
-    roomSize.height = 240; // room height in px
+    roomSize.height = 480; // room height in px
 
   </script>
   <script src="/imports/howler.js"></script>
@@ -25,7 +25,22 @@
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
 		import global from "/imports/assets/global.js"
-    import * as obj_objectname from '/obj/objectname/index.js'
+    import * as obj_solidtall from '/obj/solidtall/index.js'
+    import * as obj_sur from '/obj/sur/index.js'
+    import * as obj_sul from '/obj/sul/index.js'
+    import * as obj_solidtall_2 from '/obj/solidtall_2/index.js'
+    import * as obj_mainchara from '/obj/mainchara/index.js'
+    import * as obj_sdr from '/obj/sur/index.js'
+    import * as obj_sdl from '/obj/sul/index.js'
+    import * as obj_ruinsmusic from '/obj/ruinsmusic/index.js'
+    import * as obj_doorBmusicfade from '/obj/doorBmusicfade/index.js'
+    import * as obj_markerA from '/obj/markerA/index.js'
+    import * as obj_markerB from '/obj/markerB/index.js'
+    import * as obj_toroverworld2 from '/obj/toroverworld2/index.js'
+    import * as obj_doorA from '/obj/doorA/index.js'
+    import * as obj_savepoint from '/obj/savepoint/index.js'
+    import * as obj_toribuster from '/obj/toribuster/index.js'
+    import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js'
 		import * as screenUpdater from '/obj/screen/index.js'
 
 		const allInstances = [];
@@ -34,7 +49,7 @@
     loadCurrentSong("currentsong2")
 
     screenUpdater.create()
-    instance_create(0, 0, obj_objectname);
+    instance_create(0, 0, obj_solidtall);
 
     if (global.room_persistent === window.location.href) {
       const save = global._roomSaves?.[window.location.href];
@@ -147,7 +162,7 @@
           }
         }
 
-        updateCamera(instances.get(obj_objectname)[0]) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
+        updateCamera(instances.get(obj_mainchara)[0]) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
         screenUpdater.updateScreen();
 
         input_update();

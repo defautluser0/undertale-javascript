@@ -28,7 +28,8 @@ function create() {
 
     alarm: alarm, // alarm array
 
-    // any variables assigned inside create codestringno: 0,
+    // any variables assigned inside create code
+    stringno: 0,
 		stringpos: 0,
 		halt: 0,
 		dfy: 0,

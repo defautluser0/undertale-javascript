@@ -1,7 +1,7 @@
 import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as parent from "/obj/solidparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -9,8 +9,8 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "solidtall_2", // sprite name
+    depth: 60000, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     x: 0, // object x. this is set by room
@@ -23,7 +23,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_solidtall_2", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -38,6 +38,7 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
+		step,
   };
   
   self._hspeed = 0;
@@ -121,7 +122,7 @@ function updateGamemakerFunctions() {
 		this.animationEnd?.();
   }
 
-  // getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
+  getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
 
 	this.previousx = this.x;
 	this.xprevious = this.x;
@@ -171,4 +172,8 @@ function updateSprite() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent };
+function step() {
+	this.visible = parent.step(this.visible);
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step };

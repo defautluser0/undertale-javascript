@@ -1,7 +1,8 @@
 import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
+import { caster_is_playing, caster_load, caster_loop } from "/imports/customFunctions.js"
+import { c_white, mus_ruins, mus_toomuch } from "/imports/assets.js";
 
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as parent from "/obj/musicobjectparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -9,7 +10,7 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
+    name: "ruinsmusic", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -38,6 +39,9 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
+    roomStart,
+    alarm0,
+    user0,
   };
   
   self._hspeed = 0;
@@ -171,4 +175,26 @@ function updateSprite() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent };
+function user0() {
+  parent.user0.call(this);
+}
+
+function alarm0() {
+
+}
+
+function roomStart() {
+  this.user0();
+
+  if (caster_is_playing(global.currentsong != 1)) {
+    if (global.flag[221] == 0) {
+      global.currentsong = caster_load(mus_ruins);
+      caster_loop(global.currentsong, 1, 1);
+    } else {
+      global.currentsong = caster_load(mus_toomuch);
+      caster_loop(global.currentsong, 1, 1);
+    }
+  }
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, user0, alarm0, roomStart };

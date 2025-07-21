@@ -1,6 +1,6 @@
-import { draw_sprite_ext, instance_destroy, instance_exists, instance_create, getBoundingBox, collision_rectangle, instances, ini_open, ini_read_real, ini_write_real, ini_close } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, mus_flowey } from "/imports/assets.js";
-import { caster_load, caster_loop } from "/imports/customFunctions.js";
+import { draw_sprite_ext, instance_destroy, instance_exists, instance_create, getBoundingBox, collision_rectangle, instances, ini_open, ini_read_real, ini_write_real, ini_close, _with } from "/imports/assets/gamemakerFunctions.js";
+import { c_white, mus_flowey, mus_toriel } from "/imports/assets.js";
+import { caster_load, caster_loop, scr_depth } from "/imports/customFunctions.js";
 import global from "/imports/assets/global.js";
 
 import * as obj_floweytalker1 from "/obj/floweytalker1/index.js";
@@ -8,7 +8,9 @@ import * as obj_mainchara from "/obj/mainchara/index.js";
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_fader from "/obj/fader/index.js";
-import * as obj_battlerflowey from "/obj/battlerflowey/index.js"
+import * as obj_battlerflowey from "/obj/battlerflowey/index.js";
+import * as obj_toroverworld1 from "/obj/toroverworld1/index.js";
+import * as obj_torface from "/obj/torface/index.js";
 
 const parent = null;
 
@@ -16,6 +18,22 @@ function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
+	ini_open("undertale.ini");
+	const a = ini_read_real("Flowey", "Alter", 0);
+	const b = ini_read_real("Flowey", "K", 0);
+	const c = ini_read_real("Flowey", "SPECIALK", 0);
+	ini_close()
+	let alter = 0;
+
+	if (a > 0 || b > 0 || c > 0) {
+		alter = 1
+	}
+
+	if (alter === 1) {
+		_with(obj_floweytalker1, function() {
+			this.visible = false;
+		})
+	}
 
   return {
     name: "floweytrigger", // sprite name
@@ -37,10 +55,10 @@ function create() {
     // any variables assigned inside create code
 		conversation: 0,
 		faketor: 0,
-		alter: 0,
-		a: 0,
-		b: 0,
-		c: 0,
+		alter: alter,
+		a: a,
+		b: b,
+		c: c,
 		collided: false,
 
     // object functions. add to here if you want them to be accessible from this. context
@@ -104,7 +122,7 @@ function updateSprite() {
 }
 
 function roomStart() {
-	if (global.plot > 0) {
+	if (global.plot > 0.5) {
 		instance_destroy(this);
 	}
 
@@ -229,7 +247,9 @@ function alarm2() {
     global.msg[6] = scr_gettext("obj_floweytrigger_128");
     global.msg[7] = scr_gettext("obj_floweytrigger_129");
 
-		instance_destroy(temptor)
+		_with(this.temptor, function() {
+			instance_destroy(this);
+		})
 	}
 
 	instance_create(0, 0, obj_dialoguer);
@@ -258,34 +278,38 @@ function step() {
 	{
 			global.room_persistent = "";
 			global.specialbattle = 0;
-			instances.get(obj_toroverworld1)[0].direction = 90;
-			instances.get(obj_toroverworld1)[0].speed = 2;
+			_with (obj_toroverworld1, function() {
+				this.direction = 90;
+				this.speed = 2;
+			})
 			this.alarm[3] = 15;
 			this.conversation = 4;
 	}
 
 	if (this.conversation == 20 && instance_exists(OBJ_WRITER) == 0)
 	{
-			mus = instance_create(0, 0, obj_musfadeout);
+			this.mus = instance_create(0, 0, obj_musfadeout);
 			global.interact = 1;
 			this.visible = false;
-			flow = obj_floweytalker1;
+			this.flow = obj_floweytalker1;
 			
-			instances.get(obj_floweytalker1)[0].visible = false;
+			_with(obj_floweytalker1, function() {
+				this.visible = false
+			});
 			
-			flow_m = scr_marker(flow.x, flow.y, spr_floweysink);
+			this.flow_m = scr_marker(flow.x, flow.y, spr_floweysink);
 			
-			scr_depth.call(flow_m);
+			scr_depth.call(this.flow_m);
 			
-			flow_m.image_speed = 0.25;
-			conversation = 21;
+			this.flow_m.image_speed = 0.25;
+			this.conversation = 21;
 	}
 
 	if (this.conversation == 21 && instance_exists(OBJ_WRITER) == 0)
 	{
-			if (flow_m.image_index >= 5)
+			if (this.flow_m.image_index >= 5)
 			{
-					flow_m.visible = false;
+					this.flow_m.visible = false;
 					this.conversation = 21.2;
 					this.alarm[4] = 50;
 			}
@@ -305,10 +329,10 @@ function step() {
 
 	if (this.conversation == 23)
 	{
-			temptor = scr_marker(146, view_yview[0] - 60, spr_toriel_d);
-			temptor.image_speed = 0.25;
-			temptor.vspeed = 2;
-			global.currentsong = caster_load("music/toriel.ogg");
+			this.temptor = scr_marker(146, view_yview[0] - 60, spr_toriel_d);
+			this.temptor.image_speed = 0.25;
+			this.temptor.vspeed = 2;
+			global.currentsong = caster_load(mus_toriel);
 			caster_loop(global.currentsong, 0.7, 0.86);
 			this.conversation = 24;
 	}
@@ -317,12 +341,12 @@ function step() {
 	{
 			scr_depth.call(this.temptor);
 			
-			if (temptor.y >= 258)
+			if (this.temptor.y >= 258)
 			{
 					this.faketor = 1;
-					temptor.image_index = 0;
-					temptor.speed = 0;
-					temptor.image_speed = 0;
+					this.temptor.image_index = 0;
+					this.temptor.speed = 0;
+					this.temptor.image_speed = 0;
 					this.conversation = 25;
 					this.alarm[2] = 30;
 			}

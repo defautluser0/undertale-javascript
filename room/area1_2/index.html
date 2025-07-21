@@ -95,10 +95,13 @@
         for (const { objName, data } of save) {
           // Try to find the object by name in current instances map keys
           let obj = null;
-          for (const candidate of instances.keys()) {
-            if (candidate.name === objName) {
-              obj = candidate;
-              break;
+          for (const candidates of instances.values()) {
+            for (const inst of candidates) {
+              if (inst.name === objName) {
+                console.log(inst.name, objName, inst);
+                obj = inst;
+                break;
+              }
             }
           }
 
@@ -111,11 +114,17 @@
           const instance = {
             ...obj.create?.(),
             ...data,
-            _object: obj
+            ...obj._object,
+            _object: obj._object
           };
+          instance.startx = instance.x;
+          instance.starty = instance.y;
+          instance.xstart = instance.x;
+          instance.ystart = instance.y;
 
-          if (!instances.has(obj)) instances.set(obj, []);
-          instances.get(obj).push(instance);
+          instances.set(obj._object, []);
+
+          instances.get(obj._object).push(instance);
 
           obj.roomStart?.call(instance);
         }
@@ -213,7 +222,7 @@
             const save = [];
 
             for (const [obj, list] of instances.entries()) {
-              const objName = obj.name;
+              const objName = list[0]?.name;
               if (!objName) continue;
 
               for (const inst of list) {

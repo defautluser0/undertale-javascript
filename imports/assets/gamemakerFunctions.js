@@ -1,5 +1,5 @@
 import { _key_prev_state, _key_state } from '/imports/input.js';
-import { playingSounds, c_white, rooms } from '/imports/assets.js'
+import { playingSounds, c_white, c_yellow, rooms } from '/imports/assets.js'
 import { ctx, ogCanvas } from '/imports/canvasSetup.js';
 import global from '/imports/assets/global.js';
 
@@ -98,10 +98,15 @@ function getBoundingBox() {
   }
 
   // Apply position and scale
-  this.bbox_left = this.x + left * scaleX;
-  this.bbox_top = this.y + top * scaleY;
-  this.bbox_right = this.x + (right + 1) * scaleX;
-  this.bbox_bottom = this.y + (bottom + 1) * scaleY;
+  const bboxX1 = this.x + left * scaleX;
+  const bboxX2 = this.x + (right + 1) * scaleX;
+  const bboxY1 = this.y + top * scaleY;
+  const bboxY2 = this.y + (bottom + 1) * scaleY;
+
+  this.bbox_left = Math.min(bboxX1, bboxX2);
+  this.bbox_right = Math.max(bboxX1, bboxX2);
+  this.bbox_top = Math.min(bboxY1, bboxY2);
+  this.bbox_bottom = Math.max(bboxY1, bboxY2);
 }
 
 // image cache loader
@@ -1058,7 +1063,7 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       let bw = 0;
       let bh = 0;
 
-      const spritePath = `/spr/${inst.sprite_index}/${inst.sprite_index}_${Math.floor(inst.image_index) || 0}.png`;
+      const spritePath = `/spr/${inst.sprite_index}/${inst.sprite_index}_${floor(inst.image_index) || 0}.png`;
       const spriteCacheEntry = loadImageCached(spritePath, spriteCache);
 
       if (!spriteCacheEntry.loaded) {
@@ -1088,7 +1093,7 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       } else {
         // Precise pixel collision using mask cache
         const sprite = inst.sprite_index;
-        const frame = Math.round(inst.image_index) || 0;
+        const frame = floor(inst.image_index) || 0;
         let url = `/spr/masks/${sprite}_${frame}.png`;
 
         let mask = loadImageCached(url, maskCache);
@@ -1165,7 +1170,7 @@ function collision_point(x, y, obj, notme = false) {
       if (obj !== "all" && !isInstanceOf(inst, obj)) continue;
 
       const sprite = inst.sprite_index;
-      const frame = Math.round(inst.image_index) || 0;
+      const frame = floor(inst.image_index) || 0;
       const spritePath = `/spr/${sprite}/${sprite}_${frame}.png`;
       const spriteCacheEntry = loadImageCached(spritePath, spriteCache);
 
@@ -1551,34 +1556,44 @@ function audio_pause_sound(index, id = null) {
 function instance_find(obj, n) {
   try {
     if (n < 0) {
-      throw new Error(`instance_find: number ${n} is less than 0.`)
-    }
-    if (obj === "all") {
-      const all = [];
-      for (const list of instances.values()) {
-        all.push(...list);
-      }
-
-      if (n >= 0 && n < all.length) {
-        return all[n];
-      } else {
-        throw new Error(`instance_find: index ${n} out of range for "all".`);
-      }
+      throw new Error(`instance_find: number ${n} is less than 0.`);
     }
 
-    if (instances.get(obj)) {
-      if (instance_number(obj) >= n) {
-        return instances.get(obj)[n]
-      } else {
-        throw new Error("instance_find: number is greater than instance count of", obj)
+    const result = [];
+
+    for (const list of instances.values()) {
+      for (const inst of list) {
+        let current = inst._object;
+        while (current) {
+          if (current === obj) {
+            result.push(inst);
+            break;
+          }
+          current = current.parent;
+        }
       }
+    }
+
+    if (n < result.length) {
+      return result[n];
     } else {
-      return null;
+      throw new Error(`instance_find: index ${n} out of range for object`, obj.name || obj);
     }
-  } catch(error) {
+  } catch (error) {
     console.error(error);
     return null;
   }
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with, abs, instance_number, action_move, audio_resume_sound, audio_pause_sound, instance_find };
+/**
+ * You can use this function to change one instance of an object into another instance of a different object, and while doing so decide whether to perform the initial instances Destroy and Clean Up Events and the new instances Create Event. In this way, you can have (for example) a bomb change into an explosion - in which case the "perf" argument would probably be true as you would want the bomb to perform its Destroy Event and Clean Up Event, as well as the explosion to perform its Create Event - or you could have your player character change into a different one - in which case the "perf" argument would probably be false as you do not want the instances to perform their Create and Destroy/Clean Up events.
+ * 
+ * @param {object} obj The new object the calling object will change into.
+ * @param {boolean} perf Whether to perform that new object's Create and Destroy events (true) or not (false).
+ */
+function instance_change(obj, perf) {
+  console.warn("STUB: instance_change.", obj, perf)
+  return;
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with, abs, instance_number, action_move, audio_resume_sound, audio_pause_sound, instance_find, instance_change };

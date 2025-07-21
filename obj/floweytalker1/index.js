@@ -1,7 +1,9 @@
-import { draw_sprite_ext, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
+import { draw_sprite_ext, instance_destroy, instance_exists, instance_find } from "/imports/assets/gamemakerFunctions.js";
+import { c_white, snd_floweylaugh } from "/imports/assets.js";
+import { snd_play } from "/imports/customFunctions.js"
 import global from "/imports/assets/global.js"
 
+import * as obj_floface from "/obj/floface/index.js";
 const parent = null;
 
 function create() {
@@ -34,6 +36,8 @@ function create() {
     updateSprite,
 		roomStart,
 		alarm1,
+    alarm0,
+    step,
   };
 }
 
@@ -93,4 +97,26 @@ function alarm1() {
 	this.image_speed = 0.5;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm1 };
+function alarm0() {
+  snd_play(snd_floweylaugh);
+  this.alarm[1] = 150;
+  this.image_speed = 0.6
+}
+
+function step() {
+  if (window.location.href === "https://undertale.defautluser0.xyz/room/area1_2/") {
+    if (global.plot !== 0) {
+      instance_destroy(this);
+    }
+  }
+
+  if (instance_exists(obj_floface)) {
+    this.image_index = instance_find(obj_floface, 0)?.image_index;
+  }
+
+  if (this.sprite_index === "spr_floweysink" && this.image_index === 5) {
+    instance_destroy(this)
+  }
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm1, alarm0, step };

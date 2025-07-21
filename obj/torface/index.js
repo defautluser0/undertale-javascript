@@ -1,7 +1,9 @@
 import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as obj_dialoguer from "/obj/dialoguer/index.js";
+
+import * as parent from "/obj/face/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -9,7 +11,7 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
+    name: "torface", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -38,6 +40,8 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
+    roomStart,
+    alarm9,
   };
   
   self._hspeed = 0;
@@ -117,8 +121,6 @@ function updateGamemakerFunctions() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
-
-		this.animationEnd?.();
   }
 
   // getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
@@ -171,4 +173,12 @@ function updateSprite() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent };
+function roomStart() {
+  parent.roomStart.call(this);
+}
+
+function alarm9() {
+  parent.alarm9.call(this);
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm9 };

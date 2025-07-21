@@ -4,9 +4,9 @@ import { control_check } from "/imports/input.js"
 import { scr_gameoverb } from "/imports/customFunctions.js"
 
 import * as obj_dborder from "/obj/dborder/index.js";
-import * as obj_rborder from "/obj/rborder/index.js";
 import * as obj_uborder from "/obj/uborder/index.js";
 import * as obj_lborder from "/obj/lborder/index.js";
+import * as obj_rborder from "/obj/rborder/index.js";
 
 import global from "/imports/assets/global.js";
 
@@ -72,6 +72,8 @@ function updateGamemakerFunctions() {
   }
 
   getBoundingBox.call(this);
+
+  this.updateCol();
 }
 
 function updateSprite() {
@@ -89,8 +91,8 @@ function updateSprite() {
       1,
     );
     if (img) {
-      this.image_width = img.width;
-      this.image_height = img.height;
+      this.sprite_width = img.width;
+      this.sprite_height = img.height;
     }
   }
 }
@@ -156,11 +158,11 @@ function updateCol() {
   }
   other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_uborder, false, false)
   if (other) {
-    this.y = other.y + this.sprite_height;
+    this.y = other.y + 5;
   }
   other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_lborder, false, false)
   if (other) {
-    this.x = other.x + this.sprite_width;
+    this.x = other.x + 5;
   }
 }
 
