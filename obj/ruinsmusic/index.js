@@ -180,7 +180,7 @@ function user0() {
 }
 
 function alarm0() {
-
+  // its actually empty ingame :sob:
 }
 
 function roomStart() {
