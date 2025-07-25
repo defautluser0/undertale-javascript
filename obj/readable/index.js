@@ -84,7 +84,7 @@ function step() {
 	if (this.myinteract == 1)
 	{
 		global.interact = 1;
-		this.alarm[0] = 1;
+		this.alarm[0] = 2;
 		this.myinteract = 2;
 	}
 

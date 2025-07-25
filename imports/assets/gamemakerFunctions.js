@@ -508,10 +508,10 @@ function instance_create(x, y, obj) {
     if (obj === null || typeof obj !== "object" || !Number.isFinite(x) || !Number.isFinite(y)) {
       throw new Error("instance_create: called with invalid parameters:", { x, y, obj })
     }
-    const instance = {
-      ...obj.create?.(), // get default vars (including x/y defaulting to 0)
-      _object: obj,
-    };
+    const instance = obj.create();
+    if (!instance) throw new Error("instance_create: obj has invalid or no create()");
+
+    instance._object = obj;
 
     instance.x = x;
     instance.y = y;
@@ -1596,4 +1596,29 @@ function instance_change(obj, perf) {
   return;
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with, abs, instance_number, action_move, audio_resume_sound, audio_pause_sound, instance_find, instance_change };
+/**
+ * This function tells the calling instance to start the given path. The path started by the instance is stored in the variable path_index. A path is created from a series of defining points that are linked together and then used to plan the movements of an instance. They can be created with code, or in Paths and they are assigned to an instance to use in the game. You would then use this function to tell your instance which path to follow, what speed to follow the path (measured in pixels per step), how to behave when it reaches the end of the path, and whether to follow the absolute or relative path position. This last part means that it either starts and follows the path exactly as you designed and placed it in Paths (absolute), or it starts and follows the path from the position at which the instance was created (relative).
+ * 
+ * @param {object} path The path index to start.
+ * @param {number} speed The speed of which to follow the path in pixels per step, negative meaning going backwards.
+ * @param {string} endaction What to do when the end of the path is reached.
+ * @param {boolean} absolute Whether the calling instance should follow the absolute path as it is defined in Paths (true) or a relative path to its current position (false).
+ */
+function path_start(path, speed, endaction, absolute) {
+  try {
+    if (typeof this === "undefined" || typeof path !== "object" || typeof speed !== "number" || typeof endaction !== "string" || typeof absolute !== "boolean") {
+      throw new Error("path_start: invalid arguments", path, speed, endaction, absolute, this);
+    }
+
+    for (const [number, point] in Object.entries(path.points)) {
+      console.log(number, point, Object.entries(path.points));
+      for (const [x, y, speed] in point) {
+        console.log(number, x, y, speed)
+      }
+    }
+  } catch(error) {
+    console.error(error);
+  }
+}
+
+export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with, abs, instance_number, action_move, audio_resume_sound, audio_pause_sound, instance_find, instance_change, path_start };

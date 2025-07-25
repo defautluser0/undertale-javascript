@@ -68,6 +68,9 @@ const mus_options_winter = new Howl({
 const mus_toriel = new Howl({
   src: ["/imports/assets/mus/toriel.ogg"]
 })
+const mus_toomuch = new Howl({
+  src: ["/imports/assets/mus/toomuch.ogg"]
+})
 
 // snd_*
 const SND_TXT1 = new Howl({
@@ -170,6 +173,7 @@ export {
   mus_options_fall,
   mus_options_summer,
   mus_toriel,
+  mus_toomuch,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,

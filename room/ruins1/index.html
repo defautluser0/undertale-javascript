@@ -48,8 +48,19 @@
     loadCurrentSong("currentsong")
     loadCurrentSong("currentsong2")
 
+    instance_create(22, 194, obj_ruinsmusic);
+    instance_create(140, 450, obj_doorBmusicfade);
+    instance_create(160, 450, obj_doorBmusicfade);
+    instance_create(150, 420, obj_markerA);
+    instance_create(150, 110, obj_markerB);
+    instance_create(142, 320, obj_toroverworld2);
+    instance_create(140, 100, obj_doorA);
+    instance_create(160, 100, obj_doorA);
+    instance_create(150, 190, obj_savepoint);
+    instance_create(150, 86, obj_toribuster);
+    instance_create(150, 200, obj_mainchara);
+    instance_create(20, 220, obj_overworldcontroller);
     screenUpdater.create()
-    instance_create(0, 0, obj_solidtall);
 
     if (global.room_persistent === window.location.href) {
       const save = global._roomSaves?.[window.location.href];
@@ -60,36 +71,38 @@
           for (const candidates of instances.values()) {
             for (const inst of candidates) {
               if (inst.name === objName) {
-                console.log(inst.name, objName, inst);
                 obj = inst;
+                obj.saved = true;
+                inst.saved = false;
+                console.log(obj.saved, inst.saved);
                 break;
               }
             }
           }
 
           if (!obj) {
-            // Optionally: fallback to global object imports if you have a global registry
             console.warn(`Object with name "${objName}" not found, skipping instance`);
             continue;
           }
-
-          const instance = {
-            ...obj.create?.(),
-            ...data,
-            ...obj._object,
-            _object: obj._object
-          };
+          const instance = obj._object?.create?.();
+          if (!instance) {
+            console.error(`instance ${objName}.create() is invalid or null`); continue;
+          }
+          instance._object = obj._object;
+          Object.defineProperties(instance, Object.getOwnPropertyDescriptors(data));
+          Object.defineProperties(instance, Object.getOwnPropertyDescriptors(instance._object));
+        
           instance.startx = instance.x;
           instance.starty = instance.y;
           instance.xstart = instance.x;
           instance.ystart = instance.y;
 
-          instances.set(obj._object, []);
+          if (!instances.get(obj._object)[0].saved) instances.set(obj._object, []);
 
           instances.get(obj._object).push(instance);
 
           obj.roomStart?.call(instance);
-        }
+        };
       }
     }
 
@@ -119,6 +132,7 @@
         }
         
         control_update();
+        screenUpdater.beginStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.beginStep?.call(instance);
@@ -134,6 +148,7 @@
             obj.step?.call(instance);
           }
         }
+        screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.endStep?.call(instance);
@@ -176,7 +191,7 @@
           }
         }
 
-        if (global.roomEnd && global.eventDone && global.nextRoom !== null) {
+        if (global.roomEnd && global.eventDone && global.nextRoom !== null && "https://undertale.defautluser0.xyz" + global.nextRoom !== window.location.href) {
           global.eventDone = false;
           let nextRoom = global.nextRoom
           global.nextRoom = null;

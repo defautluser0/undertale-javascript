@@ -29,8 +29,8 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0.25, // sprite frame speed
     image_number: 2, // sprite frame number
-    sprite_width: 0, // set to sprite_index's width
-    sprite_height: 0, // set to sprite_index's height
+    sprite_width: 32, // set to sprite_index's width
+    sprite_height: 32, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
     sprite_index: "spr_face_torielhappytalk", // sprite

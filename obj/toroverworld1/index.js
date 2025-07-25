@@ -25,6 +25,7 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
     image_number: 4, // sprite frame number
+    image_number_t: 2,
     sprite_width: 0, // set to sprite_index's width
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
@@ -65,7 +66,7 @@ function create() {
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
-  self._direction = 0;
+  self._direction = 270;
 
   Object.defineProperty(self, "hspeed", {
     get() {
@@ -139,6 +140,10 @@ function updateGamemakerFunctions() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
+  }
+
+  if ((this.sprite_index === this.dtsprite || this.sprite_index === this.utsprite || this.sprite_index === this.ltsprite || this.sprite_index === this.rtsprite) && this.image_index >= this.image_number_t) {
+    this.image_index -= this.image_number_t;
   }
 
   getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)

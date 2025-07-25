@@ -117,7 +117,7 @@
           }
         }
 
-        if (global.roomEnd && global.eventDone && global.nextRoom !== null) {
+        if (global.roomEnd && global.eventDone && global.nextRoom !== null && "https://undertale.defautluser0.xyz" + global.nextRoom !== window.location.href) {
           global.eventDone = false;
           let nextRoom = global.nextRoom
           global.nextRoom = null;

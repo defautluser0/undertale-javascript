@@ -1,6 +1,7 @@
 import { draw_sprite_ext, getBoundingBox, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
 import { caster_is_playing, caster_load, caster_loop } from "/imports/customFunctions.js";
 import { c_white } from "/imports/assets.js";
+import global from "/imports/assets/global.js"
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 

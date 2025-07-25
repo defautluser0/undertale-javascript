@@ -1,4 +1,4 @@
-import { draw_sprite_ext, instance_create, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, instance_create, instance_destroy, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
@@ -59,6 +59,8 @@ function updateGamemakerFunctions() {
 	if (this.image_index >= this.image_number) {
 		this.image_index -= this.image_number;
 	}
+
+	getBoundingBox.call(this);
 }
 
 function updateSprite() {
@@ -68,15 +70,14 @@ function updateSprite() {
 }
 
 function roomStart() {
-	/*if (global.plot === 0) {
+	if (global.plot === 0) {
 		instance_destroy(this);
-	}*/
+	}
 }
 
 function alarm0() {
 	this.myinteract = 3;
-	global.msg[0] = " * (Golden flowers.^1)&* (They must have&  broken your fall.)/%%"
-	global.msg[1] = " %%%"
+	global.msc = 500;
 	global.typer = 5;
 	global.facechoice = 0;
 	global.faceemotion = 0;
