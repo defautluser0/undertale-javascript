@@ -43,7 +43,7 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
     flag: [],
     idealborder: [],
     plot: 0,
-    currentroom: "room_start",
+    currentroom: "room_introstory",
     monstername: [],
     monsterhp: [],
     monstermaxhp: [],
@@ -116,6 +116,7 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
     menuchoice: [],
     gold: 0,
     screen_border_id: 0,
+    phone: [],
   }
 
   for (let i = 0; i < 8; i += 1) {
@@ -126,6 +127,7 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
     global.menucoord[i] = 0;
     global.bmenuno = 0;
     global.bmenucoord[i] = 0;
+    global.phone[i] = 0;
   }
 
   for (let i = 0; i < 24; i += 1) {
@@ -167,6 +169,7 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
 if (window.navigator.userAgent === "MEOW Debugger") {
   global.debug = 1;
   global.interact = 0;
+  globalThis.global = global;
 } else {
   global.debug = 0;
 }

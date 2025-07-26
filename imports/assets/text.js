@@ -1,5 +1,9 @@
 import global from "/imports/assets/global.js";
-import { scr_gettext } from "/imports/customFunctions.js";
+import {
+  scr_gettext,
+  ossafe_ini_open,
+  ossafe_ini_close,
+} from "/imports/customFunctions.js";
 import {
   ds_map_create,
   ds_map_add,
@@ -16,15 +20,15 @@ function SCR_TEXT(argument0) {
 
     case 1:
       global.msg[0] =
-        "\\XLa, la.^3 &Time to wake&up and\\R smell\\X &the^4 pain./";
-      global.msg[1] = "* Though^2.^4.^6.^8.&It's still a&little shaky./";
-      global.msg[2] = "fhuehfuehfuehfuheufhe/%";
-      global.msg[3] = "%%%";
+        " \\XLa, la.^3 &Time to wake&up and\\R smell\\X &the^4 pain./";
+      global.msg[1] = " * Though^2.^4.^6.^8.&It's still a&little shaky./";
+      global.msg[2] = " fhuehfuehfuehfuheufhe/%";
+      global.msg[3] = " %%%";
       break;
 
     case 2:
-      global.msg[0] = "* TestMonster and its cohorts&draw near!";
-      global.msg[1] = "%%%";
+      global.msg[0] = " * TestMonster and its cohorts&draw near!";
+      global.msg[1] = " %%%";
       break;
 
     case 3:
@@ -32,7 +36,7 @@ function SCR_TEXT(argument0) {
 
       if (global.monster[0] == 1) {
         // with (global.monsterinstance[0])
-        script_execute.call(global.monsterinstance[0], scr_mercystandard);
+        // script_execute.call(global.monsterinstance[0], scr_mercystandard);
 
         adder = "\\W";
 
@@ -57,7 +61,7 @@ function SCR_TEXT(argument0) {
 
       if (global.monster[1] == 1) {
         // with (global.monsterinstance[1])
-        script_execute.call(global.monsterinstance[1], scr_mercystandard);
+        // script_execute.call(global.monsterinstance[1], scr_mercystandard);
 
         if (global.monsterinstance[1].mercy < 0 && global.flag[22] == 0)
           global.msg[0] += "\\Y";
@@ -76,7 +80,7 @@ function SCR_TEXT(argument0) {
 
       if (global.monster[2] == 1) {
         // with (global.monsterinstance[2])
-        script_execute.call(global.monsterinstance[2], scr_mercystandard);
+        // script_execute.call(global.monsterinstance[2], scr_mercystandard);
 
         if (global.monsterinstance[2].mercy < 0 && global.flag[22] == 0)
           global.msg[0] += "\\Y";
@@ -199,213 +203,134 @@ function SCR_TEXT(argument0) {
       break;
 
     case 15:
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/ruins1"
-      ) {
-        global.msg[0] = scr_gettext("SCR_TEXT_127"); // * (The shadow of the ruins&  looms above^1, filling you // with&  determination.)/
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins1/") {
+        global.msg[0] = scr_gettext("SCR_TEXT_127"); // * (The shadow of the ruins&  looms above^1, filling you with&  determination.)/
         global.msg[1] = scr_gettext("SCR_TEXT_128"); // * (HP fully restored.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/ruins7"
-      ) {
-        global.msg[0] = scr_gettext("SCR_TEXT_129"); // * (Playfully crinkling through&  the leaves fills you // with&  determination.)/
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins7") {
+        global.msg[0] = scr_gettext("SCR_TEXT_129"); // * (Playfully crinkling through&  the leaves fills you with&  determination.)/
         global.msg[1] = scr_gettext("SCR_TEXT_130"); // * (HP fully restored.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/ruins12A"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins12A") {
         global.msg[0] = scr_gettext("SCR_TEXT_131"); // * (Knowing the mouse might one&  day leave its hole and&  get the cheese...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_132"); // * (It fills you // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_132"); // * (It fills you with&  determination.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/ruins19"
-      )
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins19")
         global.msg[0] = scr_gettext("SCR_TEXT_133"); // * (Seeing such a cute^1, tidy&  house in the RUINS gives&  you determination.)/%%
 
       if (global.flag[202] >= 20) global.msg[0] = scr_gettext("SCR_TEXT_134"); // * Determination./%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/tundra1"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_135"); // * (The cold atmosphere of a&  new land... it fills you&  // with determination.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra1")
+        global.msg[0] = scr_gettext("SCR_TEXT_135"); // * (The cold atmosphere of a&  new land... it fills you&  with determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/tundra3"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_136"); // * (The convenience of that&  lamp still fills you&  // with determination.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra3")
+        global.msg[0] = scr_gettext("SCR_TEXT_136"); // * (The convenience of that&  lamp still fills you&  with determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/tundra_spaghetti"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_spaghetti") {
         global.msg[0] = scr_gettext("SCR_TEXT_137"); // * (Knowing the mouse might one&  day find a way to heat&  up the spaghetti...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_138"); // * (It fills you // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_138"); // * (It fills you with&  determination.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/tundra_lesserdog"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_lesserdog") {
         global.msg[0] = scr_gettext("SCR_TEXT_140"); // * (Knowing that dog will&  never give up trying to&  make the perfect snowdog...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_141"); // * (It fills you // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_141"); // * (It fills you with&  determination.)/%%
 
         if (global.flag[55] == 1) {
           global.msg[0] = scr_gettext("SCR_TEXT_142"); // * (Snow can always be broken&  down and rebuilt into&  something more useful.)/
-          global.msg[1] = scr_gettext("SCR_TEXT_143"); // * (This simple fact fills&  you // with determination.)/%%
+          global.msg[1] = scr_gettext("SCR_TEXT_143"); // * (This simple fact fills&  you with determination.)/%%
         }
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/tundra_town"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_144"); // * (The sight of such a friendly&  town fills you // with&  determination.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_town")
+        global.msg[0] = scr_gettext("SCR_TEXT_144"); // * (The sight of such a friendly&  town fills you with&  determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water2"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_145"); // * (The sound of rushing water&  fills you // with&  determination.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water2")
+        global.msg[0] = scr_gettext("SCR_TEXT_145"); // * (The sound of rushing water&  fills you with&  determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water4"
-      )
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water4")
         global.msg[0] = scr_gettext("SCR_TEXT_146"); // * (A feeling of dread hangs&  over you...^1)&* (But you stay determined.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water_savepoint1"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_savepoint1") {
         global.msg[0] = scr_gettext("SCR_TEXT_147"); // * (Knowing the mouse might one&  day extract the cheese from&  the mystical crystal...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_148"); // * (It fills you // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_148"); // * (It fills you with&  determination.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water_preundyne"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_preundyne") {
         global.msg[0] = scr_gettext("SCR_TEXT_150"); // * (The sound of muffled rain&  on the cavetop...)/
 
         if (global.flag[86] == 1) global.msg[0] = scr_gettext("SCR_TEXT_151"); // * (The serene sound of a&  distant music box...)/
 
-        global.msg[1] = scr_gettext("SCR_TEXT_152"); // * (It fills you // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_152"); // * (It fills you with&  determination.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water_trashzone2"
-      )
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_trashzone2")
         global.msg[0] = scr_gettext("SCR_TEXT_153"); // * (The feeling of your socks&  squishing as you step&  gives you determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water_trashsavepoint"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_trashsavepoint") {
         global.msg[0] = scr_gettext("SCR_TEXT_156"); // * (The waterfall here seems&  to flow from the&  ceiling of the cavern...)/
         global.msg[1] = scr_gettext("SCR_TEXT_157"); // * (Occasionally^1, a piece of&  trash will flow&  through...)/
         global.msg[2] = scr_gettext("SCR_TEXT_158"); // * (... and fall into the&  bottomless abyss below.)/
         global.msg[3] = scr_gettext("SCR_TEXT_159"); // * (Viewing this endless&  cycle of worthless&  garbage...)/
-        global.msg[4] = scr_gettext("SCR_TEXT_160"); // * (It fills you // with&  determination.)/%%
+        global.msg[4] = scr_gettext("SCR_TEXT_160"); // * (It fills you with&  determination.)/%%
 
-        if (global.flag[91] == 1) global.msg[0] = scr_gettext("SCR_TEXT_161"); // * (Partaking in worthless&  garbage fills you&  // with determination.)/%%
+        if (global.flag[91] == 1) global.msg[0] = scr_gettext("SCR_TEXT_161"); // * (Partaking in worthless&  garbage fills you&  with determination.)/%%
 
         global.flag[91] = 1;
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water_friendlyhub"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_164"); // * (You feel a calming&  tranquility^1. You're filled&  // with determination...)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_friendlyhub")
+        global.msg[0] = scr_gettext("SCR_TEXT_164"); // * (You feel a calming&  tranquility^1. You're filled&  with determination...)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water_temvillage"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_165"); // * (You feel..^1. something.)&* (You're filled // with&  detemmienation.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_temvillage")
+        global.msg[0] = scr_gettext("SCR_TEXT_165"); // * (You feel..^1. something.)&* (You're filled with&  detemmienation.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/water_undynefinal"
-      ) {
-        global.msg[0] = scr_gettext("SCR_TEXT_168"); // * (The wind is howling^1.&* You're filled // with&  determination...)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_undynefinal") {
+        global.msg[0] = scr_gettext("SCR_TEXT_168"); // * (The wind is howling^1.&* You're filled with&  determination...)/%%
 
         if (global.flag[99] > 0) global.msg[0] = scr_gettext("SCR_TEXT_169"); // * (The howling wind is&  now a breeze^1. This gives&  you determination...)/%%
 
-        if (global.flag[350] == 1) global.msg[0] = scr_gettext("SCR_TEXT_170"); // * (The wind has stopped^1.&* You're filled // with&  determination...)/%%
+        if (global.flag[350] == 1) global.msg[0] = scr_gettext("SCR_TEXT_170"); // * (The wind has stopped^1.&* You're filled with&  determination...)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_prelab"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_prelab") {
         global.msg[0] = scr_gettext("SCR_TEXT_174"); // * (Seeing such a strange&  laboratory in a place like&  this...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_175"); // * (You're filled // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_175"); // * (You're filled with&  determination.)/%%
       }
 
-      if (
-        window.location.href === "https://undertale.defautluser0.xyz/room/fire6"
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire6"
       )
-        global.msg[0] = scr_gettext("SCR_TEXT_180"); // * (The wooshing sound of steam&  and cogs..^1. it fills you&  // with determination.)/%%
+        global.msg[0] = scr_gettext("SCR_TEXT_180"); // * (The wooshing sound of steam&  and cogs..^1. it fills you&  with determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_savepoint1"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_savepoint1") {
         global.msg[0] = scr_gettext("SCR_TEXT_184"); // * (An ominous structure looms&  in the distance...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_185"); // * (You're filled // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_185"); // * (You're filled with&  determination.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_mewmew2"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_mewmew2") {
         global.msg[0] = scr_gettext("SCR_TEXT_187"); // * (Knowing the mouse might one&  day hack the computerized&  safe and get the cheese...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_188"); // * (It fills you // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_188"); // * (It fills you with&  determination.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_hotelfront_1"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_191"); // * (A huge structure lies north.^1)&* (You're filled // with&  determination.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_hotelfront_1")
+        global.msg[0] = scr_gettext("SCR_TEXT_191"); // * (A huge structure lies north.^1)&* (You're filled with&  determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_hotellobby"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_195"); // * (The relaxing atmosphere&  of this hotel..^1. it fills&  you // with determination.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_hotellobby")
+        global.msg[0] = scr_gettext("SCR_TEXT_195"); // * (The relaxing atmosphere&  of this hotel..^1. it fills&  you with determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_core_branch"
-      )
-        global.msg[0] = scr_gettext("SCR_TEXT_199"); // * (The air is filled // with&  the smell of ozone..^1. it fills&  you // with determination.)/%%
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_core_branch")
+        global.msg[0] = scr_gettext("SCR_TEXT_199"); // * (The air is filled with&  the smell of ozone..^1. it fills&  you with determination.)/%%
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_core_premett"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_core_premett") {
         global.msg[0] = scr_gettext("SCR_TEXT_203"); // * (Behind this door must be&  the elevator to the King's&  castle.)/
-        global.msg[1] = scr_gettext("SCR_TEXT_204"); // * (You're filled // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_204"); // * (You're filled with&  determination.)/%%
       }
 
-      if (
-        window.location.href ===
-        "https://undertale.defautluser0.xyz/room/fire_savepoint2"
-      ) {
+      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_savepoint2") {
         global.msg[0] = scr_gettext("SCR_TEXT_208"); // * (The smell of cobwebs fills&  the air...)/
-        global.msg[1] = scr_gettext("SCR_TEXT_209"); // * (You're filled // with&  determination.)/%%
+        global.msg[1] = scr_gettext("SCR_TEXT_209"); // * (You're filled with&  determination.)/%%
       }
 
       break;
@@ -617,11 +542,11 @@ function SCR_TEXT(argument0) {
 
     case 214:
       global.msg[0] = scr_gettext("SCR_TEXT_411"); // \\E0* Do you need some&  ideas for conversation&  topics?/
-      global.msg[1] = scr_gettext("SCR_TEXT_412"); // * Well^1, I often start // with&  a simple 'how do you&  do...'/
+      global.msg[1] = scr_gettext("SCR_TEXT_412"); // * Well^1, I often start with&  a simple 'how do you&  do...'/
       global.msg[2] = scr_gettext("SCR_TEXT_413"); // * You could ask them about&  their favorite books.../
       global.msg[3] = scr_gettext("SCR_TEXT_414"); // * Jokes can be useful for&  'breaking the ice.'/
       global.msg[4] = scr_gettext("SCR_TEXT_415"); // * Listen to this one.../
-      global.msg[5] = scr_gettext("SCR_TEXT_416"); // * What did the skeleton&  tile his roof // with?/
+      global.msg[5] = scr_gettext("SCR_TEXT_416"); // * What did the skeleton&  tile his roof with?/
       global.msg[6] = scr_gettext("SCR_TEXT_417"); // * ... SHIN-gles!/
       global.msg[7] = scr_gettext("SCR_TEXT_418"); // \\E1* .../
       global.msg[8] = scr_gettext("SCR_TEXT_419"); // \\E0* Well^1, I thought it&  was amusing./%
@@ -842,7 +767,7 @@ function SCR_TEXT(argument0) {
         global.msg[1] = scr_gettext("SCR_TEXT_639"); // YOU TWO ARE WEIRD!/
         global.msg[2] = scr_gettext("SCR_TEXT_640"); // \\E3CROSSWORDS ARE SO&EASY./
         global.msg[3] = scr_gettext("SCR_TEXT_641"); // IT'S THE SAME&SOLUTION EVERY&TIME./
-        global.msg[4] = scr_gettext("SCR_TEXT_642"); // \\E0I JUST FILL ALL&THE BOXES IN // with&THE LETTER "Z".../
+        global.msg[4] = scr_gettext("SCR_TEXT_642"); // \\E0I JUST FILL ALL&THE BOXES IN with&THE LETTER "Z".../
         global.msg[5] = scr_gettext("SCR_TEXT_643"); // BECAUSE EVERY TIME&I LOOK AT A&CROSSWORD.../
         global.msg[6] = scr_gettext("SCR_TEXT_644"); // ALL I CAN DO IS&SNORE!!!/
         global.msg[7] = scr_gettext("SCR_TEXT_645"); // NYEH HEH HEH!!!/%%
@@ -987,7 +912,7 @@ function SCR_TEXT(argument0) {
             global.msg[0] = scr_gettext("SCR_TEXT_779"); // * Huh^1? No money^1?&* Sorry^1, I can't give it to&  you for free./%%
 
             if (global.flag[85] == 1)
-              global.msg[0] = scr_gettext("SCR_TEXT_781"); // * Huh^1? You can't afford it&  even // with the discount^1?&* I.../%%
+              global.msg[0] = scr_gettext("SCR_TEXT_781"); // * Huh^1? You can't afford it&  even with the discount^1?&* I.../%%
           }
         }
 
@@ -1103,7 +1028,7 @@ function SCR_TEXT(argument0) {
       if (global.choice == 1) {
         global.msg[2] = scr_gettext("SCR_TEXT_900"); // \\E2WOWIE.../
         global.msg[3] = scr_gettext("SCR_TEXT_901"); // YOU RESISTED THE&FLAVOR OF MY&HOMECOOKED PASTA.../
-        global.msg[4] = scr_gettext("SCR_TEXT_902"); // JUST SO YOU&COULD SHARE&IT // with ME???/
+        global.msg[4] = scr_gettext("SCR_TEXT_902"); // JUST SO YOU&COULD SHARE&IT with ME???/
         global.flag[62] = 2;
       }
 
@@ -1438,11 +1363,11 @@ function SCR_TEXT(argument0) {
 
     case 258:
       if (global.flag[109] == 0) {
-        global.msg[0] = scr_gettext("SCR_TEXT_1237"); // * (The fridge is filled // with&  instant noodles and soda.)/
+        global.msg[0] = scr_gettext("SCR_TEXT_1237"); // * (The fridge is filled with&  instant noodles and soda.)/
         global.msg[1] = scr_gettext("SCR_TEXT_1238"); // * (Take a package of noodles?)& &         Take it     Leave it  \\C
         global.msg[2] = scr_gettext("SCR_TEXT_1239"); //
       } else {
-        global.msg[0] = scr_gettext("SCR_TEXT_1242"); // * (The fridge is filled // with&  instant noodles and soda.)/%%
+        global.msg[0] = scr_gettext("SCR_TEXT_1242"); // * (The fridge is filled with&  instant noodles and soda.)/%%
       }
 
       break;
@@ -1587,11 +1512,9 @@ function SCR_TEXT(argument0) {
 
     case 268:
       if (global.flag[114] == 0) {
-        if (scr_murderlv() < 16)
-          global.msg[0] =
-            scr_gettext(
-              "SCR_TEXT_1406"
-            ); // * (There's a worn dagger&  inside the box.)/
+        if (scr_murderlv.call(this) < 16)
+          global.msg[0] = scr_gettext("SCR_TEXT_1406");
+        // * (There's a worn dagger&  inside the box.)/
         else global.msg[0] = scr_gettext("SCR_TEXT_1408"); // * (Knife inside the box.)/
 
         global.msg[1] = scr_gettext("SCR_TEXT_1409"); // * (Will you take it?)& &         Take it     Leave it  \\C
@@ -1608,14 +1531,14 @@ function SCR_TEXT(argument0) {
           noroom = -1;
           doak = 1;
 
-          if (scr_murderlv() >= 16) scr_itemget(52);
+          if (scr_murderlv.call(this) >= 16) scr_itemget(52);
           else script_execute(scr_itemget, 51);
         }
 
         if (noroom == 0) {
           global.msg[0] = scr_gettext("SCR_TEXT_1431"); // * (You got the Worn Dagger.)/%%
 
-          if (scr_murderlv() >= 16)
+          if (scr_murderlv.call(this) >= 16)
             global.msg[0] = scr_gettext("SCR_TEXT_1432"); // * (You got the Real Knife.)/%%
 
           global.flag[114] = 1;
@@ -1645,14 +1568,14 @@ function SCR_TEXT(argument0) {
           noroom = -1;
           doak = 1;
 
-          if (scr_murderlv() < 16) script_execute(scr_itemget, 50);
+          if (scr_murderlv.call(this) < 16) script_execute(scr_itemget, 50);
           else script_execute(scr_itemget, 53);
         }
 
         if (noroom == 0) {
           global.msg[0] = scr_gettext("SCR_TEXT_1470"); // * (You got the Heart-shaped&  Locket.)/%%
 
-          if (scr_murderlv() >= 16)
+          if (scr_murderlv.call(this) >= 16)
             global.msg[0] = scr_gettext("SCR_TEXT_1471"); // * (You got The Locket.)/%%
 
           global.flag[115] = 1;
@@ -1848,7 +1771,7 @@ function SCR_TEXT(argument0) {
       global.msg[0] = scr_gettext("SCR_TEXT_1644"); // * zzzzzzzzzzzzzzz..^1.&* zzzzzzzzzzzzzz.../
       global.msg[1] = scr_gettext("SCR_TEXT_1645"); // * zzzzzzzzzz..^1.&* (are they gone yet^1)&* zzzzzzzzzzzzzzz.../
       global.msg[2] = scr_gettext("SCR_TEXT_1646"); // * (This ghost keeps saying 'z'&  out loud repeatedly^1,&  pretending to sleep.)/
-      global.msg[3] = scr_gettext("SCR_TEXT_1647"); // * Move it // with force?& &         Yes         No \\C
+      global.msg[3] = scr_gettext("SCR_TEXT_1647"); // * Move it with force?& &         Yes         No \\C
       global.msg[4] = scr_gettext("SCR_TEXT_1648"); //
       break;
 
@@ -1994,7 +1917,7 @@ function SCR_TEXT(argument0) {
 
       if (global.choice == 1) global.msg[0] = scr_gettext("SCR_TEXT_1789"); // %%
 
-      if (global.flag[43] > 25) global.msg[0] = scr_gettext("SCR_TEXT_1790"); // * You're making the switches&  uncomfortable // with all&  this attention./%%
+      if (global.flag[43] > 25) global.msg[0] = scr_gettext("SCR_TEXT_1790"); // * You're making the switches&  uncomfortable with all&  this attention./%%
 
       break;
 
@@ -2014,26 +1937,17 @@ function SCR_TEXT(argument0) {
       if (global.choice == 0) {
         global.msg[0] = scr_gettext("SCR_TEXT_1806"); // * You hear a clicking sound./%%
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/ruins15B && global.plot < 14"
-        ) {
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins15B/" && global.plot < 14) {
           global.plot = 14;
           snd_play(snd_switchpull_n);
         }
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/ruins15C && global.plot < 15"
-        ) {
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins15C/" && global.plot < 15) {
           global.plot = 15;
           snd_play(snd_switchpull_n);
         }
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/ruins15D && global.plot < 16"
-        ) {
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins15D/" && global.plot < 16) {
           global.plot = 16;
           snd_play(snd_switchpull_n);
         }
@@ -2070,7 +1984,7 @@ function SCR_TEXT(argument0) {
         global.msg[0] = scr_gettext("SCR_TEXT_1830"); // * You read the passage.../
         global.msg[1] = scr_gettext("SCR_TEXT_1831"); // * "Why did the skeleton want&  a friend?"/
         global.msg[2] = scr_gettext("SCR_TEXT_1832"); // * "Because she was feeling&  BONELY..."/
-        global.msg[3] = scr_gettext("SCR_TEXT_1833"); // * The rest of the page is&  filled // with jokes of&  a similar caliber./%%
+        global.msg[3] = scr_gettext("SCR_TEXT_1833"); // * The rest of the page is&  filled with jokes of&  a similar caliber./%%
       }
 
       if (global.choice == 1) global.msg[0] = scr_gettext("SCR_TEXT_1835"); // %%
@@ -2119,7 +2033,7 @@ function SCR_TEXT(argument0) {
       if (global.choice == 0) {
         global.msg[0] = scr_gettext("SCR_TEXT_1867"); // * Sweet dreams./%%
       } else {
-        global.msg[0] = scr_gettext("SCR_TEXT_1870"); // \\E1* You'd rather stay&  up and chat // with&  me^1, then?/
+        global.msg[0] = scr_gettext("SCR_TEXT_1870"); // \\E1* You'd rather stay&  up and chat with&  me^1, then?/
 
         if (global.flag[103] > 0) global.msg[0] = scr_gettext("SCR_TEXT_1871"); // * Up already^1, I see?/
 
@@ -2225,7 +2139,7 @@ function SCR_TEXT(argument0) {
       global.msg[6] = scr_gettext("SCR_TEXT_1946"); // * (What should you say?)&         Let's be    What a&         friends     loser\\C
       global.msg[7] = scr_gettext("SCR_TEXT_1947"); //
 
-      if (scr_murderlv() >= 7) {
+      if (scr_murderlv.call(this) >= 7) {
         if (instance_exists(obj_papyrus8)) {
           if (obj_papyrus8.murder == 1) {
             global.msg[0] = scr_gettext("SCR_TEXT_1956"); // \\E0WOWIE!^1!&YOU DID IT!!!/
@@ -2250,7 +2164,7 @@ function SCR_TEXT(argument0) {
     case 541:
       if (global.choice == 0) {
         scr_papface(0, 0);
-        global.msg[1] = scr_gettext("SCR_TEXT_1978"); // REALLY!^1?&YOU WANT TO BE&FRIENDS^1, // with ME???/
+        global.msg[1] = scr_gettext("SCR_TEXT_1978"); // REALLY!^1?&YOU WANT TO BE&FRIENDS^1, with ME???/
         global.msg[2] = scr_gettext("SCR_TEXT_1979"); // WELL THEN.../
         global.msg[3] = scr_gettext("SCR_TEXT_1980"); // \\E0I GUESS..^1./
         global.msg[4] = scr_gettext("SCR_TEXT_1981"); // I GUESS&I CAN MAKE AN&ALLOWANCE FOR YOU!/
@@ -2287,7 +2201,7 @@ function SCR_TEXT(argument0) {
       global.msg[17] = scr_gettext("SCR_TEXT_2014"); // ... EXCEPT SOMEONE&// with A POWERFUL&SOUL./
       global.msg[18] = scr_gettext("SCR_TEXT_2015"); // ... LIKE YOU!!!/
       global.msg[19] = scr_gettext("SCR_TEXT_2016"); // THAT'S WHY THE&KING WANTS TO&ACQUIRE A HUMAN./
-      global.msg[20] = scr_gettext("SCR_TEXT_2017"); // HE WANTS TO OPEN&THE BARRIER // with&SOUL POWER./
+      global.msg[20] = scr_gettext("SCR_TEXT_2017"); // HE WANTS TO OPEN&THE BARRIER with&SOUL POWER./
       global.msg[21] = scr_gettext("SCR_TEXT_2018"); // THEN US MONSTERS&CAN RETURN TO&THE SURFACE!/%%
       break;
 
@@ -2517,7 +2431,7 @@ function SCR_TEXT(argument0) {
         global.msg[1] = scr_gettext("SCR_TEXT_2231"); // \\E0MY BROTHER ALWAYS&GOES OUT TO EAT^1.&BUT.../
         global.msg[2] = scr_gettext("SCR_TEXT_2232"); // \\E3RECENTLY^1, HE TRIED&'BAKING' SOMETHING./
         global.msg[3] = scr_gettext("SCR_TEXT_2233"); // IT WAS LIKE..^1.&A QUICHE./
-        global.msg[4] = scr_gettext("SCR_TEXT_2234"); // BUT FILLED // with A&SUGARY^1, NON-EGG&SUBSTANCE./
+        global.msg[4] = scr_gettext("SCR_TEXT_2234"); // BUT FILLED with A&SUGARY^1, NON-EGG&SUBSTANCE./
         global.msg[5] = scr_gettext("SCR_TEXT_2235"); // \\E0HOW ABSURD!/%%
       }
 
@@ -2651,14 +2565,14 @@ function SCR_TEXT(argument0) {
       break;
 
     case 567:
-      global.msg[0] = scr_gettext("SCR_TEXT_2372"); // * what^1?&* haven't you seen a guy&  // with two jobs before?/
+      global.msg[0] = scr_gettext("SCR_TEXT_2372"); // * what^1?&* haven't you seen a guy&  with two jobs before?/
       global.msg[1] = scr_gettext("SCR_TEXT_2373"); // \\E1* fortunately^1, two jobs&  means twice as many&  legally-required breaks./
       global.msg[2] = scr_gettext("SCR_TEXT_2374"); // \\E0* i'm going to grillby's.&* wanna come?&  Yeah        I'm busy \\C
       global.msg[3] = scr_gettext("SCR_TEXT_2375"); //
 
       if (global.flag[67] == 1) global.msg[0] = scr_gettext("SCR_TEXT_2376"); // * .../%%
 
-      if (scr_murderlv() >= 7) {
+      if (scr_murderlv.call(this) >= 7) {
         global.msg[0] = scr_gettext("SCR_TEXT_2380"); // \\E2* hey^1, looks like you're&  really turning yourself&  around./
         global.msg[1] = scr_gettext("SCR_TEXT_2381"); // \\E0* how about i treat you&  to lunch at grillby's?/
         global.msg[2] = scr_gettext("SCR_TEXT_2382"); // \\E1* ... when everyone you&  scared away comes&  back^1, i mean./%%
@@ -2940,7 +2854,7 @@ function SCR_TEXT(argument0) {
 
     case 588:
       if (global.choice == 0) {
-        global.msg[0] = scr_gettext("SCR_TEXT_2682"); // * (You open the fridge.^1)&* (The air fills // with a&  rotten stench.)/
+        global.msg[0] = scr_gettext("SCR_TEXT_2682"); // * (You open the fridge.^1)&* (The air fills with a&  rotten stench.)/
         global.msg[1] = scr_gettext("SCR_TEXT_2683"); // * (All the food inside here&  spoiled long ago.)/%%
       } else {
         global.msg[0] = scr_gettext("SCR_TEXT_2686"); //  %%
@@ -3003,7 +2917,7 @@ function SCR_TEXT(argument0) {
     case 592:
       if (global.choice == 0) {
         if (global.lv == 1) {
-          global.msg[0] = scr_gettext("SCR_TEXT_2752"); // * (You tap the dummy // with&  your fist.)/
+          global.msg[0] = scr_gettext("SCR_TEXT_2752"); // * (You tap the dummy with&  your fist.)/
           global.msg[1] = scr_gettext("SCR_TEXT_2753"); // * (You feel bad.)/%%
         }
 
@@ -3295,10 +3209,10 @@ function SCR_TEXT(argument0) {
       global.msg[0] = scr_gettext("SCR_TEXT_3073"); // * .../
       global.msg[1] = scr_gettext("SCR_TEXT_3074"); // * Seven./
       global.msg[2] = scr_gettext("SCR_TEXT_3075"); // * Seven human souls./
-      global.msg[3] = scr_gettext("SCR_TEXT_3076"); // * // with the power of seven&  human souls^1, our king.../
+      global.msg[3] = scr_gettext("SCR_TEXT_3076"); // * with the power of seven&  human souls^1, our king.../
       global.msg[4] = scr_gettext("SCR_TEXT_3077"); // \\W* \\YKing \\RASGORE \\YDreemurr\\W.../
       global.msg[5] = scr_gettext("SCR_TEXT_3078"); // * ... will become a god./
-      global.msg[6] = scr_gettext("SCR_TEXT_3079"); // \\W* // with that power^1, \\RASGORE\\W &  can finally shatter the&  barrier./
+      global.msg[6] = scr_gettext("SCR_TEXT_3079"); // \\W* with that power^1, \\RASGORE\\W &  can finally shatter the&  barrier./
       global.msg[7] = scr_gettext("SCR_TEXT_3080"); // * He will finally take the&  surface back from humanity.../
       global.msg[8] = scr_gettext("SCR_TEXT_3081"); // * And give them back the&  suffering and pain that&  we have endured./
       global.msg[9] = scr_gettext("SCR_TEXT_3082"); // * .../
@@ -3553,7 +3467,7 @@ function SCR_TEXT(argument0) {
       global.msg[8] = scr_gettext("SCR_TEXT_3345"); // * Click.../%%
 
       if (global.flag[88] < 3) {
-        global.msg[5] = scr_gettext("SCR_TEXT_3348"); // AFTER YOU HANG&OUT // with ME.../
+        global.msg[5] = scr_gettext("SCR_TEXT_3348"); // AFTER YOU HANG&OUT with ME.../
         global.msg[6] = scr_gettext("SCR_TEXT_3349"); // LET'S MEET UP&AT HER HOUSE!/
         global.msg[7] = scr_gettext("SCR_TEXT_3350"); // I THINK YOU&WOULD MAKE&GREAT PALS!/
         global.msg[8] = scr_gettext("SCR_TEXT_3351"); // \\TS \\F0 \\T0 %
@@ -3568,7 +3482,7 @@ function SCR_TEXT(argument0) {
       break;
 
     case 636:
-      global.msg[0] = scr_gettext("SCR_TEXT_3363"); // * Unfortunately^1, monsters are&  not experienced // with&  illness./
+      global.msg[0] = scr_gettext("SCR_TEXT_3363"); // * Unfortunately^1, monsters are&  not experienced with&  illness./
       global.msg[1] = scr_gettext("SCR_TEXT_3364"); // * However^1, when monsters are&  about to expire of age^1,&  they lie down^1, immobile./
       global.msg[2] = scr_gettext("SCR_TEXT_3365"); // * We call this state&  "Fallen Down."/
       global.msg[3] = scr_gettext("SCR_TEXT_3366"); // * A person who has Fallen&  Down will soon perish./
@@ -3584,7 +3498,7 @@ function SCR_TEXT(argument0) {
       break;
 
     case 638:
-      global.msg[0] = scr_gettext("SCR_TEXT_3363"); // * Unfortunately^1, monsters are&  not experienced // with&  illness./
+      global.msg[0] = scr_gettext("SCR_TEXT_3363"); // * Unfortunately^1, monsters are&  not experienced with&  illness./
       global.msg[1] = scr_gettext("SCR_TEXT_3364"); // * However^1, when monsters are&  about to expire of age^1,&  they lie down^1, immobile./
       global.msg[2] = scr_gettext("SCR_TEXT_3365"); // * We call this state&  "Fallen Down."/
       global.msg[3] = scr_gettext("SCR_TEXT_3366"); // * A person who has Fallen&  Down will soon perish./
@@ -3605,7 +3519,7 @@ function SCR_TEXT(argument0) {
       global.msg[2] = scr_gettext("SCR_TEXT_3400"); // * This allows monsters to&  absorb the souls of&  humans.../
       global.msg[3] = scr_gettext("SCR_TEXT_3401"); // * While it is extremely&  difficult for humans to&  absorb a monster's soul./
       global.msg[4] = scr_gettext("SCR_TEXT_3402"); // * This is why they feared us./
-      global.msg[5] = scr_gettext("SCR_TEXT_3403"); // * Though monsters are weak^1,&  // with enough human souls.../
+      global.msg[5] = scr_gettext("SCR_TEXT_3403"); // * Though monsters are weak^1,&  with enough human souls.../
       global.msg[6] = scr_gettext("SCR_TEXT_3404"); // * They could easily destroy&  all of mankind./%%
 
       if (global.choice == 1) global.msg[0] = scr_gettext("SCR_TEXT_3407"); // * (You decide not to read it.)/%%
@@ -3662,7 +3576,7 @@ function SCR_TEXT(argument0) {
 
     case 648:
       global.msg[0] = scr_gettext("SCR_TEXT_3469"); // * (You look inside a book.)&* (It's a comic book.)/
-      global.msg[1] = scr_gettext("SCR_TEXT_3470"); // * (A hideous android is running&  to school // with toast in&  its mouth.)/
+      global.msg[1] = scr_gettext("SCR_TEXT_3470"); // * (A hideous android is running&  to school with toast in&  its mouth.)/
       global.msg[2] = scr_gettext("SCR_TEXT_3471"); // * (Seems like it's late.)/
       global.msg[3] = scr_gettext("SCR_TEXT_3472"); // * (This doesn't strike you&  as very accurate...)/%%
 
@@ -3852,7 +3766,7 @@ function SCR_TEXT(argument0) {
           global.msg[0] = scr_gettext("SCR_TEXT_3653"); // * sorry^1, thirty is&  the limit on&  head-dogs./%%
 
           if (global.flag[381] == 0) {
-            global.msg[0] = scr_gettext("SCR_TEXT_3656"); // \\TS*^1 \\Tsi'll be 'frank' // with&  you./
+            global.msg[0] = scr_gettext("SCR_TEXT_3656"); // \\TS*^1 \\Tsi'll be 'frank' with&  you./
             global.msg[1] = scr_gettext("SCR_TEXT_3657"); // * as much as i like&  putting hot dogs&  on your head.../
             global.msg[2] = scr_gettext("SCR_TEXT_3658"); // * thirty is just&  an excessive number./
             global.msg[3] = scr_gettext("SCR_TEXT_3659"); // * twenty-nine^1, now&  that's fine^1, but&  thirty.../
@@ -3903,7 +3817,7 @@ function SCR_TEXT(argument0) {
               global.msg[0] = scr_gettext("SCR_TEXT_3701"); // * another dog^1, coming&  right up.../
               global.msg[1] = scr_gettext("SCR_TEXT_3702"); // * ... you really like&  hot animals^1, don't&  you?/
               global.msg[2] = scr_gettext("SCR_TEXT_3703"); // * hey^1, i'm not judging./
-              global.msg[3] = scr_gettext("SCR_TEXT_3704"); // * i'd be out of a job&  // without folks like you./%%
+              global.msg[3] = scr_gettext("SCR_TEXT_3704"); // * i'd be out of a job&  without folks like you./%%
             }
 
             if (global.flag[379] == 3) {
@@ -4062,7 +3976,7 @@ function SCR_TEXT(argument0) {
 
     case 698:
       global.msg[0] = scr_gettext("SCR_TEXT_3859"); // OHO^1!&THE HUMAN ARRIVES!/
-      global.msg[1] = scr_gettext("SCR_TEXT_3860"); // ARE YOU READY TO&HANG OUT // with&UNDYNE?/
+      global.msg[1] = scr_gettext("SCR_TEXT_3860"); // ARE YOU READY TO&HANG OUT with&UNDYNE?/
       global.msg[2] = scr_gettext("SCR_TEXT_3861"); // I HAVE A PLAN&TO MAKE YOU TWO&GREAT FRIENDS!/
       global.msg[3] = scr_gettext("SCR_TEXT_3862"); // \\TS \\F0 \\T0 %
       global.msg[4] = scr_gettext("SCR_TEXT_3863"); // * (Will you hang out?)& &         Yes         No\\C
@@ -4143,7 +4057,7 @@ function SCR_TEXT(argument0) {
         global.msg[5] = scr_gettext("SCR_TEXT_3937"); // \\E0* We're going to&  hang out./
         global.msg[6] = scr_gettext("SCR_TEXT_3938"); // \\E2* We're going to&  have a good&  time./
         global.msg[7] = scr_gettext("SCR_TEXT_3939"); // '\\M1* We' + "'" + 're going to&  become "friends."/'
-        global.msg[8] = scr_gettext("SCR_TEXT_3940"); // \\E3* You'll become so&  enamored // with me.../
+        global.msg[8] = scr_gettext("SCR_TEXT_3940"); // \\E3* You'll become so&  enamored with me.../
         global.msg[9] = scr_gettext("SCR_TEXT_3941"); // \\E1* YOU'LL be the one&  feeling humiliated&  for your actions!/
         global.msg[10] = scr_gettext("SCR_TEXT_3942"); // \\E6* Fuhuhuhuhu!!/
         global.msg[11] = scr_gettext("SCR_TEXT_3943"); // \\M2* It's the perfect&  revenge!!!/
@@ -4158,8 +4072,8 @@ function SCR_TEXT(argument0) {
         global.msg[0] = scr_gettext("SCR_TEXT_3951"); // \\E4* Then why are you&  here?/
         global.msg[1] = scr_gettext("SCR_TEXT_3952"); // \\E1* ...!/
         global.msg[2] = scr_gettext("SCR_TEXT_3953"); // \\E2* Wait^1, I get it./
-        global.msg[3] = scr_gettext("SCR_TEXT_3954"); // \\E3* You think that I'm&  gonna be friends&  // with you^1, huh?/
-        global.msg[4] = scr_gettext("SCR_TEXT_3955"); // * Right???&              NEVER &  Yes         // with you\\C
+        global.msg[3] = scr_gettext("SCR_TEXT_3954"); // \\E3* You think that I'm&  gonna be friends&  with you^1, huh?/
+        global.msg[4] = scr_gettext("SCR_TEXT_3955"); // * Right???&              NEVER &  Yes         with you\\C
         global.msg[5] = scr_gettext("SCR_TEXT_3956"); //
       }
 
@@ -4170,7 +4084,7 @@ function SCR_TEXT(argument0) {
         global.msg[0] = scr_gettext("SCR_TEXT_3963"); // \\E6* Really^1?&* How delightful!^1!&* I accept!/
         global.msg[1] = scr_gettext("SCR_TEXT_3964"); // * Let's all frolick&  in the fields&  of friendship!/
         global.msg[2] = scr_gettext("SCR_TEXT_3965"); // \\E2* ...NOT!/
-        global.msg[3] = scr_gettext("SCR_TEXT_3966"); // \\E2* Why would I EVER&  be friends // with&  YOU!?/
+        global.msg[3] = scr_gettext("SCR_TEXT_3966"); // \\E2* Why would I EVER&  be friends with&  YOU!?/
         global.msg[4] = scr_gettext("SCR_TEXT_3967"); // \\E3* If you weren't my&  houseguest^1, I'd beat&  you up right now!/
         global.msg[5] = scr_gettext("SCR_TEXT_3968"); // \\E0* You're the enemy&  of everyone's hopes&  and dreams!/
         global.msg[6] = scr_gettext("SCR_TEXT_3969"); // \\E1* I WILL NEVER&  BE YOUR FRIEND./
@@ -4225,7 +4139,7 @@ function SCR_TEXT(argument0) {
       global.msg[0] = scr_gettext("SCR_TEXT_4016"); // * That sugar's for&  the tea./
       global.msg[1] = scr_gettext("SCR_TEXT_4017"); // \\E2* I'm not gonna give&  you a cup of&  sugar!/
       global.msg[2] = scr_gettext("SCR_TEXT_4018"); // \\E6* What do I look&  like^1, the ice-cream&  woman?/
-      global.msg[3] = scr_gettext("SCR_TEXT_4019"); // \\E2* Do human ice-cream&  women TERRORIZE HUMANITY&  // with ENERGY SPEARS?/
+      global.msg[3] = scr_gettext("SCR_TEXT_4019"); // \\E2* Do human ice-cream&  women TERRORIZE HUMANITY&  with ENERGY SPEARS?/
       global.msg[4] = scr_gettext("SCR_TEXT_4020"); // \\E3* Are their ice-cream&  songs a PRELUDE TO&  DESTRUCTION?/
       global.msg[5] = scr_gettext("SCR_TEXT_4021"); // \\E1* IS THAT IT? & &  Yes         No\\C
       global.msg[6] = scr_gettext("SCR_TEXT_4022"); //
@@ -4243,7 +4157,7 @@ function SCR_TEXT(argument0) {
 
     case 710:
       global.msg[0] = scr_gettext("SCR_TEXT_4038"); // * Envision these&  vegetables as your&  greatest enemy!/
-      global.msg[1] = scr_gettext("SCR_TEXT_4039"); // \\E2* Now!^1!&* Pound them to dust&  // with your fists!!/
+      global.msg[1] = scr_gettext("SCR_TEXT_4039"); // \\E2* Now!^1!&* Pound them to dust&  with your fists!!/
       global.msg[2] = scr_gettext("SCR_TEXT_4041"); // \\TS \\F0 \\T0 %
       global.msg[3] = scr_gettext("SCR_TEXT_4042"); // * (How will you pound?)& &         Strong      Wimpy\\C
       global.msg[4] = scr_gettext("SCR_TEXT_4043"); //
@@ -4388,7 +4302,7 @@ function SCR_TEXT(argument0) {
     case 724:
       global.msg[0] = scr_gettext("SCR_TEXT_4191"); // \\M5* OH MY!!!!/
       global.msg[1] = scr_gettext("SCR_TEXT_4192"); // \\M2* ... IT'S A COMPLETELY&  NONDESCRIPT GLASS OF WATER./
-      global.msg[2] = scr_gettext("SCR_TEXT_4193"); // \\M4* BUT ANYTHING CAN MAKE&  A GREAT STORY // with ENOUGH&  SPIN!/
+      global.msg[2] = scr_gettext("SCR_TEXT_4193"); // \\M4* BUT ANYTHING CAN MAKE&  A GREAT STORY with ENOUGH&  SPIN!/
       global.msg[3] = scr_gettext("SCR_TEXT_4194"); // \\M2* (REPORT THIS ONE?)& &         Report      Look More\\C
       global.msg[4] = scr_gettext("SCR_TEXT_4195"); //
       break;
@@ -4428,7 +4342,7 @@ function SCR_TEXT(argument0) {
       global.msg[3] = scr_gettext("SCR_TEXT_4237"); // \\M1* I'VE HEARD THAT LIKE THE&  OTHER FILMS.../
       global.msg[4] = scr_gettext("SCR_TEXT_4238"); // \\M1* IT CONSISTS MOSTLY OF A SINGLE&  FOUR-HOUR SHOT OF ROSE PETALS&  SHOWERING ON MY RECLINING BODY./
       global.msg[5] = scr_gettext("SCR_TEXT_4239"); // \\M5* OOH!!^1!&* BUT THAT'S!!^1!&* NOT CONFIRMED!!/
-      global.msg[6] = scr_gettext("SCR_TEXT_4240"); // \\M5* YOU WOULDN'T (COUGH) SPOIL MY&  MOVIE FOR EVERYONE // with A&  PROMOTIONAL STORY^1, WOULD YOU?/
+      global.msg[6] = scr_gettext("SCR_TEXT_4240"); // \\M5* YOU WOULDN'T (COUGH) SPOIL MY&  MOVIE FOR EVERYONE with A&  PROMOTIONAL STORY^1, WOULD YOU?/
       global.msg[7] = scr_gettext("SCR_TEXT_4241"); // \\M2* (REPORT THIS ONE?)& &         Report      Look More\\C
       global.msg[8] = scr_gettext("SCR_TEXT_4242"); //
       break;
@@ -4467,9 +4381,9 @@ function SCR_TEXT(argument0) {
 
     case 732:
       global.msg[0] = scr_gettext("SCR_TEXT_4282"); // \\M4* BASKETBALL'S A BLAST^1, ISN'T IT^1,&  DARLING?/
-      global.msg[1] = scr_gettext("SCR_TEXT_4283"); // \\M1* TOO BAD YOU CAN'T PLAY // with&  THESE BALLS./
+      global.msg[1] = scr_gettext("SCR_TEXT_4283"); // \\M1* TOO BAD YOU CAN'T PLAY with&  THESE BALLS./
       global.msg[2] = scr_gettext("SCR_TEXT_4284"); // \\M4* THEY'RE MTT-BRAND FASHION&  BASKETBALLS^1.&* FOR WEARING^1, NOT PLAYING./
-      global.msg[3] = scr_gettext("SCR_TEXT_4285"); // \\M6* YOU CAN'T GET RICH AND FAMOUS&  LIKE MOI // withOUT BEAUTIFYING&  A FEW ORBS./
+      global.msg[3] = scr_gettext("SCR_TEXT_4285"); // \\M6* YOU CAN'T GET RICH AND FAMOUS&  LIKE MOI withOUT BEAUTIFYING&  A FEW ORBS./
       global.msg[4] = scr_gettext("SCR_TEXT_4286"); // \\M2* (REPORT THIS ONE?)& &         Report      Look More\\C
       global.msg[5] = scr_gettext("SCR_TEXT_4287"); //
       break;
@@ -4504,7 +4418,7 @@ function SCR_TEXT(argument0) {
 
     case 736:
       global.msg[0] = scr_gettext("SCR_TEXT_4326"); // \\M5* OH MY^1! IT'S A PRESENT^1!&* AND IT'S ADDRESSED TO YOU^1,&  DARLING!/
-      global.msg[1] = scr_gettext("SCR_TEXT_4327"); // \\M6* AREN'T YOU JUST BURSTING&  // with EXCITEMENT?/
+      global.msg[1] = scr_gettext("SCR_TEXT_4327"); // \\M6* AREN'T YOU JUST BURSTING&  with EXCITEMENT?/
       global.msg[2] = scr_gettext("SCR_TEXT_4328"); // \\M5* WHAT COULD BE INSIDE^1?&* WELL^1, NO TIME LIKE THE&  "PRESENT" TO FIND OUT!/
       global.msg[3] = scr_gettext("SCR_TEXT_4329"); // \\M2* (REPORT THIS ONE?)& &         Report      Look More\\C
       global.msg[4] = scr_gettext("SCR_TEXT_4330"); //
@@ -4685,7 +4599,7 @@ function SCR_TEXT(argument0) {
       break;
 
     case 751:
-      global.msg[0] = scr_gettext("SCR_TEXT_4511"); // * Ribbit^1, ribbit^1.&* (How are you doing // without&  yellow names?)/
+      global.msg[0] = scr_gettext("SCR_TEXT_4511"); // * Ribbit^1, ribbit^1.&* (How are you doing without&  yellow names?)/
       global.msg[1] = scr_gettext("SCR_TEXT_4512"); //                      Bring &         It's        Them&         great       Back\\C
       global.msg[2] = scr_gettext("SCR_TEXT_4513"); //
       break;
@@ -4731,7 +4645,7 @@ function SCR_TEXT(argument0) {
 
     case 757:
       if (global.choice == 0) {
-        global.msg[0] = scr_gettext("SCR_TEXT_4559"); // * Congratulations^1!&* You are now Mortal Enemies&  // with Mettaton./
+        global.msg[0] = scr_gettext("SCR_TEXT_4559"); // * Congratulations^1!&* You are now Mortal Enemies&  with Mettaton./
         global.msg[1] = scr_gettext("SCR_TEXT_4560"); // * \\YCOOLSKELETON95\\W has posted&  a comment on this change./
         global.msg[2] = scr_gettext("SCR_TEXT_4561"); // * CONGRATULATIONS^1, YOU TWO^1!&* WISH YOU A LONG AND&  HORRIBLE RIVALRY./%%
       }
@@ -4755,7 +4669,7 @@ function SCR_TEXT(argument0) {
 
     case 760:
       global.msg[0] = scr_gettext("SCR_TEXT_4588"); // * hey^1.&* i heard you're going&  to the core./
-      global.msg[1] = scr_gettext("SCR_TEXT_4589"); // \\E0* how about grabbing some&  dinner // with me first?&  Yeah        I'm busy \\C
+      global.msg[1] = scr_gettext("SCR_TEXT_4589"); // \\E0* how about grabbing some&  dinner with me first?&  Yeah        I'm busy \\C
       global.msg[2] = scr_gettext("SCR_TEXT_4590"); //
 
       if (global.flag[67] == 1) global.msg[0] = scr_gettext("SCR_TEXT_4591"); // * .../%%
@@ -4844,22 +4758,13 @@ function SCR_TEXT(argument0) {
       if (global.choice == 0) {
         global.msg[0] = scr_gettext("SCR_TEXT_4678"); // * Where will we go today?& &         Error       Error\\C
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/fire_dock"
-        )
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_dock")
           global.msg[0] = scr_gettext("SCR_TEXT_4680"); // * Where will we go today?& &         Snowdin     Waterfall\\C
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/water_dock"
-        )
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/water_dock")
           global.msg[0] = scr_gettext("SCR_TEXT_4682"); // * Where will we go today?& &         Snowdin     Hotland\\C
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/tundra_dock"
-        )
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_dock")
           global.msg[0] = scr_gettext("SCR_TEXT_4684"); // * Where will we go today?& &         Waterfall   Hotland\\C
 
         global.msg[1] = scr_gettext("SCR_TEXT_4686"); //
@@ -4871,30 +4776,18 @@ function SCR_TEXT(argument0) {
 
     case 772:
       if (global.choice == 0) {
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/fire_dock || room == room_water_dock"
-        )
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_dock" || window.location.href === "https://undertale.defautluser0.xyz/room/water_dock")
           global.flag[459] = 1;
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/tundra_dock"
-        )
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_dock")
           global.flag[459] = 2;
       }
 
       if (global.choice == 1) {
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/tundra_dock || room == room_water_dock"
-        )
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_dock" || window.location.href === "https://undertale.defautluser0.xyz/room/water_dock")
           global.flag[459] = 3;
 
-        if (
-          window.location.href ===
-          "https://undertale.defautluser0.xyz/room/fire_dock"
-        )
+        if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_dock")
           global.flag[459] = 2;
       }
 
@@ -5019,7 +4912,7 @@ function SCR_TEXT(argument0) {
       global.msg[14] = scr_gettext("SCR_TEXT_4830"); // \\E0* I haven't felt like&  this for a long time./
       global.msg[15] = scr_gettext("SCR_TEXT_4831"); // \\E2* As a flower^1, I was&  soulless./
       global.msg[16] = scr_gettext("SCR_TEXT_4832"); // \\E1* I lacked the power to&  love other people./
-      global.msg[17] = scr_gettext("SCR_TEXT_4833"); // \\E2* However^1, // with everyone's&  souls inside me.../
+      global.msg[17] = scr_gettext("SCR_TEXT_4833"); // \\E2* However^1, with everyone's&  souls inside me.../
       global.msg[18] = scr_gettext("SCR_TEXT_4834"); // \\E7* I not only have my own&  compassion back.../
       global.msg[19] = scr_gettext("SCR_TEXT_4835"); // \\E5* But I can feel every&  other monster's as&  well./
       global.msg[20] = scr_gettext("SCR_TEXT_4836"); // \\E7* They all care about&  each other so much./
@@ -5064,8 +4957,8 @@ function SCR_TEXT(argument0) {
       global.msg[6] = scr_gettext("SCR_TEXT_4877"); // \\E2* But first.../
       global.msg[7] = scr_gettext("SCR_TEXT_4878"); // \\E4* There's something I&  have to do./
       global.msg[8] = scr_gettext("SCR_TEXT_4879"); // * Right now^1, I can feel&  everyone's hearts&  beating as one./
-      global.msg[9] = scr_gettext("SCR_TEXT_4880"); // * They're all burning&  // with the same&  desire./
-      global.msg[10] = scr_gettext("SCR_TEXT_4881"); // * // with everyone's power..^1.&* // with everyone's&  determination.../
+      global.msg[9] = scr_gettext("SCR_TEXT_4880"); // * They're all burning&  with the same&  desire./
+      global.msg[10] = scr_gettext("SCR_TEXT_4881"); // * with everyone's power..^1.&* with everyone's&  determination.../
       global.msg[11] = scr_gettext("SCR_TEXT_4882"); // * It's time for&  monsters.../
       global.msg[12] = scr_gettext("SCR_TEXT_4883"); // * To finally go free./%%
       break;
@@ -5073,7 +4966,7 @@ function SCR_TEXT(argument0) {
     case 803:
       global.msg[0] = scr_gettext("SCR_TEXT_4887"); // \\E7* Frisk.../
       global.msg[1] = scr_gettext("SCR_TEXT_4888"); // \\E0* I have to go now./
-      global.msg[2] = scr_gettext("SCR_TEXT_4889"); // \\E7* // without the power of&  everyone's souls.../
+      global.msg[2] = scr_gettext("SCR_TEXT_4889"); // \\E7* without the power of&  everyone's souls.../
       global.msg[3] = scr_gettext("SCR_TEXT_4890"); // \\E1* I can't keep&  maintaining this&  form./
       global.msg[4] = scr_gettext("SCR_TEXT_4891"); // * In a little while.../
       global.msg[5] = scr_gettext("SCR_TEXT_4892"); // * I'll turn back into&  a flower./
@@ -5081,7 +4974,7 @@ function SCR_TEXT(argument0) {
       global.msg[7] = scr_gettext("SCR_TEXT_4894"); // * I'll stop being able&  to feel love again./
       global.msg[8] = scr_gettext("SCR_TEXT_4895"); // \\E1* So..^1. Frisk./
       global.msg[9] = scr_gettext("SCR_TEXT_4896"); // \\E7* It's best if you&  just forget about&  me^1, OK?/
-      global.msg[10] = scr_gettext("SCR_TEXT_4897"); // \\E0* Just go be // with&  the people who&  love you./
+      global.msg[10] = scr_gettext("SCR_TEXT_4897"); // \\E0* Just go be with&  the people who&  love you./
       global.msg[11] = scr_gettext("SCR_TEXT_4898"); // \\TS \\F0 \\T0 %
       global.msg[12] = scr_gettext("SCR_TEXT_4899"); //  &         Comfort&         him         Do not\\C
       global.msg[13] = scr_gettext("SCR_TEXT_4900"); //
@@ -5124,15 +5017,15 @@ function SCR_TEXT(argument0) {
       global.msg[22] = scr_gettext("SCR_TEXT_4941"); // \\E2* (Help me explain what&  anime is to Asgore.)/
       global.msg[23] = scr_gettext("SCR_TEXT_4942"); // \\E0* Y-you see^1, it's&  like a cartoon^1,&  but.../
       global.msg[24] = scr_gettext("SCR_TEXT_4943"); // \\TS \\F0 \\T0 %
-      global.msg[25] = scr_gettext("SCR_TEXT_4944"); //  &         // with        // with&         Sword's     Gun's\\C
+      global.msg[25] = scr_gettext("SCR_TEXT_4944"); //  &         with        with&         Sword's     Gun's\\C
       global.msg[26] = scr_gettext("SCR_TEXT_4945"); //
       break;
 
     case 807:
       scr_asgface(0, 2);
-      global.msg[1] = scr_gettext("SCR_TEXT_4950"); // \\E2* So it's like a&  cartoon..^1.&* But // with swords?/
+      global.msg[1] = scr_gettext("SCR_TEXT_4950"); // \\E2* So it's like a&  cartoon..^1.&* But with swords?/
 
-      if (global.choice == 1) global.msg[1] = scr_gettext("SCR_TEXT_4952"); // \\E2* So it's like a&  cartoon..^1.&* But // with guns?/
+      if (global.choice == 1) global.msg[1] = scr_gettext("SCR_TEXT_4952"); // \\E2* So it's like a&  cartoon..^1.&* But with guns?/
 
       global.msg[2] = scr_gettext("SCR_TEXT_4953"); // \\E0* Golly^1!&* That sounds neato!/
       global.msg[3] = scr_gettext("SCR_TEXT_4954"); // \\E3* Where is this^1?&* Where can I see the&  Anime./
@@ -5276,7 +5169,7 @@ function SCR_TEXT(argument0) {
       global.msg[4] = scr_gettext("SCR_TEXT_5099"); // \\E3* Wow..^1. it's e-even&  better than on TV./
       global.msg[5] = scr_gettext("SCR_TEXT_5100"); // \\E7* WAY better^1!&* Better than I ever&  imagined!/
       scr_undface(6, 1);
-      global.msg[7] = scr_gettext("SCR_TEXT_5102"); // \\E1* Frisk^1, you LIVE // with&  this!?/
+      global.msg[7] = scr_gettext("SCR_TEXT_5102"); // \\E1* Frisk^1, you LIVE with&  this!?/
       global.msg[8] = scr_gettext("SCR_TEXT_5103"); // \\E9* The sunlight is so&  nice..^1. and the air&  is so fresh!/
       global.msg[9] = scr_gettext("SCR_TEXT_5104"); // * I really feel alive!/
       scr_papface(10, 0);
@@ -5331,7 +5224,7 @@ function SCR_TEXT(argument0) {
       global.msg[2] = scr_gettext("SCR_TEXT_5153"); // \\E1* So you must have&  a place to return to^1,&  do you not?/
       global.msg[3] = scr_gettext("SCR_TEXT_5154"); // \\E2* What will you do&  now?/
       global.msg[4] = scr_gettext("SCR_TEXT_5155"); // \\TS \\F0 \\T0 %
-      global.msg[5] = scr_gettext("SCR_TEXT_5156"); //          I want      I have&         to stay     places&         // with you    to go\\C
+      global.msg[5] = scr_gettext("SCR_TEXT_5156"); //          I want      I have&         to stay     places&         with you    to go\\C
       global.msg[6] = scr_gettext("SCR_TEXT_5157"); //
       break;
 
@@ -5460,16 +5353,10 @@ function SCR_TEXT(argument0) {
       global.msg[4] = scr_gettext("SCR_TEXT_5292"); // * Cinnamon or&  butterscotch?/
       global.msg[5] = scr_gettext("SCR_TEXT_5293"); // \\E1* ... wait^1.&* Do not tell me./
 
-      if (bs == 1)
-        global.msg[6] =
-          scr_gettext(
-            "SCR_TEXT_5295"
-          ); // \\E0* Is it Butterscotch?& &  Yes         No      \\C
-      else if (bs == 2)
-        global.msg[6] =
-          scr_gettext(
-            "SCR_TEXT_5296"
-          ); // \\E0* Is it Cinnamon?& &  Yes         No      \\C
+      if (bs == 1) global.msg[6] = scr_gettext("SCR_TEXT_5295");
+      // \\E0* Is it Butterscotch?& &  Yes         No      \\C
+      else if (bs == 2) global.msg[6] = scr_gettext("SCR_TEXT_5296");
+      // \\E0* Is it Cinnamon?& &  Yes         No      \\C
       else global.msg[6] = scr_gettext("SCR_TEXT_5294"); // \\E0* It is ERROR MESSAGE!& &  Yes         No      \\C
 
       global.msg[7] = scr_gettext("SCR_TEXT_5297"); //
@@ -5579,7 +5466,7 @@ function SCR_TEXT(argument0) {
       global.msg[0] = scr_gettext("SCR_TEXT_5402"); // * (Ring...)/
       scr_alface(1, 0);
       global.msg[2] = scr_gettext("SCR_TEXT_5404"); // \\E0* Hey!/
-      global.msg[3] = scr_gettext("SCR_TEXT_5405"); // \\E3* This um^1, doesn't have&  anything to do // with&  guiding you..^1. but.../
+      global.msg[3] = scr_gettext("SCR_TEXT_5405"); // \\E3* This um^1, doesn't have&  anything to do with&  guiding you..^1. but.../
       global.msg[4] = scr_gettext("SCR_TEXT_5406"); // \\E2* .../
       global.msg[5] = scr_gettext("SCR_TEXT_5407"); // \\E6* Uhh^1, hey^1, would you want&  to watch a human TV&  show together???/
       global.msg[6] = scr_gettext("SCR_TEXT_5408"); // * Sometime???/
@@ -5674,11 +5561,8 @@ function SCR_TEXT(argument0) {
       break;
 
     case 847:
-      if (global.choice == 0)
-        global.msg[0] =
-          scr_gettext(
-            "SCR_TEXT_5506"
-          ); // * (The flashlight is out of&  batteries.)/%%
+      if (global.choice == 0) global.msg[0] = scr_gettext("SCR_TEXT_5506");
+      // * (The flashlight is out of&  batteries.)/%%
       else global.msg[0] = scr_gettext("SCR_TEXT_5510"); //  %%
 
       break;
@@ -5890,11 +5774,8 @@ function SCR_TEXT(argument0) {
           global.msg[1] = scr_gettext("SCR_TEXT_5737"); // * (It slides underneath the door^1,&  as if pulled by a magnet.)/
           global.msg[2] = scr_gettext("SCR_TEXT_5738"); // * (...)/
 
-          if (noroom == 1)
-            global.msg[3] =
-              scr_gettext(
-                "SCR_TEXT_5743"
-              ); // * (ZOMMM!!^1!)&* (It shoots back out at a&  high speed!)/%%
+          if (noroom == 1) global.msg[3] = scr_gettext("SCR_TEXT_5743");
+          // * (ZOMMM!!^1!)&* (It shoots back out at a&  high speed!)/%%
           else global.msg[3] = scr_gettext("SCR_TEXT_5747"); // * (Two Dog Residues slowly slide&  back out from underneath&  the door.)/%%
         }
       }
@@ -5965,7 +5846,7 @@ function SCR_TEXT(argument0) {
         global.msg[0] = scr_gettext("SCR_TEXT_5823"); // * (KA-SIGH...^1)&* (THE SHOW MUST GO ON!)/%%
 
         // with (obj_playmovement)
-        con = 240;
+          con = 240;
       }
 
       break;
@@ -6102,7 +5983,7 @@ function SCR_TEXT(argument0) {
 
     case 951:
       if (doak == 0) {
-        global.msg[0] = scr_gettext("SCR_TEXT_dogshrine_5970"); // * (Something is wrong // with&  the box.)/%
+        global.msg[0] = scr_gettext("SCR_TEXT_dogshrine_5970"); // * (Something is wrong with&  the box.)/%
 
         if (global.choice == 0) {
           if (global.flag[292] >= global.flag[293])
@@ -6126,7 +6007,7 @@ function SCR_TEXT(argument0) {
               }
 
               if (global.flag[292] >= global.flag[293]) {
-                global.msg[0] = scr_gettext("SCR_TEXT_dogshrine_6003"); // * (Clink!)&* (The box is filled // with coins.)/
+                global.msg[0] = scr_gettext("SCR_TEXT_dogshrine_6003"); // * (Clink!)&* (The box is filled with coins.)/
                 global.msg[1] = scr_gettext("SCR_TEXT_dogshrine_6004"); // * (Perhaps if you leave and&  return^1, the donations will be&  used for something.)/%
                 global.flag[294] += 1;
                 trophy_unlock("donate_" + string(global.flag[294]));
@@ -6515,7 +6396,7 @@ function SCR_TEXT(argument0) {
       global.choices[4] = 0;
       global.choices[5] = 0;
 
-      if (scr_murderlv() >= 7) {
+      if (scr_murderlv.call(this) >= 7) {
         global.msg[0] = scr_gettext("SCR_TEXT_6206"); //    * Check
         global.choices[0] = 1;
         global.choices[1] = 0;
@@ -7120,13 +7001,13 @@ function SCR_TEXT(argument0) {
         else global.msg[0] += scr_gettext("SCR_TEXT_6829"); //    \\Y* (Saved)\\W &
 
         if (global.flag[507] == 0)
-          global.msg[0] +=
-            scr_gettext("SCR_TEXT_6831"); // \\W   * Papyrus       * Sans \\W &
+          global.msg[0] += scr_gettext("SCR_TEXT_6831");
+        // \\W   * Papyrus       * Sans \\W &
         else global.msg[0] += scr_gettext("SCR_TEXT_6832"); // \\Y   * (Saved)       * (Saved)\\W &
 
         if (global.flag[508] == 0)
-          global.msg[0] +=
-            scr_gettext("SCR_TEXT_6834"); // \\W   * Toriel        * Asgore \\W
+          global.msg[0] += scr_gettext("SCR_TEXT_6834");
+        // \\W   * Toriel        * Asgore \\W
         else global.msg[0] += scr_gettext("SCR_TEXT_6835"); // \\Y   * (Saved)       * (Saved)\\W
 
         global.choices[0] = 1;
@@ -7187,7 +7068,7 @@ function SCR_TEXT(argument0) {
         global.msg[4] = scr_gettext("SCR_TEXT_6899"); // * My apologies./
         global.msg[5] = scr_gettext("SCR_TEXT_6900"); // * Why not use your&  imagination to&  divert yourself?/
         global.msg[6] = scr_gettext("SCR_TEXT_6901"); // * Pretend you are..^1.&* A monarch!/
-        global.msg[7] = scr_gettext("SCR_TEXT_6902"); // * Rule over the leaf pile&  // with a fist of iron./
+        global.msg[7] = scr_gettext("SCR_TEXT_6902"); // * Rule over the leaf pile&  with a fist of iron./
         global.msg[8] = scr_gettext("SCR_TEXT_6903"); // * Can you do that for me?/
         global.msg[9] = scr_gettext("SCR_TEXT_6904"); // \\TS \\F0 \\T0 %
         global.msg[10] = scr_gettext("SCR_TEXT_6905"); // * Click.../%%
@@ -7209,7 +7090,7 @@ function SCR_TEXT(argument0) {
       global.msg[0] = scr_gettext("SCR_TEXT_6920"); // * Dialing..\\E0.\\TT /
       global.msg[1] = scr_gettext("SCR_TEXT_6921"); // \\F1 %
       global.msg[2] = scr_gettext("SCR_TEXT_6922"); // * This is TORIEL./
-      global.msg[3] = scr_gettext("SCR_TEXT_6923"); // \\E1* Help // with a puzzle^1.^1.^1.?/
+      global.msg[3] = scr_gettext("SCR_TEXT_6923"); // \\E1* Help with a puzzle^1.^1.^1.?/
       global.msg[4] = scr_gettext("SCR_TEXT_6924"); // * Um^1, you have not&  left the room^1, have you?/
       global.msg[5] = scr_gettext("SCR_TEXT_6925"); // \\E0* Wait patiently for&  me and we can solve&  it together!/
       global.msg[6] = scr_gettext("SCR_TEXT_6926"); // \\TS \\F0 \\T0 %
@@ -7323,7 +7204,7 @@ function SCR_TEXT(argument0) {
       break;
 
     case 1520:
-      global.msg[0] = scr_gettext("SCR_TEXT_7052"); // * (The box is aclog // with the&  the hair of a dog.)/%%
+      global.msg[0] = scr_gettext("SCR_TEXT_7052"); // * (The box is aclog with the&  the hair of a dog.)/%%
       break;
 
     case 2001:
@@ -7594,7 +7475,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_desc_2_0",
-    '* "Croquet Roll" - Heals 15 HP&* Fried dough traditionally&  served // with a mallet./%'
+    '* "Croquet Roll" - Heals 15 HP&* Fried dough traditionally&  served with a mallet./%'
   );
   ds_map_add(
     global.text_data_en,
@@ -7620,7 +7501,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_desc_7_0",
-    '* "Spider Donut" - Heals 12 HP&* A donut made // with Spider&  Cider in the batter./%'
+    '* "Spider Donut" - Heals 12 HP&* A donut made with Spider&  Cider in the batter./%'
   );
   ds_map_add(
     global.text_data_en,
@@ -7637,7 +7518,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_desc_10_0",
-    '* "Spider Cider" - Heals 24 HP&* Made // with whole spiders^1,&  not just the juice./%'
+    '* "Spider Cider" - Heals 24 HP&* Made with whole spiders^1,&  not just the juice./%'
   );
   ds_map_add(
     global.text_data_en,
@@ -7788,7 +7669,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_desc_36_0",
-    '* "Instant Noodles" Heals HP&* Comes // with everything you&  need for a quick meal!/%%'
+    '* "Instant Noodles" Heals HP&* Comes with everything you&  need for a quick meal!/%%'
   );
   ds_map_add(
     global.text_data_en,
@@ -7803,7 +7684,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_desc_39_0",
-    '* "Hot Cat" Heals 21 HP&* Like a hot dog^1, but // with&  little cat ears on the end./%%'
+    '* "Hot Cat" Heals 21 HP&* Like a hot dog^1, but with&  little cat ears on the end./%%'
   );
   ds_map_add(
     global.text_data_en,
@@ -7828,7 +7709,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_desc_44_0",
-    '* "Cloudy Glasses" - Armor DF 6&* Glasses marred // with wear.&* Increases INV by 9./'
+    '* "Cloudy Glasses" - Armor DF 6&* Glasses marred with wear.&* Increases INV by 9./'
   );
   ds_map_add(
     global.text_data_en,
@@ -7961,7 +7842,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_desc_64_0",
-    '* "temy armor" - Armor DF 20&* The things you can do // with&  a college education!/'
+    '* "temy armor" - Armor DF 20&* The things you can do with&  a college education!/'
   );
   ds_map_add(
     global.text_data_en,
@@ -8113,18 +7994,18 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_121",
-    "   * Ran away // with \\[1] EXP&     and \\[2] GOLD."
+    "   * Ran away with \\[1] EXP&     and \\[2] GOLD."
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_127",
-    " * (The shadow of the ruins&  looms above^1, filling you // with&  determination.)/"
+    " * (The shadow of the ruins&  looms above^1, filling you with&  determination.)/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_128", " * (HP fully restored.)/%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_129",
-    " * (Playfully crinkling through&  the leaves fills you // with&  determination.)/"
+    " * (Playfully crinkling through&  the leaves fills you with&  determination.)/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_130", " * (HP fully restored.)/%%");
   ds_map_add(
@@ -8135,7 +8016,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_132",
-    " * (It fills you // with&  determination.)/%%"
+    " * (It fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8146,12 +8027,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_135",
-    " * (The cold atmosphere of a&  new land... it fills you&  // with determination.)/%%"
+    " * (The cold atmosphere of a&  new land... it fills you&  with determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_136",
-    " * (The convenience of that&  lamp still fills you&  // with determination.)/%%"
+    " * (The convenience of that&  lamp still fills you&  with determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8161,7 +8042,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_138",
-    " * (It fills you // with&  determination.)/%%"
+    " * (It fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8171,7 +8052,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_141",
-    " * (It fills you // with&  determination.)/%%"
+    " * (It fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8181,17 +8062,17 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_143",
-    " * (This simple fact fills&  you // with determination.)/%%"
+    " * (This simple fact fills&  you with determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_144",
-    " * (The sight of such a friendly&  town fills you // with&  determination.)/%%"
+    " * (The sight of such a friendly&  town fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_145",
-    " * (The sound of rushing water&  fills you // with&  determination.)/%%"
+    " * (The sound of rushing water&  fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8206,7 +8087,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_148",
-    " * (It fills you // with&  determination.)/%%"
+    " * (It fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8221,7 +8102,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_152",
-    " * (It fills you // with&  determination.)/%%"
+    " * (It fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8251,27 +8132,27 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_160",
-    " * (It fills you // with&  determination.)/%%"
+    " * (It fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_161",
-    " * (Partaking in worthless&  garbage fills you&  // with determination.)/%%"
+    " * (Partaking in worthless&  garbage fills you&  with determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_164",
-    " * (You feel a calming&  tranquility^1. You're filled&  // with determination...)/%%"
+    " * (You feel a calming&  tranquility^1. You're filled&  with determination...)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_165",
-    " * (You feel..^1. something.)&* (You're filled // with&  detemmienation.)/%%"
+    " * (You feel..^1. something.)&* (You're filled with&  detemmienation.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_168",
-    " * (The wind is howling^1.&* You're filled // with&  determination...)/%%"
+    " * (The wind is howling^1.&* You're filled with&  determination...)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8281,7 +8162,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_170",
-    " * (The wind has stopped^1.&* You're filled // with&  determination...)/%%"
+    " * (The wind has stopped^1.&* You're filled with&  determination...)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8291,12 +8172,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_175",
-    " * (You're filled // with&  determination.)/%%"
+    " * (You're filled with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_180",
-    " * (The wooshing sound of steam&  and cogs..^1. it fills you&  // with determination.)/%%"
+    " * (The wooshing sound of steam&  and cogs..^1. it fills you&  with determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8306,7 +8187,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_185",
-    " * (You're filled // with&  determination.)/%%"
+    " * (You're filled with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8316,22 +8197,22 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_188",
-    " * (It fills you // with&  determination.)/%%"
+    " * (It fills you with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_191",
-    " * (A huge structure lies north.^1)&* (You're filled // with&  determination.)/%%"
+    " * (A huge structure lies north.^1)&* (You're filled with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_195",
-    " * (The relaxing atmosphere&  of this hotel..^1. it fills&  you // with determination.)/%%"
+    " * (The relaxing atmosphere&  of this hotel..^1. it fills&  you with determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_199",
-    " * (The air is filled // with&  the smell of ozone..^1. it fills&  you // with determination.)/%%"
+    " * (The air is filled with&  the smell of ozone..^1. it fills&  you with determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8341,7 +8222,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_204",
-    " * (You're filled // with&  determination.)/%%"
+    " * (You're filled with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8351,7 +8232,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_209",
-    " * (You're filled // with&  determination.)/%%"
+    " * (You're filled with&  determination.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -8637,7 +8518,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_412",
-    " * Well^1, I often start // with&  a simple 'how do you&  do...'/"
+    " * Well^1, I often start with&  a simple 'how do you&  do...'/"
   );
   ds_map_add(
     global.text_data_en,
@@ -8653,7 +8534,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_416",
-    " * What did the skeleton&  tile his roof // with?/"
+    " * What did the skeleton&  tile his roof with?/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_417", " * ... SHIN-gles!/");
   ds_map_add(global.text_data_en, "SCR_TEXT_418", " \\E1* .../");
@@ -9021,7 +8902,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_642",
-    '\\E0I JUST FILL ALL&THE BOXES IN // with&THE LETTER "Z".../'
+    '\\E0I JUST FILL ALL&THE BOXES IN with&THE LETTER "Z".../'
   );
   ds_map_add(
     global.text_data_en,
@@ -9173,7 +9054,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_781",
-    " * Huh^1? You can't afford it&  even // with the discount^1?&* I.../%%"
+    " * Huh^1? You can't afford it&  even with the discount^1?&* I.../%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -9316,7 +9197,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_902",
-    " JUST SO YOU&COULD SHARE&IT // with ME???/"
+    " JUST SO YOU&COULD SHARE&IT with ME???/"
   );
   ds_map_add(
     global.text_data_en,
@@ -9730,7 +9611,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1100",
-    " * (The box is overstuffed // with&  cards.)/"
+    " * (The box is overstuffed with&  cards.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -9849,7 +9730,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1237",
-    " * (The fridge is filled // with&  instant noodles and soda.)/"
+    " * (The fridge is filled with&  instant noodles and soda.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -9860,7 +9741,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1242",
-    " * (The fridge is filled // with&  instant noodles and soda.)/%%"
+    " * (The fridge is filled with&  instant noodles and soda.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -10261,7 +10142,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1647",
-    " * Move it // with force?& &         Yes         No \\C"
+    " * Move it with force?& &         Yes         No \\C"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_1648", " ");
   ds_map_add(
@@ -10329,7 +10210,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1790",
-    " * You're making the switches&  uncomfortable // with all&  this attention./%%"
+    " * You're making the switches&  uncomfortable with all&  this attention./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -10377,7 +10258,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1833",
-    " * The rest of the page is&  filled // with jokes of&  a similar caliber./%%"
+    " * The rest of the page is&  filled with jokes of&  a similar caliber./%%"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_1835", " %%");
   ds_map_add(
@@ -10420,7 +10301,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1870",
-    " \\E1* You'd rather stay&  up and chat // with&  me^1, then?/"
+    " \\E1* You'd rather stay&  up and chat with&  me^1, then?/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_1871", " * Up already^1, I see?/");
   ds_map_add(
@@ -10659,7 +10540,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1978",
-    " REALLY!^1?&YOU WANT TO BE&FRIENDS^1, // with ME???/"
+    " REALLY!^1?&YOU WANT TO BE&FRIENDS^1, with ME???/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_1979", " WELL THEN.../");
   ds_map_add(global.text_data_en, "SCR_TEXT_1980", " \\E0I GUESS..^1./");
@@ -10762,7 +10643,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_2017",
-    " HE WANTS TO OPEN&THE BARRIER // with&SOUL POWER./"
+    " HE WANTS TO OPEN&THE BARRIER with&SOUL POWER./"
   );
   ds_map_add(
     global.text_data_en,
@@ -11059,7 +10940,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_2234",
-    " BUT FILLED // with A&SUGARY^1, NON-EGG&SUBSTANCE./"
+    " BUT FILLED with A&SUGARY^1, NON-EGG&SUBSTANCE./"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_2235", " \\E0HOW ABSURD!/%%");
   ds_map_add(global.text_data_en, "SCR_TEXT_2240", " * (It's a joke book.)/");
@@ -11230,7 +11111,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_2372",
-    " * what^1?&* haven't you seen a guy&  // with two jobs before?/"
+    " * what^1?&* haven't you seen a guy&  with two jobs before?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -11530,7 +11411,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_2682",
-    " * (You open the fridge.^1)&* (The air fills // with a&  rotten stench.)/"
+    " * (You open the fridge.^1)&* (The air fills with a&  rotten stench.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -11596,7 +11477,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_2752",
-    " * (You tap the dummy // with&  your fist.)/"
+    " * (You tap the dummy with&  your fist.)/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_2753", " * (You feel bad.)/%%");
   ds_map_add(
@@ -11844,7 +11725,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3076",
-    " * // with the power of seven&  human souls^1, our king.../"
+    " * with the power of seven&  human souls^1, our king.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -11859,7 +11740,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3079",
-    " \\W* // with that power^1, \\RASGORE\\W &  can finally shatter the&  barrier./"
+    " \\W* with that power^1, \\RASGORE\\W &  can finally shatter the&  barrier./"
   );
   ds_map_add(
     global.text_data_en,
@@ -12182,7 +12063,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3283",
-    " I JUST WANT TO&BE FRIENDS // with&EVERYONE.../"
+    " I JUST WANT TO&BE FRIENDS with&EVERYONE.../"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_3284", " \\TS \\F0 \\T0 %");
   ds_map_add(global.text_data_en, "SCR_TEXT_3285", " * Click.../%%");
@@ -12338,7 +12219,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3329",
-    " I REALLY CAN&BE FRIENDS // with&EVERYONE!!!/"
+    " I REALLY CAN&BE FRIENDS with&EVERYONE!!!/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_3330", " \\TS \\F0 \\T0 %");
   ds_map_add(global.text_data_en, "SCR_TEXT_3331", " * Click.../%%");
@@ -12365,7 +12246,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3348",
-    " AFTER YOU HANG&OUT // with ME.../"
+    " AFTER YOU HANG&OUT with ME.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -12413,7 +12294,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3403",
-    " * Though monsters are weak^1,&  // with enough human souls.../"
+    " * Though monsters are weak^1,&  with enough human souls.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -12522,7 +12403,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3470",
-    " * (A hideous android is running&  to school // with toast in&  its mouth.)/"
+    " * (A hideous android is running&  to school with toast in&  its mouth.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -12760,7 +12641,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3656",
-    " \\TS*^1 \\Tsi'll be 'frank' // with&  you./"
+    " \\TS*^1 \\Tsi'll be 'frank' with&  you./"
   );
   ds_map_add(
     global.text_data_en,
@@ -12830,7 +12711,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3704",
-    " * i'd be out of a job&  // without folks like you./%%"
+    " * i'd be out of a job&  without folks like you./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -13118,7 +12999,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3860",
-    " ARE YOU READY TO&HANG OUT // with&UNDYNE?/"
+    " ARE YOU READY TO&HANG OUT with&UNDYNE?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -13228,7 +13109,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3940",
-    " \\E3* You'll become so&  enamored // with me.../"
+    " \\E3* You'll become so&  enamored with me.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -13257,12 +13138,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3954",
-    " \\E3* You think that I'm&  gonna be friends&  // with you^1, huh?/"
+    " \\E3* You think that I'm&  gonna be friends&  with you^1, huh?/"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3955",
-    " * Right???&              NEVER &  Yes         // with you\\C"
+    " * Right???&              NEVER &  Yes         with you\\C"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_3956", " ");
   ds_map_add(
@@ -13279,7 +13160,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3966",
-    " \\E2* Why would I EVER&  be friends // with&  YOU!?/"
+    " \\E2* Why would I EVER&  be friends with&  YOU!?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -13380,7 +13261,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4019",
-    " \\E2* Do human ice-cream&  women TERRORIZE HUMANITY&  // with ENERGY SPEARS?/"
+    " \\E2* Do human ice-cream&  women TERRORIZE HUMANITY&  with ENERGY SPEARS?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -13412,7 +13293,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4039",
-    " \\E2* Now!^1!&* Pound them to dust&  // with your fists!!/"
+    " \\E2* Now!^1!&* Pound them to dust&  with your fists!!/"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_4041", " \\TS \\F0 \\T0 %");
   ds_map_add(
@@ -13647,7 +13528,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4193",
-    " \\M4* BUT ANYTHING CAN MAKE&  A GREAT STORY // with ENOUGH&  SPIN!/"
+    " \\M4* BUT ANYTHING CAN MAKE&  A GREAT STORY with ENOUGH&  SPIN!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -13703,7 +13584,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4240",
-    " \\M5* YOU WOULDN'T (COUGH) SPOIL MY&  MOVIE FOR EVERYONE // with A&  PROMOTIONAL STORY^1, WOULD YOU?/"
+    " \\M5* YOU WOULDN'T (COUGH) SPOIL MY&  MOVIE FOR EVERYONE with A&  PROMOTIONAL STORY^1, WOULD YOU?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -13744,7 +13625,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4283",
-    " \\M1* TOO BAD YOU CAN'T PLAY // with&  THESE BALLS./"
+    " \\M1* TOO BAD YOU CAN'T PLAY with&  THESE BALLS./"
   );
   ds_map_add(
     global.text_data_en,
@@ -13754,7 +13635,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4285",
-    " \\M6* YOU CAN'T GET RICH AND FAMOUS&  LIKE MOI // withOUT BEAUTIFYING&  A FEW ORBS./"
+    " \\M6* YOU CAN'T GET RICH AND FAMOUS&  LIKE MOI withOUT BEAUTIFYING&  A FEW ORBS./"
   );
   ds_map_add(
     global.text_data_en,
@@ -13785,7 +13666,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4327",
-    " \\M6* AREN'T YOU JUST BURSTING&  // with EXCITEMENT?/"
+    " \\M6* AREN'T YOU JUST BURSTING&  with EXCITEMENT?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -13960,7 +13841,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4511",
-    " * Ribbit^1, ribbit^1.&* (How are you doing // without&  yellow names?)/"
+    " * Ribbit^1, ribbit^1.&* (How are you doing without&  yellow names?)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -14037,7 +13918,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4589",
-    " \\E0* how about grabbing some&  dinner // with me first?&  Yeah        I'm busy \\C"
+    " \\E0* how about grabbing some&  dinner with me first?&  Yeah        I'm busy \\C"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_4590", " ");
   ds_map_add(global.text_data_en, "SCR_TEXT_4591", " * .../%%");
@@ -14288,7 +14169,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4833",
-    " \\E2* However^1, // with everyone's&  souls inside me.../"
+    " \\E2* However^1, with everyone's&  souls inside me.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -14428,12 +14309,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4880",
-    " * They're all burning&  // with the same&  desire./"
+    " * They're all burning&  with the same&  desire./"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4881",
-    " * // with everyone's power..^1.&* // with everyone's&  determination.../"
+    " * with everyone's power..^1.&* with everyone's&  determination.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -14446,7 +14327,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4889",
-    " \\E7* // without the power of&  everyone's souls.../"
+    " \\E7* without the power of&  everyone's souls.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -14478,7 +14359,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4897",
-    " \\E0* Just go be // with&  the people who&  love you./"
+    " \\E0* Just go be with&  the people who&  love you./"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_4898", " \\TS \\F0 \\T0 %");
   ds_map_add(
@@ -14566,18 +14447,18 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4944",
-    " &         // with        // with&         Sword's     Gun's\\C"
+    " &         with        with&         Sword's     Gun's\\C"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_4945", " ");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4950",
-    " \\E2* So it's like a&  cartoon..^1.&* But // with swords?/"
+    " \\E2* So it's like a&  cartoon..^1.&* But with swords?/"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4952",
-    " \\E2* So it's like a&  cartoon..^1.&* But // with guns?/"
+    " \\E2* So it's like a&  cartoon..^1.&* But with guns?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -14861,7 +14742,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5102",
-    " \\E1* Frisk^1, you LIVE // with&  this!?/"
+    " \\E1* Frisk^1, you LIVE with&  this!?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -14992,7 +14873,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5156",
-    "         I want      I have&         to stay     places&         // with you    to go\\C"
+    "         I want      I have&         to stay     places&         with you    to go\\C"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_5157", " ");
   ds_map_add(global.text_data_en, "SCR_TEXT_5161", " %%");
@@ -15304,7 +15185,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5405",
-    " \\E3* This um^1, doesn't have&  anything to do // with&  guiding you..^1. but.../"
+    " \\E3* This um^1, doesn't have&  anything to do with&  guiding you..^1. but.../"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_5406", " \\E2* .../");
   ds_map_add(
@@ -16405,7 +16286,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6902",
-    " * Rule over the leaf pile&  // with a fist of iron./"
+    " * Rule over the leaf pile&  with a fist of iron./"
   );
   ds_map_add(
     global.text_data_en,
@@ -16435,7 +16316,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6923",
-    " \\E1* Help // with a puzzle^1.^1.^1.?/"
+    " \\E1* Help with a puzzle^1.^1.^1.?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -16587,7 +16468,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_7052",
-    " * (The box is aclog // with the&  the hair of a dog.)/%%"
+    " * (The box is aclog with the&  the hair of a dog.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -16690,7 +16571,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_dogshrine_5970",
-    " * (Something is wrong // with&  the box.)/%"
+    " * (Something is wrong with&  the box.)/%"
   );
   ds_map_add(
     global.text_data_en,
@@ -16725,7 +16606,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_dogshrine_6003",
-    " * (Clink!)&* (The box is filled // with coins.)/"
+    " * (Clink!)&* (The box is filled with coins.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -17485,7 +17366,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_adate_676",
-    " \\E6P\\M3retend date // with you^1?&T-to make you feel&better?/"
+    " \\E6P\\M3retend date with you^1?&T-to make you feel&better?/"
   );
   ds_map_add(global.text_data_en, "obj_adate_677", " \\E7.../");
   ds_map_add(
@@ -17501,7 +17382,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_adate_680",
-    " \\E7Undyne's the person I..^1.&Um..^1. really want to&go on a date // with./"
+    " \\E7Undyne's the person I..^1.&Um..^1. really want to&go on a date with./"
   );
   ds_map_add(
     global.text_data_en,
@@ -17915,7 +17796,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_adate_1071",
-    " \\E4I will make intent&eye contact // with you&so you sweat while&you talk./"
+    " \\E4I will make intent&eye contact with you&so you sweat while&you talk./"
   );
   ds_map_add(
     global.text_data_en,
@@ -18140,7 +18021,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_adate_1417",
-    " And that time I&told you I was&busy // with work on&the phone..^1. I...%"
+    " And that time I&told you I was&busy with work on&the phone..^1. I...%"
   );
   ds_map_add(
     global.text_data_en,
@@ -18227,7 +18108,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_adate_1533",
-    " \\F6Alphys..^1. I want to&help you become&happy // with who&you are!/"
+    " \\F6Alphys..^1. I want to&help you become&happy with who&you are!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -18333,7 +18214,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_adate_1740",
-    " \\F6Well^1, I gotta go&catch up // with&them!/"
+    " \\F6Well^1, I gotta go&catch up with&them!/"
   );
   ds_map_add(global.text_data_en, "obj_adate_1741", " Later!/%%");
   ds_map_add(global.text_data_en, "obj_adate_1745", " \\F3.../");
@@ -18827,7 +18708,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_alphystrigger1_254",
-    " \\E5* Now he's an unstoppable&  killing machine // with a&  thirst for human blood?/"
+    " \\E5* Now he's an unstoppable&  killing machine with a&  thirst for human blood?/"
   );
   ds_map_add(global.text_data_en, "obj_alphystrigger1_255", " * Ehehehehe.../");
   ds_map_add(global.text_data_en, "obj_alphystrigger1_256", " \\E8* Heh./");
@@ -19025,7 +18906,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asgore_finalintro_181",
-    "     * (You're filled // with&          DETERMINATION.^5) %%"
+    "     * (You're filled with&          DETERMINATION.^5) %%"
   );
   ds_map_add(global.text_data_en, "obj_asgore_finalintro_213", " Human.../");
   ds_map_add(
@@ -19189,7 +19070,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asgore_lastcutscene_285",
-    " My wife, however,&became disgusted // with&my actions./"
+    " My wife, however,&became disgusted with&my actions./"
   );
   ds_map_add(
     global.text_data_en,
@@ -19396,7 +19277,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asgore_lastcutscene_792",
-    " Well^1, let's get&this over // with./%%"
+    " Well^1, let's get&this over with./%%"
   );
   ds_map_add(global.text_data_en, "obj_asgore_lastcutscene_796", " .../%%");
   ds_map_add(global.text_data_en, "obj_asgore_lastcutscene_831", " \\E2.../");
@@ -19950,7 +19831,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielb_550",
-    " * Asriel is glowing // with a&  strange power."
+    " * Asriel is glowing with a&  strange power."
   );
   ds_map_add(global.text_data_en, "obj_asrielb_551", " * It's the end.");
   ds_map_add(
@@ -19986,7 +19867,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielb_618",
-    " * Your items fill up // with&  dreams./^"
+    " * Your items fill up with&  dreams./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -20033,22 +19914,22 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_58",
-    " * You feel something faintly&  resonating // within ASRIEL."
+    " * You feel something faintly&  resonating within ASRIEL."
   );
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_59",
-    " * You feel something&  resonating // within ASRIEL."
+    " * You feel something&  resonating within ASRIEL."
   );
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_60",
-    " * You feel something strongly&  resonating // within ASRIEL."
+    " * You feel something strongly&  resonating within ASRIEL."
   );
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_61",
-    " * You feel your friends' SOULs&  resonating // within ASRIEL!"
+    " * You feel your friends' SOULs&  resonating within ASRIEL!"
   );
   ds_map_add(
     global.text_data_en,
@@ -20058,22 +19939,22 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_425",
-    " * You feel something faintly&  resonating // within ASRIEL."
+    " * You feel something faintly&  resonating within ASRIEL."
   );
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_426",
-    " * You feel something&  resonating // within ASRIEL."
+    " * You feel something&  resonating within ASRIEL."
   );
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_427",
-    " * You feel something strongly&  resonating // within ASRIEL."
+    " * You feel something strongly&  resonating within ASRIEL."
   );
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_428",
-    " * You feel your friends' SOULs&  resonating // within ASRIEL!"
+    " * You feel your friends' SOULs&  resonating within ASRIEL!"
   );
   ds_map_add(global.text_data_en, "obj_asrielfinal_429", " * ...");
   ds_map_add(
@@ -20084,7 +19965,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_469",
-    " * Something else began resonating&  // within the SOUL^1, stronger&  and stronger./"
+    " * Something else began resonating&  within the SOUL^1, stronger&  and stronger./"
   );
   ds_map_add(
     global.text_data_en,
@@ -20148,7 +20029,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_565",
-    " * Maybe^1, // with what little&  power you have.../"
+    " * Maybe^1, with what little&  power you have.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -20276,7 +20157,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_844",
-    " You're the only one&who's any fun to&play // with anymore./%%"
+    " You're the only one&who's any fun to&play with anymore./%%"
   );
   ds_map_add(global.text_data_en, "obj_asrielfinal_849", " \\E4.../");
   ds_map_add(global.text_data_en, "obj_asrielfinal_850", " No.../");
@@ -20338,7 +20219,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_976",
-    " * You called out to your&  friends // with all your&  heart./"
+    " * You called out to your&  friends with all your&  heart./"
   );
   ds_map_add(
     global.text_data_en,
@@ -20359,12 +20240,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_1010",
-    " * // within the depths of ASRIEL's&  SOUL^1, something's resonating..!/%%"
+    " * within the depths of ASRIEL's&  SOUL^1, something's resonating..!/%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_1014",
-    " * // within the depths of ASRIEL's&  SOUL^1, something's resonating..!/%%"
+    " * within the depths of ASRIEL's&  SOUL^1, something's resonating..!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -20599,7 +20480,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_bara01_558",
-    " * RG 01 - ATK 30 DEF 20&* Royal Guard member // with&  shining^1, polished armor./^"
+    " * RG 01 - ATK 30 DEF 20&* Royal Guard member with&  shining^1, polished armor./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -20614,7 +20495,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_bara01_581",
-    " * You tell RG 01 to be honest&  // with his feelings./^"
+    " * You tell RG 01 to be honest&  with his feelings./^"
   );
   ds_map_add(global.text_data_en, "obj_bara01_615", " D-dude&.../");
   ds_map_add(global.text_data_en, "obj_bara01_616", " I can't&.../");
@@ -20638,7 +20519,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_bara01_635",
-    " I love doing team&attacks // with you./"
+    " I love doing team&attacks with you./"
   );
   ds_map_add(
     global.text_data_en,
@@ -20752,7 +20633,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_bara02_564",
-    " * RG 02 - ATK 30 DEF 20&* Royal Guard member // with&  stuffy armor./^"
+    " * RG 02 - ATK 30 DEF 20&* Royal Guard member with&  stuffy armor./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -20888,7 +20769,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_blookdiary_71",
-    " * It's sad^1.&* // without her sister to&  speak for her.../"
+    " * It's sad^1.&* without her sister to&  speak for her.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -20974,7 +20855,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_blookdiary_100",
-    " * Honestly^1, she's a dork^1.&* And she's obsessed // with&  these awful cartoons./"
+    " * Honestly^1, she's a dork^1.&* And she's obsessed with&  these awful cartoons./"
   );
   ds_map_add(
     global.text_data_en,
@@ -20999,7 +20880,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_blookdiary_115",
-    " * Dear Diary^1:&* She surpised me // with&  something today./"
+    " * Dear Diary^1:&* She surpised me with&  something today./"
   );
   ds_map_add(
     global.text_data_en,
@@ -21435,12 +21316,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_chilldrake_539",
-    " * You agree // with Chilldrake&  before it gives its speech./^"
+    " * You agree with Chilldrake&  before it gives its speech./^"
   );
   ds_map_add(
     global.text_data_en,
     "obj_chilldrake_540",
-    " * You agree // with Chilldrake^1.&* It seems to get very&  uncomfortable.../^"
+    " * You agree with Chilldrake^1.&* It seems to get very&  uncomfortable.../^"
   );
   ds_map_add(
     global.text_data_en,
@@ -21470,7 +21351,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_chilldrakenpc_72",
-    " * Besides Snowy^1.&* We have to share ours&  // with him../%%"
+    " * Besides Snowy^1.&* We have to share ours&  with him../%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -21490,7 +21371,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_chilldrakenpc_83",
-    " * Us teens rule these woods&  // with a smaller-than-&  adult fist./%%"
+    " * Us teens rule these woods&  with a smaller-than-&  adult fist./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -21627,7 +21508,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_clamguy_79",
-    " * What are you doing // with&  all of that water?/%%"
+    " * What are you doing with&  all of that water?/%%"
   );
   ds_map_add(global.text_data_en, "obj_clamguy_83", " * O, k, k, k, k.../");
   ds_map_add(
@@ -21715,12 +21596,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_controlspear_89",
-    " * Aim // with arrows and select // with \\*Z."
+    " * Aim with arrows and select with \\*Z."
   );
   ds_map_add(
     global.text_data_en,
     "obj_controlspear_90",
-    " * Aim // with \\*A \\*D and select // with \\*Z."
+    " * Aim with \\*A \\*D and select with \\*Z."
   );
   ds_map_add(
     global.text_data_en,
@@ -21756,7 +21637,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_controlspear_select",
-    " * Select // with \\*Z."
+    " * Select with \\*Z."
   );
   ds_map_add(
     global.text_data_en,
@@ -22412,7 +22293,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_darkfridge_136",
-    " * There's something here..^1.&* It feels like a tree^1, ripe&  // with delicious fruit./%%"
+    " * There's something here..^1.&* It feels like a tree^1, ripe&  with delicious fruit./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -22929,7 +22810,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dateheart_159",
-    " \\E0YOU LIKE CARESSING&MY BICEPS // with A&FLOATING HEART./"
+    " \\E0YOU LIKE CARESSING&MY BICEPS with A&FLOATING HEART./"
   );
   ds_map_add(
     global.text_data_en,
@@ -23036,7 +22917,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_diamondkid_81",
-    " * ... How does he eat it&  // without a mouth?/"
+    " * ... How does he eat it&  without a mouth?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -23253,7 +23134,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dogboat_thing_423",
-    " * Tra la la^1.&* What's a game you can play&  // with a dog?/"
+    " * Tra la la^1.&* What's a game you can play&  with a dog?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -23273,7 +23154,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dogboat_thing_427",
-    " * Tra la la^1.&* Why don't you sing // with me^1.&* Tra la la./%%"
+    " * Tra la la^1.&* Why don't you sing with me^1.&* Tra la la./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -23540,7 +23421,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dogroom_npc_87",
-    " * A dog just rushed in here^1,&  filled // with inspiration./"
+    " * A dog just rushed in here^1,&  filled with inspiration./"
   );
   ds_map_add(
     global.text_data_en,
@@ -23635,7 +23516,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dummymonster_447",
-    " * TORIEL seems happy // with you./%%"
+    " * TORIEL seems happy with you./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -23799,7 +23680,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dummytrigger_274",
-    " * I'll wipe you away // with&  the dainty handkerchief&  of vengeance!/%%"
+    " * I'll wipe you away with&  the dainty handkerchief&  of vengeance!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -23864,7 +23745,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dummytrigger_345",
-    '* oh..^1. umm..^1.&* feel free to "come&  // with" if you want.../'
+    '* oh..^1. umm..^1.&* feel free to "come&  with" if you want.../'
   );
   ds_map_add(
     global.text_data_en,
@@ -23922,7 +23803,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dummytrigger_429",
-    " * It allowed me to finally&  fuse // with my body!/"
+    " * It allowed me to finally&  fuse with my body!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -23989,7 +23870,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_echoflower_142",
-    " * If you hoped // with all your&  heart^1, your wish would come&  true./"
+    " * If you hoped with all your&  heart^1, your wish would come&  true./"
   );
   ds_map_add(
     global.text_data_en,
@@ -24306,7 +24187,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_197",
-    " \\E7If you had just gone&through // without caring&about anyone.../"
+    " \\E7If you had just gone&through without caring&about anyone.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -24397,7 +24278,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_246",
-    " \\E5Your date // with her&has really just&begun./%%"
+    " \\E5Your date with her&has really just&begun./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -24412,7 +24293,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_261",
-    " \\E6What the hell is&WRONG // with you?/"
+    " \\E6What the hell is&WRONG with you?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -24444,7 +24325,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_269",
-    " // with Papyrus^1, Undyne^1,&and then Alphys./"
+    " with Papyrus^1, Undyne^1,&and then Alphys./"
   );
   ds_map_add(
     global.text_data_en,
@@ -24534,7 +24415,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_320",
-    " \\E6So^1, even // with&everything you did.../"
+    " \\E6So^1, even with&everything you did.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -24577,7 +24458,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_331",
-    " \\E4Are you friends // with&all of them yet?/"
+    " \\E4Are you friends with&all of them yet?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -24781,7 +24662,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_444",
-    " \\E2What's wrong // with&you?/"
+    " \\E2What's wrong with&you?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -24812,7 +24693,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_451",
-    " \\E4He's one of the&better characters&to mess around // with./"
+    " \\E4He's one of the&better characters&to mess around with./"
   );
   ds_map_add(
     global.text_data_en,
@@ -24990,7 +24871,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endflowey_regret_152",
-    " One being // with the&power to erase&EVERYTHING.../"
+    " One being with the&power to erase&EVERYTHING.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -25170,7 +25051,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endogeny_366",
-    " * Amalgamate is striking the&  wall // with its claws."
+    " * Amalgamate is striking the&  wall with its claws."
   );
   ds_map_add(
     global.text_data_en,
@@ -25277,7 +25158,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endogeny_500",
-    " * You play // with the Amalgamate./^"
+    " * You play with the Amalgamate./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -25307,7 +25188,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_endogeny_518",
-    " * Amalgamate is not excited&  enough to play // with...?/^"
+    " * Amalgamate is not excited&  enough to play with...?/^"
   );
   ds_map_add(
     global.text_data_en,
@@ -25530,7 +25411,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_fakefroggit_481",
-    " * The battlefield is filled   // with the smell of&   mustard seed."
+    " * The battlefield is filled   with the smell of&   mustard seed."
   );
   ds_map_add(
     global.text_data_en,
@@ -25612,7 +25493,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_finalfroggit_442",
-    " * The battlefield is filled&  // with the smell of mustard&  seed."
+    " * The battlefield is filled&  with the smell of mustard&  seed."
   );
   ds_map_add(
     global.text_data_en,
@@ -26150,7 +26031,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_floweytrigger_358",
-    " \\E1* THIS time^1, you've&  GOT to become friends&  // with everyone./"
+    " \\E1* THIS time^1, you've&  GOT to become friends&  with everyone./"
   );
   ds_map_add(global.text_data_en, "obj_floweytrigger_359", " \\E2* OK?/");
   ds_map_add(
@@ -26300,7 +26181,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_floweytrigger2_205",
-    " * Do you think you&  are the only one&  // with that power?/"
+    " * Do you think you&  are the only one&  with that power?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -26325,7 +26206,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_floweytrigger2_210",
-    " \\E0* I thought I was&  the only one // with&  that power^1. But.../"
+    " \\E0* I thought I was&  the only one with&  that power^1. But.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -26556,7 +26437,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_floweytrigger2_289",
-    " * Do you think you&  are the only one&  // with that power?/"
+    " * Do you think you&  are the only one&  with that power?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -26581,7 +26462,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_floweytrigger2_294",
-    " \\E0* I thought I was&  the only one // with&  that power^1. But.../"
+    " \\E0* I thought I was&  the only one with&  that power^1. But.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -27117,7 +26998,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_friendscene_819",
-    " No^1, silly^1!&A skeleton tiles&his roof // with.../"
+    " No^1, silly^1!&A skeleton tiles&his roof with.../"
   );
   ds_map_add(global.text_data_en, "obj_friendscene_820", " SHIN-gles!!!/%%");
   ds_map_add(
@@ -27339,7 +27220,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_friendscene_1206",
-    " \\E7And now^1, // with their&souls and the humans'&together.../"
+    " \\E7And now^1, with their&souls and the humans'&together.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -27390,7 +27271,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_friendscene_1217",
-    " \\E5I'll hold victory&in front of you^1,&just // within your&reach.../"
+    " \\E5I'll hold victory&in front of you^1,&just within your&reach.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -27479,7 +27360,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_friendscene_1450",
-    " So don't worry^1!&We're // with you&all the way!/%%"
+    " So don't worry^1!&We're with you&all the way!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -27557,7 +27438,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_froggit_186",
-    " * The battlefield is filled&  // with the smell of mustard&  seed."
+    " * The battlefield is filled&  with the smell of mustard&  seed."
   );
   ds_map_add(
     global.text_data_en,
@@ -27597,7 +27478,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_gameintro_fake_45",
-    " One day^1, th^7ey all&disappeared // without&a trace."
+    " One day^1, th^7ey all&disappeared without&a trace."
   );
   ds_map_add(
     global.text_data_en,
@@ -27634,7 +27515,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_gaster_follower_a_95",
-    " * One day^1, he vanished&  // without a trace./"
+    " * One day^1, he vanished&  without a trace./"
   );
   ds_map_add(
     global.text_data_en,
@@ -27644,7 +27525,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_gaster_follower_a_97",
-    " * Ha ha..^1.&* How can I say so&  // without fear?/"
+    " * Ha ha..^1.&* How can I say so&  without fear?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -27937,7 +27818,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_greatdog_446",
-    " * Greater Dog is patting the&  ground // with its front paws."
+    " * Greater Dog is patting the&  ground with its front paws."
   );
   ds_map_add(
     global.text_data_en,
@@ -28003,7 +27884,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_greatdog_521",
-    " * The dog flops over // with&  its legs hanging in the air./^"
+    " * The dog flops over with&  its legs hanging in the air./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -28050,7 +27931,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_greatdog_558",
-    " * You play // with the dog./^"
+    " * You play with the dog./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -28080,7 +27961,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_greatdog_573",
-    " * Greater Dog is not excited&  enough to play // with./^"
+    " * Greater Dog is not excited&  enough to play with./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -28125,12 +28006,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_grillbynpc_doggo_97",
-    " * I don't like him..^1.&* He loves to appear // without&  moving./%%"
+    " * I don't like him..^1.&* He loves to appear without&  moving./%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_grillbynpc_doggo_101",
-    " * Where're the other two^1?&* I can't play // with this&  big dumb guy alone.../"
+    " * Where're the other two^1?&* I can't play with this&  big dumb guy alone.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -28415,7 +28296,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_grillbynpc_hotandbothered_84",
-    " * Sansyyyy..^1.&* Come back and sit // with me.../"
+    " * Sansyyyy..^1.&* Come back and sit with me.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -28801,7 +28682,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_gyftrot_508",
-    " * Gyftrot eyes you // with&  suspicion."
+    " * Gyftrot eyes you with&  suspicion."
   );
   ds_map_add(
     global.text_data_en,
@@ -28891,12 +28772,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_gyftrot_550",
-    " * You remove a stocking filled&  // with chicken nuggets./^"
+    " * You remove a stocking filled&  with chicken nuggets./^"
   );
   ds_map_add(
     global.text_data_en,
     "obj_gyftrot_551",
-    " * You remove the shirt that says& 'I'm // with stupid' and points&  inward./^"
+    " * You remove the shirt that says& 'I'm with stupid' and points&  inward./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -29474,7 +29355,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_icecube_406",
-    " * ICE - ATK 1 DEF 0&* // without its cap.../^"
+    " * ICE - ATK 1 DEF 0&* without its cap.../^"
   );
   ds_map_add(
     global.text_data_en,
@@ -29595,7 +29476,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_introimage_73",
-    " They sealed the monsters&underground // with a magic&spell^6. \\E0 ^1 %"
+    " They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %"
   );
   ds_map_add(
     global.text_data_en,
@@ -29694,7 +29575,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_jerry_408",
-    " * Jerry sneezes // without covering&  its nose."
+    " * Jerry sneezes without covering&  its nose."
   );
   ds_map_add(
     global.text_data_en,
@@ -29738,7 +29619,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_jetpackchara_201",
-    " * OH^1, I LOATHE TO THINK OF&  WHAT WOULD HAVE HAPPENED&  TO YOU // withOUT HER!!!/"
+    " * OH^1, I LOATHE TO THINK OF&  WHAT WOULD HAVE HAPPENED&  TO YOU withOUT HER!!!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -29835,7 +29716,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_jetpackchara_333",
-    " * I'M NOT GOING TO DESTROY&  YOU // withOUT A LIVE&  TELEVISION AUDIENCE!!/"
+    " * I'M NOT GOING TO DESTROY&  YOU withOUT A LIVE&  TELEVISION AUDIENCE!!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -30363,7 +30244,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_labtv_event_94",
-    " * (There's a VHS player // with a&  few tapes picked out beside&  it...)/"
+    " * (There's a VHS player with a&  few tapes picked out beside&  it...)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -30584,7 +30465,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_labtv_event_401",
-    " * Um^1, anyway^1, where are you&  going // with this?/"
+    " * Um^1, anyway^1, where are you&  going with this?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -30934,7 +30815,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_lastsans_trigger_277",
-    " * even when you ran&  away^1, you did it&  // with a smile./"
+    " * even when you ran&  away^1, you did it&  with a smile./"
   );
   ds_map_add(
     global.text_data_en,
@@ -31052,7 +30933,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_lastsans_trigger_363",
-    " \\E0* all that's important is&  that you were honest&  // with yourself./"
+    " \\E0* all that's important is&  that you were honest&  with yourself./"
   );
   ds_map_add(
     global.text_data_en,
@@ -31294,7 +31175,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_lastsans_trigger_486",
-    " \\E0* what's // with that look&  in your eye?/"
+    " \\E0* what's with that look&  in your eye?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -31718,7 +31599,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_lastsans_trigger_689",
-    " \\E4* you'll need to find&  a mutant hand // with&  even more fingers./%%"
+    " \\E4* you'll need to find&  a mutant hand with&  even more fingers./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -31876,7 +31757,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_lastsans_trigger_755",
-    " \\E4* well^1, i won't grace&  it // with a description./%%"
+    " \\E4* well^1, i won't grace&  it with a description./%%"
   );
   ds_map_add(global.text_data_en, "obj_lastsans_trigger_759", " \\E0* .../");
   ds_map_add(
@@ -32312,7 +32193,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_librarynpc_lizard2_71",
-    " * There's so little to report&  that we just fill it // with&  comics and games./%%"
+    " * There's so little to report&  that we just fill it with&  comics and games./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -32636,7 +32517,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_maddummy_1154",
-    " * Mad Dummy glares into a&  mirror^1, then turns to you&  // with the same expression."
+    " * Mad Dummy glares into a&  mirror^1, then turns to you&  with the same expression."
   );
   ds_map_add(
     global.text_data_en,
@@ -32676,7 +32557,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_maddummy_1196",
-    " * No one is happy // with this./^"
+    " * No one is happy with this./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -33263,7 +33144,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_341",
-    " IT'S BECAUSE SHE&MADE FRIENDS // with&YOU^1, THEN.../"
+    " IT'S BECAUSE SHE&MADE FRIENDS with&YOU^1, THEN.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -33294,7 +33175,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_348",
-    " SHE EVER LET&HERSELF BECOME&FRIENDS // with YOU./"
+    " SHE EVER LET&HERSELF BECOME&FRIENDS with YOU./"
   );
   ds_map_add(
     global.text_data_en,
@@ -33467,7 +33348,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_394",
-    " CAUSE I WANT TO&GO // with HER!/"
+    " CAUSE I WANT TO&GO with HER!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -33645,7 +33526,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_462",
-    " \\E4* I'm sorry about what&  happened // with ASGORE./"
+    " \\E4* I'm sorry about what&  happened with ASGORE./"
   );
   ds_map_add(
     global.text_data_en,
@@ -33736,7 +33617,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_486",
-    " \\E9* We're all // with you^1!&* Everyone is^1!&* Even the queen!/"
+    " \\E9* We're all with you^1!&* Everyone is^1!&* Even the queen!/"
   );
   ds_map_add(global.text_data_en, "obj_mainend_487", " \\E1* .../");
   ds_map_add(
@@ -33999,22 +33880,22 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_667",
-    " * along // with the lives&  of countless citizens./"
+    " * along with the lives&  of countless citizens./"
   );
   ds_map_add(
     global.text_data_en,
     "obj_mainend_669",
-    " * along // with the life&  of.../"
+    " * along with the life&  of.../"
   );
   ds_map_add(
     global.text_data_en,
     "obj_mainend_671",
-    " * along // with the life&  of undyne^1, their&  greatest hero./"
+    " * along with the life&  of undyne^1, their&  greatest hero./"
   );
   ds_map_add(
     global.text_data_en,
     "obj_mainend_673",
-    " * along // with the lives&  of countless citizens./"
+    " * along with the lives&  of countless citizens./"
   );
   ds_map_add(
     global.text_data_en,
@@ -34075,7 +33956,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_697",
-    " \\E1* she threw the queen&  out of the castle&  // with her strength./"
+    " \\E1* she threw the queen&  out of the castle&  with her strength./"
   );
   ds_map_add(
     global.text_data_en,
@@ -34179,7 +34060,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_742",
-    " \\E2* i decided to go&  // with her./"
+    " \\E2* i decided to go&  with her./"
   );
   ds_map_add(
     global.text_data_en,
@@ -34255,7 +34136,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_786",
-    " * // with ASGORE gone.../"
+    " * with ASGORE gone.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -34424,7 +34305,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_839",
-    " I DO THAT ALL THE&TIME^1, // withOUT&TRYING!!/"
+    " I DO THAT ALL THE&TIME^1, withOUT&TRYING!!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -34477,7 +34358,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_877",
-    " \\E0* // with ASGORE gone^1, the&  people looked to&  undyne to rule.../"
+    " \\E0* with ASGORE gone^1, the&  people looked to&  undyne to rule.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -34492,7 +34373,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_880",
-    " \\E1* he's brainwashed&  everyone // with his&  stupid TV show./"
+    " \\E1* he's brainwashed&  everyone with his&  stupid TV show./"
   );
   ds_map_add(
     global.text_data_en,
@@ -35202,7 +35083,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_1152",
-    " \\E1* But when Undyne called^1,&  // with crazed desperation&  in her voice.../"
+    " \\E1* But when Undyne called^1,&  with crazed desperation&  in her voice.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -35294,7 +35175,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mainend_1172",
-    " \\E4* He's..^1.&* He's a good guy^1.&* And // with him around.../"
+    " \\E4* He's..^1.&* He's a good guy^1.&* And with him around.../"
   );
   ds_map_add(global.text_data_en, "obj_mainend_1173", " \\E4* I.../");
   ds_map_add(global.text_data_en, "obj_mainend_1174", " \\E2* Sigh./");
@@ -35419,7 +35300,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_memoryhead_190",
-    " You'll&be // with&us&shortly."
+    " You'll&be with&us&shortly."
   );
   ds_map_add(global.text_data_en, "obj_memoryhead_195", " %%%");
   ds_map_add(global.text_data_en, "obj_memoryhead_420", " * But nobody came.");
@@ -35604,7 +35485,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonb_quiz_255",
-    " LET'S START // with&AN EASY ONE!!/%%"
+    " LET'S START with&AN EASY ONE!!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -35681,7 +35562,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonb_second_274",
-    " // withOUT THAT BUTTON,&YOU ARE INCHING&CLOSER AND CLOSER&TO YOUR DEMISE!/%%"
+    " withOUT THAT BUTTON,&YOU ARE INCHING&CLOSER AND CLOSER&TO YOUR DEMISE!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -35727,7 +35608,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonb_second_579",
-    " * You press the yellow button^1.&* The phone is resonating // with&  Mettaton's presence...!/^"
+    " * You press the yellow button^1.&* The phone is resonating with&  Mettaton's presence...!/^"
   );
   ds_map_add(
     global.text_data_en,
@@ -35821,7 +35702,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonb_third_236",
-    " AND // with YOUR SOUL,&ASGORE WILL DESTROY&HUMANITY./%%"
+    " AND with YOUR SOUL,&ASGORE WILL DESTROY&HUMANITY./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -36008,7 +35889,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonex_215_console",
-    " Have fun // with that&on-screen keyboard.../"
+    " Have fun with that&on-screen keyboard.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -36179,7 +36060,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonex_712",
-    " * // with the last of your power^1,&  you pose dramatically^1.&* The audience screams./^"
+    " * with the last of your power^1,&  you pose dramatically^1.&* The audience screams./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -36347,7 +36228,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonex_928",
-    " Mettaton^1, I don't&know what I'll&watch // without you./%%"
+    " Mettaton^1, I don't&know what I'll&watch without you./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -36584,7 +36465,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettboss_event_258",
-    " * // withOUT A PLOT TWIST?/%%"
+    " * withOUT A PLOT TWIST?/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -36609,7 +36490,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettboss_event_267",
-    " * YOU SEE^1, I CAN'T BE A&  STAR // withOUT AN AUDIENCE./"
+    " * YOU SEE^1, I CAN'T BE A&  STAR withOUT AN AUDIENCE./"
   );
   ds_map_add(
     global.text_data_en,
@@ -37120,7 +37001,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettnewsevent_397",
-    " \\M4* BUT YOU SHOULDN'T PLAY&  // with THIS ONE^1.&* IT'S AN MTT-BRAND FASHIONBALL./"
+    " \\M4* BUT YOU SHOULDN'T PLAY&  with THIS ONE^1.&* IT'S AN MTT-BRAND FASHIONBALL./"
   );
   ds_map_add(
     global.text_data_en,
@@ -37251,7 +37132,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettnewsevent_531",
-    " \\M4* ..^1.&* THOSE RED CYLINDERS // with&  BURNING FUSES.../"
+    " \\M4* ..^1.&* THOSE RED CYLINDERS with&  BURNING FUSES.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -37410,7 +37291,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettnewsevent_935",
-    " \\W* YOU FAILED TO DEFUSE ALL&  OF THE BOMBS // withIN \\YTHREE&  MINUTES\\W!/"
+    " \\W* YOU FAILED TO DEFUSE ALL&  OF THE BOMBS withIN \\YTHREE&  MINUTES\\W!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -37462,7 +37343,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettnewsevent_995",
-    " * OH NO^1.&* YOU DEACTIVATED THE BOMB&  // with YOUR HACKING SKILLS./"
+    " * OH NO^1.&* YOU DEACTIVATED THE BOMB&  with YOUR HACKING SKILLS./"
   );
   ds_map_add(
     global.text_data_en,
@@ -37688,7 +37569,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_migosp_468",
-    " * MIGOSP - ATK 7 DEF 5&* It seems evil^1, but it's&  just // with the wrong crowd.../^"
+    " * MIGOSP - ATK 7 DEF 5&* It seems evil^1, but it's&  just with the wrong crowd.../^"
   );
   ds_map_add(
     global.text_data_en,
@@ -37987,7 +37868,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mkid_goner_97",
-    " * Everything functions&  perfectly // without you.../"
+    " * Everything functions&  perfectly without you.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -38070,7 +37951,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_moldessa_471",
-    " * You adjust Moldessa's face^1.&* It seems to be happy // with its&  new look./^"
+    " * You adjust Moldessa's face^1.&* It seems to be happy with its&  new look./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -38080,7 +37961,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_moldessa_495",
-    " * You lie down and rest^1.&* Moldessa tucks you in // with&  a blanket of moss./"
+    " * You lie down and rest^1.&* Moldessa tucks you in with&  a blanket of moss./"
   );
   ds_map_add(
     global.text_data_en,
@@ -38090,7 +37971,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_moldessa_506",
-    " * You lie down and rest^1.&* Moldessa tucks you in // with&  a blanket of moss./^"
+    " * You lie down and rest^1.&* Moldessa tucks you in with&  a blanket of moss./^"
   );
   ds_map_add(global.text_data_en, "obj_moldsmal_193", " Burble&burb...");
   ds_map_add(global.text_data_en, "obj_moldsmal_194", " Squorch&...");
@@ -38135,7 +38016,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_moldsmal_422",
-    " * You lie immobile // with Moldsmal.&* You feel like you understand&  the world a little better./^"
+    " * You lie immobile with Moldsmal.&* You feel like you understand&  the world a little better./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -38193,7 +38074,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_moldsmalx_463",
-    " * Moldbygg seems comfortable&  // with your presence."
+    " * Moldbygg seems comfortable&  with your presence."
   );
   ds_map_add(
     global.text_data_en,
@@ -38281,7 +38162,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_monsterkidtrigger3_174",
-    " * If you're walking anyway^1,&  I guess I'll go // with you^1,&  haha.../%%"
+    " * If you're walking anyway^1,&  I guess I'll go with you^1,&  haha.../%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -38395,7 +38276,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_monsterkidtrigger7_221",
-    " * A..^1. a..^1. and what's // with&  that weird expression...?/%%"
+    " * A..^1. a..^1. and what's with&  that weird expression...?/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -38712,7 +38593,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_muffetnpc2_85",
-    " * What's wrong // with everyone^1?&* Don't they like spiders~/%%"
+    " * What's wrong with everyone^1?&* Don't they like spiders~/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -38737,7 +38618,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_muffetnpc2_95",
-    " * A spider football stadium^1!&* We'll play // with 4 balls on the&  field at once!/%%"
+    " * A spider football stadium^1!&* We'll play with 4 balls on the&  field at once!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -38772,7 +38653,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_multitileevent_123",
-    " * A DUNGEON // with A PUZZLE SO&  DASTARDLY^1, MY PARAMOUR WILL&  SURELY PERISH!/%%"
+    " * A DUNGEON with A PUZZLE SO&  DASTARDLY^1, MY PARAMOUR WILL&  SURELY PERISH!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -38832,7 +38713,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_multitileevent_194",
-    " * MY POOR LOVE!&* I'M SO FILLED // with GRIEF,&  I CAN'T STOP LAUGHING!/"
+    " * MY POOR LOVE!&* I'M SO FILLED with GRIEF,&  I CAN'T STOP LAUGHING!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -39001,7 +38882,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_multitileevent_594",
-    " * AND NOW, // withOUT FURTHER ADO,&  THE FLAMES WILL BE DEACTIVATED!/%%"
+    " * AND NOW, withOUT FURTHER ADO,&  THE FLAMES WILL BE DEACTIVATED!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -39031,7 +38912,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_multitileevent_619",
-    " * YOU'LL NEVER BE ABLE TO&  // withSTAND MY HOT METAL&  BODY!/"
+    " * YOU'LL NEVER BE ABLE TO&  withSTAND MY HOT METAL&  BODY!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -39273,7 +39154,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_napstablook2_62",
-    " * go on // without me.../"
+    " * go on without me.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -39536,7 +39417,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_napstablook_farm1_89",
-    " * hmmm..^1. i should probably&  try to make friends&  // with my neighbor/"
+    " * hmmm..^1. i should probably&  try to make friends&  with my neighbor/"
   );
   ds_map_add(
     global.text_data_en,
@@ -40053,12 +39934,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_notify_room_178",
-    " \\YALPHYS updated status.\\W &* that's the last time i try&  to help // with a puzzle lmao/%%"
+    " \\YALPHYS updated status.\\W &* that's the last time i try&  to help with a puzzle lmao/%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_notify_room_197",
-    " \\YALPHYS posted a picture.\\W &* dinner // with the girlfriend ;)/"
+    " \\YALPHYS posted a picture.\\W &* dinner with the girlfriend ;)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -40118,7 +39999,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_notify_room_285",
-    " * (It's a photo of a garbage can&  // with several pink^1, glittery&  filters over it.)/%%"
+    " * (It's a photo of a garbage can&  with several pink^1, glittery&  filters over it.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -40246,7 +40127,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_334",
-    " * (It's a dirty sock // with a&  series of notes on it.)/"
+    " * (It's a dirty sock with a&  series of notes on it.)/"
   );
   ds_map_add(global.text_data_en, "obj_npc_room_335", " \\TP %");
   ds_map_add(
@@ -40594,7 +40475,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_622",
-    " \\E4* Forgotten how fun it&  was to perform // with&  others./"
+    " \\E4* Forgotten how fun it&  was to perform with&  others./"
   );
   ds_map_add(
     global.text_data_en,
@@ -40624,7 +40505,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_631",
-    " \\E0* Frisk^1, darling^1.&* Can you help me // with&  something?/"
+    " \\E0* Frisk^1, darling^1.&* Can you help me with&  something?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -40654,7 +40535,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_638",
-    " \\E8* But, you know^1.&* // with my face instead&  of hers./"
+    " \\E8* But, you know^1.&* with my face instead&  of hers./"
   );
   ds_map_add(
     global.text_data_en,
@@ -40692,7 +40573,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_662",
-    " * (By barking // with text-to-speech&  on^1, the dog accidentally&  programmed a whole game.)/"
+    " * (By barking with text-to-speech&  on^1, the dog accidentally&  programmed a whole game.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -40712,7 +40593,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_674",
-    " * Blub blub..^1.&* Now we can live life&  // without reservations./%%"
+    " * Blub blub..^1.&* Now we can live life&  without reservations./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -40807,7 +40688,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_728",
-    " * Originally^1, we dug mazes&  // with puzzles in order to&  foil human attacks./"
+    " * Originally^1, we dug mazes&  with puzzles in order to&  foil human attacks./"
   );
   ds_map_add(
     global.text_data_en,
@@ -40817,7 +40698,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_730",
-    " * You can't go (ugh) two feet&  // without being up to your&  armpits in puzzles./%%"
+    " * You can't go (ugh) two feet&  without being up to your&  armpits in puzzles./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -40827,7 +40708,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_npc_room_735",
-    " * Maybe I'll be able to&  go two feet // without running&  into a puzzle./%%"
+    " * Maybe I'll be able to&  go two feet without running&  into a puzzle./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -41096,7 +40977,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_otherphonecall_117",
-    " * // with^1, uhh..^1.&* The toppings are^1, uh.../"
+    " * with^1, uhh..^1.&* The toppings are^1, uh.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -41259,7 +41140,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papbookshelf_67",
-    '"PEEK-A-BOO // with&FLUFFY BUNNY."/'
+    '"PEEK-A-BOO with&FLUFFY BUNNY."/'
   );
   ds_map_add(
     global.text_data_en,
@@ -41274,7 +41155,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papbookshelf_76",
-    " * (The bookshelf is filled&  // with complex tomes&  about puzzle creation.)/"
+    " * (The bookshelf is filled&  with complex tomes&  about puzzle creation.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -41446,7 +41327,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_171",
-    " YOU CAN'T SPELL&'PREPARED' // withOUT&SEVERAL LETTERS&FROM MY NAME!!!/%%"
+    " YOU CAN'T SPELL&'PREPARED' withOUT&SEVERAL LETTERS&FROM MY NAME!!!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -41536,7 +41417,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_288",
-    " WILL GO ON&A DATE // with&YOU!!!/*"
+    " WILL GO ON&A DATE with&YOU!!!/*"
   );
   ds_map_add(
     global.text_data_en,
@@ -41643,7 +41524,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_389",
-    " YOU'VE WANTED TO&HANG OUT // with&ME FROM THE&VERY BEGINNING!??/*"
+    " YOU'VE WANTED TO&HANG OUT with&ME FROM THE&VERY BEGINNING!??/*"
   );
   ds_map_add(
     global.text_data_en,
@@ -41733,7 +41614,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_543",
-    " \\E0I CAN EASILY&KEEP UP // with&YOU!!!/"
+    " \\E0I CAN EASILY&KEEP UP with&YOU!!!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -41803,7 +41684,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_705",
-    " * (Move and inspect // with \\*Z.)"
+    " * (Move and inspect with \\*Z.)"
   );
   ds_map_add(global.text_data_en, "obj_papdate_721", " \\E3MY HAT...?/");
   ds_map_add(global.text_data_en, "obj_papdate_722", " \\E8MY HAT./");
@@ -41982,7 +41863,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_1022",
-    " YOU'RE MADLY IN&LOVE // with ME./"
+    " YOU'RE MADLY IN&LOVE with ME./"
   );
   ds_map_add(
     global.text_data_en,
@@ -42018,7 +41899,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_1033",
-    " YOU'RE COMPLETELY&OBSESSED // with ME./"
+    " YOU'RE COMPLETELY&OBSESSED with ME./"
   );
   ds_map_add(
     global.text_data_en,
@@ -42079,12 +41960,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_1089",
-    " \\E8I THOUGHT THAT&BECAUSE YOU&FLIRTED // with ME.../"
+    " \\E8I THOUGHT THAT&BECAUSE YOU&FLIRTED with ME.../"
   );
   ds_map_add(
     global.text_data_en,
     "obj_papdate_1090",
-    " THAT I WAS&SUPPOSED&TO GO ON A&DATE // with YOU./"
+    " THAT I WAS&SUPPOSED&TO GO ON A&DATE with YOU./"
   );
   ds_map_add(
     global.text_data_en,
@@ -42125,7 +42006,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_1099",
-    " \\E5A DARK PRISON OF&PASSION^1, // with NO&ESCAPE./"
+    " \\E5A DARK PRISON OF&PASSION^1, with NO&ESCAPE./"
   );
   ds_map_add(
     global.text_data_en,
@@ -42239,7 +42120,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_1130",
-    " YOU SHOULD HANG&OUT // with MY BOSS^1,&UNDYNE!!!/"
+    " YOU SHOULD HANG&OUT with MY BOSS^1,&UNDYNE!!!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -42296,7 +42177,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papfridge_74",
-    '* (Half of the fridge is&  filled // with containers&  all labelled "spaghetti.")/'
+    '* (Half of the fridge is&  filled with containers&  all labelled "spaghetti.")/'
   );
   ds_map_add(
     global.text_data_en,
@@ -42311,7 +42192,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papfridge_81",
-    '* (Half of the fridge is&  filled // with containers&  all labelled "spaghetti.")/'
+    '* (Half of the fridge is&  filled with containers&  all labelled "spaghetti.")/'
   );
   ds_map_add(
     global.text_data_en,
@@ -42432,7 +42313,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papsink_314",
-    " STOP PLAGUING MY&LIFE // with INCIDENTAL&MUSIC!!!/%%"
+    " STOP PLAGUING MY&LIFE with INCIDENTAL&MUSIC!!!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -42457,7 +42338,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papstove_78",
-    " BUT FILLED // with A&SUGARY^1, NON-EGG&SUBSTANCE./"
+    " BUT FILLED with A&SUGARY^1, NON-EGG&SUBSTANCE./"
   );
   ds_map_add(global.text_data_en, "obj_papstove_79", " \\E0HOW ABSURD!/%%");
   ds_map_add(
@@ -43038,7 +42919,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus4_409",
-    " \\E0THEN THREATEN AND&BAFFLE THEM // with&DANGEROUS JAPES./"
+    " \\E0THEN THREATEN AND&BAFFLE THEM with&DANGEROUS JAPES./"
   );
   ds_map_add(
     global.text_data_en,
@@ -43169,7 +43050,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus5_282",
-    " AND YOU DID IT&ALL // withOUT MY&HELP.../"
+    " AND YOU DID IT&ALL withOUT MY&HELP.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -43267,7 +43148,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus7_250",
-    " MAYBE..^1. TOO EASY&TO DEFEAT THE&HUMAN // with./"
+    " MAYBE..^1. TOO EASY&TO DEFEAT THE&HUMAN with./"
   );
   ds_map_add(
     global.text_data_en,
@@ -43334,7 +43215,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus7_271",
-    " * // without traps and fire?/"
+    " * without traps and fire?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -43946,7 +43827,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus_friendc_113",
-    " \\E2* Not // with THAT&  attitude!/%%"
+    " \\E2* Not with THAT&  attitude!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -43991,7 +43872,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus_houseoutside_109",
-    " SO YOU CAME&BACK TO HAVE A&DATE // with ME!/"
+    " SO YOU CAME&BACK TO HAVE A&DATE with ME!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -44036,7 +43917,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus_room_122",
-    " // withOUT SUCH A&COOL GUY TAKING&CARE OF HIM???/"
+    " withOUT SUCH A&COOL GUY TAKING&CARE OF HIM???/"
   );
   ds_map_add(global.text_data_en, "obj_papyrus_room_123", " NYEH HEH HEH!/%%");
   ds_map_add(
@@ -44159,12 +44040,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus_room_179",
-    " \\E0YOU'LL HAVE TO&SPEND TIME // with&NOT ME./%%"
+    " \\E0YOU'LL HAVE TO&SPEND TIME with&NOT ME./%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_papyrus_room_185",
-    " HEY^1! READY TO&HANG OUT // with&UNDYNE???/"
+    " HEY^1! READY TO&HANG OUT with&UNDYNE???/"
   );
   ds_map_add(
     global.text_data_en,
@@ -44265,7 +44146,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrus_room_220",
-    " HEY^1! READY TO&HANG OUT // with&UNDYNE???/"
+    " HEY^1! READY TO&HANG OUT with&UNDYNE???/"
   );
   ds_map_add(
     global.text_data_en,
@@ -44504,7 +44385,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrusboss_488",
-    " COME BACK HERE& // with MY SPECIAL& ATTACK!!!/%%"
+    " COME BACK HERE& with MY SPECIAL& ATTACK!!!/%%"
   );
   ds_map_add(global.text_data_en, "obj_papyrusboss_502", " .../");
   ds_map_add(global.text_data_en, "obj_papyrusboss_503", " OH WELL./");
@@ -44848,7 +44729,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrusboss_1698",
-    " W-WELL^1!& I'M A SKELETON& // with VERY HIGH& STANDARDS!!!/%%"
+    " W-WELL^1!& I'M A SKELETON& with VERY HIGH& STANDARDS!!!/%%"
   );
   ds_map_add(global.text_data_en, "obj_papyrusboss_1700", " OH NO!!!/%%");
   ds_map_add(
@@ -44869,7 +44750,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papyrusboss_1755",
-    " I GUESS THIS MEANS& I HAVE TO GO ON A& DATE // with YOU...?/%%"
+    " I GUESS THIS MEANS& I HAVE TO GO ON A& DATE with YOU...?/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -44922,7 +44803,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_parsnik_434",
-    " * Snakes play // with a beach ball."
+    " * Snakes play with a beach ball."
   );
   ds_map_add(
     global.text_data_en,
@@ -45260,7 +45141,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_phonecall_room_319",
-    " \\E6* Well^1! I hope^1!&  You agree // with me^1!&* About Mew Mew 2!/"
+    " \\E6* Well^1! I hope^1!&  You agree with me^1!&* About Mew Mew 2!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -45601,12 +45482,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_phonecall_room_598",
-    " \\E0* Y-you'll have to press&  all three of them&  // within 3 seconds./"
+    " \\E0* Y-you'll have to press&  all three of them&  within 3 seconds./"
   );
   ds_map_add(
     global.text_data_en,
     "obj_phonecall_room_599",
-    " \\E6* I'll t-try to help&  you // with the&  rhythm!/"
+    " \\E6* I'll t-try to help&  you with the&  rhythm!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -45643,7 +45524,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_playmovement_795",
-    " * OOMPH!&* I AM SO OVERWHELMED // with&  TRAGEDIES./"
+    " * OOMPH!&* I AM SO OVERWHELMED with&  TRAGEDIES./"
   );
   ds_map_add(
     global.text_data_en,
@@ -46433,7 +46314,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_questionasker_625",
-    " // with BRUTAL COMBAT&CAPABILITIES?/"
+    " with BRUTAL COMBAT&CAPABILITIES?/"
   );
   ds_map_add(global.text_data_en, "obj_questionasker_626", " SIMPLE./");
   ds_map_add(
@@ -46600,7 +46481,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_questionasker_746",
-    " // with DR. ALPHYS&HELPING YOU.../"
+    " with DR. ALPHYS&HELPING YOU.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -46893,7 +46774,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_162",
-    " * There's a switch here^1.&* It's been depressed // with&  vines./%%"
+    " * There's a switch here^1.&* It's been depressed with&  vines./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -46988,12 +46869,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_248",
-    " * Seven of their greatest&  magicians sealed us underground&  // with a magic spell./"
+    " * Seven of their greatest&  magicians sealed us underground&  with a magic spell./"
   );
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_249",
-    " * Anything can enter through the&  seal, but only beings // with a&  powerful SOUL can leave./%%"
+    " * Anything can enter through the&  seal, but only beings with a&  powerful SOUL can leave./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -47013,7 +46894,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_263",
-    " * The ancient glyphs have been&  painted over // with a list of&  21 different flavors./%%"
+    " * The ancient glyphs have been&  painted over with a list of&  21 different flavors./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -47028,17 +46909,17 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_275",
-    " * They attacked suddenly, and&  // without mercy./%%"
+    " * They attacked suddenly, and&  without mercy./%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_280",
-    " * // without candles or magic to&  guide them Home^1, the monsters&  used crystals to navigate./%%"
+    " * without candles or magic to&  guide them Home^1, the monsters&  used crystals to navigate./%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_292",
-    " * (It's a beat-up figurine&  of a female human // with&  cat ears.)/%%"
+    " * (It's a beat-up figurine&  of a female human with&  cat ears.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -47140,7 +47021,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_362",
-    " \\E0* Nothing beats food&  home-cooked // with&  fire magic./%%"
+    " \\E0* Nothing beats food&  home-cooked with&  fire magic./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -47180,7 +47061,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_396",
-    " * (But^1, // with patience^1,&  I will make my way&  through.)/%%"
+    " * (But^1, with patience^1,&  I will make my way&  through.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -47323,7 +47204,7 @@ function textdata_en() {
     "obj_readable_room1_469",
     "* i" +
       "'" +
-      'll just keep injecting&  everything // with& "determination."/'
+      'll just keep injecting&  everything with& "determination."/'
   );
   ds_map_add(
     global.text_data_en,
@@ -47519,7 +47400,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_553",
-    " * I haven't told ASGORE yet^1,&  because I want to surprise&  him // with it.../"
+    " * I haven't told ASGORE yet^1,&  because I want to surprise&  him with it.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -47545,7 +47426,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_559",
-    " * What happens when something&  // without a SOUL gains&  the will to live?/%%"
+    " * What happens when something&  without a SOUL gains&  the will to live?/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -47555,7 +47436,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_570",
-    " * (The door is jammed shut&  // with vines.)/%%"
+    " * (The door is jammed shut&  with vines.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -47585,7 +47466,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_596",
-    " * (There are photos of Sans // with&  a lot of people you don't&  recognize.)/"
+    " * (There are photos of Sans with&  a lot of people you don't&  recognize.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -47600,12 +47481,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_603",
-    " * (There are photos of Sans // with&  a lot of people you don't&  recognize.)/"
+    " * (There are photos of Sans with&  a lot of people you don't&  recognize.)/"
   );
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_604",
-    " * (... and^1, one photo of you&  standing // with Sans and all&  your friends.)/"
+    " * (... and^1, one photo of you&  standing with Sans and all&  your friends.)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -47803,7 +47684,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room2_128",
-    '* "Typha" - A group of wetland&  flowering plants // with&  brown^1, oblong seedpods./'
+    '* "Typha" - A group of wetland&  flowering plants with&  brown^1, oblong seedpods./'
   );
   ds_map_add(
     global.text_data_en,
@@ -47843,7 +47724,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room2_150",
-    " * Humans^1, // with their physical&  forms^1, are far stronger&  than us./"
+    " * Humans^1, with their physical&  forms^1, are far stronger&  than us./"
   );
   ds_map_add(
     global.text_data_en,
@@ -47948,7 +47829,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room2_230",
-    '* ... then dethroned "Ball" // with&  a sharp attack./'
+    '* ... then dethroned "Ball" with&  a sharp attack./'
   );
   ds_map_add(
     global.text_data_en,
@@ -48279,7 +48160,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room2_432",
-    " * whatever^1.&* they're a hassle to work&  // with anyway./"
+    " * whatever^1.&* they're a hassle to work&  with anyway./"
   );
   ds_map_add(
     global.text_data_en,
@@ -48434,7 +48315,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room2_499",
-    " YOU ENRICH MY&LIFE // with SHED-&BASED PUNS./"
+    " YOU ENRICH MY&LIFE with SHED-&BASED PUNS./"
   );
   ds_map_add(
     global.text_data_en,
@@ -48616,7 +48497,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room3_92",
-    " * Therefore^1, if a being // with&  a powerful SOUL struck // with&  the desire to kill.../"
+    " * Therefore^1, if a being with&  a powerful SOUL struck with&  the desire to kill.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -49067,7 +48948,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room4_126",
-    " * Excuse me..^1.&* Yes^1, you^1, // with the striped&  shirt./"
+    " * Excuse me..^1.&* Yes^1, you^1, with the striped&  shirt./"
   );
   ds_map_add(
     global.text_data_en,
@@ -49077,7 +48958,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room4_128",
-    " * Yes^1, your friend..^1.&* The one behind you^1, // with the&  creepy smile./%%"
+    " * Yes^1, your friend..^1.&* The one behind you^1, with the&  creepy smile./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -49092,7 +48973,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room4_140",
-    " * A monster // with a human SOUL..^1.&* A horrible beast // with&  unfathomable power./%%"
+    " * A monster with a human SOUL..^1.&* A horrible beast with&  unfathomable power./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -49137,12 +49018,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room4_174",
-    " * STILL FIDDLING // with THAT&  MICROWAVE, EH, DARLING?/"
+    " * STILL FIDDLING with THAT&  MICROWAVE, EH, DARLING?/"
   );
   ds_map_add(
     global.text_data_en,
     "obj_readable_room4_175",
-    " * CAN'T BLAME YOU FOR BEING&  TOTALLY ENAMORED // with AN&  ELECTRONIC BOX./%%"
+    " * CAN'T BLAME YOU FOR BEING&  TOTALLY ENAMORED with AN&  ELECTRONIC BOX./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -49808,12 +49689,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_asgore_489",
-    " * Something stirs deep // within&  him./^"
+    " * Something stirs deep within&  him./^"
   );
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_asgore_492",
-    " * Something stirs // within him..^1.&* It's all flooding back!/%%"
+    " * Something stirs within him..^1.&* It's all flooding back!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -49946,7 +49827,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_papyrus_632",
-    " * You asked the Lost Soul for&  help // with a puzzle./"
+    " * You asked the Lost Soul for&  help with a puzzle./"
   );
   ds_map_add(
     global.text_data_en,
@@ -50043,7 +49924,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_sans_486",
-    " * You asked the Lost Soul to&  take a break from fighting&  // with you.../"
+    " * You asked the Lost Soul to&  take a break from fighting&  with you.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -50133,7 +50014,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_sans_583",
-    " * It nods its head^1, like it&  knew this // without question...!/%%"
+    " * It nods its head^1, like it&  knew this without question...!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -50171,12 +50052,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_toriel_503",
-    " * Something is stirring // within&  her.../^"
+    " * Something is stirring within&  her.../^"
   );
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_toriel_506",
-    " * Something stirs // within her..^1.&* It's all flooding back!/%%"
+    " * Something stirs within her..^1.&* It's all flooding back!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -50348,7 +50229,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_undyne_649",
-    " * You clashed against the Lost&  Soul // with all of your might./"
+    " * You clashed against the Lost&  Soul with all of your might./"
   );
   ds_map_add(
     global.text_data_en,
@@ -50463,7 +50344,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_saddragon_76",
-    " * Guess I'll catch up // with you&  later.../%%"
+    " * Guess I'll catch up with you&  later.../%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -50478,12 +50359,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sans_friendc_75",
-    " * hey^1, frisk^1, what's&  // with that weird&  expression?/"
+    " * hey^1, frisk^1, what's&  with that weird&  expression?/"
   );
   ds_map_add(
     global.text_data_en,
     "obj_sans_friendc_77",
-    " \\E2* Sans^1, did I tell you&  about the time Frisk&  flirted // with me...?/"
+    " \\E2* Sans^1, did I tell you&  about the time Frisk&  flirted with me...?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -50524,7 +50405,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sans_friendc_92",
-    " \\E0* It is hard to think&  anyone would want to&  flirt // with me./"
+    " \\E0* It is hard to think&  anyone would want to&  flirt with me./"
   );
   ds_map_add(global.text_data_en, "obj_sans_friendc_94", " \\E0* Ehehe.../");
   ds_map_add(global.text_data_en, "obj_sans_friendc_95", " \\E7* Ehehehe.../");
@@ -50685,7 +50566,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sans_interactable1_75",
-    " \\E2* it's just a dark cavern&  filled // with skeletons&  and horrible monsters./%%"
+    " \\E2* it's just a dark cavern&  filled with skeletons&  and horrible monsters./%%"
   );
   ds_map_add(global.text_data_en, "obj_sans_interactable1_79", " * well?/%%");
   ds_map_add(
@@ -51013,7 +50894,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sansb_277",
-    " \\E4knowing that one&day^1, // without any&warning.../"
+    " \\E4knowing that one&day^1, without any&warning.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -51658,7 +51539,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sansbyetrigger_132",
-    " \\E0* well^1, i'll be straight-&  forward // with you./"
+    " \\E0* well^1, i'll be straight-&  forward with you./"
   );
   ds_map_add(
     global.text_data_en,
@@ -51809,7 +51690,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sansdate3_184",
-    " \\E0* then she just&  howls // with laughter./"
+    " \\E0* then she just&  howls with laughter./"
   );
   ds_map_add(
     global.text_data_en,
@@ -51871,7 +51752,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sansdate3_198",
-    " \\E2* papyrus gets kind&  of cranky // without&  his bedtime story./"
+    " \\E2* papyrus gets kind&  of cranky without&  his bedtime story./"
   );
   ds_map_add(
     global.text_data_en,
@@ -51971,7 +51852,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sansdate3_306",
-    " \\E2* i'm just joking&  // with you./"
+    " \\E2* i'm just joking&  with you./"
   );
   ds_map_add(global.text_data_en, "obj_sansdate3_307", " \\E1* besides.../");
   ds_map_add(
@@ -52038,12 +51919,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sansmailbox_60",
-    " * (It's a mailbox overflowing&  // with unread junk mail.)/%%"
+    " * (It's a mailbox overflowing&  with unread junk mail.)/%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_sanssnowman_98",
-    " * (It's a lump of snow // with the&  word 'sans' written on it&  in red marker.)/%%"
+    " * (It's a lump of snow with the&  word 'sans' written on it&  in red marker.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -52096,7 +51977,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_savepoint_fake_272",
-    " \\E7But now^1, // with YOUR help.../"
+    " \\E7But now^1, with YOUR help.../"
   );
   ds_map_add(global.text_data_en, "obj_savepoint_fake_273", " \\E8 %");
   ds_map_add(global.text_data_en, "obj_savepoint_fake_274", " \\TFHe's DEAD./");
@@ -52150,7 +52031,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_savepoint_fake_342",
-    " \\E3And then^1, // with my&newfound powers.../"
+    " \\E3And then^1, with my&newfound powers.../"
   );
   ds_map_add(global.text_data_en, "obj_savepoint_fake_343", " \\E7Monsters./");
   ds_map_add(global.text_data_en, "obj_savepoint_fake_344", " \\E5Humans./");
@@ -53093,7 +52974,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop3_727",
-    " \\M5* You hang out&  // with him once^1,&  then he wants&  to hang out.../"
+    " \\M5* You hang out&  with him once^1,&  then he wants&  to hang out.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -53433,7 +53314,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop3_1265",
-    " \\M2* A robot // with a&  SOUL.../*"
+    " \\M2* A robot with a&  SOUL.../*"
   );
   ds_map_add(
     global.text_data_en,
@@ -53530,7 +53411,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop3_1537",
-    " \\E7* He'd be OK&  if he just&  treated us&  // with some&  respect./%%"
+    " \\E7* He'd be OK&  if he just&  treated us&  with some&  respect./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -53566,12 +53447,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop3_1644",
-    " \\E1*\\M2 Yeah!^1!&* He should come&  look for&  junk // with us!/%%"
+    " \\E1*\\M2 Yeah!^1!&* He should come&  look for&  junk with us!/%%"
   );
   ds_map_add(
     global.text_data_en,
     "obj_shop3_1657",
-    " \\M3* But like^1, if&  we let him&  hang out // with&  us..^1. I just&  worry it'll.../*"
+    " \\M3* But like^1, if&  we let him&  hang out with&  us..^1. I just&  worry it'll.../*"
   );
   ds_map_add(
     global.text_data_en,
@@ -53606,7 +53487,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop3_1710",
-    " * We'd be saving&  his LIFE // with&  our&  friendship!!/"
+    " * We'd be saving&  his LIFE with&  our&  friendship!!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -53692,7 +53573,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop3_1911",
-    " \\E5*\\M5 I don't wanna&  have a dream&  // without YOU&  in it...!/%%"
+    " \\E5*\\M5 I don't wanna&  have a dream&  without YOU&  in it...!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -54152,7 +54033,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop4_610",
-    " \\E5* ... and if I want to be&  FRIENDS // with them^1, I should&  just..^1. uh^1, try to see&  things from their&  perspective?/"
+    " \\E5* ... and if I want to be&  FRIENDS with them^1, I should&  just..^1. uh^1, try to see&  things from their&  perspective?/"
   );
   ds_map_add(global.text_data_en, "obj_shop4_611", " \\E4* Wow./");
   ds_map_add(
@@ -54268,7 +54149,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop4_652",
-    " \\E3* Never interact // with attractive&  people./"
+    " \\E3* Never interact with attractive&  people./"
   );
   ds_map_add(
     global.text_data_en,
@@ -54404,7 +54285,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop4_724",
-    " \\E5* When I first came to Hotland^1,&  it was my dream to work&  // with Mettaton./"
+    " \\E5* When I first came to Hotland^1,&  it was my dream to work&  with Mettaton./"
   );
   ds_map_add(global.text_data_en, "obj_shop4_725", " \\E4* .../");
   ds_map_add(
@@ -54497,7 +54378,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop4_768",
-    " \\E6* I'm sure // with my (ahem)&  qualifications^1, it won't&  be long before I'm a&  famous movie star.../"
+    " \\E6* I'm sure with my (ahem)&  qualifications^1, it won't&  be long before I'm a&  famous movie star.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -54532,7 +54413,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop4_792",
-    " \\E1* I'll get in trouble if I get&  chummy // with the customers./"
+    " \\E1* I'll get in trouble if I get&  chummy with the customers./"
   );
   ds_map_add(global.text_data_en, "obj_shop4_793", " \\E0* Sorry./");
   ds_map_add(global.text_data_en, "obj_shop4_794", " \\E4* .../");
@@ -54666,7 +54547,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shop5_611",
-    " \\E3* Is this a joke^1?&* Are you having a chuckle^1?&* Ha ha^1, very funny^1.&* I'm the one // with a degree./%%"
+    " \\E3* Is this a joke^1?&* Are you having a chuckle^1?&* Ha ha^1, very funny^1.&* I'm the one with a degree./%%"
   );
   ds_map_add(global.text_data_en, "obj_shop5_633", " \\E1* WOA!!/");
   ds_map_add(
@@ -54737,7 +54618,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shyren_472",
-    " * Shyren taps a little beat&  // with her fins."
+    " * Shyren taps a little beat&  with her fins."
   );
   ds_map_add(
     global.text_data_en,
@@ -54783,7 +54664,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_shyren_503",
-    " * SHYREN - ATK 19 DEF 0&* A talented singer^1, // with&  a little help./^"
+    " * SHYREN - ATK 19 DEF 0&* A talented singer^1, with&  a little help./^"
   );
   ds_map_add(
     global.text_data_en,
@@ -55291,7 +55172,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_smallfrog_146",
-    " * (It must have been difficult&  // without being able to tell&  the enemy's feelings.)/%%"
+    " * (It must have been difficult&  without being able to tell&  the enemy's feelings.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -55556,7 +55437,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_snowdrake_512",
-    '* Snowdrake is pleased // with&  its "cool" joke.'
+    '* Snowdrake is pleased with&  its "cool" joke.'
   );
   ds_map_add(
     global.text_data_en,
@@ -55703,7 +55584,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_snowdrakedad_97",
-    " * Now that my wife^1.&* Is combined^1.&* // with 16 othah people./%%"
+    " * Now that my wife^1.&* Is combined^1.&* with 16 othah people./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -55738,7 +55619,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_snowdrakedad_112",
-    " * I think I should try to&  patch things up // with him./"
+    " * I think I should try to&  patch things up with him./"
   );
   ds_map_add(
     global.text_data_en,
@@ -55853,7 +55734,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_snowdrakenpc_87",
-    " * Mom might have to share her&  mind // with other people now^1,&  but she's still my mom./"
+    " * Mom might have to share her&  mind with other people now^1,&  but she's still my mom./"
   );
   ds_map_add(
     global.text_data_en,
@@ -56137,7 +56018,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sosorry_364",
-    " \\E4Nobody likes me...&they're just putting&up // with me/"
+    " \\E4Nobody likes me...&they're just putting&up with me/"
   );
   ds_map_add(
     global.text_data_en,
@@ -56323,7 +56204,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_sosorry_461",
-    " \\E2I'll leave you // with&that thought!/"
+    " \\E2I'll leave you with&that thought!/"
   );
   ds_map_add(global.text_data_en, "obj_sosorry_462", " \\E7Goodbye!/");
   ds_map_add(global.text_data_en, "obj_sosorry_463", " \\E8See you later!/");
@@ -56698,7 +56579,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_spiderb_296",
-    " // with that money,&the spider clans&can finally be&reunited~/%%"
+    " with that money,&the spider clans&can finally be&reunited~/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -56733,7 +56614,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_spiderb_315",
-    " But // with the money&from your SOUL, we'll&be able to rent&them a heated limo~/%%"
+    " But with the money&from your SOUL, we'll&be able to rent&them a heated limo~/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -56743,7 +56624,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_spiderb_321",
-    " And // with all of&the leftovers...^1?&We could have a&nice vacation~/"
+    " And with all of&the leftovers...^1?&We could have a&nice vacation~/"
   );
   ds_map_add(
     global.text_data_en,
@@ -56778,7 +56659,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_spiderb_601",
-    " * Muffet does a synchronized&  dance // with the other spiders."
+    " * Muffet does a synchronized&  dance with the other spiders."
   );
   ds_map_add(
     global.text_data_en,
@@ -56984,7 +56865,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_spiderb_849",
-    " I'll wrap you&up and let you&play // with my pet&again!/"
+    " I'll wrap you&up and let you&play with my pet&again!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -57070,7 +56951,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_spidertalkevent_267",
-    " * ... that they're awfully&  stingy // with their money./"
+    " * ... that they're awfully&  stingy with their money./"
   );
   ds_map_add(
     global.text_data_en,
@@ -57090,7 +56971,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_spidertalkevent_275",
-    " * Ahuhuhu..^1.&* I disagree // with that&  notion./"
+    " * Ahuhuhu..^1.&* I disagree with that&  notion./"
   );
   ds_map_add(
     global.text_data_en,
@@ -57247,7 +57128,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_storybattle_gen_609",
-    " // with the human&SOUL^1, ASRIEL&crossed through&the barrier./*"
+    " with the human&SOUL^1, ASRIEL&crossed through&the barrier./*"
   );
   ds_map_add(
     global.text_data_en,
@@ -57363,7 +57244,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_storybattle_gen_936",
-    " // with enough souls^1,&we can shatter&the barrier&forever./%%"
+    " with enough souls^1,&we can shatter&the barrier&forever./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -57479,7 +57360,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_storybattle_gen_1110",
-    " He held me // with&tears in his eyes^1,&saying.../"
+    " He held me with&tears in his eyes^1,&saying.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -57519,7 +57400,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_storybattle_gen_1126",
-    " \\E3I wasted weeks // with&that stupid king^1,&vainly hoping I would&feel something./"
+    " \\E3I wasted weeks with&that stupid king^1,&vainly hoping I would&feel something./"
   );
   ds_map_add(
     global.text_data_en,
@@ -58649,7 +58530,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_tordogcall_117",
-    " * Come back here // with my&  CELLPHONE!/"
+    " * Come back here with my&  CELLPHONE!/"
   );
   ds_map_add(global.text_data_en, "obj_tordogcall_118", " \\TS \\F0 \\T0 %");
   ds_map_add(global.text_data_en, "obj_tordogcall_119", " * Click.../%%");
@@ -58796,7 +58677,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_toriel_friendc_71",
-    '* I am having a lot&  of fun // with the&  "texting" feature./'
+    '* I am having a lot&  of fun with the&  "texting" feature./'
   );
   ds_map_add(
     global.text_data_en,
@@ -59149,12 +59030,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_torielboss_852",
-    " * Can you show mercy // without&  fighting or running&  away...?/^"
+    " * Can you show mercy without&  fighting or running&  away...?/^"
   );
   ds_map_add(
     global.text_data_en,
     "obj_torielboss_854",
-    " * Can you show mercy&  // without running away...?/^"
+    " * Can you show mercy&  without running away...?/^"
   );
   ds_map_add(
     global.text_data_en,
@@ -59850,7 +59731,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_torinteractable7_137",
-    " \\E2* Frisk^1.&* I'll be honest // with&  you./"
+    " \\E2* Frisk^1.&* I'll be honest with&  you./"
   );
   ds_map_add(
     global.text_data_en,
@@ -60045,7 +59926,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_torinteractable7_191",
-    " * You should really go&  be // with your friends&  now^1, OK?/"
+    " * You should really go&  be with your friends&  now^1, OK?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -60259,7 +60140,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_townnpc_bear1_99",
-    " * Hmmm^1, usually that skeleton&  goes to meet // with Undyne&  about now./"
+    " * Hmmm^1, usually that skeleton&  goes to meet with Undyne&  about now./"
   );
   ds_map_add(
     global.text_data_en,
@@ -60709,7 +60590,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_townnpc_monsterkid1_161",
-    " * Yo^1, you aren't going to&  be able to climb // with&  an umbrella./%%"
+    " * Yo^1, you aren't going to&  be able to climb with&  an umbrella./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -60825,7 +60706,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_townnpc_slimeson_84",
-    " * Now we can play Monsters&  and Humans // with REAL humans!/%%"
+    " * Now we can play Monsters&  and Humans with REAL humans!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -60892,7 +60773,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_townnpc_weirdfish_75",
-    " * I'm literally going to make&  out // with a fish./%%"
+    " * I'm literally going to make&  out with a fish./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -60947,7 +60828,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_townnpc_weirdfish_101",
-    " * Don't try to catch hot&  people // with a fishing rod./"
+    " * Don't try to catch hot&  people with a fishing rod./"
   );
   ds_map_add(
     global.text_data_en,
@@ -61110,7 +60991,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_truechara_121",
-    " // with your guidance./"
+    " with your guidance./"
   );
   ds_map_add(
     global.text_data_en,
@@ -61175,7 +61056,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_truechara_141",
-    " And, // with your help./"
+    " And, with your help./"
   );
   ds_map_add(
     global.text_data_en,
@@ -61220,7 +61101,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_truechara_154",
-    " You are wracked // with&a perverted&sentimentality./"
+    " You are wracked with&a perverted&sentimentality./"
   );
   ds_map_add(global.text_data_en, "obj_truechara_155", " Hmm./");
   ds_map_add(
@@ -61348,7 +61229,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_tsunderplane_467",
-    '* Tsunderplane "accidentally"&  bumps you // with its wing.'
+    '* Tsunderplane "accidentally"&  bumps you with its wing.'
   );
   ds_map_add(
     global.text_data_en,
@@ -61453,12 +61334,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_tsunderplanenpc_88",
-    " * I was merely infatuated&  // with the CONCEPT of love./"
+    " * I was merely infatuated&  with the CONCEPT of love./"
   );
   ds_map_add(
     global.text_data_en,
     "obj_tsunderplanenpc_89",
-    " * The idea of romance^1, the&  concept of sharing affection&  // with another.../"
+    " * The idea of romance^1, the&  concept of sharing affection&  with another.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -61530,7 +61411,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undyne1_155",
-    " \\M5H..^1. HI^1, UNDYNE!&I'M HERE // with MY&DAILY REPORT.../"
+    " \\M5H..^1. HI^1, UNDYNE!&I'M HERE with MY&DAILY REPORT.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -61720,7 +61601,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undyne_ex_881",
-    " And // with that&power.../%%"
+    " And with that&power.../%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -61803,7 +61684,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undyne_friendc_113",
-    " * The sooner you get&  it over // with^1, the&  better!/%%"
+    " * The sooner you get&  it over with^1, the&  better!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -61953,12 +61834,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undyne_friendc_188",
-    " \\E1* Do you think we&  can watch something&  // with fighting next?/"
+    " \\E1* Do you think we&  can watch something&  with fighting next?/"
   );
   ds_map_add(
     global.text_data_en,
     "obj_undyne_friendc_189",
-    " \\E9* Oh^1, and then...&* Something..^1.&* // with princesses!?/"
+    " \\E9* Oh^1, and then...&* Something..^1.&* with princesses!?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -62063,7 +61944,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynebattle2_530",
-    " * You pretend to swing at&  UNDYNE // with all your might./%%"
+    " * You pretend to swing at&  UNDYNE with all your might./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -62094,7 +61975,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynebattle2_584",
-    " NOW COME ON^1!&HIT ME // with&ALL YOU'VE GOT!&NGAHHHH!!!/%%"
+    " NOW COME ON^1!&HIT ME with&ALL YOU'VE GOT!&NGAHHHH!!!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -62141,7 +62022,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynebattle2_673",
-    " \\E4Reminded me of&someone I used&to train // with./"
+    " \\E4Reminded me of&someone I used&to train with./"
   );
   ds_map_add(
     global.text_data_en,
@@ -62151,7 +62032,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynebattle2_678",
-    " \\E9You're a wimpy&loser // with a&big heart!/"
+    " \\E9You're a wimpy&loser with a&big heart!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -62330,7 +62211,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undyneboss_471",
-    " \\E4  I gave you a&  spear to block&  the bullets // with./"
+    " \\E4  I gave you a&  spear to block&  the bullets with./"
   );
   ds_map_add(
     global.text_data_en,
@@ -62357,7 +62238,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undyneboss_501",
-    "  And now,&  sunlight is&  just // within&  our reach!"
+    "  And now,&  sunlight is&  just within&  our reach!"
   );
   ds_map_add(
     global.text_data_en,
@@ -62581,7 +62462,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undyneboss_1102",
-    " * Undyne thinks of her friends&  and pounds the ground&  // with her fists."
+    " * Undyne thinks of her friends&  and pounds the ground&  with her fists."
   );
   ds_map_add(
     global.text_data_en,
@@ -62780,7 +62661,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_afterward_117",
-    " \\E0* In the meantime^1,&  I guess I'll go&  hang // with Papyrus./"
+    " \\E0* In the meantime^1,&  I guess I'll go&  hang with Papyrus./"
   );
   ds_map_add(
     global.text_data_en,
@@ -62825,7 +62706,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_afterward_143",
-    " \\E0* In the meantime^1,&  I guess I'll go&  hang // with Papyrus./"
+    " \\E0* In the meantime^1,&  I guess I'll go&  hang with Papyrus./"
   );
   ds_map_add(
     global.text_data_en,
@@ -62936,7 +62817,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_afterward_172",
-    " \\E0* In the meantime^1,&  I guess I'll go&  hang // with Papyrus./"
+    " \\E0* In the meantime^1,&  I guess I'll go&  hang with Papyrus./"
   );
   ds_map_add(
     global.text_data_en,
@@ -63011,7 +62892,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_177",
-    " * I'll^1, uh^1, put it&  // with the others./%%"
+    " * I'll^1, uh^1, put it&  with the others./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -63072,7 +62953,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_368",
-    " * He thinks I can't&  be friends // with&  YOU!?/"
+    " * He thinks I can't&  be friends with&  YOU!?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -63082,7 +62963,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_370",
-    " * I could make friends&  // with a wimpy loser&  like you any day!/"
+    " * I could make friends&  with a wimpy loser&  like you any day!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -63314,7 +63195,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_1001",
-    " * Let's start // with the&  sauce!!/%%"
+    " * Let's start with the&  sauce!!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -63406,7 +63287,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_1478",
-    " \\E4* Some people just&  don't get along&  // with each other./"
+    " \\E4* Some people just&  don't get along&  with each other./"
   );
   ds_map_add(
     global.text_data_en,
@@ -63431,7 +63312,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_1490",
-    " \\E2*\\M2 IT MEANS I CAN&  DESTROY YOU // withOUT&  REGRET!/%%"
+    " \\E2*\\M2 IT MEANS I CAN&  DESTROY YOU withOUT&  REGRET!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -63661,7 +63542,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_1945",
-    " \\E5* And he ended up&  being FRIENDS // with&  you instead!/"
+    " \\E5* And he ended up&  being FRIENDS with&  you instead!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -63686,7 +63567,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynedate_inside_1950",
-    " \\E7* So^1, um^1, maybe he&  can do something&  else // with his life./%%"
+    " \\E7* So^1, um^1, maybe he&  can do something&  else with his life./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -63977,7 +63858,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynetrigger_boss_328",
-    " \\E0* ... // with their giant&  robots and flowery&  swordswomen./"
+    " \\E0* ... with their giant&  robots and flowery&  swordswomen./"
   );
   ds_map_add(
     global.text_data_en,
@@ -64092,7 +63973,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynetrigger_boss_356",
-    '\\E9* Something like "I miss&  being friends // with you."/'
+    '\\E9* Something like "I miss&  being friends with you."/'
   );
   ds_map_add(
     global.text_data_en,
@@ -64102,7 +63983,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynetrigger_boss_358",
-    " \\E6I WOULD NEVER GET&  CHUMMY // with A COWARD&  LIKE YOU!/"
+    " \\E6I WOULD NEVER GET&  CHUMMY with A COWARD&  LIKE YOU!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -64203,7 +64084,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynetrigger_boss_392",
-    " * A teenage comedian&  who fell in // with&  the wrong crowd.../"
+    " * A teenage comedian&  who fell in with&  the wrong crowd.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -64346,7 +64227,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_undynetrigger_boss_497",
-    " \\E5* He ALWAYS answers&  // within the first&  two rings./"
+    " \\E5* He ALWAYS answers&  within the first&  two rings./"
   );
   ds_map_add(global.text_data_en, "obj_undynetrigger_boss_498", " \\E4* .../");
   ds_map_add(
@@ -64565,7 +64446,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_vulkin_544",
-    " * Vulkin's cheeks glow // with&  a bright heat."
+    " * Vulkin's cheeks glow with&  a bright heat."
   );
   ds_map_add(
     global.text_data_en,
@@ -64673,7 +64554,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_whimsalot_449",
-    " * Whimsalot locks eyes // with you."
+    " * Whimsalot locks eyes with you."
   );
   ds_map_add(
     global.text_data_en,
@@ -64801,7 +64682,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_wizard_523",
-    " * Madjick peers at you // with&  strange eyes."
+    " * Madjick peers at you with&  strange eyes."
   );
   ds_map_add(global.text_data_en, "obj_wizard_524", " * Smells like magic.");
   ds_map_add(
@@ -65127,7 +65008,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_woshua_505",
-    " * Woshua is friends // with&  a little bird."
+    " * Woshua is friends with&  a little bird."
   );
   ds_map_add(
     global.text_data_en,
@@ -65187,7 +65068,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_woshua_559",
-    " * You tell a joke about a kid&  who ate a pie // with&  their bare hands./"
+    " * You tell a joke about a kid&  who ate a pie with&  their bare hands./"
   );
   ds_map_add(
     global.text_data_en,
@@ -65734,13 +65615,13 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_265",
-    " \\E3I'M NOT REALLY&FRIENDS // with HER.../"
+    " \\E3I'M NOT REALLY&FRIENDS with HER.../"
   );
   ds_map_add(global.text_data_en, "scr_papcall_266", " \\E0YET!!!!/%%");
   ds_map_add(
     global.text_data_en,
     "scr_papcall_271",
-    " SOMEDAY I'LL&IMPRESS HER // with&MY HUGE BICEPS.../"
+    " SOMEDAY I'LL&IMPRESS HER with&MY HUGE BICEPS.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -66094,7 +65975,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_488",
-    " \\E4THIS SENSE OF&ORDER!!^1! IT FILLS&ME // with POWER!/%%"
+    " \\E4THIS SENSE OF&ORDER!!^1! IT FILLS&ME with POWER!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -66569,7 +66450,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_832",
-    " TRY TO BUILD A&BRIDGE // with THE&BRIDGE SEEDS!!/%%"
+    " TRY TO BUILD A&BRIDGE with THE&BRIDGE SEEDS!!/%%"
   );
   ds_map_add(global.text_data_en, "scr_papcall_837", " I'M HELPING./%%");
   ds_map_add(
@@ -66685,7 +66566,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_917",
-    " \\E3EXCEPT // with&MUSCULAR&SEAHORSES./%%"
+    " \\E3EXCEPT with&MUSCULAR&SEAHORSES./%%"
   );
   ds_map_add(global.text_data_en, "scr_papcall_922", " HI?/%%");
   ds_map_add(
@@ -66706,7 +66587,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_931",
-    " \\E6* Someone at LEAST&  engrave a plaque // with&  swords and kissing!!!/%%"
+    " \\E6* Someone at LEAST&  engrave a plaque with&  swords and kissing!!!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -66792,7 +66673,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1029",
-    " HUH^1? SANS ISN'T&PLAYING // with HIS&TELESCOPE?/"
+    " HUH^1? SANS ISN'T&PLAYING with HIS&TELESCOPE?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -66929,7 +66810,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1127",
-    " \\E4* Strangely^1, they're made&  for someone // without&  fins or claws./"
+    " \\E4* Strangely^1, they're made&  for someone without&  fins or claws./"
   );
   ds_map_add(
     global.text_data_en,
@@ -67044,7 +66925,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1222",
-    " \\E4* She was really&  talented..^1. \\E9for someone&  // with no fingers./"
+    " \\E4* She was really&  talented..^1. \\E9for someone&  with no fingers./"
   );
   ds_map_add(
     global.text_data_en,
@@ -67267,7 +67148,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1417",
-    " \\E7* Though^1, // with the city&  filling up^1, who knows&  how long that'll last./%%"
+    " \\E7* Though^1, with the city&  filling up^1, who knows&  how long that'll last./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -67367,7 +67248,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1523",
-    " \\E4AFTER ALL^1, I'M&HOUSEMATES // with A&LAZY BAG OF TRASH!/"
+    " \\E4AFTER ALL^1, I'M&HOUSEMATES with A&LAZY BAG OF TRASH!/"
   );
   ds_map_add(
     global.text_data_en,
@@ -67464,7 +67345,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1570",
-    " \\E3I'VE SPENT TOO&LONG // with MY&BROTHER TODAY./%%"
+    " \\E3I'VE SPENT TOO&LONG with MY&BROTHER TODAY./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -67548,7 +67429,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1632",
-    " * Well^1, I think we&  should hang out&  // with Papyrus./"
+    " * Well^1, I think we&  should hang out&  with Papyrus./"
   );
   ds_map_add(
     global.text_data_en,
@@ -67583,7 +67464,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1654",
-    " YOU KNOW^1, THE&ONE // with THE&SKELETON IN FRONT./%%"
+    " YOU KNOW^1, THE&ONE with THE&SKELETON IN FRONT./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -67721,12 +67602,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1760",
-    " * Oh^1, you're hanging&  out // with Napstablook!^1?&* That's great!!!/"
+    " * Oh^1, you're hanging&  out with Napstablook!^1?&* That's great!!!/"
   );
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1761",
-    " \\E9* I haven't seen them&  hanging out // with&  anyone since.../"
+    " \\E9* I haven't seen them&  hanging out with&  anyone since.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -68017,7 +67898,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1960",
-    " * Once you get familiar&  // with this room.../"
+    " * Once you get familiar&  with this room.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -68062,7 +67943,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_1990",
-    " * Once you get familiar&  // with this room.../"
+    " * Once you get familiar&  with this room.../"
   );
   ds_map_add(
     global.text_data_en,
@@ -68146,7 +68027,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_2059",
-    " \\E1* NGAHHHH!!^1!&* IT FILLS ME // with&  POWER!!!/%%"
+    " \\E1* NGAHHHH!!^1!&* IT FILLS ME with&  POWER!!!/%%"
   );
   ds_map_add(global.text_data_en, "scr_papcall_2064", " * NGAHHHH!!/%%");
   ds_map_add(
@@ -68365,12 +68246,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_2201",
-    " \\E2* Or when I almost&  killed you // with&  spears???/"
+    " \\E2* Or when I almost&  killed you with&  spears???/"
   );
   ds_map_add(
     global.text_data_en,
     "scr_papcall_2202",
-    " \\E3* Or when I almost&  killed you // with&  MORE spears???/"
+    " \\E3* Or when I almost&  killed you with&  MORE spears???/"
   );
   ds_map_add(
     global.text_data_en,
@@ -69108,7 +68989,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_2720",
-    " * Pssshhht^1, what!^1?&* Popular // with WHO?/"
+    " * Pssshhht^1, what!^1?&* Popular with WHO?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -69118,7 +68999,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_2724",
-    " * Awww..^1.&* Papyrus^1, you're popular&  // with me^1, too./"
+    " * Awww..^1.&* Papyrus^1, you're popular&  with me^1, too./"
   );
   ds_map_add(
     global.text_data_en,
@@ -69326,7 +69207,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_2858",
-    " ALPHYS..^1.&I NEED HELP // with&A.../"
+    " ALPHYS..^1.&I NEED HELP with&A.../"
   );
   ds_map_add(global.text_data_en, "scr_papcall_2859", " (AUDIBLE WINK)/");
   ds_map_add(global.text_data_en, "scr_papcall_2860", " \\E2PUZZLE.../");
@@ -69385,7 +69266,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_2898",
-    " \\E0* It's funny^1, the bunny&  actually requested to be&  // with the dragon guy./"
+    " \\E0* It's funny^1, the bunny&  actually requested to be&  with the dragon guy./"
   );
   ds_map_add(
     global.text_data_en,
@@ -69664,7 +69545,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3118",
-    " \\E2* Earlier^1, the human&  and I danced // with&  DEATH!!!/"
+    " \\E2* Earlier^1, the human&  and I danced with&  DEATH!!!/"
   );
   ds_map_add(global.text_data_en, "scr_papcall_3120", " WOW!!!/");
   ds_map_add(global.text_data_en, "scr_papcall_3121", " IS DEATH COOL?/");
@@ -69899,7 +69780,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3286",
-    " * What's wrong // with&  dogs!?/"
+    " * What's wrong with&  dogs!?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -69909,7 +69790,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3290",
-    " * What's WRONG // with it!?/"
+    " * What's WRONG with it!?/"
   );
   ds_map_add(global.text_data_en, "scr_papcall_3292", " EVERYTHING./%%");
   ds_map_add(
@@ -70001,7 +69882,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3353",
-    " HEY^1, YOU DIDN'T&HIT ME // with MY&ENTIRE COUCH./"
+    " HEY^1, YOU DIDN'T&HIT ME with MY&ENTIRE COUCH./"
   );
   ds_map_add(
     global.text_data_en,
@@ -70315,12 +70196,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3544",
-    " \\E2HE'LL PROBABLY&FILL THEM // with&HOTDOGS AND SLIME./%%"
+    " \\E2HE'LL PROBABLY&FILL THEM with&HOTDOGS AND SLIME./%%"
   );
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3549",
-    " HEY!^1!&MAYBE HE'LL SHARE&SOME // with YOU!/%%"
+    " HEY!^1!&MAYBE HE'LL SHARE&SOME with YOU!/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -70629,7 +70510,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3741",
-    " \\E3HOW WILL YOU&GET BY // withOUT&ME?/"
+    " \\E3HOW WILL YOU&GET BY withOUT&ME?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -70681,7 +70562,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3765",
-    " \\E9* Even // without words^1,&  we'll be // with you&  in spirit^1, OK!?/"
+    " \\E9* Even without words^1,&  we'll be with you&  in spirit^1, OK!?/"
   );
   ds_map_add(
     global.text_data_en,
@@ -70811,7 +70692,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3857",
-    " \\E3* Then suck all of&  its guts out // with&  its fangs?/"
+    " \\E3* Then suck all of&  its guts out with&  its fangs?/"
   );
   ds_map_add(global.text_data_en, "scr_papcall_3859", " BREAD HAS GUTS?/");
   ds_map_add(
@@ -70843,7 +70724,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3880",
-    " * (The signal is clogged // with&  cobwebs...)/%%"
+    " * (The signal is clogged with&  cobwebs...)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -70868,7 +70749,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3891",
-    " \\E0LIKE A TANDEM&MOTORCYCLE // with&EIGHT WHEELS./%%"
+    " \\E0LIKE A TANDEM&MOTORCYCLE with&EIGHT WHEELS./%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -70909,7 +70790,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_papcall_3924",
-    " * (The signal is clogged // with&  cobwebs...)/%%"
+    " * (The signal is clogged with&  cobwebs...)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -71180,7 +71061,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_torcall_34",
-    " * It is difficult to use this&  // with large hands./"
+    " * It is difficult to use this&  with large hands./"
   );
   ds_map_add(
     global.text_data_en,
@@ -71302,7 +71183,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_torcall_96",
-    " * Undyne and Papyrus want to&  cook something together&  // with me./"
+    " * Undyne and Papyrus want to&  cook something together&  with me./"
   );
   ds_map_add(
     global.text_data_en,
@@ -71347,7 +71228,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "scr_torcall_113",
-    " * Papyrus made a bet // with her&  that she could not lift&  everyone here up./"
+    " * Papyrus made a bet with her&  that she could not lift&  everyone here up./"
   );
   ds_map_add(global.text_data_en, "scr_torcall_114", " * She could./");
   ds_map_add(
@@ -71690,7 +71571,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "room_fire_lab2_95",
-    " * (It's a lamp // with pink fish&  on the lampshade.^1)&* (There's no lightbulb.)/%%"
+    " * (It's a lamp with pink fish&  on the lampshade.^1)&* (There's no lightbulb.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -71810,7 +71691,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "joyconfig_fun_summer",
-    " try to // withstand#the sun's life-#giving rays"
+    " try to withstand#the sun's life-#giving rays"
   );
   ds_map_add(
     global.text_data_en,
@@ -72247,12 +72128,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "castroll_white_amalgamates",
-    " Living // with#Their Families,#Thinking About#Sticks"
+    " Living with#Their Families,#Thinking About#Sticks"
   );
   ds_map_add(
     global.text_data_en,
     "castroll_yellow_amalgamates",
-    " Living // with#Their Families"
+    " Living with#Their Families"
   );
   ds_map_add(global.text_data_en, "credits_short_160", " By Toby Fox");
   ds_map_add(
@@ -72925,7 +72806,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "mett_operacomment_2",
-    " (Dance // with me, darling.)"
+    " (Dance with me, darling.)"
   );
   ds_map_add(
     global.text_data_en,
@@ -73006,7 +72887,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "mett_operacomment_7",
-    " (Dancing // with... A human.)"
+    " (Dancing with... A human.)"
   );
   ds_map_add(global.text_data_en, "mett_operacomment_8", " (What a shame...)");
   ds_map_add(global.text_data_en, "item_use_0", " * Error!/%%");
@@ -73234,7 +73115,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "item_use_29a",
-    " * The rest of your inventory&  filled up // with Dog Residue./%%"
+    " * The rest of your inventory&  filled up with Dog Residue./%%"
   );
   ds_map_add(global.text_data_en, "item_use_29b", " * .../");
   ds_map_add(global.text_data_en, "item_use_29c", " * You finished using it./");
@@ -74104,7 +73985,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3363",
-    " * Unfortunately^1, monsters are&  not experienced // with&  illness./"
+    " * Unfortunately^1, monsters are&  not experienced with&  illness./"
   );
   ds_map_add(
     global.text_data_en,
@@ -74145,7 +74026,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_4559",
-    " * Congratulations^1!&* You are now Mortal Enemies&  // with Mettaton./"
+    " * Congratulations^1!&* You are now Mortal Enemies&  with Mettaton./"
   );
   ds_map_add(
     global.text_data_en,

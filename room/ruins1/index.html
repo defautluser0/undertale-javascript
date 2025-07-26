@@ -49,8 +49,8 @@
     loadCurrentSong("currentsong2")
 
     instance_create(22, 194, obj_ruinsmusic);
-    instance_create(140, 450, obj_doorBmusicfade);
-    instance_create(160, 450, obj_doorBmusicfade);
+    instance_create(140, 451, obj_doorBmusicfade);
+    instance_create(160, 451, obj_doorBmusicfade);
     instance_create(150, 420, obj_markerA);
     instance_create(150, 110, obj_markerB);
     instance_create(142, 320, obj_toroverworld2);
@@ -146,6 +146,11 @@
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.step?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.followPath?.call(instance);
           }
         }
         screenUpdater.endStep();

@@ -235,7 +235,7 @@ function alarm4() {
 }
 
 function alarm3() {
-	global.currentroom = window.location.href.slice(35, 39) + "_"  + window.location.href.slice(40).split("/")[0]
+  global.currentroom = `${window.location.href.slice(35, 39)}_${window.location.href.slice(40).split("/")[0]}`;
 
 	if (global.currentroom !== "room_water_undynehouse") {
 		global.room_persistent = window.location.href;

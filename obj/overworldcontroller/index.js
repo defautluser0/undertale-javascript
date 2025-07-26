@@ -1,9 +1,9 @@
-import { draw_sprite_ext, draw_sprite, instances, draw_set_color, draw_text, draw_text_transformed, keyboard_check_pressed, string } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, c_black, fnt_small, fnt_maintext, c_gray, snd_save, snd_select, snd_squeak } from "/imports/assets.js";
+import { draw_sprite_ext, draw_sprite, instances, draw_set_color, draw_text, draw_text_transformed, keyboard_check_pressed, string, ini_read_real, ini_read_string, floor, round, string_width, script_execute } from "/imports/assets/gamemakerFunctions.js";
+import { c_white, c_black, fnt_small, fnt_maintext, c_gray, snd_save, snd_select, snd_squeak, c_yellow } from "/imports/assets.js";
 import global from "/imports/assets/global.js"
 import { view_current, view_xview, view_yview } from "/imports/view.js"
 import * as obj_maincharaReal from "/obj/mainchara/index.js"
-import { ossafe_fill_rectangle, scr_setfont, snd_play, scr_gettext } from "/imports/customFunctions.js"
+import { ossafe_fill_rectangle, scr_setfont, snd_play, scr_gettext, ossafe_ini_open, ossafe_ini_close, scr_roomname, substr, scr_save } from "/imports/customFunctions.js"
 import { control_clear, control_check_pressed, vk_up, vk_down, vk_right, vk_left } from "/imports/input.js"
 
 function create() {
@@ -336,7 +336,7 @@ function draw() {
 			if (global.menuno == 4)
 			{
 					this.iniread = ossafe_ini_open("undertale.ini");
-					this.name = ini_read_String("General", "Name", "EMPTY")
+					this.name = ini_read_string("General", "Name", "EMPTY")
 					this.love = ini_read_real("General", "Love", 0);
 					this.time = ini_read_real("General", "Time", 1);
 					this.kills = ini_read_real("General", "Kills", 0);
@@ -352,21 +352,21 @@ function draw() {
 					if (global.menucoord[4] == 2)
 							draw_set_color(c_yellow);
 					
-					minutes = floor(time / 1800);
-					seconds = round(((time / 1800) - minutes) * 60);
+					this.minutes = floor(this.time / 1800);
+					this.seconds = round(((this.time / 1800) - this.minutes) * 60);
 					
-					if (seconds == 60)
-							seconds = 59;
+					if (this.seconds == 60)
+							this.seconds = 59;
 					
-					if (seconds < 10)
-							seconds = "0" + String(seconds);
+					if (this.seconds < 10)
+							this.seconds = "0" + string(this.seconds);
 					
 					var roomname = scr_roomname(this.roome);
-					var lvtext = scr_gettext("save_menu_lv", String(this.love));
-					var timetext = scr_gettext("save_menu_time", String(minutes), String(seconds));
-					var namesize = String_width(substr(this.name, 1, 6));
-					var lvsize = String_width(this.lvtext);
-					var timesize = String_width(this.timetext);
+					var lvtext = scr_gettext("save_menu_lv", string(this.love));
+					var timetext = scr_gettext("save_menu_time", string(this.minutes), string(this.seconds));
+					var namesize = string_width(substr(this.name, 1, 6));
+					var lvsize = string_width(lvtext);
+					var timesize = string_width(timetext);
 					var x_center = this.xx + 160;
 					var lvpos = round((x_center + (namesize / 2)) - (timesize / 2) - (lvsize / 2));
 					var namepos = 70 + this.xx;
@@ -378,7 +378,7 @@ function draw() {
 							timepos += 6;
 					}
 					
-					draw_text(namepos, 60 + this.yy, name);
+					draw_text(namepos, 60 + this.yy, this.name);
 					draw_text(lvpos, 60 + this.yy, lvtext);
 					draw_text(timepos - timesize, 60 + this.yy, timetext);
 					
@@ -428,9 +428,6 @@ function draw() {
 											global.menucoord[4] = 0;
 									else
 											global.menucoord[4] = 1;
-									
-									keyboard_clear(vk_left);
-									keyboard_clear(vk_right);
 							}
 					}
 					

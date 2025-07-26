@@ -1,28 +1,35 @@
-import { _key_prev_state, _key_state } from '/imports/input.js';
-import { playingSounds, c_white, c_yellow, rooms } from '/imports/assets.js'
-import { ctx, ogCanvas } from '/imports/canvasSetup.js';
-import global from '/imports/assets/global.js';
+import { _key_prev_state, _key_state } from "/imports/input.js";
+import { playingSounds, c_white, c_red, rooms } from "/imports/assets.js";
+import { ctx, ogCanvas } from "/imports/canvasSetup.js";
+import global from "/imports/assets/global.js";
 
 let ini_filename = null;
 let ini_data = {};
 let ini_loaded = false;
+let text_data = new Array(32).fill({name: null, data: ""});
+let text_loaded = new Array(32).fill({name: null, loaded: false});
+let text_read = new Array(32).fill({name: null});
+let text_write = new Array(32).fill({name: null});
+let text_total = new Array(32).fill({name: null});
+let text_read_line = new Array(32).fill({name: null, line: 0});
+let text_write_line = new Array(32).fill({name: null, line: 0});
 const __ds_map_store = {};
 let __ds_map_next_id = 0;
 
 const spriteOffsets = {
-  "spr_tobdog_summer": {
+  spr_tobdog_summer: {
     xoffset: 15,
     yoffset: 22,
   },
-  "spr_tobdog_sleep_trash": {
+  spr_tobdog_sleep_trash: {
     xoffset: 13,
     yoffset: 6,
   },
-  "spr_blconwdshrt": {
+  spr_blconwdshrt: {
     xoffset: 2,
     yoffset: 2,
   },
-}
+};
 
 const offCanvas = document.createElement("canvas");
 const offCtx = offCanvas.getContext("2d");
@@ -71,13 +78,18 @@ function getBoundingBox() {
   const height = mask.imageData.height;
 
   // Find the bounding box of white (collision) pixels
-  let left = width, top = height, right = 0, bottom = 0;
+  let left = width,
+    top = height,
+    right = 0,
+    bottom = 0;
   let found = false;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const idx = (y * width + x) * 4;
-      const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+      const r = data[idx],
+        g = data[idx + 1],
+        b = data[idx + 2];
       if (r === 255 && g === 255 && b === 255) {
         if (!found) found = true;
         if (x < left) left = x;
@@ -138,17 +150,24 @@ function loadImageCached(path, cache) {
 
 /**
  * With this function you can play any sound asset in your game. You provide the sound asset and assign it a priority, which is then used to determine how sounds are dealt with when the number of sounds playing is over the limit set by the function audio_channel_num(). Lower priority sounds will be stopped in favour of higher priority sounds, and the priority value can be any real number (the actual value is arbitrary, and can be from 0 to 1 or 0 to 100, as GameMaker will prioritize them the same). The higher the number the higher the priority, so a sound with priority 100 will be favoured over a sound with priority 1. The third argument is for making the sound loop and setting it to true will make the sound repeat until it's stopped manually, and setting it to false will play the sound once only.
- * 
+ *
  * @param {string} index The index of the sound to play.
  * @param {number} priority Set the channel priority for the sound.
  * @param {boolean} loop Sets the sound to loop or not.
  * @param {number} gain [OPTIONAL] Value for the gain.
  * @param {number} offset [OPTIONAL] The time (in seconds) to set the start point to. Values longer than the length of the given sound are ignored.
  * @param {number} pitch [OPTIONAL] The pitch multiplier (default 1).
- * 
+ *
  * @returns {string}
  */
-function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1) {
+function audio_play_sound(
+  index,
+  priority,
+  loop,
+  gain = 1,
+  offset = 0,
+  pitch = 1
+) {
   if (!index || typeof index !== "object") return null;
 
   // Check if any instance of this sound is playing and compare priorities
@@ -175,7 +194,7 @@ function audio_play_sound(index, priority, loop, gain = 1, offset = 0, pitch = 1
 }
 /**
  * This function can be used to change the pitch of a given sound. The sound can either be one referenced from an index for an individual sound being played which has been stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions, or an actual sound asset from the Asset Browser. If it is an index of a playing sound, then only that instance will be changed, however when using a sound asset from the Asset Browser, all instances of that sound asset being played will be changed. The pitch argument is a pitch multiplier, in that the input value multiplies the current pitch by that amount, so the default value of 1 is no pitch change, while a value of less than 1 will lower the pitch and greater than 1 will raise the pitch. It is best to use small increments for this function as any value under 0 or over 5 may not be audible anyway. It is worth noting that the total pitch change permitted is clamped to (1/256) - 256 octaves, so any value over or under this will not be registered.
- * 
+ *
  * @param {string} index The index of the sound to change.
  * @param {number} pitch The pitch multiplier (default 1).
  */
@@ -185,7 +204,7 @@ function audio_sound_pitch(index, pitch, id = null) {
 
 /**
  * With this function you can fade a sound in or out over a given length of time, or it can be used to set the sound gain instantly. The time is measured in milliseconds, and the function requires that you input a final level of gain for the sound to have reached by the end of that time. This gain can be between 0 (silent) and any value greater than 0, although normally you'd consider the maximum volume as 1. Anything over 1 can be used but, depending on the sound used and the platform being compiled to, you may get distortion or clipping when the sound is played back. Note that the gain scale is linear, and to instantly change the gain, simply set the time argument to 0. This function will affect all instances of the sound that are playing currently in the room if the index is a sound resource, and the final volume will be the volume at which all further instances of the sound will be played. However if you have used the index returned from a function like audio_play_sound() it will only affect that one instance of the sound.
- * 
+ *
  * @param {string} index The index of the sound to set the gain for.
  * @param {number} volume Value for the music volume.
  * @param {number} time The length for the change in gain in milliseconds.
@@ -201,29 +220,30 @@ function audio_sound_gain(index, volume, time = 0, id = null) {
 
 /**
  * This function will check the given sound to see if it is currently playing. The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be checked and if any of them are playing the function will return true otherwise it will return false. Note that this function will still return true if the sound being checked has previously been paused using the audio_pause_sound() function.
- * 
+ *
  * @param {object} index The index of the sound to check.
- * 
+ *
  * @returns {boolean}
  */
 function audio_is_playing(index, id = null) {
+  if (typeof index !== "object" || index === null) return;
   id = id ?? index._sounds[0]?._id;
   return id !== null ? index.playing(id) : false;
 }
 
 /**
  * This function will stop ALL sounds that are currently playing
- * 
+ *
  * @returns {void}
  */
-function audio_stop_all(){
+function audio_stop_all() {
   Howler.stop();
   playingSounds.clear();
 }
 
 /**
  * This function will stop the given sound if it is currently playing. The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be stopped.
- * 
+ *
  * @param {string} index The index of the sound to stop.
  */
 
@@ -232,9 +252,9 @@ function audio_stop_sound(index, id = null) {
   if (id !== null) index.stop(id);
 }
 
-/** 
+/**
  * This function will get the font currently assigned for drawing text. The function will return -1 if no font is set, or the name of the font assigned.
- * 
+ *
  * @returns {string | -1} The font name, or -1 if none.
  */
 function draw_get_font() {
@@ -244,7 +264,7 @@ function draw_get_font() {
 
 /**
  * With this function you can set the base draw colour for the game. This will affect drawing of fonts, forms, primitives and 3D, however it will not affect sprites (drawn manually or by an instance). If any affected graphics are drawn with their own colour values, this value will be ignored.
- * 
+ *
  * @param {string} colour - The colour to set for drawing.
  * @returns {void}
  */
@@ -254,7 +274,7 @@ function draw_set_color(col) {
 
 /**
  * With this function you can draw any string at any position within the room. To combine strings you can use + and you can also use \n within a string to add a line break so it is drawn over multiple lines.
- * 
+ *
  * @param {number} x The x coordinate of the drawn string.
  * @param {number} y The y coordinate of the drawn string.
  * @param {string} string The string to draw.
@@ -266,7 +286,7 @@ function draw_text(x, y, string, second) {
 
 /**
  * This function will draw text in a similar way to draw_text() only now you can choose to scale the text along the horizontal or vertical axis (effectively stretching or shrinking it) and also have it be drawn at an angle (where 0 is normal and every degree over 0 rotates the text anti-clockwise).
- * 
+ *
  * @param {number} x The x coordinate of the drawn string.
  * @param {number} y The y coordinate of the drawn string.
  * @param {string} string The string to draw.
@@ -275,7 +295,15 @@ function draw_text(x, y, string, second) {
  * @param {number} angle The angle of the text.
  * @returns {void}
  */
-function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, second = 0) {
+function draw_text_transformed(
+  x,
+  y,
+  string,
+  xscale = 1,
+  yscale = 1,
+  angle = 0,
+  second = 0
+) {
   try {
     let font = {};
     if (second === 0) {
@@ -287,7 +315,9 @@ function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, 
     }
 
     if (!font) {
-      throw new Error(`draw_text_transformed(${x}, ${y}, "${string}", ${xscale}, ${yscale}, ${angle}): font not set. Please run draw_set_font(font_object);.`)
+      throw new Error(
+        `draw_text_transformed(${x}, ${y}, "${string}", ${xscale}, ${yscale}, ${angle}): font not set. Please run draw_set_font(font_object);.`
+      );
     }
 
     if (!font.image || font.loading) {
@@ -299,10 +329,10 @@ function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, 
     const lineHeight = font.glyphs[" "]?.h || font.size;
 
     // Approximate total text block size
-    const textWidths = lines.map(line => {
+    const textWidths = lines.map((line) => {
       return Array.from(line).reduce((w, char) => {
         const glyph = font.glyphs[char];
-        return w + ((glyph?.shift ?? (glyph?.w + (glyph?.offset || 0))) * xscale);
+        return w + (glyph?.shift ?? glyph?.w + (glyph?.offset || 0)) * xscale;
       }, 0);
     });
 
@@ -332,26 +362,37 @@ function draw_text_transformed(x, y, string, xscale = 1, yscale = 1, angle = 0, 
         ctx.translate(xOffset + offsetX, yOffset - offsetY);
 
         if (currentDrawColor !== c_white) {
-          const tintedGlyphCanvas = get_tinted_glyph(glyph, currentDrawColor, char, second);
+          const tintedGlyphCanvas = get_tinted_glyph(
+            glyph,
+            currentDrawColor,
+            char,
+            second
+          );
           ctx.drawImage(tintedGlyphCanvas, 0, 0);
         } else {
           ctx.drawImage(
             font.image,
-            glyph.x, glyph.y, glyph.w, glyph.h,
-            0, 0, glyph.w, glyph.h
+            glyph.x,
+            glyph.y,
+            glyph.w,
+            glyph.h,
+            0,
+            0,
+            glyph.w,
+            glyph.h
           );
         }
 
         ctx.restore();
 
-        xOffset += (glyph.shift ?? (glyph.w + (glyph.offset || 0)));
+        xOffset += glyph.shift ?? glyph.w + (glyph.offset || 0);
       }
 
       yOffset += lineHeight;
     }
 
     ctx.restore();
-  } catch(error) {
+  } catch (error) {
     console.error(error);
   }
 }
@@ -383,8 +424,14 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
 
   gctx.drawImage(
     font.image,
-    glyph.x, glyph.y, glyph.w, glyph.h,
-    0, 0, glyph.w, glyph.h
+    glyph.x,
+    glyph.y,
+    glyph.w,
+    glyph.h,
+    0,
+    0,
+    glyph.w,
+    glyph.h
   );
 
   gctx.globalCompositeOperation = "source-in";
@@ -396,11 +443,11 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
   return canvas;
 }
 
-/** 
+/**
  * With this function you can check to see if a key has been pressed or not. Unlike the keyboard_check() function, this function will only run once for every time the key is pressed down, so for it to trigger again, the key must be first released and then pressed again. The function will take a keycode value as returned by any of the vk_* constants listed far above.
- * 
+ *
  * @param {string} key The key to check the pressed state of.
- * 
+ *
  * @returns {boolean}
  */
 function keyboard_check_pressed(key) {
@@ -419,31 +466,32 @@ function keyboard_check_pressed(key) {
       key = "Digit" + code;
     } else {
       // Map symbols to their KeyboardEvent.code equivalents
-      key = {
-        " ": "Space",
-        "-": "Minus",
-        "=": "Equal",
-        "[": "BracketLeft",
-        "]": "BracketRight",
-        "\\": "Backslash",
-        ";": "Semicolon",
-        "'": "Quote",
-        ",": "Comma",
-        ".": "Period",
-        "/": "Slash",
-        "`": "Backquote"
-      }[key] || key; // fallback to raw key if unknown
+      key =
+        {
+          " ": "Space",
+          "-": "Minus",
+          "=": "Equal",
+          "[": "BracketLeft",
+          "]": "BracketRight",
+          "\\": "Backslash",
+          ";": "Semicolon",
+          "'": "Quote",
+          ",": "Comma",
+          ".": "Period",
+          "/": "Slash",
+          "`": "Backquote",
+        }[key] || key; // fallback to raw key if unknown
     }
   }
 
   return !!_key_state[key] && !_key_prev_state[key];
 }
 
-/** 
+/**
  * With this function you can check to see if a key is held down or not. The function will take a keycode value as returned by the function ord (only capital letters from A-Z or numbers from 0-9), or any of the vk_* constants listed far above. Unlike the keyboard_check_pressed or keyboard_check_released functions which are only triggered once when the key is pressed or released, this function is triggered every step that the key is held down for.
- * 
+ *
  * @param {string} key The key to check the down state of.
- * 
+ *
  * @returns {boolean}
  */
 function keyboard_check(key) {
@@ -452,7 +500,7 @@ function keyboard_check(key) {
 
 /**
  * This function will set the font to be used for all further text drawing. This font must have been added using CSS, inside the font.css file in this directory.
- * 
+ *
  * @param {object} font The name of the font to use.
  */
 function draw_set_font(font, second) {
@@ -483,13 +531,20 @@ function draw_set_font(font, second) {
   }
 }
 
-
 /**
- * This function permits you to go to any room in your game project. You supply the room index (stored in the variable for the room name). Note that the room will not change until the end of the event where the function was called, so any code after this has been called will still run if in the same event. This function will also trigger the Room End event.  WARNING: This function takes the room name as a string (so instead of room_menu itd be "room_menu" with the quotes).
- * 
- * @param {string} index 
+ * This function permits you to go to any room in your game project. You supply the room index (stored in the variable for the room name). Note that the room will not change until the end of the event where the function was called, so any code after this has been called will still run if in the same event. This function will also trigger the Room End event.  WARNING: This function takes the room name as a string (so instead of room_menu itd be "room_menu" with the quotes). Room Numbers should work fine.
+ *
+ * @param {string} index
  */
 function room_goto(index) {
+  if (typeof index !== "string") {
+    if (typeof index === "number") {
+      index = room_get_name(index);
+    } else {
+      console.error("room is nonexistant / not a valid type");
+      return;
+    }
+  }
   global.eventDone = false;
   global.roomEnd = true;
   global.nextRoom = `/room/${index.slice(5)}/`;
@@ -498,18 +553,28 @@ function room_goto(index) {
 /**
  * This is the instance_create() description.
  * TODO: document
- * 
+ *
  * @param {number} x The x position the object will be created at
  * @param {number} y The y position the object will be created at
  * @param {string} obj The object index of the object to create an instance of
  */
 function instance_create(x, y, obj) {
   try {
-    if (obj === null || typeof obj !== "object" || !Number.isFinite(x) || !Number.isFinite(y)) {
-      throw new Error("instance_create: called with invalid parameters:", { x, y, obj })
+    if (
+      obj === null ||
+      typeof obj !== "object" ||
+      !Number.isFinite(x) ||
+      !Number.isFinite(y)
+    ) {
+      throw new Error("instance_create: called with invalid parameters:", {
+        x,
+        y,
+        obj,
+      });
     }
     const instance = obj.create();
-    if (!instance) throw new Error("instance_create: obj has invalid or no create()");
+    if (!instance)
+      throw new Error("instance_create: obj has invalid or no create()");
 
     instance._object = obj;
 
@@ -519,6 +584,10 @@ function instance_create(x, y, obj) {
     instance.starty = y;
     instance.xstart = x;
     instance.ystart = y;
+    instance.previousx = x;
+    instance.previousy = y;
+    instance.xprevious = x;
+    instance.yprevious = y;
 
     if (!instances.has(obj)) {
       instances.set(obj, []);
@@ -528,14 +597,14 @@ function instance_create(x, y, obj) {
     obj.roomStart?.call(instance);
 
     return instance;
-  } catch(error) {
+  } catch (error) {
     console.error(error);
   }
 }
 
 /**
  * You call this function whenever you wish to "destroy" an instance, normally triggering a Destroy Event and also a Clean Up Event. This will remove it from the room until the room is restarted (unless the room is persistent). Calling the function will simply destroy all instances of a particular object.
- * 
+ *
  * @param {string} index The object asset to destroy instances of
  * @returns {void}
  */
@@ -565,7 +634,7 @@ function instance_destroy(target) {
   // Otherwise, assume it's an object module: destroy all matching instances (including children)
   for (const list of instances.values()) {
     // Make a copy so we can safely remove while iterating
-    const toDestroy = list.filter(inst => isInstanceOf(inst, target));
+    const toDestroy = list.filter((inst) => isInstanceOf(inst, target));
     for (const inst of toDestroy) {
       inst.destroy?.call(inst);
       inst.cleanUp?.call(inst);
@@ -575,10 +644,9 @@ function instance_destroy(target) {
   }
 }
 
-
 /**
  * This function can be used in two ways depending on what you wish to check. You can give it an object_index to check for, in which case this function will return true if any active instances of the specified object exist in the current room, or you can also supply it with an instance id, in which case this function will return true if that specific instance exists and is active in the current room.
- * 
+ *
  * @param {object} obj The object or instance to check for the exsistence  of
  * @returns {boolean}
  */
@@ -598,8 +666,8 @@ function instance_exists(obj) {
 
 /**
  * With this function you can find out how many active instances of the specified object exists in the room. When checking using this function, if the object is a parent, then all child objects will also be included in the return value, and also note that those instances which have been deactivated with the instance deactivate functions will not be included in this check.
- * 
- * @param {object} obj 
+ *
+ * @param {object} obj
  * @returns {number}
  */
 function instance_number(obj) {
@@ -622,22 +690,21 @@ function instance_number(obj) {
   return count;
 }
 
-
 /**
  * This function draws the given sprite and sub-image at a position within the game room. For the sprite you can use the instance variable sprite_index to get the current sprite that is assigned to the instance running the code, or you can use any other sprite asset. The same goes for the sub-image, as this can also be set to the instance variable image_index which will set the sub-image to that selected for the current instance sprite (note, that you can draw a different sprite and still use the sub-image value for the current instance), or you can use any other value for this to draw a specific sub-image of the chosen sprite. If the value is larger than the number of sub-images, then GameMaker will automatically loop the number to select the corresponding image (for example, if the sprite being drawn has 5 sub-images numbered 0 to 4 and we set the index value to 7, then the function will draw the third sub-image, numbered 2). Finally, the x and y position is the position within the room that the sprite will be drawn, and it is centered on the sprite x offset and y offset.
- * 
+ *
  * @param {object} sprite The index of the sprite to draw
  * @param {number} subimg The sub-image (frame) of  the  sprite to draw (image_index or -1 correlate to the current frame of animation in the object)
  * @param {number} x The x coordinate of where to draw the spirte
  * @param {number} y The y coordinate of where to draw the sprite
  */
 function draw_sprite(sprite, subimg, x, y) {
-  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, c_white, 1)
+  draw_sprite_ext(sprite, subimg, x, y, 1, 1, 0, c_white, 1);
 }
 
 /**
  * This function will draw the given sprite as in the function draw_sprite() but with additional options to change the scale, blending, rotation and alpha of the sprite being drawn. Changing these values does not modify the resource in any way (only how it is drawn), and you can use any of the available sprite variables instead of direct values for all the arguments in the function.
- * 
+ *
  * @param {object} sprite The index of the sprite to draw
  * @param {number} subimg The subimg (frame) of the sprite to draw (image_index or -1 correlate to the current frame of animation in thhe object)
  * @param {number} x The x coordinate of where to draw the sprite
@@ -649,7 +716,18 @@ function draw_sprite(sprite, subimg, x, y) {
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  * @returns {void}
  */
-function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alpha, returnImg = 0) {
+function draw_sprite_ext(
+  sprite,
+  subimg,
+  x,
+  y,
+  xscale,
+  yscale,
+  rot,
+  colour,
+  alpha,
+  returnImg = 0
+) {
   if (!sprite) return;
   if (alpha < 0) alpha = 0;
 
@@ -662,15 +740,15 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
   if (!cached.loaded) return;
 
   const img = cached.img;
-  
+
   const offset = spriteOffsets[sprite] || { xoffset: 0, yoffset: 0 };
   const ox = offset.xoffset || 0;
   const oy = offset.yoffset || 0;
 
   ctx.save();
-  
+
   ctx.translate(x - ox * xscale, y - oy * yscale);
-  ctx.rotate(rot * Math.PI / 180);
+  ctx.rotate((rot * Math.PI) / 180);
   ctx.scale(xscale, yscale);
   ctx.globalAlpha = alpha;
 
@@ -706,7 +784,7 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
 
 /**
  * With this function you can draw part of any sprite at a given position within the room. As with draw_sprite() you can specify a sprite and a sub-image for drawing, then you must give the relative coordinates within the sprite of the area to select for drawing. This means that a left position of 0 and a top position of 0 would be the top left corner of the sprite and all further coordinates should be taken from that position.
- * 
+ *
  * @param {object} sprite The index of the sprite to draw.
  * @param {number} subimg The subimg (frame) of the sprite to draw (image_index or -1 correlate to the current frame of animation in the object).
  * @param {number} left The x position on the sprite of the top left corner of the area to draw.
@@ -717,12 +795,25 @@ function draw_sprite_ext(sprite, subimg, x, y, xscale, yscale, rot, colour, alph
  * @param {number} y The y coordinate of where to draw the sprite.
  */
 function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
-  draw_sprite_part_ext(sprite, subimg, left, top, width, height, round(x), round(y), 1, 1, c_white, 1);
+  draw_sprite_part_ext(
+    sprite,
+    subimg,
+    left,
+    top,
+    width,
+    height,
+    round(x),
+    round(y),
+    1,
+    1,
+    c_white,
+    1
+  );
 }
 
 /**
  * This function will draw a part of the chosen sprite at the given position following the same rules as per draw_sprite_part(), only now you can scale the part, blend a colour with it, or change its alpha when drawing it to the screen (the same as when drawing a sprite with draw_sprite_ext()).
- * 
+ *
  * @param {object} sprite The index of the sprite to draw.
  * @param {number} subimg The subimg (frame) of the sprite to draw (image_index or -1 correlate to the current frame of animation in the object).
  * @param {number} left The x position on the sprite of the top left corner of the area to draw.
@@ -736,7 +827,20 @@ function draw_sprite_part(sprite, subimg, left, top, width, height, x, y) {
  * @param {string} colour The colour with which to blend the sprite. c_white is to display it normally.
  * @param {number} alpha The alpha of the sprite (from 0 to 1 where 0 is transparent and 1 opaque).
  */
-function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xscale = 1, yscale = 1, colour = c_white, alpha = 1) {
+function draw_sprite_part_ext(
+  sprite,
+  subimg,
+  left,
+  top,
+  width,
+  height,
+  x,
+  y,
+  xscale = 1,
+  yscale = 1,
+  colour = c_white,
+  alpha = 1
+) {
   if (!sprite) return;
   if (left < 0) left = 0;
   if (top < 0) top = 0;
@@ -797,7 +901,7 @@ function draw_sprite_part_ext(sprite, subimg, left, top, width, height, x, y, xs
 
 /**
  * You can use this function to return a specific character at a specific position within a string, with the index starting at 1 for the first character. If no character is found or the string is shorter than the given index value, an empty string "" is returned, however if the given index is equal to or smaller than 0, then the first character of the string is returned.
- * 
+ *
  * @param {string} str The string to check.
  * @param {number} index The position to get the character from.
  * @returns {string}
@@ -808,7 +912,7 @@ function string_char_at(str, index) {
 
 /**
  * This function takes any real number and rounds it up to the nearest integer. Care should be taken with this function as one common mistake is to use it round up a random value and expect it always to be greater than 1, ie: "let int = ceil(random(5));" Now, you would expect this code to always give an integer between 1 and 5, but this may not always be the case as there is a very small possibility that the random function will return 0, and rounding up 0 still gives you 0. This is a remote possibility but should be taken into account when using this function.
- * 
+ *
  * @param {number} x The number to change.
  * @returns {number}
  */
@@ -818,7 +922,7 @@ function ceil(x) {
 
 /**
  * Returns the floor of n, that is, n rounded down to an integer. This is similar to the round() function, but it only rounds down, no matter what the decimal value, so floor(5.99999) will return 5, as will floor(5.2), floor(5.6457) etc...
- * 
+ *
  * @param {number} n The number to floor.
  * @returns {number}
  */
@@ -828,7 +932,7 @@ function floor(n) {
 
 /**
  * Just as it says, round() takes a number and rounds it up or down to the nearest integer. In the special case where the number supplied is exactly a half-integer (1.5, 17.5, -2.5, etc), the number will be rounded to the nearest even value, for example, 2.5 would be rounded to 2, while 3.5 will be rounded to 4. This type of rounding is called bankers rounding and over large numbers of iterations or when using floating point maths, it gives a statistically better rounding than the more traditional "round up if over .5 and round down otherwise" approach. What this means is that if the fraction of a value is 0.5, then the rounded result is the even integer nearest to the input value. So, for example, 23.5 becomes 24, as does 24.5, while -23.5 becomes -24, as does -24.5. This method treats positive and negative values symmetrically, so is therefore free of sign bias, and, more importantly, for reasonable distributions of values, the expected (average) value of the rounded numbers is the same as that of the original numbers.
- * 
+ *
  * @param {number} n The number to round
  * @returns {number}
  */
@@ -837,7 +941,11 @@ function round(n) {
   let roundNumber = Math.round(n);
 
   // if the floor of the number is divisible by two and rounding the number is not divisible by two and (removing or adding 0.5 from the number) is equal to the floor of the number then return the floor of the number, else return the number rounded
-  if (floorNumber % 2 === 0 && roundNumber % 2 !== 0 && (n - 0.5 === floorNumber || n + 0.5 === floorNumber)) {
+  if (
+    floorNumber % 2 === 0 &&
+    roundNumber % 2 !== 0 &&
+    (n - 0.5 === floorNumber || n + 0.5 === floorNumber)
+  ) {
     return floorNumber;
   } else {
     return roundNumber;
@@ -846,7 +954,7 @@ function round(n) {
 
 /**
  * This function returns a random floating-point (decimal) number between 0.0 (inclusive) and the specified upper limit (inclusive). For example, random(100) will return a value from 0 to 100.00, but that value can be 22.56473! You can also use real numbers and not integers in this function like this - random(0.5), which will return a value between 0 and 0.500.
- * 
+ *
  * @param {number} n The upper range from which the random number will be selected
  * @returns {number}
  */
@@ -856,18 +964,20 @@ function random(n) {
 
 /**
  * This function simply returns the width, in pixels, of the indexed surface. It should be noted that if you call this to check the application_surface immediately after having changed its size using surface_resize() it will not return the new value as the change needs a step or two to be fully processed. After waiting a step it should return the new size correctly.
- * 
- * @param {string} surface 
+ *
+ * @param {string} surface
  * @returns {number}
  */
 function surface_get_width(surface) {
-  console.warn(`STUB: surface_get_width(${surface}). returning gameCanvas.width instead`);
+  console.warn(
+    `STUB: surface_get_width(${surface}). returning gameCanvas.width instead`
+  );
   return ogCanvas.width;
 }
 
 /**
  * This function calls a Script Function or Method with the given arguments.
- * 
+ *
  * @param {function} scr  	The function/script or method that you want to call.
  * @param  {...any} args OPTIONAL The different arguments that you want to pass through to the function/script
  * @returns {any}
@@ -878,7 +988,7 @@ function script_execute(scr, ...args) {
 
 /**
  * This function can be used to turn a value into a number. When using this function on a string, numbers, minus signs, decimal points and exponential parts in the string are taken into account, while other characters (such as letters) will cause an error to be thrown.
- * 
+ *
  * @param {string} n The string to be converted to a number.
  * @returns {number}
  */
@@ -888,7 +998,7 @@ function real(n) {
 
 /**
  * This function draws either an outline of a rectangle or a filled rectangle where the (x1,y1) position is the top left corner and the (x2,y2) position is the bottom right corner.
- * 
+ *
  * @param {number} x1 The x coordinate of the top left corner of the rectangle
  * @param {number} y1 The y coordinate of the top left corner of the rectangle
  * @param {number} x2 The x coordinate of the bottom right corner of the rectangle
@@ -897,7 +1007,7 @@ function real(n) {
  */
 function draw_rectangle(x1, y1, x2, y2, outline) {
   ctx.fillStyle = currentDrawColor;
-  ctx.strokeStyle = currentDrawColor
+  ctx.strokeStyle = currentDrawColor;
   x1 = round(x1);
   x2 = round(x2);
   y1 = round(y1);
@@ -905,15 +1015,15 @@ function draw_rectangle(x1, y1, x2, y2, outline) {
   ctx.beginPath();
   ctx.rect(x1, y1, x2 - x1, y2 - y1);
   if (outline) {
-    ctx.stroke()
+    ctx.stroke();
   } else {
-    ctx.fill()
+    ctx.fill();
   }
 }
 
 /**
  * This function takes a single character input string and returns the Unicode (UTF16) value for that character. Note that when used with the keyboard_check* functions, the input string can only be one character in length and can only be a number from 0 to 9 or a capitalised Roman character from A to Z.
- * 
+ *
  * @param {string} string The string with which to find the Unicode value
  * @returns {number}
  */
@@ -923,7 +1033,7 @@ function ord(string) {
 
 /**
  * This is the draw_background() help.
- * 
+ *
  * @param {string} background The background to draw.
  * @param {number} x The x position to draw the background at.
  * @param {number} y The y position to draw the background at.
@@ -936,30 +1046,30 @@ function draw_background(background, x, y) {
   img.src = `/bg/${background}.png`;
 
   img.onload = () => {
-    ctx.drawImage(img, round(x), round(y))
-  }
+    ctx.drawImage(img, round(x), round(y));
+  };
 }
 
 /**
  * This function is used to remove a part of the given string. You supply the input string, the starting position within that string to remove characters from (the index starts at 1) and the number of characters to remove. The function will return a new string without that part in it.
- * 
+ *
  * @param {string} str The string to copy and delete from.
  * @param {number} index The position of the first character to remove (from 1).
  * @param {number} count The number of characters to remove.
  * @returns {string}
  */
 function string_delete(str, index, count) {
-    if (index < 1 || count < 1) return str; // GameMaker-style: index starts at 1
+  if (index < 1 || count < 1) return str; // GameMaker-style: index starts at 1
 
-    // Convert from 1-based to 0-based index
-    let start = index - 1;
+  // Convert from 1-based to 0-based index
+  let start = index - 1;
 
-    return str.slice(0, start) + str.slice(start + count);
+  return str.slice(0, start) + str.slice(start + count);
 }
 
 /**
  * With this function you can take two colours and then merge them together to make a new colour. The amount of each of the component colours can be defined by changing the "amount" argument, where a value of 0 will return the first colour (col1), a value of 1 will return the second colour (col2) and a value in between will return the corresponding mix. For example, a value of 0.5 will mix the two colours equally. The following image illustrates how this works by merging the colours red and blue together:
- * 
+ *
  * @param {string} col1 The first colour to merge
  * @param {string} col2 The second colour to merge
  * @param {number} amount How much of each colour should be merged. For example, 0 will return col1, 1 will return col2, and 0.5 would return a merge of both colours equally
@@ -979,28 +1089,26 @@ function merge_color(col1, col2, amount) {
 function hexToRgb(hex) {
   hex = hex.replace("#", "");
   if (hex.length === 3) {
-    hex = hex.split("").map(c => c + c).join("");
+    hex = hex
+      .split("")
+      .map((c) => c + c)
+      .join("");
   }
   const bigint = parseInt(hex, 16);
   return {
     r: (bigint >> 16) & 255,
     g: (bigint >> 8) & 255,
-    b: bigint & 255
+    b: bigint & 255,
   };
 }
 function rgbToHex(r, g, b) {
-  return (
-    "#" +
-    [r, g, b]
-      .map(x => x.toString(16).padStart(2, "0"))
-      .join("")
-  );
+  return "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
 
 function room_next(room) {
   if (typeof room !== "string") return;
 
-  let roomIndex = rooms.indexOf(room)
+  let roomIndex = rooms.indexOf(room);
 
   if (roomIndex === -1) return -1;
 
@@ -1010,7 +1118,7 @@ function room_next(room) {
 function room_previous(room) {
   if (typeof room !== "string") return;
 
-  let roomIndex = rooms.indexOf(room)
+  let roomIndex = rooms.indexOf(room);
 
   if (roomIndex === -1) return -1;
 
@@ -1018,25 +1126,29 @@ function room_previous(room) {
 }
 
 function room_goto_next() {
-  room_goto(room_next(global.currentRoom));
+  room_goto(room_next(global.currentroom));
 }
 
 function room_goto_previous() {
-  room_goto(room_previous(global.currentRoom));
+  room_goto(room_previous(global.currentroom));
 }
 
 function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
+  if (!this) {
+    console.warn("please call collision_rectangle with .call(inst, [args])");
+    return;
+  }
   if (
-    (
-      typeof this.bbox_left !== "number" ||
-      typeof this.bbox_right !== "number" ||
-      typeof this.bbox_top !== "number" ||
-      typeof this.bbox_bottom !== "number"
-    )
+    typeof this.bbox_left !== "number" ||
+    typeof this.bbox_right !== "number" ||
+    typeof this.bbox_top !== "number" ||
+    typeof this.bbox_bottom !== "number"
   ) {
     console.warn(`${this.name}'s bounding boxes not set.`);
     return null;
   }
+  if (x1 > x2) [x1, x2] = [x2, x1];
+  if (y1 > y2) [y1, y2] = [y2, y1];
   function isInstanceOf(inst, objToMatch) {
     let currentObj = inst._object;
     while (currentObj) {
@@ -1063,7 +1175,9 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       let bw = 0;
       let bh = 0;
 
-      const spritePath = `/spr/${inst.sprite_index}/${inst.sprite_index}_${floor(inst.image_index) || 0}.png`;
+      const spritePath = `/spr/${inst.sprite_index}/${inst.sprite_index}_${
+        floor(inst.image_index) || 0
+      }.png`;
       const spriteCacheEntry = loadImageCached(spritePath, spriteCache);
 
       if (!spriteCacheEntry.loaded) {
@@ -1081,11 +1195,7 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
       const bottom = inst.bbox_bottom;
 
       if (!prec) {
-        const hit =
-          x1 < right &&
-          x2 > left &&
-          y1 < bottom &&
-          y2 > top;
+        const hit = x1 <= right && x2 >= left && y1 <= bottom && y2 >= top;
 
         if (hit) {
           return inst;
@@ -1138,7 +1248,9 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
         outer: for (let y = sy; y < ey; y++) {
           for (let x = sx; x < ex; x++) {
             const idx = (y * width + x) * 4;
-            const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+            const r = data[idx],
+              g = data[idx + 1],
+              b = data[idx + 2];
             if (r === 255 && g === 255 && b === 255) {
               collisionFound = true;
               break outer;
@@ -1177,7 +1289,8 @@ function collision_point(x, y, obj, notme = false) {
       const scaleX = inst.image_xscale ?? 1;
       const scaleY = inst.image_yscale ?? 1;
 
-      let bw = 32, bh = 32;
+      let bw = 32,
+        bh = 32;
       if (spriteCacheEntry.loaded) {
         bw = spriteCacheEntry.img.width * scaleX;
         bh = spriteCacheEntry.img.height * scaleY;
@@ -1205,10 +1318,12 @@ function collision_point(x, y, obj, notme = false) {
         const localY = Math.floor((y - inst.y) / scaleY);
 
         if (
-          localX < 0 || localY < 0 ||
+          localX < 0 ||
+          localY < 0 ||
           localX >= mask.imageData.width ||
           localY >= mask.imageData.height
-        ) continue;
+        )
+          continue;
 
         const idx = (localY * mask.imageData.width + localX) * 4;
         const r = mask.imageData.data[idx];
@@ -1322,7 +1437,6 @@ function ini_export() {
   document.body.removeChild(a);
 }
 
-
 function ini_import(iniText, filename) {
   ini_open(filename);
   const lines = iniText.split(/\r?\n/);
@@ -1344,7 +1458,10 @@ function ini_import(iniText, filename) {
       value = value.trim();
 
       // Strip quotes if present
-      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
         value = value.slice(1, -1);
       }
 
@@ -1355,8 +1472,6 @@ function ini_import(iniText, filename) {
   // Save to localStorage
   localStorage.setItem(String(filename), JSON.stringify(ini_data));
 }
-
-
 
 function file_exists(filename) {
   return localStorage.getItem(filename) !== null;
@@ -1370,7 +1485,7 @@ function choose(...args) {
 
 /**
  * With this function you can draw either an outline of a circle or a filled circle.
- * 
+ *
  * @param {number} x The x coordinate of the center of the circle.
  * @param {number} y The y coordinate of the center of the circle.
  * @param {number} r The circle's radius (length from its center to its edge)
@@ -1378,13 +1493,13 @@ function choose(...args) {
  */
 function draw_circle(x, y, r, outline) {
   ctx.fillStyle = currentDrawColor;
-  ctx.strokeStyle = currentDrawColor
+  ctx.strokeStyle = currentDrawColor;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI, false);
   if (outline) {
-    ctx.stroke()
+    ctx.stroke();
   } else {
-    ctx.fill()
+    ctx.fill();
   }
 }
 
@@ -1422,7 +1537,7 @@ function string(str) {
 }
 
 function room_get_name(index) {
-  return rooms[index] ?? "";
+  return rooms[index-1] ?? "";
 }
 
 function point_distance(x1, y1, x2, y2) {
@@ -1432,12 +1547,12 @@ function point_distance(x1, y1, x2, y2) {
 }
 
 function distance_to_point(x, y) {
-  return point_distance(this.x, this.y, x, y)
+  return point_distance(this.x, this.y, x, y);
 }
 
 /**
  * Moves the instance towards a given point at a given speed.
- * 
+ *
  * @param {number} x The x position of the point to move towards.
  * @param {number} y The y position of the point to move towards.
  * @param {number} sp The speed to move at in pixels per second.
@@ -1475,7 +1590,7 @@ function _with(obj, fn) {
 
     if (typeof obj !== "object") {
       throw new Error("_with: object must be an object");
-    } 
+    }
 
     if (obj._object) {
       obj = obj._object;
@@ -1485,27 +1600,17 @@ function _with(obj, fn) {
     for (const inst of instancesOfObj) {
       fn.call(inst);
     }
-  } catch(error) {
-    console.error(`with() error on object ${obj?.name || '[unknown]'}`, error);
+  } catch (error) {
+    console.error(`with() error on object ${obj?.name || "[unknown]"}`, error);
   }
 }
 
 function abs(val) {
-  return Math.abs(val)
+  return Math.abs(val);
 }
 
 function action_move(direction, speed) {
-  const directions = [
-    225,
-    270,
-    315,
-    180,
-    null,
-    0,
-    135,
-    90,
-    45,
-  ];
+  const directions = [225, 270, 315, 180, null, 0, 135, 90, 45];
 
   const index = direction.indexOf("1");
 
@@ -1517,7 +1622,7 @@ function action_move(direction, speed) {
     return;
   } else {
     this.direction = directions[index];
-    this.speed = speed
+    this.speed = speed;
     const rad = (this.direction * Math.PI) / 180;
     this.hspeed = Math.cos(rad) * speed;
     this.vspeed = -Math.sin(rad) * speed;
@@ -1526,7 +1631,7 @@ function action_move(direction, speed) {
 
 /**
  * With this function you can resume any sound that is currently paused (after using the function audio_pause_sound()). The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be re-started.
- * 
+ *
  * @param {object} index The index of the sound to resume.
  * @returns {void}
  */
@@ -1537,7 +1642,7 @@ function audio_resume_sound(index, id = null) {
 
 /**
  * With this function you can pause any sound that is currently playing. The sound can either be a single instance of a sound (the index for individual sounds being played can be stored in a variable when using the audio_play_sound() or audio_play_sound_at() functions) or a sound asset, in which case all instances of the given sound will be paused.
- * 
+ *
  * @param {object} index The index of the sound to pause.
  * @returns {void}
  */
@@ -1548,7 +1653,7 @@ function audio_pause_sound(index, id = null) {
 
 /**
  * All instances have a unique identifier (id) which can be used to modify and manipulate them while a game is running, but you may not always know what the id for a specific instance is and so this function can help as you can use it to iterate through all of them to find what you need. You specify the object that you want to find the instance of and a number, and if there is an instance at that position in the instance list then the function returns the id of that instance, and if not it returns the special keyword noone. You can also use the keyword all to iterate through all the instances in a room, as well as a parent object to iterate through all the instances that are part of that parent / child hierarchy, and you can even specify an instance (if you have its id) as a check to see if it actually exists in the current room. Please note that as instances are sorted in an arbitrary manner, there is no specific order to how the instances are checked by this function, and any instance can be in any position.
- * 
+ *
  * @param {object} obj The object to find the nth instance of
  * @param {number} n The number of the instance to find
  * @returns {object} The instance (or null if none)
@@ -1577,7 +1682,10 @@ function instance_find(obj, n) {
     if (n < result.length) {
       return result[n];
     } else {
-      throw new Error(`instance_find: index ${n} out of range for object`, obj.name || obj);
+      throw new Error(
+        `instance_find: index ${n} out of range for object`,
+        obj.name || obj
+      );
     }
   } catch (error) {
     console.error(error);
@@ -1587,18 +1695,18 @@ function instance_find(obj, n) {
 
 /**
  * You can use this function to change one instance of an object into another instance of a different object, and while doing so decide whether to perform the initial instances Destroy and Clean Up Events and the new instances Create Event. In this way, you can have (for example) a bomb change into an explosion - in which case the "perf" argument would probably be true as you would want the bomb to perform its Destroy Event and Clean Up Event, as well as the explosion to perform its Create Event - or you could have your player character change into a different one - in which case the "perf" argument would probably be false as you do not want the instances to perform their Create and Destroy/Clean Up events.
- * 
+ *
  * @param {object} obj The new object the calling object will change into.
  * @param {boolean} perf Whether to perform that new object's Create and Destroy events (true) or not (false).
  */
 function instance_change(obj, perf) {
-  console.warn("STUB: instance_change.", obj, perf)
+  console.warn("STUB: instance_change.", obj, perf);
   return;
 }
 
 /**
  * This function tells the calling instance to start the given path. The path started by the instance is stored in the variable path_index. A path is created from a series of defining points that are linked together and then used to plan the movements of an instance. They can be created with code, or in Paths and they are assigned to an instance to use in the game. You would then use this function to tell your instance which path to follow, what speed to follow the path (measured in pixels per step), how to behave when it reaches the end of the path, and whether to follow the absolute or relative path position. This last part means that it either starts and follows the path exactly as you designed and placed it in Paths (absolute), or it starts and follows the path from the position at which the instance was created (relative).
- * 
+ *
  * @param {object} path The path index to start.
  * @param {number} speed The speed of which to follow the path in pixels per step, negative meaning going backwards.
  * @param {string} endaction What to do when the end of the path is reached.
@@ -1606,19 +1714,301 @@ function instance_change(obj, perf) {
  */
 function path_start(path, speed, endaction, absolute) {
   try {
-    if (typeof this === "undefined" || typeof path !== "object" || typeof speed !== "number" || typeof endaction !== "string" || typeof absolute !== "boolean") {
-      throw new Error("path_start: invalid arguments", path, speed, endaction, absolute, this);
+    if (
+      typeof this === "undefined" ||
+      typeof path !== "object" ||
+      typeof speed !== "number" ||
+      typeof endaction !== "string" ||
+      typeof absolute !== "boolean" ||
+      (typeof absolute === "number" && (absolute !== 1 || absolute !== 0))
+    ) {
+      throw new Error("path_start: invalid arguments");
     }
 
-    for (const [number, point] in Object.entries(path.points)) {
-      console.log(number, point, Object.entries(path.points));
-      for (const [x, y, speed] in point) {
-        console.log(number, x, y, speed)
-      }
+    const firstPoint = path.points[1];
+    if (!firstPoint) {
+      throw new Error("path_start: path has no starting point");
     }
-  } catch(error) {
+
+    if (absolute) {
+      this.x = firstPoint.x;
+      this.y = firstPoint.y;
+    }
+
+    this._path = {
+      data: path,
+      index: 1,
+      speed,
+      endaction,
+      absolute,
+    };
+  } catch (error) {
     console.error(error);
   }
 }
 
-export { audio_play_sound, audio_is_playing, audio_stop_all, audio_stop_sound, audio_sound_gain, audio_sound_pitch, draw_get_font, draw_set_color, draw_set_font, draw_text, draw_text_transformed, keyboard_check,  keyboard_check_pressed, currentDrawColor, currentFont, room_goto, instances, instance_create, instance_destroy, instance_exists, draw_sprite, draw_sprite_ext, string_char_at, floor, ceil, round, random, surface_get_width, script_execute, real, draw_rectangle, ord, draw_sprite_part, draw_sprite_part_ext, draw_background, string_delete, merge_color, secondFont, thirdFont, room_next, room_previous, room_goto_next, room_goto_previous, collision_rectangle, collision_point, collision_line, getBoundingBox, ini_open, ini_close, ini_read_string, ini_read_real, ini_write_string, ini_write_real, ini_section_exists, ini_key_exists, ini_key_delete, ini_section_delete, ini_export, ini_import, file_exists, choose, draw_circle, ds_map_add, ds_map_create, ds_map_find_value, string_copy, string_length, string, room_get_name, point_distance, distance_to_point, move_towards_point, _with, abs, instance_number, action_move, audio_resume_sound, audio_pause_sound, instance_find, instance_change, path_start };
+/**
+ * This function will return the width (in pixels) of the input string, taking into account any line-breaks the text may have. It is very handy for calculating distances between text elements based on the total width of the letters that make up the string as it would be drawn with draw_text() using the currently defined font.
+ * 
+ * @param {string} string The string to measure the width of
+ * @returns {number}
+ */
+function string_width(string) {
+  // TODO: make it work and not return string.length
+  return string_length(string);
+}
+
+function file_text_open_read(fname) {
+  let file = null;
+  let fileData = null;
+  for (let i = 0; i < text_read.length; i++) {
+    if (text_read[i].name === null && text_data[i].name === null || text_read[i].name === fname || text_data[i].name === fname) {
+      file = text_read[i];
+      fileData = text_data[i];
+      text_read_line[i].name = fname;
+      break;
+    }
+  }
+  if (!file || !fileData) {
+    console.warn("no file available to open (close some files and try again)");
+    return null;
+  }
+  file.name = fname;
+  fileData.name = fname;
+  if (!fileData.data && localStorage.getItem(fname)) fileData.data = localStorage.getItem(fname); else localStorage.setItem(fname, fileData.data)
+  return file;
+}
+
+function file_text_open_write(fname) {
+  let file = null;
+  let fileData = null;
+  for (let i = 0; i < text_write.length; i++) {
+    if (text_write[i].name === null && text_data[i].name === null || text_write[i].name === fname && text_data[i].name === fname) {
+      file = text_write[i];
+      fileData = text_data[i];
+      text_write_line[i].name = fname;
+      break;
+    }
+  }
+  if (!file || !fileData) {
+    console.error("no file available to open (close some files and try again)");
+    return null;
+  }
+  file.name = fname;
+  fileData.name = fname;
+  if (localStorage.getItem(fname)) fileData.data = localStorage.getItem(fname); else localStorage.setItem(fname, fileData.data)
+  return file;
+}
+
+function file_text_read_real(fileid) {
+  return parseInt(file_text_read_string(fileid)) || 0;
+}
+
+function file_text_read_string(fileid) {
+  if (typeof fileid !== "object") return;
+
+  function getPos(str, substr, index) {
+    return str.split(substr, index).join(substr).length;
+  }
+
+  let file = null
+  let fileData = null;
+  let fileLine = 0;
+  let str = "";
+  for (let i = 0; i < text_read.length; i++) {
+    if (text_read[i] === fileid) {file = text_read[i];fileData = text_data[i];fileLine = text_read_line[i].line;};
+  }
+
+  if (!file || !fileData) return;
+
+  if (fileLine === 0) {
+    for (let i = 0; i < fileData.data.length; i++) {
+      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+        str = str.concat("", fileData.data[i]);
+      } else {
+        break;
+      }
+    }
+  } else {
+    for (let i = getPos(fileData.data, "\r\n", fileLine) + 2; i < fileData.data.length; i++) {
+      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+        str = str.concat("", fileData.data[i]);
+      } else {
+        break;
+      }
+    }
+  }
+
+  return str;
+}
+
+function file_text_readln(fileid) {
+  if (typeof fileid !== "object") return;
+
+  function getPos(str, substr, index) {
+    return str.split(substr, index).join(substr).length;
+  }
+
+  let file = null
+  let fileData = null;
+  let fileLine = 0;
+  let index = 0;
+  let str = "";
+  for (let i = 0; i < text_read.length; i++) {
+    if (text_read[i] === fileid) {file = text_read[i];fileData = text_data[i];fileLine = text_read_line[i].line;index=i;};
+  }
+
+  if (!file || !fileData) return;
+
+  if (fileLine === 0) {
+    for (let i = 0; i < fileData.data.length; i++) {
+      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+        str = str.concat("", fileData.data[i]);
+      } else {
+        fileLine++;
+        break;
+      }
+    }
+  } else {
+    for (let i = getPos(fileData.data, "\r\n", fileLine) + 2; i < fileData.data.length; i++) {
+      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+        str = str.concat("", fileData.data[i]);
+      } else {
+        fileLine++;
+        break;
+      }
+    }
+  }
+
+  text_read_line[index].line = fileLine;
+  return str;
+}
+
+function file_text_write_real(fileid, val) {
+  return parseInt(file_text_write_string(fileid, val)) || 0;
+}
+
+function file_text_write_string(fileid, str) {
+  if (typeof fileid !== "object") return;
+}
+
+function file_text_writeln(fileid) {
+  if (typeof fileid !== "object") return;
+}
+
+function file_text_close(fileid) {
+  if (typeof fileid !== "object") return;
+}
+
+function file_text_import(data, filename) {
+  localStorage.setItem(filename, data);
+}
+
+function file_text_export(filename) {
+  const data = localStorage.getItem(filename);
+  if (!data) return;
+
+  const blob = new Blob([data], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click()
+  document.body.removeChild(a);
+}
+
+export {
+  audio_play_sound,
+  audio_is_playing,
+  audio_stop_all,
+  audio_stop_sound,
+  audio_sound_gain,
+  audio_sound_pitch,
+  draw_get_font,
+  draw_set_color,
+  draw_set_font,
+  draw_text,
+  draw_text_transformed,
+  keyboard_check,
+  keyboard_check_pressed,
+  currentDrawColor,
+  currentFont,
+  room_goto,
+  instances,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  draw_sprite,
+  draw_sprite_ext,
+  string_char_at,
+  floor,
+  ceil,
+  round,
+  random,
+  surface_get_width,
+  script_execute,
+  real,
+  draw_rectangle,
+  ord,
+  draw_sprite_part,
+  draw_sprite_part_ext,
+  draw_background,
+  string_delete,
+  merge_color,
+  secondFont,
+  thirdFont,
+  room_next,
+  room_previous,
+  room_goto_next,
+  room_goto_previous,
+  collision_rectangle,
+  collision_point,
+  collision_line,
+  getBoundingBox,
+  ini_open,
+  ini_close,
+  ini_read_string,
+  ini_read_real,
+  ini_write_string,
+  ini_write_real,
+  ini_section_exists,
+  ini_key_exists,
+  ini_key_delete,
+  ini_section_delete,
+  ini_export,
+  ini_import,
+  file_exists,
+  choose,
+  draw_circle,
+  ds_map_add,
+  ds_map_create,
+  ds_map_find_value,
+  string_copy,
+  string_length,
+  string,
+  room_get_name,
+  point_distance,
+  distance_to_point,
+  move_towards_point,
+  _with,
+  abs,
+  instance_number,
+  action_move,
+  audio_resume_sound,
+  audio_pause_sound,
+  instance_find,
+  instance_change,
+  path_start,
+  string_width,
+  file_text_open_read,
+  file_text_open_write,
+  file_text_write_real,
+  file_text_read_real,
+  file_text_write_string,
+  file_text_read_string,
+  file_text_writeln,
+  file_text_readln,
+  file_text_close,
+  file_text_import,
+  file_text_export,
+};

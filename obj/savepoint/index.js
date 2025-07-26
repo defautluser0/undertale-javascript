@@ -1,9 +1,16 @@
-import { draw_sprite_ext, getBoundingBox, instance_destroy, instance_exists } from "/imports/assets/gamemakerFunctions.js";
-import { scr_murderlv, snd_play, scr_depth } from "/imports/customFunctions.js"
+import {
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_destroy,
+  instance_exists,
+  instance_create,
+} from "/imports/assets/gamemakerFunctions.js";
+import { scr_murderlv, snd_play, scr_depth } from "/imports/customFunctions.js";
 import { c_white, snd_power } from "/imports/assets.js";
-import global from "/imports/assets/global.js"
+import global from "/imports/assets/global.js";
 
-import * as OBJ_WRITER from "/obj/writer/index.js"
+import * as OBJ_WRITER from "/obj/writer/index.js";
+import * as obj_dialoguer from "/obj/dialoguer/index.js";
 import * as parent from "/obj/readablesolid/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -45,8 +52,9 @@ function create() {
     roomStart,
     alarm0,
     beginStep,
+    step,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -102,7 +110,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -125,16 +133,16 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
 
-		this.animationEnd?.();
+    this.animationEnd?.();
   }
 
-  getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
+  getBoundingBox.call(this); // uncomment if bounding box is needed for something (collision checks from this or others)
 
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+  this.previousx = this.x;
+  this.xprevious = this.x;
+  this.previousy = this.y;
+  this.yprevious = this.y;
+
   // Apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -148,7 +156,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // Recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -169,35 +179,56 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
     if (img) {
       this.sprite_width = img.width;
-      this.sprite_height = img.height
+      this.sprite_height = img.height;
     }
   }
 }
 
 function roomStart() {
   if (global.flag[493] >= 12 && global.flag[7] == 0) {
-    if (window.location.href === "https://undertale.defautluser0.xyz/room/castle_front/")
+    if (
+      window.location.href ==
+      "https://undertale.defautluser0.xyz/room/castle_front/"
+    )
       instance_destroy(this);
-    if (window.location.href == "https://undertale.defautluser0.xyz/room/castle_finalshoehorn/")
+    if (
+      window.location.href ==
+      "https://undertale.defautluser0.xyz/room/castle_finalshoehorn/"
+    )
       instance_destroy(this);
 
-    if (window.location.href == "https://undertale.defautluser0.xyz/room/sanscorridor/")
+    if (
+      window.location.href ==
+      "https://undertale.defautluser0.xyz/room/sanscorridor/"
+    )
       instance_destroy(this);
 
-    if (window.location.href == "https://undertale.defautluser0.xyz/room/castle_elevatorout/")
+    if (
+      window.location.href ==
+      "https://undertale.defautluser0.xyz/room/castle_elevatorout/"
+    )
       instance_destroy(this);
 
-    if (window.location.href == "https://undertale.defautluser0.xyz/room/castle_throneroom/")
+    if (
+      window.location.href ==
+      "https://undertale.defautluser0.xyz/room/castle_throneroom/"
+    )
       instance_destroy(this);
   }
 
-  if (window.location.href == "https://undertale.defautluser0.xyz/room/water19/") {
-    if (scr_murderlv() < 11 || global.flag[27] == 1 || global.plot > 119)
-      instance_destroy(this)
+  if (
+    window.location.href == "https://undertale.defautluser0.xyz/room/water19/"
+  ) {
+    if (
+      scr_murderlv.call(this) < 11 ||
+      global.flag[27] == 1 ||
+      global.plot > 119
+    )
+      instance_destroy(this);
   }
 }
 
@@ -208,108 +239,161 @@ function alarm0() {
   global.facechoice = 0;
   global.faceemotion = 0;
 
-  if (global.hp < global.maxhp)
-    global.hp = global.maxhp;
+  if (global.hp < global.maxhp) global.hp = global.maxhp;
 
   global.en = global.maxen;
   snd_play(snd_power);
   this.offroom = 0;
 
-  if (room == room_castle_front)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/castle_front/"
+  )
     this.offroom = 1;
 
-  if (room == room_castle_throneroom)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/castle_throneroom/"
+  )
     this.offroom = 1;
 
-  if (room == room_castle_finalshoehorn)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/castle_finalshoehorn/"
+  )
     this.offroom = 1;
 
-  if (room == room_castle_prebarrier)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/castle_prebarrier/"
+  )
     this.offroom = 1;
 
-  if (room == room_sanscorridor)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/sanscorridor/"
+  )
     this.offroom = 1;
 
-  if (room == room_castle_elevatorout)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/castle_elevatorout/"
+  )
     this.offroom = 1;
 
-  if (room == room_truelab_hub)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/truelab_hub/"
+  )
     this.offroom = 1;
 
-  if (room == room_truelab_bedroom)
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/truelab_bedroom/"
+  )
     this.offroom = 1;
 
-  if (scr_murderlv() >= 2 && global.flag[27] == 0)
-  {
-    if (room == room_tundra3 || room == room_tundra_spaghetti || room == room_tundra_lesserdog || room == room_tundra_town)
-    {
-      if (global.flag[27] == 0)
-      {
+  if (scr_murderlv.call(this) >= 2 && global.flag[27] == 0) {
+    if (
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra3/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra_spaghetti/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra_lesserdog/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra_town/"
+    ) {
+      if (global.flag[27] == 0) {
         global.msc = 0;
         pop = 16 - global.flag[203];
-        
-        if (pop < 0)
-            pop = 0;
-        
-        if (scr_murderlv() >= 2)
-            global.msg[0] = scr_gettext("obj_savepoint_97", string(pop));
-        
-        if (scr_murderlv() == 5)
-            global.msg[0] = scr_gettext("obj_savepoint_99"); // \R* That comedian.../%%
-        
+
+        if (pop < 0) pop = 0;
+
+        if (scr_murderlv.call(this) >= 2)
+          global.msg[0] = scr_gettext("obj_savepoint_97", string(pop));
+
+        if (scr_murderlv.call(this) == 5)
+          global.msg[0] = scr_gettext("obj_savepoint_99"); // \R* That comedian.../%%
+
         if (global.flag[57] == 2 && pop <= 0)
-            global.msg[0] = scr_gettext("obj_savepoint_101"); // * Determination./%%
-        
+          global.msg[0] = scr_gettext("obj_savepoint_101"); // * Determination./%%
+
         if (pop <= 0 && global.flag[57] != 2)
-            global.msg[0] = scr_gettext("obj_savepoint_103"); // * The comedian got away^1.&* Failure./%%
+          global.msg[0] = scr_gettext("obj_savepoint_103"); // * The comedian got away^1.&* Failure./%%
       }
     }
   }
 
-  if (scr_murderlv() >= 8 && global.flag[27] == 0)
-  {
-    if (room == room_water2 || room == room_water4 || room == room_water_savepoint1 || room == room_water_preundyne || room == room_water_trashsavepoint || room == room_water_friendlyhub || room == room_water_undynefinal || room == room_water19 || room == room_water_temvillage)
-    {
-      if (global.flag[27] == 0)
-      {
+  if (scr_murderlv.call(this) >= 8 && global.flag[27] == 0) {
+    if (
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water2/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water4/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_savepoint1/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_preundyne/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_trashsavepoint/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_friendlyhub/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_undynefinal/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water19/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_temvillage/"
+    ) {
+      if (global.flag[27] == 0) {
         global.msc = 0;
         pop = 18 - global.flag[204];
-        
-        if (pop < 0)
-            pop = 0;
-        
-        if (scr_murderlv() >= 8)
-            global.msg[0] = scr_gettext("obj_savepoint_118", string(pop));
-        
-        if (pop <= 0)
-            global.msg[0] = scr_gettext("obj_savepoint_120"); // * Determination./%%
+
+        if (pop < 0) pop = 0;
+
+        if (scr_murderlv.call(this) >= 8)
+          global.msg[0] = scr_gettext("obj_savepoint_118", string(pop));
+
+        if (pop <= 0) global.msg[0] = scr_gettext("obj_savepoint_120"); // * Determination./%%
       }
     }
   }
 
-  if (scr_murderlv() >= 12 && global.flag[27] == 0)
-  {
-    if (room == room_fire_prelab || room == room_fire6 || room == room_fire_savepoint1 || room == room_fire_mewmew2 || room == room_fire_savepoint2 || room == room_fire_hotellobby || room == room_fire_core_branch || room == room_fire_core_premett)
-    {
-      if (global.flag[27] == 0)
-      {
+  if (scr_murderlv.call(this) >= 12 && global.flag[27] == 0) {
+    if (
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_prelab/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire6/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_savepoint1/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_mewmew2/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_savepoint2/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_hotellobby/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_core_branch/" ||
+      window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_core_premett/"
+    ) {
+      if (global.flag[27] == 0) {
         global.msc = 0;
         pop = 40 - global.flag[205];
-        
-        if (pop < 0)
-            pop = 0;
-        
-        if (scr_murderlv() >= 12)
-            global.msg[0] = scr_gettext("obj_savepoint_135", string(pop));
-        
-        if (pop <= 0)
-            global.msg[0] = scr_gettext("obj_savepoint_137"); // * Determination./%%
+
+        if (pop < 0) pop = 0;
+
+        if (scr_murderlv.call(this) >= 12)
+          global.msg[0] = scr_gettext("obj_savepoint_135", string(pop));
+
+        if (pop <= 0) global.msg[0] = scr_gettext("obj_savepoint_137"); // * Determination./%%
       }
     }
   }
 
-  if (scr_murderlv() >= 16)
-  {
+  if (scr_murderlv.call(this) >= 16) {
     global.msc = 0;
     global.msg[0] = scr_gettext("obj_savepoint_145"); // * Determination./%%
   }
@@ -332,4 +416,18 @@ function beginStep() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm0, beginStep };
+function step() {
+  parent.step.call(this);
+}
+
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  alarm0,
+  beginStep,
+  step,
+};

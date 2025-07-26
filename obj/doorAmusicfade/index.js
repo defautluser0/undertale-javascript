@@ -94,7 +94,7 @@ function user9() {
   instance_create(0, 0, obj_unfader);
   this.ok = 1;
 
-  if (global.currentroom = "room_water_undynefinal3" && instance_exists(obj_undyneachaser) === true) {
+  if (global.currentroom === "room_water_undynefinal3" && instance_exists(obj_undyneachaser) === true) {
     this.ok = 0;
   }
 

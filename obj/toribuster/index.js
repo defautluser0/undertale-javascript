@@ -24,7 +24,7 @@ function create() {
     image_angle: 0,
     image_blend: c_white,
     sprite_index: "spr_whitefader", // sprite object
-    visible: true, // sprite visibility
+    visible: false, // sprite visibility
     friction: 0,
     gravity: 0,
     gravity_direction: 270, // gravity direction
@@ -119,7 +119,7 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  // getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
+  getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
 
 	this.previousx = this.x;
 	this.xprevious = this.x;

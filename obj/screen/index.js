@@ -101,6 +101,8 @@ function beginStep() {
   }
   
   global.spec_rtimer += 1;
+
+  global.time += 1;
   
   if (global.spec_rtimer >= 6)
       global.debug_r = 0;

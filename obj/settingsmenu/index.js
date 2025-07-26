@@ -1,4 +1,4 @@
-import { draw_sprite_ext, ini_open, ini_read_real, ini_write_real, ini_write_string, ini_close, file_exists, room_goto, instance_create, draw_set_color, draw_text_transformed, draw_text, merge_color, choose, draw_circle, keyboard_check_pressed, draw_rectangle, ini_import, ini_export } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, ini_open, ini_read_real, ini_write_real, ini_write_string, ini_close, file_exists, room_goto, instance_create, draw_set_color, draw_text_transformed, draw_text, merge_color, choose, draw_circle, keyboard_check_pressed, draw_rectangle, ini_import, ini_export, file_text_import, file_text_export } from "/imports/assets/gamemakerFunctions.js";
 import { caster_free, caster_load, scr_setfont, scr_drawtext_centered_scaled, caster_play, caster_loop } from "/imports/customFunctions.js";
 import { c_white, c_yellow, c_orange, c_red, c_gray, c_black, mus_harpnoise, mus_options_winter, mus_options_fall, mus_options_summer, fnt_maintext } from "/imports/assets.js";
 import { vk_down, vk_up, vk_left, vk_right, control_check_pressed } from "/imports/input.js"
@@ -77,6 +77,7 @@ function create() {
 	let extreme2 = 0;
 	let harp = 0;
 	let weathermusic = 0;
+	let month = 0;
 
 	if (fun === 1) {
 		intro = 1;
@@ -132,7 +133,11 @@ function create() {
 		num_borders,
 		r_buffer,
 		r_line,
+		month,
+		rectile: 0,
 		indexsiner: 0,
+		intro,
+		o_o,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
@@ -198,10 +203,10 @@ function step() {
 function roomEnd() {
 	if (this.fun === 1) {
 		if (this.harp !== 0)
-			caster_free(harp);
+			caster_free(this.harp);
 		
 		if (this.weathermusic !== 0)
-			caster_free(weathermusic)
+			caster_free(this.weathermusic)
 	}
 }
 
@@ -215,10 +220,10 @@ function draw() {
 			this.weathermusic = caster_load(mus_options_winter);
 		
     if (this.weather === 2 || this.weather === 4)
-			weathermusic = caster_load(mus_options_fall);
+			this.weathermusic = caster_load(mus_options_fall);
     
     if (this.weather === 3)
-			weathermusic = caster_load(mus_options_summer);
+			this.weathermusic = caster_load(mus_options_summer);
 	}
 
 	if (this.weather === 1) {
@@ -283,7 +288,7 @@ function draw() {
 		draw_text_transformed(220 + Math.sin(this.siner / 12), 120 + Math.cos(this.siner / 12), "sweep a leaf#sweep away a#troubles", 1, 1, -20);
 	}
 
-	this.menu_max = 3;
+	this.menu_max = 5;
 
 	if (this.menu_engage === 0) {
 		if (keyboard_check_pressed(vk_down)) {
@@ -349,6 +354,30 @@ function draw() {
 			});
 			input.click();
 		}
+
+		if (this.menu === 5 && this.menu_engage === 1) {
+			file_text_export("file0");
+			file_text_export("file9")
+		}
+		
+		if (this.menu === 4 && this.menu_engage === 1) {
+			const input = document.createElement("input");
+			input.type = "file";
+			input.addEventListener("change", (e) => {
+				const file = e.target.files[0];
+				if (!file) return;
+
+				const reader = new FileReader();
+
+				reader.onload = function() {
+					const data = reader.result;
+					file_text_import(data, file.name);
+					window.location.reload();
+				}
+				reader.readAsText(file);
+			});
+			input.click();
+		}
 	}
 
 	draw_set_color(c_white);
@@ -393,6 +422,20 @@ function draw() {
 		draw_set_color(c_yellow);
 
 	draw_text(20, 130, "EXPORT .INIS");
+
+	if (this.menu != 4)
+		draw_set_color(c_white);
+	else
+		draw_set_color(c_yellow);
+
+	draw_text(20, 160, "IMPORT file0/file9");
+
+	if (this.menu != 5)
+		draw_set_color(c_white);
+	else
+		draw_set_color(c_yellow);
+
+	draw_text(20, 190, "EXPORT file0 & file9");
 
 	if (this.intro === 1) {
 		if (this.rectile === 16) {

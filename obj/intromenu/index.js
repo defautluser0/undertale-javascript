@@ -236,7 +236,7 @@ function draw() {
 		}
     
     if (this.mlevel == 1) {
-			if (fk == 0)
+			if (this.fk == 0)
 				draw_sprite("spr_flowey", 0, 147, 169);
     }
     

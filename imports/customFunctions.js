@@ -29,9 +29,24 @@ import {
   ini_open,
   ini_read_real,
   ini_write_real,
+  ini_write_string,
+  ini_read_string,
   ini_close,
   audio_is_playing,
   abs,
+  script_execute,
+  file_text_open_read,
+  file_text_open_write,
+  file_text_write_real,
+  file_text_write_string,
+  file_text_writeln,
+  file_text_read_real,
+  file_text_read_string,
+  file_text_readln,
+  file_text_close,
+  ini_section_exists,
+  string_width,
+  room_goto_next,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -63,6 +78,7 @@ import {
 import { vk_down, vk_up, vk_right, vk_left, control_check_pressed, control_clear } from "/imports/input.js"
 import global from "/imports/assets/global.js";
 import { view_xview, view_current, view_wview } from "/imports/view.js"
+import { rooms } from "/imports/assets/rooms.js";
 
 import * as obj_whitefader from "/obj/whitefader/index.js";
 import * as obj_persistentfader from "/obj/persistentfader/index.js";
@@ -875,17 +891,46 @@ function scr_namingscreen() {
       
       if (this.truereset > 0)
       {
-        // TODO: save file
+        ossafe_ini_open("undertale.ini");
+        const sk = ini_read_real("reset", "s_key", 0);
+        let Won = ini_read_real("General", "Won",  0);
+        let CP = ini_read_real("General", "CP", 0);
+        let CH = ini_read_real("General", "CH", 0);
+        ossafe_ini_close("undertale.ini");
+
+        if (ossafe_ini_exists("undertale.ini"))
+          ossafe_file_delete("undertale.ini");
+
+        ossafe_ini_open("undertale.ini");
+        ini_write_real("reset", "reset", 1);
+
+        if (sk != 0)
+          ini_write_real("reset", "s_key", sk);
+
+        if (Won != 0)
+          ini_write_real("General", "BW", Won);
+
+        if (CP != 0)
+          ini_write_real("General", "BP", CP);
+
+        if (CH != 0)
+          ini_write_real("General", "BH", CH);
+
+        ossafe_ini_close();
       }
       
       caster_free(cy);
       global.flag[5] = floor(random(100)) + 1; // fun value
+      ossafe_ini_open("undertale.ini");
+      ini_write_real("General", "fun", global.flag[5])
+
+      global.time = 0;
       
       if (scr_hardmodename(this.charname)) {
         global.flag[6] = 1;
       }
       
-      room_goto("room_area1");
+      room_goto_next();
     }
   }
 
@@ -1359,7 +1404,8 @@ function scr_namingscreen() {
 
   if (this.naming === 3)
   {
-      if (this.hasname == 1)
+      const iniread = ossafe_ini_open("undertale.ini");
+      if (ini_section_exists("General") && this.hasname == 1)
       {
           this.minutes = floor(this.time / 1800);
           this.seconds = round(((this.time / 1800) - this.minutes) * 60);
@@ -1373,9 +1419,9 @@ function scr_namingscreen() {
           var roomname = scr_roomname(this.roome);
           var lvtext = scr_gettext("save_menu_lv", string(this.love));
           var timetext = scr_gettext("save_menu_time", string(this.minutes), string(this.seconds));
-          var namesize = string_length(substr(this.name, 1, 6));
-          var lvsize = lvtext.length;
-          var timesize = timetext.length;
+          var namesize = string_width(substr(this.name, 1, 6));
+          var lvsize = string_width(lvtext);
+          var timesize = string_width(timetext);
           var x_center = 160;
           var lvpos = round((x_center + (namesize / 2)) - (timesize / 2) - (lvsize / 2));
           var namepos = 70;
@@ -1451,7 +1497,7 @@ function scr_namingscreen() {
           {
               caster_free("all");
               
-              if (file_exists("file0") === 0)
+              if (file_exists("file0") === false)
                   room_goto("room_area1");
               else
                   script_execute.call(this, scr_load);
@@ -1484,14 +1530,23 @@ function scr_namingscreen() {
       else
       {
           draw_set_color(c_ltgray);
-          draw_text(85, 20, "--- Instruction ---"); //  --- Instruction ---
-          draw_text(85, 50, "[Z or ENTER] - Confirm"); // Confirm
-          draw_text(85, 70, "[X or SHIFT] - Cancel"); // Cancel
-          draw_text(85, 90, "[C or CTRL] - Menu (In-game)"); // Menu (In-game)
-          draw_text(85, 110, "[F4] - Fullscreen");
-          draw_text(85, 130, "[Hold ESC] - Quit");
-          draw_text(86, 150, "When HP is 0, you lose."); // When HP is 0, you lose.
-          
+          draw_text(85, 20, scr_gettext("instructions_title")); //  --- Instruction ---
+
+          let lines = [];
+          lines[0] = "confirm";
+          lines[1] = "cancel";
+          lines[2] = "menu";
+          lines[3] = "fullscreen";
+          lines[4] = "quit";
+          let num_lines = lines.length;
+
+          for (let i = 0; i < num_lines; i++) {
+            let key = scr_gettext("instructions_" + lines[i] + "_key");
+            let label = scr_gettext("instructions_" + lines[i] + "_label");
+            draw_text(85, 50 + (i * 18), key + " - " + label);
+          }
+
+          draw_text(85, 140, scr_gettext("instructions_hp0"));
           
           var xx = 85;
           
@@ -1758,8 +1813,8 @@ function scr_roomname(argument0) {
 
   let roomid = room_get_name(argument0);
 
-  if (substr(roomid, 1, 5) === "room_") {
-    let roomname = scr_gettext("roomname" + substr(roomid, 6));
+  if (roomid.slice(0, 5) === "room_") {
+    let roomname = scr_gettext("roomname_" + roomid.slice(5));
     if (roomname !== "") {
       return roomname;
     }
@@ -2275,13 +2330,237 @@ function scr_murderlv() {
   if (mrd == 15 && global.flag[425] == 1 && global.flag[27] == 0)
     mrd = 16;
 
-  let murderboy = mrd;
+  this.murderboy = mrd;
 
   if (global.flag[26] > 0) {
     mrd = global.flag[26];
   }
 
   return mrd;
+}
+
+function ossafe_ini_open(argument0) {
+  ini_open(argument0)
+}
+
+function ossafe_ini_close(argument0) {
+  ini_close(argument0)
+}
+
+function ossafe_file_text_open_read(argument0) {
+  return file_text_open_read(argument0)
+}
+
+function ossafe_file_text_open_write(argument0) {
+  return file_text_open_write(argument0)
+}
+
+function ossafe_file_text_write_real(argument0, argument1) {
+  return file_text_write_real(argument0, argument1)
+}
+
+function ossafe_file_text_write_string(argument0, argument1) {
+  return file_text_write_string(argument0, argument1)
+}
+
+function ossafe_file_text_writeln(argument0) {
+  return file_text_writeln(argument0)
+}
+
+function ossafe_file_text_read_real(argument0, argument1) {
+  return file_text_read_real(argument0, argument1)
+}
+
+function ossafe_file_text_read_string(argument0, argument1) {
+  return file_text_read_string(argument0, argument1)
+}
+
+function ossafe_file_text_readln(argument0) {
+  return file_text_readln(argument0)
+}
+
+function ossafe_file_text_close(argument0) {
+  file_text_close(argument0)
+}
+
+function scr_save() {
+  script_execute.call(this, scr_saveprocess);
+  let filechoicebk2 = global.filechoice;
+  global.filechoice = 9;
+  script_execute.call(this, scr_saveprocess);
+  global.filechoice = filechoicebk2
+  let iniwrite = ossafe_ini_open("undertale.ini");
+  ini_write_string("General", "Name", global.charname);
+  ini_write_real("General", "Love", global.lv);
+  ini_write_real("General", "Time", global.time);
+  ini_write_real("General", "Kills", global.kills);
+  ini_write_real("General", "Room", rooms.indexOf(`${window.location.href.slice(35, 39)}_${window.location.href.slice(40).split("/")[0]}`));
+  ossafe_ini_close();
+}
+
+function scr_saveprocess() {
+  global.lastsavedkills = global.kills;
+  global.lastsavedtime = global.time;
+  global.lastsavedlv = global.lv;
+  const file = "file" + string(global.filechoice);
+  const myfileid = ossafe_file_text_open_write(file);
+  ossafe_file_text_write_string(myfileid, global.charname);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.lv);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.maxhp);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.maxen);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.at);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.wstrength);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.df);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.adef);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.sp);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.xp);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.gold);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.kills);
+  ossafe_file_text_writeln(myfileid);
+  for (let i = 0; i < 8; i++) {
+    ossafe_file_text_write_real(myfileid, global.item[i]);
+    ossafe_file_text_writeln(myfileid);
+    ossafe_file_text_write_real(myfileid, global.phone[i]);
+    ossafe_file_text_writeln(myfileid);
+  }
+  ossafe_file_text_write_real(myfileid, global.weapon);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.armor);
+  ossafe_file_text_writeln(myfileid);
+  for (let i = 0; i < 512; i += 1) {
+    ossafe_file_text_write_real(myfileid, global.flag[i]);
+    ossafe_file_text_writeln(myfileid);
+  }
+  ossafe_file_text_write_real(myfileid, global.plot);
+  ossafe_file_text_writeln(myfileid);
+  for (let i = 0; i < 3; i += 1) {
+    ossafe_file_text_write_real(myfileid, global.menuchoice[i]);
+    ossafe_file_text_writeln(myfileid);
+  }
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.currentroom);
+  ossafe_file_text_writeln(myfileid);
+  ossafe_file_text_write_real(myfileid, global.time);
+  ossafe_file_text_close(myfileid);
+}
+
+function scr_load() {
+  const filechoicebk = global.filechoice;
+  global.room_persistent = "";
+  global.filechoice = filechoicebk;
+  const file = "file" + string(global.filechoice);
+  const myfileid = ossafe_file_text_open_read(file);
+  global.charname =  ossafe_file_text_read_string(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.lv = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.maxhp = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.maxen = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.at = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.wstrength = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.df = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.adef = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.sp = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.xp = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.gold = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.kills = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  for (let i = 0; i < 8; i++) {
+    global.item[i] = ossafe_file_text_read_real(myfileid);
+    ossafe_file_text_readln(myfileid);
+    global.phone[i] = ossafe_file_text_read_real(myfileid);
+    ossafe_file_text_readln(myfileid);
+  }
+  global.weapon = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.armor = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  for (let i = 0; i < 512; i ++) {
+    global.flag[i] = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  }
+  global.plot = ossafe_file_text_read_real(myfileid);
+  ossafe_file_text_readln(myfileid);
+  for (let i = 0; i < 3; i++) {
+    global.menuchoice[i] = ossafe_file_text_read_real(myfileid);
+    ossafe_file_text_readln(myfileid);
+  }
+  global.flag[94] = 0;
+  global.currentsong = ossafe_file_text_open_read(myfileid);
+  ossafe_file_text_readln(myfileid);
+  global.currentroom = room_get_name(ossafe_file_text_read_real(myfileid));
+  ossafe_file_text_readln(myfileid);
+  global.time =  ossafe_file_text_read_real(myfileid);
+  global.lastsavedkills = global.kills;
+  global.lastsavedtime = global.time;
+  global.lastsavedlv = global.lv;
+  ossafe_file_text_close(myfileid);
+  global.hp = global.maxhp;
+  global.en = global.maxen;
+  script_execute.call(this, scr_tempsave);
+  if (rooms.indexOf(global.currentroom) < 75) {
+    global.area = 0;
+  } else {
+    global.area = 1;
+  }
+
+  global.flag[360] = 0;
+  global.flag[361] = 0;
+  global.flag[362] = 0;
+  global.flag[363] = 0;
+  global.flag[364] = 0;
+  scr_dogcheck.call(this);
+  if (this.dogcheck == 1) {
+    room_goto(global.currentroom)
+  }
+}
+
+function scr_dogcheck() {
+  this.dogcheck = 1;
+
+  if (rooms.indexOf(global.currentroom) < 4) {
+    this.dogcheck = 0;
+  }
+
+  if (rooms.indexOf(global.currentroom) > 265) {
+    this.dogcheck = 0;
+  }
+
+  if (global.currentroom === "room_castle_exit" || global.currentroom === "room_outsideworld" || global.currentroom === "room_undertale_end" || global.currentroom === "room_tundra_sansroom" || global.currentroom === "room_tundra_sansroom_dark" || global.currentroom === "room_tundra_basement") {
+    console.log("you shouldnt spawn here");
+    this.dogcheck = 0;
+  }
+
+  if (this.dogcheck === 0) {
+    room_goto("room_dogcheck");
+  }
+}
+
+function scr_tempsave() {
+  const filechoicebk2 = global.filechoice;
+  global.filechoice = 9;
+  script_execute.call(this, scr_saveprocess);
+  global.filechoice = filechoicebk2;
 }
 
 export {
@@ -2328,4 +2607,20 @@ export {
   scr_gameoverb,
   scr_depth,
   scr_murderlv,
+  ossafe_ini_open,
+  ossafe_ini_close,
+  ossafe_file_text_open_read,
+  ossafe_file_text_open_write,
+  ossafe_file_text_write_string,
+  ossafe_file_text_writeln,
+  ossafe_file_text_write_real,
+  ossafe_file_text_read_string,
+  ossafe_file_text_readln,
+  ossafe_file_text_read_real,
+  ossafe_file_text_close,
+  scr_save,
+  scr_saveprocess,
+  scr_load,
+  scr_tempsave,
+  scr_dogcheck,
 };

@@ -1,11 +1,10 @@
-import { draw_sprite_ext, getBoundingBox, instance_exists, instance_find, instance_destroy, collision_rectangle, _with, path_start } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, instance_find, instance_create, instance_destroy, collision_rectangle, _with, path_start } from "/imports/assets/gamemakerFunctions.js";
 import { scr_depth, scr_npcdir } from "/imports/customFunctions.js";
 import { c_white, path_torielwalk1 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
 import * as obj_toribuster from "/obj/toribuster/index.js";
-import * as obj_torface from "/obj/torface/index.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
+import * as obj_mainchara from "/obj/mainchara/index.js";
 
 import * as parent from "/obj/toroverworld1/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -15,7 +14,7 @@ function create() {
   // create code
 
   const self = {
-    name: "toroverworld1", // sprite name
+    name: "toroverworld2", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -50,23 +49,33 @@ function create() {
     rtsprite: "spr_toriel_rt",
     myinteract: 0,
     facing: 3,
-    phone: 0,
-    fader: 0,
-    fading: 0,
+    conversation: 0,
+    t: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
+    updateCol,
+    followPath,
     roomStart,
     step,
-    updateCol,
+    alarm5,
   };
   
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
   self._direction = 270;
+  self._path = {
+    data: {},
+    index: 1,
+    speed: 0,
+    endaction: "",
+    absolute: false,
+    xOffset: 0,
+    yOffset: 0,
+  }
 
   Object.defineProperty(self, "hspeed", {
     get() {
@@ -108,6 +117,33 @@ function create() {
     },
   });
 
+  Object.defineProperty(self, "path_index", {
+    get() {
+      return this._path.data;
+    },
+    set(val) {
+      this._path.data = val;
+    }
+  })
+
+  Object.defineProperty(self, "path_speed", {
+    get() {
+      return this._path.speed;
+    },
+    set(val) {
+      this._path.speed = val;
+    }
+  })
+
+  Object.defineProperty(self, "path_endaction", {
+    get() {
+      return this._path.endaction;
+    },
+    set(val) {
+      this._path.endaction = val;
+    }
+  })
+
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
     this._hspeed = Math.cos(rad) * this._speed;
@@ -147,6 +183,8 @@ function updateGamemakerFunctions() {
   }
 
   getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
+
+  this.updateCol();
 
 	this.previousx = this.x;
 	this.xprevious = this.x;
@@ -196,6 +234,58 @@ function updateSprite() {
   }
 }
 
+function followPath() {
+  const pathState = this._path;
+  if (!pathState) return;
+
+  const points = pathState.data.points;
+  const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
+
+  let currKey = pathState.index;
+  let nextKeyIndex = keys.indexOf(currKey) + 1;
+
+  if (nextKeyIndex >= keys.length) {
+    if (pathState.data.closed) {
+      nextKeyIndex = 0;
+    } else {
+      switch (pathState.endaction) {
+        case "path_action_stop":
+          this.x = points[currKey].x;
+          this.y = points[currKey].y;
+          this.speed = 0;
+          return;
+        case "path_action_loop":
+          pathState.index = keys[0];
+          nextKeyIndex = 1;
+          break;
+        case "path_action_loop":
+          keys.reverse(); // optional improvement later
+          pathState.index = keys[0];
+          nextKeyIndex = 1;
+          break;
+        default:
+          return;
+      }
+    }
+  }
+  const next = points[keys[nextKeyIndex]];
+
+  const dx = next.x - this.x;
+  const dy = next.y - this.y;
+  const dist = Math.hypot(dx, dy);
+
+  if (dist <= pathState.speed) {
+    // Snap to next point
+    this.x = next.x;
+    this.y = next.y;
+    pathState.index = keys[nextKeyIndex];
+  } else {
+    // Move toward next point
+    this.x += (dx / dist) * pathState.speed;
+    this.y += (dy / dist) * pathState.speed;
+  }
+}
+
 function roomStart() {
   scr_depth.call(this, 0, 0, 0, 0, 0)
 
@@ -209,47 +299,50 @@ function roomStart() {
 function step() {
   scr_depth.call(this, 0, 0, 0, 0, 0);
 
-  if (instance_exists(obj_torface)) {
-    this.myinteract = 1;
-    if (instance_exists(OBJ_WRITER)) {
-      if (instance_find(OBJ_WRITER, 0).halt !== 0) {
-        this.image_speed = 0.2
-      }
+  const mainchara = instance_find(obj_mainchara, 0);
+
+  if (mainchara.y > (this.y + 80)) {
+    if (this.t === 0) {
+      this.alarm[5] = 30;
+      this.t = 1;
     }
   } else {
-    this.myinteract = 0;
-    if (this.speed === 0) {
-      this.image_index = 0;
-      this.image_speed = 0;
+    this.alarm[5] = 24;
+    this.path_speed = 2;
+    
+    if (mainchara.y < (this.y + 65)) {
+      this.path_speed = 3;
     }
 
-    if (this.speed > 0) {
-      this.image_speed = 0.2;
+    if (mainchara.y < (this.y + 50)) {
+      this.path_speed = 4;
     }
+
+    this.image_speed = 0.2;
   }
 
-  scr_npcdir.call(this, 0);
+  scr_npcdir.call(this, 0)
+}
 
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/area1_2/" && this.y < 140) {
-    this.fader = 1;
-  }
+function alarm5() {
+  const mainchara = instance_find(obj_mainchara, 0);
 
-  if (this.fader === 1) {
-    this.image_alpha -= 0.2;
-
-    if (this.image_alpha <= 0.2) {
-      instance_destroy(this)
-    }
+  if (mainchara.y > (this.y + 80)) {
+    this.path_speed = 0;
+    this.direction = 270;
+    this.image_speed = 0;
+    this.image_index = 0;
+    this.t = 0;
   }
 }
 
 function updateCol() {
   let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_toribuster, false, false)
   if (other) {
-    _with (this._object, function() {
-      instance_destroy(this);
-    })
+    global.plot = 2;
+    instance_create(147, 440, "obj_stalkerflowey");
+    instance_destroy(this);
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, step, updateCol };
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, parent, roomStart, step, alarm5, updateCol };
