@@ -321,6 +321,8 @@ function draw() {
 					global.language = "en";
 				}
 			}
+
+			this.menu_engage = 0;
 		}
 
 		if (this.menu === 0 && this.menu_engage === 1) {
@@ -334,6 +336,7 @@ function draw() {
 			ini_open("options.ini");
 			ini_export();
 			ini_close();
+			this.menu_engage = 0;
 		}
 
 		if (this.menu === 2 && this.menu_engage === 1) {
@@ -357,7 +360,8 @@ function draw() {
 
 		if (this.menu === 5 && this.menu_engage === 1) {
 			file_text_export("file0");
-			file_text_export("file9")
+			file_text_export("file9");
+			this.menu_engage = 0;
 		}
 		
 		if (this.menu === 4 && this.menu_engage === 1) {

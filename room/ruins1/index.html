@@ -26,12 +26,14 @@
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
 		import global from "/imports/assets/global.js"
     import * as obj_solidtall from '/obj/solidtall/index.js'
+    import * as obj_solidlong from '/obj/solidlong/index.js'
     import * as obj_sur from '/obj/sur/index.js'
     import * as obj_sul from '/obj/sul/index.js'
     import * as obj_solidtall_2 from '/obj/solidtall_2/index.js'
+    import * as obj_solidsmall from '/obj/solidsmall/index.js'
     import * as obj_mainchara from '/obj/mainchara/index.js'
-    import * as obj_sdr from '/obj/sur/index.js'
-    import * as obj_sdl from '/obj/sul/index.js'
+    import * as obj_sdr from '/obj/sdr/index.js'
+    import * as obj_sdl from '/obj/sdl/index.js'
     import * as obj_ruinsmusic from '/obj/ruinsmusic/index.js'
     import * as obj_doorBmusicfade from '/obj/doorBmusicfade/index.js'
     import * as obj_markerA from '/obj/markerA/index.js'
@@ -48,11 +50,60 @@
     loadCurrentSong("currentsong")
     loadCurrentSong("currentsong2")
 
+    instance_create(20, 0, obj_solidtall);
+    instance_create(280, 0, obj_solidtall);
+    instance_create(100, 180, obj_sur);
+    instance_create(80, 160, obj_sur);
+    instance_create(200, 180, obj_sul);
+    instance_create(220, 160, obj_sul);
+    instance_create(40, 120, obj_sul);
+    instance_create(260, 120, obj_sur);
+    instance_create(40, 220, obj_solidtall_2);
+    instance_create(40, 260, obj_solidtall_2);
+    instance_create(40, 300, obj_solidtall_2);
+    instance_create(260, 220, obj_solidtall_2);
+    instance_create(260, 260, obj_solidtall_2);
+    instance_create(260, 300, obj_solidtall_2);
+    instance_create(40, 340, obj_solidtall_2);
+    instance_create(40, 380, obj_solidtall_2);
+    instance_create(260, 340, obj_solidtall_2);
+    instance_create(260, 380, obj_solidtall_2);
+    instance_create(200, 140, obj_solidsmall);
+    instance_create(180, 140, obj_solidsmall);
+    instance_create(160, 140, obj_solidsmall);
+    instance_create(140, 140, obj_solidsmall);
+    instance_create(120, 140, obj_solidsmall);
+    instance_create(100, 140, obj_solidsmall);
+    instance_create(260, 180, obj_sdr);
+    instance_create(60, 400, obj_sdl);
+    instance_create(240, 400, obj_sdr);
+    instance_create(80, 420, obj_solidsmall);
+    instance_create(100, 420, obj_solidsmall);
+    instance_create(120, 440, obj_solidsmall);
+    instance_create(180, 440, obj_solidsmall);
+    instance_create(100, 160, obj_solidsmall);
+    instance_create(200, 160, obj_solidsmall);
+    instance_create(120, 420, obj_sdl);
+    instance_create(180, 420, obj_sdr);
+    instance_create(80, 140, obj_solidsmall);
+    instance_create(220, 140, obj_solidsmall);
+    instance_create(120, 180, obj_solidsmall);
+    instance_create(180, 180, obj_solidsmall);
+    instance_create(120, 160, obj_solidsmall);
+    instance_create(180, 160, obj_solidsmall);
+    instance_create(60, 220, obj_solidsmall);
+    instance_create(40, 180, obj_sdl);
+    instance_create(60, 200, obj_sdl);
+    instance_create(240, 200, obj_sdr);
+    instance_create(240, 220, obj_solidsmall);
+    instance_create(200, 420, obj_solidlong);
+    instance_create(0, 100, obj_solidlong);
+    instance_create(0, 460, obj_solidlong);
     instance_create(22, 194, obj_ruinsmusic);
     instance_create(140, 451, obj_doorBmusicfade);
     instance_create(160, 451, obj_doorBmusicfade);
-    instance_create(150, 420, obj_markerA);
-    instance_create(150, 110, obj_markerB);
+    instance_create(160, 420, obj_markerA);
+    instance_create(150, 112, obj_markerB);
     instance_create(142, 320, obj_toroverworld2);
     instance_create(140, 100, obj_doorA);
     instance_create(160, 100, obj_doorA);

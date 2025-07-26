@@ -19,12 +19,12 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
     image_number: 0, // sprite frame number
-    sprite_width: 0, // set to sprite_index's width
-    sprite_height: 0, // set to sprite_index's height
+    sprite_width: 20, // set to sprite_index's width
+    sprite_height: 40, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
     sprite_index: "spr_solidtall_2", // sprite object
-    visible: true, // sprite visibility
+    visible: false, // sprite visibility
     friction: 0,
     gravity: 0,
     gravity_direction: 270, // gravity direction
@@ -33,6 +33,7 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
+    phase: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,

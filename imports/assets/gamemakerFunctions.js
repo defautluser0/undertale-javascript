@@ -6,13 +6,13 @@ import global from "/imports/assets/global.js";
 let ini_filename = null;
 let ini_data = {};
 let ini_loaded = false;
-let text_data = new Array(32).fill({name: null, data: ""});
-let text_loaded = new Array(32).fill({name: null, loaded: false});
-let text_read = new Array(32).fill({name: null});
-let text_write = new Array(32).fill({name: null});
-let text_total = new Array(32).fill({name: null});
-let text_read_line = new Array(32).fill({name: null, line: 0});
-let text_write_line = new Array(32).fill({name: null, line: 0});
+let text_data = Array(32).fill().map(() => ({ name: null, data: "" }));
+let text_loaded = Array(32).fill().map(() => ({ name: null, loaded: false }));
+let text_read = Array(32).fill().map(() => ({ name: null }));
+let text_write = Array(32).fill().map(() => ({ name: null }));
+let text_total = Array(32).fill().map(() => ({ name: null }));
+let text_read_line = Array(32).fill().map(() => ({ name: null, line: 0 }));
+let text_write_line = Array(32).fill().map(() => ({ name: null, line: 0 }));
 const __ds_map_store = {};
 let __ds_map_next_id = 0;
 
@@ -1762,10 +1762,18 @@ function file_text_open_read(fname) {
   let file = null;
   let fileData = null;
   for (let i = 0; i < text_read.length; i++) {
-    if (text_read[i].name === null && text_data[i].name === null || text_read[i].name === fname || text_data[i].name === fname) {
+    if (text_total[31].name !== null) {
+      break;
+    }
+    if (text_read[i].name === null && text_data[i].name === null || text_read[i].name === fname && text_data[i].name === fname) {
+      text_read[i].name = fname;
+      text_data[i].name = fname;
       file = text_read[i];
       fileData = text_data[i];
       text_read_line[i].name = fname;
+      text_read_line[i].line = 0;
+      text_loaded[i].loaded = true;
+      text_loaded[i].name = fname;
       break;
     }
   }
@@ -1782,11 +1790,19 @@ function file_text_open_read(fname) {
 function file_text_open_write(fname) {
   let file = null;
   let fileData = null;
-  for (let i = 0; i < text_write.length; i++) {
+  for (let i = 0; i < text_read.length; i++) {
+    if (text_total[31].name !== null) {
+      break;
+    }
     if (text_write[i].name === null && text_data[i].name === null || text_write[i].name === fname && text_data[i].name === fname) {
+      text_write[i].name = fname;
+      text_data[i].name = fname;
       file = text_write[i];
       fileData = text_data[i];
       text_write_line[i].name = fname;
+      text_write_line[i].line = 0;
+      text_loaded[i].loaded = true;
+      text_loaded[i].name = fname;
       break;
     }
   }
@@ -1816,7 +1832,12 @@ function file_text_read_string(fileid) {
   let fileLine = 0;
   let str = "";
   for (let i = 0; i < text_read.length; i++) {
-    if (text_read[i] === fileid) {file = text_read[i];fileData = text_data[i];fileLine = text_read_line[i].line;};
+    if (text_read[i] === fileid) {
+      file = text_read[i];
+      fileData = text_data[i];
+      fileLine = text_read_line[i].line;
+      break;
+    };
   }
 
   if (!file || !fileData) return;
@@ -1838,7 +1859,6 @@ function file_text_read_string(fileid) {
       }
     }
   }
-
   return str;
 }
 
@@ -1855,7 +1875,13 @@ function file_text_readln(fileid) {
   let index = 0;
   let str = "";
   for (let i = 0; i < text_read.length; i++) {
-    if (text_read[i] === fileid) {file = text_read[i];fileData = text_data[i];fileLine = text_read_line[i].line;index=i;};
+    if (text_read[i] === fileid) {
+      file = text_read[i];
+      fileData = text_data[i];
+      fileLine = text_read_line[i].line;
+      index=i;
+      break;
+    };
   }
 
   if (!file || !fileData) return;
@@ -1885,22 +1911,73 @@ function file_text_readln(fileid) {
 }
 
 function file_text_write_real(fileid, val) {
-  return parseInt(file_text_write_string(fileid, val)) || 0;
+  file_text_write_string(fileid, string(val))
 }
 
 function file_text_write_string(fileid, str) {
-  if (typeof fileid !== "object") return;
-  // TODO
+  if (typeof fileid !== "object") return undefined;
+  
+  let fileData = null
+  let fileLine = 0;
+  for (let i = 0; i < text_write.length; i++) {
+    if (text_write[i]  === fileid) {
+      fileData = text_data[i];
+      fileLine = text_write_line[i].line;
+      break;
+    }
+  }
+
+  if (!fileData) return;
+
+  let lines = fileData.data ? fileData.data.split("\r\n") : [];
+
+  while (lines.length <= fileLine) lines.push("");
+
+  lines[fileLine] = str;
+
+  fileData.data = lines.join("\r\n");
 }
+
 
 function file_text_writeln(fileid) {
   if (typeof fileid !== "object") return;
-  // TODO
+  
+  for (let i = 0; i < text_write.length; i++) {
+    if (text_write[i] === fileid) {
+      text_write_line[i].line++;
+      break;
+    }
+  }
 }
 
 function file_text_close(fileid) {
-  if (typeof fileid !== "object") return;
-  // TODO
+  if (typeof fileid !== "object" || fileid === null) return;
+  let fileData = null;
+  let index = 0;
+  for (let i = 0; i < text_total.length; i++) {
+    if (text_read[i] == fileid || text_write[i] == fileid) {
+      fileData = text_data[i];
+      text_read_line[i].name = null;
+      text_write_line[i].name = null;
+      text_read_line[i].line = 0;
+      text_write_line[i].line = 0;
+      text_loaded[i].loaded = false;
+      text_loaded[i].name = null;
+      index = i;
+      break;
+    }
+    if (text_total[i].name === fileid.name) {
+      text_total[i].name = null;
+    }
+  }
+
+  if (!fileData) {console.error("file", fileid.name, "not opened"); return;}
+  localStorage.setItem(fileid.name, fileData.data);
+  
+  text_read[index].name = null;
+  text_write[index].name = null;
+  text_data[index].name = null;
+  text_data[index].data = "";
 }
 
 function file_text_import(data, filename) {
