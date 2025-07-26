@@ -1890,14 +1890,17 @@ function file_text_write_real(fileid, val) {
 
 function file_text_write_string(fileid, str) {
   if (typeof fileid !== "object") return;
+  // TODO
 }
 
 function file_text_writeln(fileid) {
   if (typeof fileid !== "object") return;
+  // TODO
 }
 
 function file_text_close(fileid) {
   if (typeof fileid !== "object") return;
+  // TODO
 }
 
 function file_text_import(data, filename) {
