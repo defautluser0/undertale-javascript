@@ -47,6 +47,7 @@ import {
   ini_section_exists,
   string_width,
   room_goto_next,
+  room_next,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -1498,7 +1499,9 @@ function scr_namingscreen() {
               caster_free("all");
               
               if (file_exists("file0") === false)
+              {
                   room_goto("room_area1");
+              }
               else
                   script_execute.call(this, scr_load);
           }
