@@ -1780,7 +1780,7 @@ function string(value_or_format, ...replacements) {
  * @returns {string}
  */
 function room_get_name(index) {
-  return rooms[index-1] ?? "";
+  return rooms[index] ?? "";
 }
 
 /**

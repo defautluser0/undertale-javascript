@@ -2397,7 +2397,7 @@ function scr_save() {
   ini_write_real("General", "Love", global.lv);
   ini_write_real("General", "Time", global.time);
   ini_write_real("General", "Kills", global.kills);
-  ini_write_real("General", "Room", rooms.indexOf(`${window.location.href.slice(35, 39)}_${window.location.href.slice(40).split("/")[0]}`)+1);
+  ini_write_real("General", "Room", rooms.indexOf(`${window.location.href.slice(35, 39)}_${window.location.href.slice(40).split("/")[0]}`));
   ossafe_ini_close();
 }
 
@@ -2453,7 +2453,7 @@ function scr_saveprocess() {
   }
   ossafe_file_text_write_real(myfileid, -1);
   ossafe_file_text_writeln(myfileid);
-  ossafe_file_text_write_real(myfileid, rooms.indexOf(global.currentroom) + 1);
+  ossafe_file_text_write_real(myfileid, rooms.indexOf(global.currentroom));
   ossafe_file_text_writeln(myfileid);
   ossafe_file_text_write_real(myfileid, global.time);
   ossafe_file_text_close(myfileid);
