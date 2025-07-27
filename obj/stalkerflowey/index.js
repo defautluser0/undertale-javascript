@@ -1,9 +1,10 @@
-import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, script_execute, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
+import { scr_onscreen, scr_depth } from "/imports/customFunctions.js";
+import global from "/imports/assets/global.js";
 
-import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
-                                                              // to this fake object
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -11,7 +12,7 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
+    name: "stalkerflowey", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -23,7 +24,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_floweysink", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -40,6 +41,9 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
+    alarm0,
+    step,
+    animationEnd,
   };
   
   self._hspeed = 0;
@@ -297,7 +301,7 @@ function followPath() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
+  // let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   if (other) {
     // collision updates with an object here. other
     // is the colliding instance, so use 
@@ -310,4 +314,25 @@ function updateCol() {
   // and do another if (other) {} to run scripts.
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent };
+function alarm0() {
+  this.image_speed = 0.5;
+}
+
+function step() {
+  scr_depth.call(this, 0, 0, 0, 0, 0);
+  script_execute.call(this, scr_onscreen, 37, 18);
+
+  if (this.onscreen == 1) {
+    if (this.alarm[0] == -1) {
+      this.alarm[0] = 1;
+    }
+  }
+
+}
+
+function animationEnd() {
+  global.flag[9] += 1;
+  instance_destroy(this);
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, alarm0, step, animationEnd };

@@ -5,6 +5,7 @@ import global from "/imports/assets/global.js";
 
 import * as obj_toribuster from "/obj/toribuster/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js";
+import * as obj_stalkerflowey from "/obj/stalkerflowey/index.js"
 
 import * as parent from "/obj/toroverworld1/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -374,7 +375,7 @@ function updateCol() {
   let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_toribuster, false, false)
   if (other) {
     global.plot = 2;
-    instance_create(147, 440, "obj_stalkerflowey");
+    instance_create(147, 440, obj_stalkerflowey);
     instance_destroy(this);
   }
 }

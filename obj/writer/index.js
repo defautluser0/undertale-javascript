@@ -1,8 +1,8 @@
 import { SCR_TEXTTYPE, snd_play, scr_replace_buttons_pc, snd_stop, scr_setfont, SCR_NEWLINE } from '/imports/customFunctions.js';
 import { control_check_pressed, control_clear } from '/imports/input.js'
 import { string_char_at, floor, random, round, draw_set_color, surface_get_width,	draw_text_transformed, script_execute, real, instance_destroy, ord } from "/imports/assets/gamemakerFunctions.js"
-import { view_wview, view_current } from '/imports/view.js'
-import { fnt_comicsans, fnt_papyrus, fnt_main } from '/imports/assets.js'
+import { final_view_wview, view_current, final_view_xview } from '/imports/view.js'
+import { fnt_comicsans, fnt_papyrus, fnt_main, snd_phone } from '/imports/assets.js'
 import { SCR_TEXT } from "/imports/assets/text.js"
 import global from '/imports/assets/global.js';
 
@@ -55,15 +55,17 @@ function create() {
 }
 
 function updateAlarms() {
-  for (let i = 0; i < this.alarm.length; i++) {
-    if (this.alarm[i] > 0) {
-      this.alarm[i]--;
-      if (this.alarm[i] === 0) {
-        const handler = this[`alarm${i}`];
-        if (typeof handler === "function") handler.call(this); // call with instance context
-      }
-    }
-  }
+	for (let i = 0; i < this.alarm.length; i++) {
+		if (this.alarm[i] > 0) {
+			this.alarm[i]--;
+			if (this.alarm[i] === 0) {
+				const handler = this[`alarm${i}`];
+				if (typeof handler === "function") handler.call(this); // call with instance context
+			}
+		} else if (this.alarm[i] === 0) {
+			this.alarm[i]--;
+		}
+	}
 }
 
 function alarm0() {
@@ -127,7 +129,7 @@ function alarm0() {
 						sfx = -4;
 						
 						if (sfxtype == "p") {
-								sfx = 105;
+								sfx = snd_phone;
 						}
 						
 						if (sfx != -4) {
@@ -283,7 +285,7 @@ function alarm0() {
     } else {
         this.ch = string_char_at(this.originalstring, this.stringpos);
         
-        if (this.ch !== " " && this.ch !== "　" && this.ch !== "%" && this.ch !== "&")
+        if (this.ch !== " " && this.ch !== "　")
         {
 					snd_stop(this.txtsound);
 					snd_play(this.txtsound);
@@ -504,7 +506,7 @@ function parent_draw() {
 								global.typer = 76;
 						
 						SCR_TEXTTYPE(global.typer);
-						global.facethis.change = 1;
+						global.facechange = 1;
 					}
 			}
 			else if (this.ch == "z")
@@ -615,10 +617,10 @@ function parent_draw() {
 								myx += 11;
 				}
 				
-				if (view_wview[view_current] == 640)
+				if (final_view_wview[view_current] == 640)
 						myx *= 2;
 				
-				myx += view_xview[view_current];
+				myx += final_view_xview[view_current];
 			}
 		}
 		else if (this.ch == "&")
@@ -803,7 +805,7 @@ function parent_draw() {
 						offsety = 0;
 				}
 				
-				var display_scale = surface_get_width("application_surface") / view_wview[view_current];
+				var display_scale = surface_get_width("application_surface") / final_view_wview[view_current];
 				var finalx = round((letterx + offsetx) * display_scale) / display_scale;
 				var finaly = round((myy + offsety) * display_scale) / display_scale;
 				draw_text_transformed(finalx, finaly, this.myletter, this.htextscale * halfscale, this.vtextscale * halfscale, angle);

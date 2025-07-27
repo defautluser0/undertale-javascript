@@ -16,6 +16,7 @@ function create() {
 		visible: false,
 		x: 0,
 		y: 0,
+		depth: -1,
 
 		h: 10,
 		go: 0,
@@ -32,11 +33,11 @@ function create() {
 function draw() {
 	draw_sprite_part(this.sprite_index, this.image_index, 0, this.sprite_height - (this.h + 100), 320, this.sprite_height - this.h, 0, 30);
 
-	if (this.go  === 1) {
+	if (this.go === 1) {
 		this.h += 1;
 	}
 
-	if (this.h > 220) {
+	if (this.h > 240) {
 		this.h -= 1;
 	}
 }

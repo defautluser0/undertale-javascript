@@ -145,6 +145,9 @@ const snd_txtpap = new Howl({
 const snd_ehurt1 = new Howl({
   src: ["/imports/assets/snd/ehurt1.wav"]
 })
+const snd_phone = new Howl({
+  src: ["/imports/assets/snd/phone.wav"]
+})
 
 // currently playing sounds map
 const playingSounds = new Map();
@@ -198,5 +201,6 @@ export {
   snd_txtsans2,
   snd_txtpap,
   snd_ehurt1,
+  snd_phone,
   playingSounds,
 };

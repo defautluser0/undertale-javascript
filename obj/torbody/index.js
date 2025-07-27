@@ -185,8 +185,6 @@ function step() {
 
 function roomStart() {
   const torface = instance_find(obj_torface, 0);
-  console.log(torface);
-  console.log(torface.x + ((torface.sprite_width / 2) - (this.sprite_width / 2)), torface.x, torface.sprite_width, this.sprite_width)
   this.x = torface.x + ((torface.sprite_width / 2) - (this.sprite_width / 2))
   this.y = torface.y + 27;
 	parent.create.call(this);

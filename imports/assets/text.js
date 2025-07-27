@@ -29510,7 +29510,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_introimage_84",
-    " ^9 ^9 ^9 ^9 ^9 ^9 \\E0 %"
+    " ^9 ^9 ^9 ^9 ^9 ^9 \\E0 %%"
   );
   ds_map_add(global.text_data_en, "obj_introimage_85", " %%");
   ds_map_add(

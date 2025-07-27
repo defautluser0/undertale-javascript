@@ -76,9 +76,26 @@ import {
   c_yellow,
   mus_cymbal,
 } from "/imports/assets.js";
-import { vk_down, vk_up, vk_right, vk_left, control_check_pressed, control_clear } from "/imports/input.js"
+import {
+  vk_down,
+  vk_up,
+  vk_right,
+  vk_left,
+  control_check_pressed,
+  control_clear,
+} from "/imports/input.js";
 import global from "/imports/assets/global.js";
-import { view_xview, view_current, view_wview } from "/imports/view.js"
+import {
+  view_xview,
+  view_current,
+  view_wview,
+  view_hview,
+  view_yview,
+  final_view_xview,
+  final_view_wview,
+  final_view_hview,
+  final_view_yview,
+} from "/imports/view.js";
 import { rooms } from "/imports/assets/rooms.js";
 
 import * as obj_whitefader from "/obj/whitefader/index.js";
@@ -94,7 +111,7 @@ import * as obj_face_asgore from "/obj/face_asgore/index.js";
 import * as obj_face_mettaton from "/obj/face_mettaton/index.js";
 import * as obj_face_asriel from "/obj/face_asriel/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
-import * as obj_fakeheart from "/obj/fakeheart/index.js"
+import * as obj_fakeheart from "/obj/fakeheart/index.js";
 
 function scr_replace_buttons_pc(str) {
   try {
@@ -104,7 +121,7 @@ function scr_replace_buttons_pc(str) {
       .replaceAll("*C", "[C]")
       .replaceAll("*A", "[LEFT]")
       .replaceAll("*D", "[RIGHT]");
-  } catch(error) {
+  } catch (error) {
     console.error(error);
     return "";
   }
@@ -116,7 +133,7 @@ function measure_text_width_bitmap(text, xscale = 1, font) {
     const glyph = font.glyphs[char];
     if (glyph) {
       // glyph.shift is the advance, fallback to glyph.w + glyph.offset if missing
-      const advance = glyph.shift ?? (glyph.w + (glyph.offset || 0));
+      const advance = glyph.shift ?? glyph.w + (glyph.offset || 0);
       width += advance * xscale;
     } else {
       width += font.size * xscale; // fallback width
@@ -125,22 +142,30 @@ function measure_text_width_bitmap(text, xscale = 1, font) {
   return width;
 }
 
-function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale, second = 0) {
+function scr_drawtext_centered_scaled(
+  xx,
+  yy,
+  text,
+  xscale,
+  yscale,
+  second = 0
+) {
   let fontSize = currentFont.size;
   if (second === 1) {
-    fontSize = secondFont.size
+    fontSize = secondFont.size;
   } else if (second === 2) {
     fontSize = thirdFont.size;
   }
 
-  let font = currentFont
+  let font = currentFont;
   if (second === 1) {
     font = secondFont;
   } else if (second === 2) {
     font = thirdFont;
   }
 
-  const display_scale = surface_get_width("application_surface") / view_wview[view_current];
+  const display_scale =
+    surface_get_width("application_surface") / view_wview[view_current];
   const lineheight = Math.round(fontSize * yscale);
 
   // Fix vertical position rounding similar to GML
@@ -161,12 +186,12 @@ function scr_drawtext_centered_scaled(xx, yy, text, xscale, yscale, second = 0) 
 
 function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1, second = 0) {
   str = scr_replace_buttons_pc(str);
-  const lineHeight = (currentFont.glyphs[" "].h);
+  const lineHeight = currentFont.glyphs[" "].h;
   let xx = x0;
   let yy = y0;
   let outstr = "";
 
-  let font = currentFont
+  let font = currentFont;
   if (second === 1) {
     font = secondFont;
   } else if (second === 2) {
@@ -180,7 +205,7 @@ function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1, second = 0) {
         outstr = "";
       }
       xx = x0;
-      yy += lineHeight;  // scaled line height now
+      yy += lineHeight; // scaled line height now
     } else if (str[i] === "\\" && str[i + 2] === "*") {
       if (outstr.length > 0) {
         draw_text(xx, yy, outstr);
@@ -190,7 +215,14 @@ function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1, second = 0) {
       i += 2;
       const ch = str[i];
       const keyLabel = scr_replace_buttons_pc("*" + ch);
-      draw_text_transformed(round(xx), yy, keyLabel, icon_scale, icon_scale, second);
+      draw_text_transformed(
+        round(xx),
+        yy,
+        keyLabel,
+        icon_scale,
+        icon_scale,
+        second
+      );
       xx += measure_text_width_bitmap(keyLabel, icon_scale, font);
     } else {
       outstr += str[i];
@@ -204,7 +236,7 @@ function scr_drawtext_icons_multiline(x0, y0, str, icon_scale = 1, second = 0) {
 function scr_drawtext_icons(xx, yy, str, icon_scale = 1, second = 0) {
   str = scr_replace_buttons_pc(str);
 
-  let font = currentFont
+  let font = currentFont;
   if (second === 1) {
     font = secondFont;
   } else if (second === 2) {
@@ -225,7 +257,14 @@ function scr_drawtext_icons(xx, yy, str, icon_scale = 1, second = 0) {
     if (str.length >= 3 && str[0] === "*" && str[2]) {
       const ch = str[2];
       const keyLabel = scr_replace_buttons_pc("*" + ch);
-      draw_text_transformed(round(xx), yy, keyLabel, icon_scale, icon_scale, second);
+      draw_text_transformed(
+        round(xx),
+        yy,
+        keyLabel,
+        icon_scale,
+        icon_scale,
+        second
+      );
       xx += measure_text_width_bitmap(keyLabel, icon_scale, font);
       str = str.substring(3);
     } else {
@@ -242,7 +281,6 @@ function scr_drawtext_icons(xx, yy, str, icon_scale = 1, second = 0) {
 function scr_drawtext_centered(xx, yy, text, second) {
   scr_drawtext_centered_scaled(xx, yy, text, 1, 1, second);
 }
-
 
 // scr_setfont
 function scr_setfont(newfont, second = 0) {
@@ -310,7 +348,18 @@ function caster_loop(song, gain, pitch) {
   return this_song_i;
 }
 
-function SCR_TEXTSETUP(myfont, mycolor, writingx, writingy, writingxend, shake, textspeed, txtsound, spacing, vspacing) {
+function SCR_TEXTSETUP(
+  myfont,
+  mycolor,
+  writingx,
+  writingy,
+  writingxend,
+  shake,
+  textspeed,
+  txtsound,
+  spacing,
+  vspacing
+) {
   this.myfont = myfont;
   this.mycolor = mycolor;
   this.writingx = writingx;
@@ -338,7 +387,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 1:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_main,
         c_white,
         x + 20,
@@ -353,7 +403,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 2:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -368,7 +419,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 3:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_curs,
         c_teal,
         x,
@@ -383,7 +435,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 4:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_maintext,
         c_white,
         x + 30,
@@ -398,7 +451,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 5:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_maintext,
         c_white,
         x + 30,
@@ -413,7 +467,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 6:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -428,7 +483,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 7:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -443,7 +499,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 8:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -458,7 +515,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 9:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_maintext,
         c_white,
         x + 20,
@@ -473,7 +531,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 10:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_maintext,
         c_white,
         x + 20,
@@ -488,22 +547,25 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 11:
-      SCR_TEXTSETUP.call(this,
+      script_execute.call(
+        this,
+        SCR_TEXTSETUP,
         fnt_maintext,
         c_white,
         x + 20,
         y + 20,
         view_xview[view_current] + 290,
         0,
-        3,
+        2,
         SND_TXT2,
         9,
         18
       );
       break;
-    
+
     case 12:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -513,11 +575,12 @@ function SCR_TEXTTYPE(typer, x, y) {
         3,
         snd_txttor2,
         10,
-        20,
+        20
       );
       break;
     case 13:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -527,11 +590,12 @@ function SCR_TEXTTYPE(typer, x, y) {
         4,
         snd_txttor2,
         11,
-        20,
+        20
       );
       break;
     case 14:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -545,7 +609,8 @@ function SCR_TEXTTYPE(typer, x, y) {
       );
       break;
     case 15:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plain,
         c_black,
         x,
@@ -555,11 +620,12 @@ function SCR_TEXTTYPE(typer, x, y) {
         10,
         snd_txttor2,
         18,
-        20,
-      )
+        20
+      );
       break;
     case 16:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_maintext,
         c_white,
         x + 20,
@@ -569,11 +635,12 @@ function SCR_TEXTTYPE(typer, x, y) {
         2,
         snd_floweytalk2,
         8,
-        18,
-      )
+        18
+      );
       break;
     case 17:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_comicsans,
         c_white,
         x + 20,
@@ -583,13 +650,14 @@ function SCR_TEXTTYPE(typer, x, y) {
         1,
         snd_txtsans,
         8,
-        18,
-      )
+        18
+      );
       break;
     case 19:
       global.typer = 18;
     case 18:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_papyrus,
         c_white,
         x + 20,
@@ -599,11 +667,12 @@ function SCR_TEXTTYPE(typer, x, y) {
         1,
         snd_txtpap,
         11,
-        18,
-      )
+        18
+      );
       break;
     case 20:
-      SCR_TEXTSETUP.call(this,
+      SCR_TEXTSETUP.call(
+        this,
         fnt_plainbig,
         c_black,
         x,
@@ -613,8 +682,8 @@ function SCR_TEXTTYPE(typer, x, y) {
         2,
         snd_floweytalk2,
         25,
-        20,
-      )
+        20
+      );
       break;
   }
 
@@ -632,13 +701,10 @@ function snd_stop(snd) {
 }
 
 function SCR_NEWLINE() {
-  if (this.vtext)
-  {
+  if (this.vtext) {
     this.myx -= this.vspacing;
     this.myy = this.writingy;
-  }
-  else
-  {
+  } else {
     this.myx = this.writingx;
     this.myy += this.vspacing;
   }
@@ -652,16 +718,18 @@ function scr_namingscreen_setup(truereset) {
   const ascii_rows = 8;
   const ascii_cols = 7;
 
-  const ascii_x = new Array(ascii_cols).fill(0).map((_, i) => 60 + (i * 32));
+  const ascii_x = new Array(ascii_cols).fill(0).map((_, i) => 60 + i * 32);
   const ascii_y = new Array(ascii_rows).fill(0);
-  const ascii_charmap = Array.from({ length: ascii_rows }, () => new Array(ascii_cols).fill(""));
+  const ascii_charmap = Array.from({ length: ascii_rows }, () =>
+    new Array(ascii_cols).fill("")
+  );
 
   for (let i = 0; i < ascii_rows / 2; i++) {
-    ascii_y[i] = 75 + (i * 14);
-    ascii_y[i + ascii_rows / 2] = 135 + (i * 14);
+    ascii_y[i] = 75 + i * 14;
+    ascii_y[i + ascii_rows / 2] = 135 + i * 14;
 
     for (let j = 0; j < ascii_cols; j++) {
-      const index = (i * ascii_cols) + j;
+      const index = i * ascii_cols + j;
       if (index < 26) {
         ascii_charmap[i][j] = String.fromCharCode(65 + index); // A-Z
         ascii_charmap[i + ascii_rows / 2][j] = String.fromCharCode(97 + index); // a-z
@@ -706,7 +774,7 @@ function scr_namingscreen_setup(truereset) {
     menu_x1,
     menu_x2,
     continue_x,
-    reset_x
+    reset_x,
   };
 }
 
@@ -715,33 +783,33 @@ function scr_namingscreen_check(charname) {
   const l_char = charname.toLowerCase();
   let allow = 1;
   let spec_m = "Is this name correct?";
-  
+
   switch (l_char) {
     case "aaaaaa":
-      allow = 1
-      spec_m = "Not very creative...?"
+      allow = 1;
+      spec_m = "Not very creative...?";
       break;
 
     case "asgore":
       allow = 0;
-      spec_m = "You cannot."
+      spec_m = "You cannot.";
       break;
-    
+
     case "toriel":
-      allow = 0,
-      spec_m = "I think you should#think of your own#name, my child."
+      (allow = 0),
+        (spec_m = "I think you should#think of your own#name, my child.");
       break;
 
     case "sans":
       allow = 0;
-      spec_m = "nope."
+      spec_m = "nope.";
       break;
 
     case "undyne":
       allow = 0;
       spec_m = "Get your OWN name!";
       break;
-    
+
     case "flowey":
       allow = 0;
       spec_m = "I already CHOSE#that name.";
@@ -749,12 +817,12 @@ function scr_namingscreen_check(charname) {
 
     case "chara":
       allow = 1;
-      spec_m = "The true name."
+      spec_m = "The true name.";
       break;
 
     case "alphys":
       allow = 0;
-      spec_m = "D-don't do that."
+      spec_m = "D-don't do that.";
       break;
 
     case "alphy":
@@ -774,7 +842,7 @@ function scr_namingscreen_check(charname) {
 
     case "murder" || "mercy":
       allow = 1;
-      spec_m = "That's a little on-#the nose, isn't it...?"
+      spec_m = "That's a little on-#the nose, isn't it...?";
       break;
 
     case "asriel":
@@ -829,7 +897,7 @@ function scr_namingscreen_check(charname) {
 
     case "bpants":
       allow = 1;
-      spec_m = "You are really scraping the#bottom of the barrel."
+      spec_m = "You are really scraping the#bottom of the barrel.";
       break;
 
     case "gaster":
@@ -840,7 +908,7 @@ function scr_namingscreen_check(charname) {
   return {
     allow,
     spec_m,
-  }
+  };
 }
 
 function scr_namingscreen() {
@@ -852,14 +920,14 @@ function scr_namingscreen() {
   let ymap = [75, 89, 103, 117, 135, 149, 163, 177];
   let s = "";
   let charmap = [
-    ["A","B","C","D","E","F","G"],
-    ["H","I","J","K","L","M","N"],
-    ["O","P","Q","R","S","T","U"],
-    ["V","W","X","Y","Z","",""],
-    ["a","b","c","d","e","f","g"],
-    ["h","i","j","k","l","m","n"],
-    ["o","p","q","r","s","t","u"],
-    ["v","w","x","y","z","",""]
+    ["A", "B", "C", "D", "E", "F", "G"],
+    ["H", "I", "J", "K", "L", "M", "N"],
+    ["O", "P", "Q", "R", "S", "T", "U"],
+    ["V", "W", "X", "Y", "Z", "", ""],
+    ["a", "b", "c", "d", "e", "f", "g"],
+    ["h", "i", "j", "k", "l", "m", "n"],
+    ["o", "p", "q", "r", "s", "t", "u"],
+    ["v", "w", "x", "y", "z", "", ""],
   ];
   let bks_f = 0;
   draw_set_color(c_white);
@@ -876,25 +944,30 @@ function scr_namingscreen() {
   }
 
   if (this.naming === 5) {
-    this.alerm += 1
+    this.alerm += 1;
 
     if (this.q < 120) {
       this.q += 1;
     }
 
-    var xx = this.name_x - (q / 3);
+    var xx = this.name_x - q / 3;
 
-    draw_text_transformed(xx + random(r * 2), (q / 2) + this.name_y + random(r * 2), this.charname, 1 + (q / 50), 1 + (q / 50), random_ranger((-r * q) / 60, (r * q) / 60));
+    draw_text_transformed(
+      xx + random(r * 2),
+      q / 2 + this.name_y + random(r * 2),
+      this.charname,
+      1 + q / 50,
+      1 + q / 50,
+      random_ranger((-r * q) / 60, (r * q) / 60)
+    );
 
-    if (this.alerm > 179)
-    {
+    if (this.alerm > 179) {
       instance_create(0, 0, obj_persistentfader);
-      
-      if (this.truereset > 0)
-      {
+
+      if (this.truereset > 0) {
         ossafe_ini_open("undertale.ini");
         const sk = ini_read_real("reset", "s_key", 0);
-        let Won = ini_read_real("General", "Won",  0);
+        let Won = ini_read_real("General", "Won", 0);
         let CP = ini_read_real("General", "CP", 0);
         let CH = ini_read_real("General", "CH", 0);
         ossafe_ini_close("undertale.ini");
@@ -905,699 +978,595 @@ function scr_namingscreen() {
         ossafe_ini_open("undertale.ini");
         ini_write_real("reset", "reset", 1);
 
-        if (sk != 0)
-          ini_write_real("reset", "s_key", sk);
+        if (sk != 0) ini_write_real("reset", "s_key", sk);
 
-        if (Won != 0)
-          ini_write_real("General", "BW", Won);
+        if (Won != 0) ini_write_real("General", "BW", Won);
 
-        if (CP != 0)
-          ini_write_real("General", "BP", CP);
+        if (CP != 0) ini_write_real("General", "BP", CP);
 
-        if (CH != 0)
-          ini_write_real("General", "BH", CH);
+        if (CH != 0) ini_write_real("General", "BH", CH);
 
         ossafe_ini_close();
       }
-      
+
       caster_free(cy);
       global.flag[5] = floor(random(100)) + 1; // fun value
       ossafe_ini_open("undertale.ini");
-      ini_write_real("General", "fun", global.flag[5])
+      ini_write_real("General", "fun", global.flag[5]);
 
       global.time = 0;
-      
+
       if (scr_hardmodename(this.charname)) {
         global.flag[6] = 1;
       }
-      
+
       room_goto_next();
     }
   }
 
-  if (this.naming == 2)
-  {
-      if (this.charname == "")
-      {
-        this.spec_m = "You must choose a name.";
-        this.allow = 0;
-      }
-      else if (scr_hardmodename(this.charname))
-      {
-          this.spec_m = "WARNING: This name will#make your life hell.#Proceed anyway?";
+  if (this.naming == 2) {
+    if (this.charname == "") {
+      this.spec_m = "You must choose a name.";
+      this.allow = 0;
+    } else if (scr_hardmodename(this.charname)) {
+      this.spec_m =
+        "WARNING: This name will#make your life hell.#Proceed anyway?";
+      this.allow = 1;
+    } else if (
+      this.hasname == 1 &&
+      this.truereset == 0 &&
+      !scr_hardmodename(global.charname)
+    ) {
+      this.spec_m = "A name has already#been chosen.";
+      this.allow = 1;
+    } else if (this.charname.toLowerCase() === "shayy") {
+      switch (this.shayy) {
+        case 0:
+          this.spec_m = "shayy it's late, go to bed";
+          this.allow = 0;
+          this.raiseShayy = 1;
+          break;
+        case 1:
+          this.spec_m = "bed it's late, go to shayy";
+          this.allow = 0;
+          this.raiseShayy = 2;
+          break;
+        case 2:
+          this.spec_m = "you really are determined, arent you";
+          this.allow = 0;
+          this.raiseShayy = 3;
+          break;
+        case 3:
+          this.spec_m = `${this.charname}, don't you have anything better#to do?`;
+          this.allow = 0;
+          this.raiseShayy = 4;
+          break;
+        case 4:
+          this.spec_m = "ok you can go but only this once";
           this.allow = 1;
+          this.raiseShayy = 5;
+          break;
+        case 5:
+          this.spec_m =
+            "YOU IDIOT WHY DID YOU PRESS NO??#youre not going back now";
+          this.allow = 0;
+          this.raiseShayy = 6;
+          break;
+        case 6:
+          this.spec_m = "trying forever wont get you#anywhere";
+          this.allow = 0;
+          this.raiseShayy = 7;
+          break;
+        case 7:
+          this.spec_m = "...";
+          this.allow = 0;
+          this.raiseShayy = 8;
+          break;
+        case 8:
+          this.spec_m = "...";
+          this.allow = 0;
+          this.raiseShayy = 9;
+          break;
+        case 9:
+          this.spec_m = "...";
+          this.allow = 0;
+          this.raiseShayy = 10;
+          break;
+        case 10:
+          this.spec_m = "...";
+          this.allow = 0;
+          this.raiseShayy = 11;
+          break;
+        case 11:
+          this.spec_m = "youre just annoying atp";
+          this.allow = 0;
+          this.raiseShayy = 12;
+          break;
+        case 12:
+          this.spec_m = "stop it";
+          this.allow = 0;
+          this.raiseShayy = 12;
       }
-      else if (this.hasname == 1 && this.truereset == 0 && !scr_hardmodename(global.charname))
-      {
-        this.spec_m = "A name has already#been chosen.";
-        this.allow = 1;
-      }
-      else if (this.charname.toLowerCase() === "shayy") {
-        switch (this.shayy) {
-          case 0:
-            this.spec_m = "shayy it's late, go to bed"
-            this.allow = 0;
-            this.raiseShayy = 1;
-            break;
-          case 1:
-            this.spec_m = "bed it's late, go to shayy";
-            this.allow = 0;
-            this.raiseShayy = 2;
-            break;
-          case 2:
-            this.spec_m = "you really are determined, arent you";
-            this.allow = 0;
-            this.raiseShayy = 3;
-            break;
-          case 3:
-            this.spec_m = `${this.charname}, don't you have anything better#to do?`
-            this.allow = 0;
-            this.raiseShayy = 4;
-            break;
-          case 4:
-            this.spec_m = "ok you can go but only this once"
-            this.allow = 1;
-            this.raiseShayy = 5;
-            break;
-          case 5:
-            this.spec_m = "YOU IDIOT WHY DID YOU PRESS NO??#youre not going back now";
-            this.allow = 0;
-            this.raiseShayy = 6;
-            break;
-          case 6:
-            this.spec_m = "trying forever wont get you#anywhere"
-            this.allow = 0;
-            this.raiseShayy = 7;
-            break;
-          case 7:
-            this.spec_m = "..."
-            this.allow = 0;
-            this.raiseShayy = 8;
-            break;
-          case 8:
-            this.spec_m = "..."
-            this.allow = 0;
-            this.raiseShayy = 9;
-            break;
-          case 9:
-            this.spec_m = "..."
-            this.allow = 0;
-            this.raiseShayy = 10;
-            break;
-          case 10:
-            this.spec_m = "..."
-            this.allow = 0;
-            this.raiseShayy = 11;
-            break;
-          case 11:
-            this.spec_m = "youre just annoying atp"
-            this.allow = 0;
-            this.raiseShayy = 12;
-            break;
-          case 12:
-            this.spec_m = "stop it"
-            this.allow = 0;
-            this.raiseShayy = 12;
-        }
-      }
-      else
-      {
-        scr_namingscreen_check(this.charname);
-      }
-      
-      var confirm = control_check_pressed(0) && this.selected2 >= 0;
-      
-      if (confirm)
-      {
-        if (this.allow)
-        {
-            if (this.selected2 == 1 && this.charname.length > 0)
-            this.naming = 4;
-        }
-          
-        if (this.selected2 == 0)
-        {
-          if (this.hasname == 1 && this.truereset == 0)
-            this.naming = 3;
-          else
-            this.naming = 1;
+    } else {
+      scr_namingscreen_check(this.charname);
+    }
 
-          if (this.raiseShayy > 0) this.shayy = this.raiseShayy
+    var confirm = control_check_pressed(0) && this.selected2 >= 0;
+
+    if (confirm) {
+      if (this.allow) {
+        if (this.selected2 == 1 && this.charname.length > 0) this.naming = 4;
+      }
+
+      if (this.selected2 == 0) {
+        if (this.hasname == 1 && this.truereset == 0) this.naming = 3;
+        else this.naming = 1;
+
+        if (this.raiseShayy > 0) this.shayy = this.raiseShayy;
+      }
+
+      return;
+    }
+
+    draw_set_color(c_white);
+
+    if (this.q < 120) this.q += 1;
+
+    var xx = this.name_x - q / 3;
+
+    draw_text_transformed(
+      xx + random(r * 2),
+      q / 2 + this.name_y + random(r * 2),
+      this.charname,
+      1 + q / 50,
+      1 + q / 50,
+      random_ranger((-r * q) / 60, (r * q) / 60)
+    );
+    draw_text(90, 30, this.spec_m);
+    draw_set_color(c_white);
+
+    if (this.allow) {
+      if (this.selected2 == 0) draw_set_color(c_yellow);
+
+      scr_drawtext_centered(80, 200, "No"); // No
+      draw_set_color(c_white);
+
+      if (this.selected2 == 1) draw_set_color(c_yellow);
+
+      scr_drawtext_centered(240, 200, "Yes"); // Yes
+    } else {
+      draw_set_color(c_yellow);
+      scr_drawtext_centered(80, 200, "Go back"); // Go back
+      draw_set_color(c_white);
+    }
+
+    if (this.allow) {
+      if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(vk_left)) {
+        if (this.selected2 === 1) {
+          this.selected2 = 0;
+        } else if (this.selected2 === 0) {
+          this.selected2 = 1;
         }
-          
-        return;
       }
-      
-      draw_set_color(c_white);
-      
-      if (this.q < 120)
-          this.q += 1;
-      
-      var xx = this.name_x - (q / 3);
-      
-      draw_text_transformed(xx + random(r * 2), (q / 2) + this.name_y + random(r * 2), this.charname, 1 + (q / 50), 1 + (q / 50), random_ranger((-r * q) / 60, (r * q) / 60));
-      draw_text(90, 30, this.spec_m);
-      draw_set_color(c_white);
-      
-      if (this.allow)
-      {
-          if (this.selected2 == 0)
-              draw_set_color(c_yellow);
-          
-          scr_drawtext_centered(80, 200, "No"); // No
-          draw_set_color(c_white);
-          
-          if (this.selected2 == 1)
-              draw_set_color(c_yellow);
-          
-          scr_drawtext_centered(240, 200, "Yes"); // Yes
-      }
-      else
-      {
-          draw_set_color(c_yellow);
-          scr_drawtext_centered(80, 200, "Go back"); // Go back
-          draw_set_color(c_white);
-      }
-      
-      if (this.allow)
-      {
-          if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(vk_left))
-          {
-              if (this.selected2 === 1) {
-                  this.selected2 = 0;
-              } else if (this.selected2 === 0) {
-                  this.selected2 = 1;
-              }
-          }
-      }
+    }
   }
-  if (this.naming == 1)
-  {
-      this.q = 0;
-      r = 0.6;
-      
-      for (var row = 0; row < rows; row++)
-      {
-          var yy = ymap[row];
-          
-          for (var col = 0; col < cols; col++)
-          {
-              var xx = xmap[col];
-              
-              if (this.selected_row == row && this.selected_col == col)
-                  draw_set_color(c_yellow);
-              else
-                  draw_set_color(c_white);
-              
-              draw_text(xx + random(r), yy + random(r), charmap[row][col]);
-          }
-      }
-      
-      draw_set_color(c_white);
-      
-      if (this.selected_row == -1 && this.selected_col == 0)
+  if (this.naming == 1) {
+    this.q = 0;
+    r = 0.6;
+
+    for (var row = 0; row < rows; row++) {
+      var yy = ymap[row];
+
+      for (var col = 0; col < cols; col++) {
+        var xx = xmap[col];
+
+        if (this.selected_row == row && this.selected_col == col)
           draw_set_color(c_yellow);
-      
-      var menu_text0 = "Quit"; // Quit
-      draw_text(this.menu_x0, this.menu_y, menu_text0);
-      draw_set_color(c_white);
-      
-      if (this.selected_row == -1 && this.selected_col == 1)
-          draw_set_color(c_yellow);
-      
-      var menu_text1 = "Backspace"; // Backspace
-      draw_text(this.menu_x1, this.menu_y, menu_text1);
-      draw_set_color(c_white);
-      
-      if (this.selected_row == -1 && this.selected_col == 2)
-          draw_set_color(c_yellow);
-      
-      var menu_text2 = "Done"; // Done
-      draw_text(this.menu_x2, this.menu_y, menu_text2);
-      
-      var old_col = this.selected_col;
-      
-      do
-      {
-          if (keyboard_check_pressed(vk_right))
-          {
-              this.selected_col++;
-              
-              if (this.selected_row == -1)
-              {
-                  if (this.selected_col > 2)
-                      this.selected_col = 0;
-              }
-              else if (this.selected_col >= cols)
-              {
-                  if (this.selected_row == (rows - 1))
-                  {
-                      this.selected_col = old_col;
-                      break;
-                  }
-                  else
-                  {
-                      this.selected_col = 0;
-                      this.selected_row++;
-                  }
-              }
-          }
-          
-          if (keyboard_check_pressed(vk_left))
-          {
-              this.selected_col--;
-              
-              if (this.selected_col < 0)
-              {
-                  if (this.selected_row == 0)
-                  {
-                      this.selected_col = 0;
-                  }
-                  else if (this.selected_row > 0)
-                  {
-                      this.selected_col = cols - 1;
-                      this.selected_row--;
-                  }
-                  else
-                  {
-                      this.selected_col = 2;
-                  }
-              }
-          }
-          
-          if (keyboard_check_pressed(vk_down))
-          {
-              if (this.selected_row == -1)
-              {
-                  this.selected_row = 0;
-                  var xx = this.menu_x0;
-                  
-                  if (this.selected_col == 1)
-                      xx = this.menu_x1;
-                  
-                  if (this.selected_col == 2)
-                      xx = this.menu_x2;
-                  
-                  var best = 0;
-                  var bestdiff = Math.abs(xmap[0] - xx);
-                  
-                  for (var i = 1; i < cols; i++)
-                  {
-                      var diff = Math.abs(xmap[i] - xx);
-                      
-                      if (diff < bestdiff)
-                      {
-                          best = i;
-                          bestdiff = diff;
-                      }
-                  }
-                  
-                  this.selected_col = best;
-              }
-              else
-              {
-                  this.selected_row++;
-                  
-                  if (this.selected_row >= rows)
-                  {
-                      if (global.language == "ja")
-                      {
-                          this.selected_row = -2;
-                          var xx = xmap[this.selected_col];
-                          
-                          if (xx >= (charset_x2 - 10))
-                              this.selected_col = 2;
-                          else if (xx >= (charset_x1 - 10))
-                              this.selected_col = 1;
-                          else
-                              this.selected_col = 0;
-                      }
-                      else
-                      {
-                          this.selected_row = -1;
-                          var xx = xmap[this.selected_col];
-                          
-                          if (xx >= (this.menu_x2 - 10))
-                              this.selected_col = 2;
-                          else if (xx >= (this.menu_x1 - 10))
-                              this.selected_col = 1;
-                          else
-                              this.selected_col = 0;
-                      }
-                  }
-              }
-          }
-          
-          if (keyboard_check_pressed(vk_up))
-          {
-              if (this.selected_row == -2)
-              {
-                  this.selected_row = rows - 1;
-                  
-                  if (this.selected_col > 0)
-                  {
-                      var xx = charset_x1;
-                      
-                      if (this.selected_col == 2)
-                          xx = charset_x2;
-                      
-                      var best = 0;
-                      var bestdiff = Math.abs(xmap[0] - xx);
-                      
-                      for (var i = 1; i < cols; i++)
-                      {
-                          var diff = Math.abs(xmap[i] - xx);
-                          
-                          if (diff < bestdiff)
-                          {
-                              best = i;
-                              bestdiff = diff;
-                          }
-                      }
-                      
-                      this.selected_col = best;
-                  }
-              }
-              else if (global.language != "ja" && this.selected_row == -1)
-              {
-                  this.selected_row = rows - 1;
-                  
-                  if (this.selected_col > 0)
-                  {
-                      var xx = this.menu_x1;
-                      
-                      if (this.selected_col == 2)
-                          xx = this.menu_x2;
-                      
-                      var best = 0;
-                      var bestdiff = Math.abs(xmap[0] - xx);
-                      
-                      for (var i = 1; i < cols; i++)
-                      {
-                          var diff = Math.abs(xmap[i] - xx);
-                          
-                          if (diff < bestdiff)
-                          {
-                              best = i;
-                              bestdiff = diff;
-                          }
-                      }
-                      
-                      this.selected_col = best;
-                  }
-              }
-              else
-              {
-                  this.selected_row--;
-                  
-                  if (this.selected_row == -1)
-                  {
-                      var xx = xmap[this.selected_col];
-                      
-                      if (xx >= (this.menu_x2 - 10))
-                          this.selected_col = 2;
-                      else if (xx >= (this.menu_x1 - 10))
-                          this.selected_col = 1;
-                      else
-                          this.selected_col = 0;
-                  }
-              }
-          }
+        else draw_set_color(c_white);
+
+        draw_text(xx + random(r), yy + random(r), charmap[row][col]);
       }
-      while (!(this.selected_col < 0 || this.selected_row < 0 || charmap[this.selected_row][this.selected_col].length > 0)) {};
-      
-      bks_f = 0;
-      var confirm = control_check_pressed(0);
-      
-      if (confirm)
-      {
-          if (this.selected_row == -1)
-          {
-              if (this.selected_col == 0)
-                  this.naming = 3;
-              
-              if (this.selected_col == 1)
-                  bks_f = 1;
-              
-              if (this.selected_col == 2)
-              {
-                  if (this.charname.length > 0)
-                  {
-                      this.naming = 2;
-                      this.selected2 = 0;
-                  }
-              }
-              
-              control_clear(0);
+    }
+
+    draw_set_color(c_white);
+
+    if (this.selected_row == -1 && this.selected_col == 0)
+      draw_set_color(c_yellow);
+
+    var menu_text0 = "Quit"; // Quit
+    draw_text(this.menu_x0, this.menu_y, menu_text0);
+    draw_set_color(c_white);
+
+    if (this.selected_row == -1 && this.selected_col == 1)
+      draw_set_color(c_yellow);
+
+    var menu_text1 = "Backspace"; // Backspace
+    draw_text(this.menu_x1, this.menu_y, menu_text1);
+    draw_set_color(c_white);
+
+    if (this.selected_row == -1 && this.selected_col == 2)
+      draw_set_color(c_yellow);
+
+    var menu_text2 = "Done"; // Done
+    draw_text(this.menu_x2, this.menu_y, menu_text2);
+
+    var old_col = this.selected_col;
+
+    do {
+      if (keyboard_check_pressed(vk_right)) {
+        this.selected_col++;
+
+        if (this.selected_row == -1) {
+          if (this.selected_col > 2) this.selected_col = 0;
+        } else if (this.selected_col >= cols) {
+          if (this.selected_row == rows - 1) {
+            this.selected_col = old_col;
+            break;
+          } else {
+            this.selected_col = 0;
+            this.selected_row++;
           }
-          else if (this.selected_row == -2)
-          {
-              this.selected_charmap = 1 + this.selected_col;
-              
-              if (this.selected_charmap == 1)
-              {
-                  rows = hiragana_rows;
-                  cols = hiragana_cols;
-                  xmap = hiragana_x;
-                  ymap = hiragana_y;
-                  charmap = hiragana_charmap;
-              }
-              else if (this.selected_charmap == 2)
-              {
-                  rows = katakana_rows;
-                  cols = katakana_cols;
-                  xmap = katakana_x;
-                  ymap = katakana_y;
-                  charmap = katakana_charmap;
-              }
-              else
-              {
-                  rows = ja_ascii_rows;
-                  cols = ja_ascii_cols;
-                  xmap = ja_ascii_x;
-                  ymap = ja_ascii_y;
-                  charmap = ja_ascii_charmap;
-              }
-          }
-          else
-          {
-              if (this.charname.length == 6)
-                  this.charname = string_delete(this.charname, 6, 1);
-              
-              this.charname += charmap[this.selected_row][this.selected_col];
-          }
+        }
       }
-      
-      if (control_check_pressed(1) || bks_f == 1)
-      {
-          s = this.charname.length;
-          
-          if (s > 0)
-              this.charname = string_delete(this.charname, s, 1);
-          
-          control_clear(1);
+
+      if (keyboard_check_pressed(vk_left)) {
+        this.selected_col--;
+
+        if (this.selected_col < 0) {
+          if (this.selected_row == 0) {
+            this.selected_col = 0;
+          } else if (this.selected_row > 0) {
+            this.selected_col = cols - 1;
+            this.selected_row--;
+          } else {
+            this.selected_col = 2;
+          }
+        }
       }
-      
-      draw_set_color(c_white);
-      draw_text(this.name_x, this.name_y, this.charname);
-      scr_drawtext_centered(160, this.title_y, "Name the fallen human.");
+
+      if (keyboard_check_pressed(vk_down)) {
+        if (this.selected_row == -1) {
+          this.selected_row = 0;
+          var xx = this.menu_x0;
+
+          if (this.selected_col == 1) xx = this.menu_x1;
+
+          if (this.selected_col == 2) xx = this.menu_x2;
+
+          var best = 0;
+          var bestdiff = Math.abs(xmap[0] - xx);
+
+          for (var i = 1; i < cols; i++) {
+            var diff = Math.abs(xmap[i] - xx);
+
+            if (diff < bestdiff) {
+              best = i;
+              bestdiff = diff;
+            }
+          }
+
+          this.selected_col = best;
+        } else {
+          this.selected_row++;
+
+          if (this.selected_row >= rows) {
+            if (global.language == "ja") {
+              this.selected_row = -2;
+              var xx = xmap[this.selected_col];
+
+              if (xx >= charset_x2 - 10) this.selected_col = 2;
+              else if (xx >= charset_x1 - 10) this.selected_col = 1;
+              else this.selected_col = 0;
+            } else {
+              this.selected_row = -1;
+              var xx = xmap[this.selected_col];
+
+              if (xx >= this.menu_x2 - 10) this.selected_col = 2;
+              else if (xx >= this.menu_x1 - 10) this.selected_col = 1;
+              else this.selected_col = 0;
+            }
+          }
+        }
+      }
+
+      if (keyboard_check_pressed(vk_up)) {
+        if (this.selected_row == -2) {
+          this.selected_row = rows - 1;
+
+          if (this.selected_col > 0) {
+            var xx = charset_x1;
+
+            if (this.selected_col == 2) xx = charset_x2;
+
+            var best = 0;
+            var bestdiff = Math.abs(xmap[0] - xx);
+
+            for (var i = 1; i < cols; i++) {
+              var diff = Math.abs(xmap[i] - xx);
+
+              if (diff < bestdiff) {
+                best = i;
+                bestdiff = diff;
+              }
+            }
+
+            this.selected_col = best;
+          }
+        } else if (global.language != "ja" && this.selected_row == -1) {
+          this.selected_row = rows - 1;
+
+          if (this.selected_col > 0) {
+            var xx = this.menu_x1;
+
+            if (this.selected_col == 2) xx = this.menu_x2;
+
+            var best = 0;
+            var bestdiff = Math.abs(xmap[0] - xx);
+
+            for (var i = 1; i < cols; i++) {
+              var diff = Math.abs(xmap[i] - xx);
+
+              if (diff < bestdiff) {
+                best = i;
+                bestdiff = diff;
+              }
+            }
+
+            this.selected_col = best;
+          }
+        } else {
+          this.selected_row--;
+
+          if (this.selected_row == -1) {
+            var xx = xmap[this.selected_col];
+
+            if (xx >= this.menu_x2 - 10) this.selected_col = 2;
+            else if (xx >= this.menu_x1 - 10) this.selected_col = 1;
+            else this.selected_col = 0;
+          }
+        }
+      }
+    } while (
+      !(
+        this.selected_col < 0 ||
+        this.selected_row < 0 ||
+        charmap[this.selected_row][this.selected_col].length > 0
+      )
+    );
+    {
+    }
+
+    bks_f = 0;
+    var confirm = control_check_pressed(0);
+
+    if (confirm) {
+      if (this.selected_row == -1) {
+        if (this.selected_col == 0) this.naming = 3;
+
+        if (this.selected_col == 1) bks_f = 1;
+
+        if (this.selected_col == 2) {
+          if (this.charname.length > 0) {
+            this.naming = 2;
+            this.selected2 = 0;
+          }
+        }
+
+        control_clear(0);
+      } else if (this.selected_row == -2) {
+        this.selected_charmap = 1 + this.selected_col;
+
+        if (this.selected_charmap == 1) {
+          rows = hiragana_rows;
+          cols = hiragana_cols;
+          xmap = hiragana_x;
+          ymap = hiragana_y;
+          charmap = hiragana_charmap;
+        } else if (this.selected_charmap == 2) {
+          rows = katakana_rows;
+          cols = katakana_cols;
+          xmap = katakana_x;
+          ymap = katakana_y;
+          charmap = katakana_charmap;
+        } else {
+          rows = ja_ascii_rows;
+          cols = ja_ascii_cols;
+          xmap = ja_ascii_x;
+          ymap = ja_ascii_y;
+          charmap = ja_ascii_charmap;
+        }
+      } else {
+        if (this.charname.length == 6)
+          this.charname = string_delete(this.charname, 6, 1);
+
+        this.charname += charmap[this.selected_row][this.selected_col];
+      }
+    }
+
+    if (control_check_pressed(1) || bks_f == 1) {
+      s = this.charname.length;
+
+      if (s > 0) this.charname = string_delete(this.charname, s, 1);
+
+      control_clear(1);
+    }
+
+    draw_set_color(c_white);
+    draw_text(this.name_x, this.name_y, this.charname);
+    scr_drawtext_centered(160, this.title_y, "Name the fallen human.");
   }
 
-  if (this.naming === 3)
-  {
-      const iniread = ossafe_ini_open("undertale.ini");
-      if (ini_section_exists("General") && this.hasname == 1)
-      {
-          this.minutes = floor(this.time / 1800);
-          this.seconds = round(((this.time / 1800) - this.minutes) * 60);
-          
-          if (this.seconds == 60)
-              this.seconds = 0;
-          
-          if (this.seconds < 10)
-              this.seconds = "0" + string(this.seconds);
-          
-          var roomname = scr_roomname(this.roome);
-          var lvtext = scr_gettext("save_menu_lv", string(this.love));
-          var timetext = scr_gettext("save_menu_time", string(this.minutes), string(this.seconds));
-          var namesize = string_width(substr(this.name, 1, 6));
-          var lvsize = string_width(lvtext);
-          var timesize = string_width(timetext);
-          var x_center = 160;
-          var lvpos = round((x_center + (namesize / 2)) - (timesize / 2) - (lvsize / 2));
-          var namepos = 70;
-          var timepos = 250;
-          
-          if (global.language == "ja")
-          {
-              namepos -= 6;
-              timepos += 6;
-          }
-          
-          draw_text(namepos, 62, this.name);
-          draw_text(lvpos, 62, lvtext);
-          draw_text(timepos - timesize, 62, timetext);
-          
-          if (global.language == "ja")
-              scr_drawtext_centered(x_center, 80, roomname);
-          else
-              draw_text(namepos, 80, roomname);
-          
-          if (this.namingscreen_setup.selected3 == 0)
-              draw_set_color(c_yellow);
-          
-          var continue_text = "Continue"; // Continue
-          draw_text(this.continue_x, 105, continue_text);
-          draw_set_color(c_white);
-          draw_set_color(c_white);
-          
-          if (this.namingscreen_setup.selected3 == 2)
-              draw_set_color(c_yellow);
-          
-          scr_drawtext_centered(160, 125, "Settings"); // Settings
-          draw_set_color(c_white);
-          
-          if (this.namingscreen_setup.selected3 == 1)
-              draw_set_color(c_yellow);
-          
-          var reset_text;
-          
-          if (this.truereset == 0)
-              reset_text = "Reset"; // Reset
-          else
-              reset_text = "True Reset"; // True Reset
-          
-          draw_text(this.reset_x, 105, reset_text);
-          
-          if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(vk_left))
-          {
-              if (this.namingscreen_setup.selected3 == 0)
-                  this.namingscreen_setup.selected3 = 1;
-              else if (this.namingscreen_setup.selected3 == 1)
-                  this.namingscreen_setup.selected3 = 0;
-          }
-          
-          if (keyboard_check_pressed(vk_down))
-          {
-              if (this.namingscreen_setup.selected3 == 0 || this.namingscreen_setup.selected3 == 1)
-                  this.namingscreen_setup.selected3 = 2;
-          }
-          
-          if (keyboard_check_pressed(vk_up))
-          {
-              if (this.namingscreen_setup.selected3 == 2)
-                  this.namingscreen_setup.selected3 = 0;
-          }
-          
-          var action = -1;
-          
-          if (control_check_pressed(0))
-              action = this.namingscreen_setup.selected3;
-          
-          if (action == 0)
-          {
-              caster_free("all");
-              
-              if (file_exists("file0") === false)
-              {
-                  room_goto("room_area1");
-              }
-              else
-                  script_execute.call(this, scr_load);
-          }
-          
-          if (action == 1)
-          {
-              if (this.hasname == 0 || scr_hardmodename(global.charname) || this.truereset > 0)
-              {
-                  this.naming = 1;
-              }
-              else
-              {
-                  this.charname = global.charname;
-                  this.naming = 2;
-                  this.alerm = 0;
-                  r = 0.5;
-                  q = 0;
-              }
-              
-              control_clear(0);
-          }
-          
-          if (action == 2)
-          {
-              caster_free("all");
-              room_goto("room_settings");
-          }
+  if (this.naming === 3) {
+    const iniread = ossafe_ini_open("undertale.ini");
+    if (ini_section_exists("General") && this.hasname == 1) {
+      this.minutes = floor(this.time / 1800);
+      this.seconds = round((this.time / 1800 - this.minutes) * 60);
+
+      if (this.seconds == 60) this.seconds = 0;
+
+      if (this.seconds < 10) this.seconds = "0" + string(this.seconds);
+
+      var roomname = scr_roomname(this.roome);
+      var lvtext = scr_gettext("save_menu_lv", string(this.love));
+      var timetext = scr_gettext(
+        "save_menu_time",
+        string(this.minutes),
+        string(this.seconds)
+      );
+      var namesize = string_width(substr(this.name, 1, 6));
+      var lvsize = string_width(lvtext);
+      var timesize = string_width(timetext);
+      var x_center = 160;
+      var lvpos = round(x_center + namesize / 2 - timesize / 2 - lvsize / 2);
+      var namepos = 70;
+      var timepos = 250;
+
+      if (global.language == "ja") {
+        namepos -= 6;
+        timepos += 6;
       }
-      else
-      {
-          draw_set_color(c_ltgray);
-          draw_text(85, 20, scr_gettext("instructions_title")); //  --- Instruction ---
 
-          let lines = [];
-          lines[0] = "confirm";
-          lines[1] = "cancel";
-          lines[2] = "menu";
-          lines[3] = "fullscreen";
-          lines[4] = "quit";
-          let num_lines = lines.length;
+      draw_text(namepos, 62, this.name);
+      draw_text(lvpos, 62, lvtext);
+      draw_text(timepos - timesize, 62, timetext);
 
-          for (let i = 0; i < num_lines; i++) {
-            let key = scr_gettext("instructions_" + lines[i] + "_key");
-            let label = scr_gettext("instructions_" + lines[i] + "_label");
-            draw_text(85, 50 + (i * 18), key + " - " + label);
-          }
+      if (global.language == "ja")
+        scr_drawtext_centered(x_center, 80, roomname);
+      else draw_text(namepos, 80, roomname);
 
-          draw_text(85, 140, scr_gettext("instructions_hp0"));
-          
-          var xx = 85;
-          
-          var yy = 180;
-          
-          draw_set_color(c_white);
-          
-          if (this.selected3 == 0)
-              draw_set_color(c_yellow);
-          
-          draw_text(xx, yy, "Begin Game"); // Begin Game
-          
-          if (keyboard_check_pressed(vk_down))
-          {
-              if (this.selected3 == 0)
-                  this.selected3 = 1;
-          }
-          
-          if (keyboard_check_pressed(vk_up))
-          {
-              if (this.selected3 == 1)
-                  this.selected3 = 0;
-          }
-          
-          var yy2 = yy + 20;
-          draw_set_color(c_white);
-          
-          if (this.selected3 == 1)
-              draw_set_color(c_yellow);
-          
-          draw_text(xx, yy2, "Settings"); // Settings
-          var action = -1;
-          
-          if (control_check_pressed(0))
-              action = this.selected3;
-          
-          if (action == 0)
-          {
-              this.naming = 1;
-              control_clear(1);
-          }
-          
-          if (action == 1)
-          {
-              caster_free("all");
-              room_goto("room_settings");
-          }
+      if (this.namingscreen_setup.selected3 == 0) draw_set_color(c_yellow);
+
+      var continue_text = "Continue"; // Continue
+      draw_text(this.continue_x, 105, continue_text);
+      draw_set_color(c_white);
+      draw_set_color(c_white);
+
+      if (this.namingscreen_setup.selected3 == 2) draw_set_color(c_yellow);
+
+      scr_drawtext_centered(160, 125, "Settings"); // Settings
+      draw_set_color(c_white);
+
+      if (this.namingscreen_setup.selected3 == 1) draw_set_color(c_yellow);
+
+      var reset_text;
+
+      if (this.truereset == 0) reset_text = "Reset"; // Reset
+      else reset_text = "True Reset"; // True Reset
+
+      draw_text(this.reset_x, 105, reset_text);
+
+      if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(vk_left)) {
+        if (this.namingscreen_setup.selected3 == 0)
+          this.namingscreen_setup.selected3 = 1;
+        else if (this.namingscreen_setup.selected3 == 1)
+          this.namingscreen_setup.selected3 = 0;
       }
+
+      if (keyboard_check_pressed(vk_down)) {
+        if (
+          this.namingscreen_setup.selected3 == 0 ||
+          this.namingscreen_setup.selected3 == 1
+        )
+          this.namingscreen_setup.selected3 = 2;
+      }
+
+      if (keyboard_check_pressed(vk_up)) {
+        if (this.namingscreen_setup.selected3 == 2)
+          this.namingscreen_setup.selected3 = 0;
+      }
+
+      var action = -1;
+
+      if (control_check_pressed(0)) action = this.namingscreen_setup.selected3;
+
+      if (action == 0) {
+        caster_free("all");
+
+        if (file_exists("file0") === false) {
+          room_goto("room_area1");
+        } else script_execute.call(this, scr_load);
+      }
+
+      if (action == 1) {
+        if (
+          this.hasname == 0 ||
+          scr_hardmodename(global.charname) ||
+          this.truereset > 0
+        ) {
+          this.naming = 1;
+        } else {
+          this.charname = global.charname;
+          this.naming = 2;
+          this.alerm = 0;
+          r = 0.5;
+          q = 0;
+        }
+
+        control_clear(0);
+      }
+
+      if (action == 2) {
+        caster_free("all");
+        room_goto("room_settings");
+      }
+    } else {
+      draw_set_color(c_ltgray);
+      draw_text(85, 20, scr_gettext("instructions_title")); //  --- Instruction ---
+
+      let lines = [];
+      lines[0] = "confirm";
+      lines[1] = "cancel";
+      lines[2] = "menu";
+      lines[3] = "fullscreen";
+      lines[4] = "quit";
+      let num_lines = lines.length;
+
+      for (let i = 0; i < num_lines; i++) {
+        let key = scr_gettext("instructions_" + lines[i] + "_key");
+        let label = scr_gettext("instructions_" + lines[i] + "_label");
+        draw_text(85, 50 + i * 18, key + " - " + label);
+      }
+
+      draw_text(85, 140, scr_gettext("instructions_hp0"));
+
+      var xx = 85;
+
+      var yy = 180;
+
+      draw_set_color(c_white);
+
+      if (this.selected3 == 0) draw_set_color(c_yellow);
+
+      draw_text(xx, yy, "Begin Game"); // Begin Game
+
+      if (keyboard_check_pressed(vk_down)) {
+        if (this.selected3 == 0) this.selected3 = 1;
+      }
+
+      if (keyboard_check_pressed(vk_up)) {
+        if (this.selected3 == 1) this.selected3 = 0;
+      }
+
+      var yy2 = yy + 20;
+      draw_set_color(c_white);
+
+      if (this.selected3 == 1) draw_set_color(c_yellow);
+
+      draw_text(xx, yy2, "Settings"); // Settings
+      var action = -1;
+
+      if (control_check_pressed(0)) action = this.selected3;
+
+      if (action == 0) {
+        this.naming = 1;
+        control_clear(1);
+      }
+
+      if (action == 1) {
+        caster_free("all");
+        room_goto("room_settings");
+      }
+    }
   }
 }
 
@@ -1606,108 +1575,86 @@ function random_ranger(arg0, arg1) {
 }
 
 function ossafe_fill_rectangle(x1, y1, x2, y2) {
-  if (x1 > x2)
-  {
-      var temp = x1;
-      x1 = x2;
-      x2 = temp;
+  if (x1 > x2) {
+    var temp = x1;
+    x1 = x2;
+    x2 = temp;
   }
 
-  if (y1 > y2)
-  {
-      var temp = y1;
-      y1 = y2;
-      y2 = temp;
+  if (y1 > y2) {
+    var temp = y1;
+    y1 = y2;
+    y2 = temp;
   }
 
   draw_rectangle(x1, y1, x2, y2, false);
 }
 
 function scr_npcdir(argument0) {
-  if (this.myinteract == 0)
-  {
-      if (this.direction >= 225 && this.direction < 315)
-      {
-          this.facing = 0;
-          this.sprite_index = this.dsprite;
-      }
-      
-      if (this.direction >= 315 || this.direction < 45)
-      {
-          this.facing = 1;
-          this.sprite_index = this.rsprite;
-      }
-      
-      if (this.direction >= 45 && this.direction < 135)
-      {
-          this.facing = 2;
-          this.sprite_index = this.usprite;
-      }
-      
-      if (this.direction >= 135 && this.direction < 225)
-      {
-          this.facing = 3;
-          this.sprite_index = this.lsprite;
-      }
+  if (this.myinteract == 0) {
+    if (this.direction >= 225 && this.direction < 315) {
+      this.facing = 0;
+      this.sprite_index = this.dsprite;
+    }
+
+    if (this.direction >= 315 || this.direction < 45) {
+      this.facing = 1;
+      this.sprite_index = this.rsprite;
+    }
+
+    if (this.direction >= 45 && this.direction < 135) {
+      this.facing = 2;
+      this.sprite_index = this.usprite;
+    }
+
+    if (this.direction >= 135 && this.direction < 225) {
+      this.facing = 3;
+      this.sprite_index = this.lsprite;
+    }
   }
 
-  if (this.myinteract == (1 + argument0))
-  {
-      if (this.facing == 0)
-          this.sprite_index = this.dtsprite;
-      
-      if (this.facing == 1)
-          this.sprite_index = this.rtsprite;
-      
-      if (this.facing == 2)
-          this.sprite_index = this.utsprite;
-      
-      if (this.facing == 3)
-          this.sprite_index = this.ltsprite;
+  if (this.myinteract == 1 + argument0) {
+    if (this.facing == 0) this.sprite_index = this.dtsprite;
+
+    if (this.facing == 1) this.sprite_index = this.rtsprite;
+
+    if (this.facing == 2) this.sprite_index = this.utsprite;
+
+    if (this.facing == 3) this.sprite_index = this.ltsprite;
   }
 }
 
 function scr_npcdirspeed() {
-  if (this.myinteract == 0)
-  {
-      if (this.vspeed > 0 && this.vspeed > abs(this.hspeed))
-      {
-          this.facing = 0;
-          this.sprite_index = this.dsprite;
-      }
-      
-      if (this.hspeed > 0 && this.hspeed > abs(this.vspeed))
-      {
-          this.facing = 1;
-          this.sprite_index = this.rsprite;
-      }
-      
-      if (this.vspeed < 0 && abs(this.vspeed) > abs(this.hspeed))
-      {
-          this.facing = 2;
-          this.sprite_index = this.usprite;
-      }
-      
-      if (this.hspeed < 0 && abs(this.hspeed) > abs(this.vspeed))
-      {
-          this.facing = 3;
-          this.sprite_index = this.lsprite;
-      }
+  if (this.myinteract == 0) {
+    if (this.vspeed > 0 && this.vspeed > abs(this.hspeed)) {
+      this.facing = 0;
+      this.sprite_index = this.dsprite;
+    }
+
+    if (this.hspeed > 0 && this.hspeed > abs(this.vspeed)) {
+      this.facing = 1;
+      this.sprite_index = this.rsprite;
+    }
+
+    if (this.vspeed < 0 && abs(this.vspeed) > abs(this.hspeed)) {
+      this.facing = 2;
+      this.sprite_index = this.usprite;
+    }
+
+    if (this.hspeed < 0 && abs(this.hspeed) > abs(this.vspeed)) {
+      this.facing = 3;
+      this.sprite_index = this.lsprite;
+    }
   }
 
-  if (this.myinteract == 1)
-  {
-      if (this.facing == 0)
-          this.sprite_index = this.dtsprite;
-      
-      if (this.facing == 1)
-          this.sprite_index = this.rtsprite;
-      
-      if (this.facing == 2)
-          this.sprite_index = this.utsprite;
-      
-      if (this.facing == 3)
-          this.sprite_index = this.ltsprite;
+  if (this.myinteract == 1) {
+    if (this.facing == 0) this.sprite_index = this.dtsprite;
+
+    if (this.facing == 1) this.sprite_index = this.rtsprite;
+
+    if (this.facing == 2) this.sprite_index = this.utsprite;
+
+    if (this.facing == 3) this.sprite_index = this.ltsprite;
   }
 }
 
@@ -1719,11 +1666,19 @@ function scr_facechoice() {
   if (!this.writer) return;
   switch (global.facechoice) {
     case 1:
-      instance_create(this.writer.x - 33, this.writer.y + 25, obj_face_torieltalk);
+      instance_create(
+        this.writer.x - 33,
+        this.writer.y + 25,
+        obj_face_torieltalk
+      );
       instance_create(0, 0, obj_torbody);
       break;
     case 2:
-      instance_create(this.writer.x - 36, this.writer.y + 25, obj_face_floweytalk);
+      instance_create(
+        this.writer.x - 36,
+        this.writer.y + 25,
+        obj_face_floweytalk
+      );
       break;
     case 3:
       instance_create(this.writer.x - 35, this.writer.y + 25, obj_face_sans);
@@ -1741,7 +1696,11 @@ function scr_facechoice() {
       instance_create(this.writer.x - 40, this.writer.y + 20, obj_face_asgore);
       break;
     case 8:
-      instance_create(this.writer.x - 18, this.writer.y + 45, obj_face_mettaton);
+      instance_create(
+        this.writer.x - 18,
+        this.writer.y + 45,
+        obj_face_mettaton
+      );
       break;
     case 9:
       instance_create(this.writer.x - 30, this.writer.y + 30, obj_face_asriel);
@@ -1749,15 +1708,29 @@ function scr_facechoice() {
   }
 }
 
-function scr_gettext(text_id, one, two, three, four, five, six, seven, eight, nine) {
+function scr_gettext(
+  text_id,
+  one,
+  two,
+  three,
+  four,
+  five,
+  six,
+  seven,
+  eight,
+  nine
+) {
   let text = ds_map_find_value(global.text_data_en, text_id);
 
   if (text === undefined) {
     text = "";
   }
 
-  for (var i = 1; i <= (string_length(text) - 3); i++) {
-    if (string_copy(text, i, 2) === "\\[" && string_char_at(text, i + 2) === "]") {
+  for (var i = 1; i <= string_length(text) - 3; i++) {
+    if (
+      string_copy(text, i, 2) === "\\[" &&
+      string_char_at(text, i + 2) === "]"
+    ) {
       let sel = string_char_at(text, i + 1);
       let replace = "";
 
@@ -1799,10 +1772,10 @@ function scr_gettext(text_id, one, two, three, four, five, six, seven, eight, ni
           replace = nine;
           break;
       }
-      let before =  string_copy(text, 1, i - 1);
-      let after = string_copy(text, i + 4, string_length(text))
+      let before = string_copy(text, 1, i - 1);
+      let after = string_copy(text, i + 4, string_length(text));
       text = before + replace + after;
-      i += (string_length(replace) - 1);
+      i += string_length(replace) - 1;
     }
   }
 
@@ -1830,7 +1803,7 @@ function substr(str, pos, len) {
     pos = strlen(str) + 1 + pos;
   }
   if (!len) {
-    len = (strlen(str) - pos) + 1
+    len = strlen(str) - pos + 1;
   }
 
   if (len > 0) {
@@ -1845,324 +1818,281 @@ function strlen(str) {
 }
 
 function SCR_BORDERSETUP() {
-  if (global.border == 0)
-  {
+  if (global.border == 0) {
     global.idealborder[0] = 32;
     global.idealborder[1] = 602;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 1)
-  {
+  if (global.border == 1) {
     global.idealborder[0] = 217;
     global.idealborder[1] = 417;
     global.idealborder[2] = 180;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 2)
-  {
+  if (global.border == 2) {
     global.idealborder[0] = 217;
     global.idealborder[1] = 417;
     global.idealborder[2] = 125;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 3)
-  {
+  if (global.border == 3) {
     global.idealborder[0] = 237;
     global.idealborder[1] = 397;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 4)
-  {
+  if (global.border == 4) {
     global.idealborder[0] = 267;
     global.idealborder[1] = 367;
     global.idealborder[2] = 295;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 5)
-  {
+  if (global.border == 5) {
     global.idealborder[0] = 192;
     global.idealborder[1] = 442;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 6)
-  {
+  if (global.border == 6) {
     global.idealborder[0] = 227;
     global.idealborder[1] = 407;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 7)
-  {
+  if (global.border == 7) {
     global.idealborder[0] = 227;
     global.idealborder[1] = 407;
     global.idealborder[2] = 200;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 8)
-  {
+  if (global.border == 8) {
     global.idealborder[0] = 202;
     global.idealborder[1] = 432;
     global.idealborder[2] = 290;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 9)
-  {
+  if (global.border == 9) {
     global.idealborder[0] = 132;
     global.idealborder[1] = 492;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 10)
-  {
+  if (global.border == 10) {
     global.idealborder[0] = 147;
     global.idealborder[1] = 487;
     global.idealborder[2] = 200;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 11)
-  {
+  if (global.border == 11) {
     global.idealborder[0] = 32;
     global.idealborder[1] = 602;
     global.idealborder[2] = 330;
     global.idealborder[3] = 465;
   }
 
-  if (global.border == 12)
-  {
-    global.idealborder[0] = (room_width / 2) - 40;
-    global.idealborder[1] = (room_width / 2) + 40;
-    global.idealborder[2] = (room_height / 2) - 40;
-    global.idealborder[3] = (room_height / 2) + 40;
+  if (global.border == 12) {
+    global.idealborder[0] = room_width / 2 - 40;
+    global.idealborder[1] = room_width / 2 + 40;
+    global.idealborder[2] = room_height / 2 - 40;
+    global.idealborder[3] = room_height / 2 + 40;
   }
 
-  if (global.border == 13)
-  {
-    global.idealborder[0] = (room_width / 2) - 40;
-    global.idealborder[1] = (room_width / 2) + 40;
+  if (global.border == 13) {
+    global.idealborder[0] = room_width / 2 - 40;
+    global.idealborder[1] = room_width / 2 + 40;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 14)
-  {
-    global.idealborder[0] = (room_width / 2) - 35;
-    global.idealborder[1] = (room_width / 2) + 35;
+  if (global.border == 14) {
+    global.idealborder[0] = room_width / 2 - 35;
+    global.idealborder[1] = room_width / 2 + 35;
     global.idealborder[2] = 300;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 15)
-  {
-    global.idealborder[0] = (room_width / 2) - 50;
-    global.idealborder[1] = (room_width / 2) + 50;
+  if (global.border == 15) {
+    global.idealborder[0] = room_width / 2 - 50;
+    global.idealborder[1] = room_width / 2 + 50;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 16)
-  {
-    global.idealborder[0] = (room_width / 2) - 50;
-    global.idealborder[1] = (room_width / 2) + 50;
+  if (global.border == 16) {
+    global.idealborder[0] = room_width / 2 - 50;
+    global.idealborder[1] = room_width / 2 + 50;
     global.idealborder[2] = 50;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 17)
-  {
+  if (global.border == 17) {
     global.idealborder[0] = 162;
     global.idealborder[1] = 472;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 18)
-  {
+  if (global.border == 18) {
     global.idealborder[0] = 162;
     global.idealborder[1] = 472;
     global.idealborder[2] = 220;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 19)
-  {
-    global.idealborder[0] = (roomSize.width / 2) - 100;
-    global.idealborder[1] = (roomSize.width / 2) + 100;
+  if (global.border == 19) {
+    global.idealborder[0] = roomSize.width / 2 - 100;
+    global.idealborder[1] = roomSize.width / 2 + 100;
     global.idealborder[2] = 185;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 20)
-  {
+  if (global.border == 20) {
     global.idealborder[0] = 257;
     global.idealborder[1] = 547;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 21)
-  {
+  if (global.border == 21) {
     global.idealborder[0] = 197;
     global.idealborder[1] = 437;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 22)
-  {
+  if (global.border == 22) {
     offpurple = 0;
-    
-    if (instance_exists(obj_purpleheart))
-    {
-        offpurple = obj_purpleheart.yzero;
-        
-        if (offpurple > 250)
-            offpurple = 250;
+
+    if (instance_exists(obj_purpleheart)) {
+      offpurple = obj_purpleheart.yzero;
+
+      if (offpurple > 250) offpurple = 250;
     }
-    
+
     global.idealborder[0] = 197;
     global.idealborder[1] = 437;
     global.idealborder[2] = 250;
-    
-    if (offpurple != 0)
-        global.idealborder[2] = offpurple - 10;
-    
+
+    if (offpurple != 0) global.idealborder[2] = offpurple - 10;
+
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 23)
-  {
+  if (global.border == 23) {
     offpurple = 0;
-    
-    if (instance_exists(obj_purpleheart))
-    {
-        offpurple = obj_purpleheart.yzero;
-        
-        if (offpurple > 250)
-            offpurple = 250;
+
+    if (instance_exists(obj_purpleheart)) {
+      offpurple = obj_purpleheart.yzero;
+
+      if (offpurple > 250) offpurple = 250;
     }
-    
+
     global.idealborder[0] = 197;
     global.idealborder[1] = 537;
     global.idealborder[2] = 250;
-    
-    if (offpurple != 0)
-        global.idealborder[2] = offpurple - 10;
-    
+
+    if (offpurple != 0) global.idealborder[2] = offpurple - 10;
+
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 24)
-  {
+  if (global.border == 24) {
     global.idealborder[0] = 235;
     global.idealborder[1] = 405;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 25)
-  {
+  if (global.border == 25) {
     global.idealborder[0] = 235;
     global.idealborder[1] = 405;
     global.idealborder[2] = 160;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 26)
-  {
+  if (global.border == 26) {
     global.idealborder[0] = 295;
     global.idealborder[1] = 345;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 27)
-  {
+  if (global.border == 27) {
     global.idealborder[0] = 270;
     global.idealborder[1] = 370;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 28)
-  {
+  if (global.border == 28) {
     global.idealborder[0] = 235;
     global.idealborder[1] = 405;
     global.idealborder[2] = 35;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 29)
-  {
+  if (global.border == 29) {
     global.idealborder[0] = 207;
     global.idealborder[1] = 427;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 30)
-  {
+  if (global.border == 30) {
     global.idealborder[0] = 207;
     global.idealborder[1] = 427;
     global.idealborder[2] = 200;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 31)
-  {
+  if (global.border == 31) {
     global.idealborder[0] = 32;
     global.idealborder[1] = 602;
     global.idealborder[2] = 100;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 35)
-  {
+  if (global.border == 35) {
     global.idealborder[0] = 132;
     global.idealborder[1] = 502;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 36)
-  {
+  if (global.border == 36) {
     global.idealborder[0] = 240;
     global.idealborder[1] = 400;
     global.idealborder[2] = 225;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 37)
-  {
+  if (global.border == 37) {
     global.idealborder[3] = 385;
     global.idealborder[2] = global.idealborder[3] - 200;
     global.idealborder[0] = 120;
     global.idealborder[1] = 520;
   }
 
-  if (global.border == 38)
-  {
+  if (global.border == 38) {
     global.idealborder[0] = 270;
     global.idealborder[1] = 370;
     global.idealborder[2] = 285;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 39)
-  {
+  if (global.border == 39) {
     global.idealborder[0] = 132;
     global.idealborder[1] = 502;
     global.idealborder[2] = 250;
@@ -2172,28 +2102,25 @@ function SCR_BORDERSETUP() {
     global.idealborder[2] -= 20;
   }
 
-  if (global.border == 50)
-  {
+  if (global.border == 50) {
     global.idealborder[0] = 192;
     global.idealborder[1] = 512;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 51)
-  {
+  if (global.border == 51) {
     global.idealborder[0] = 192;
     global.idealborder[1] = 512;
     global.idealborder[2] = 250;
-    
+
     if (obj_heart.y < 270)
-        global.idealborder[2] = round((obj_heart.y - 20) / 5) * 5;
-    
+      global.idealborder[2] = round((obj_heart.y - 20) / 5) * 5;
+
     global.idealborder[3] = 385;
   }
 
-  if (global.border == 52)
-  {
+  if (global.border == 52) {
     global.idealborder[0] = 250;
     global.idealborder[1] = 390;
     global.idealborder[2] = 250;
@@ -2202,14 +2129,12 @@ function SCR_BORDERSETUP() {
 }
 
 function scr_textskip() {
-  if (instance_exists(OBJ_WRITER))
-  {
-    if (control_check_pressed(1))
-    {
-      _with (OBJ_WRITER, function() {
+  if (instance_exists(OBJ_WRITER)) {
+    if (control_check_pressed(1)) {
+      _with(OBJ_WRITER, function () {
         this.stringpos = string_length(this.originalstring);
-      })
-      
+      });
+
       control_clear(1);
     }
   }
@@ -2227,9 +2152,9 @@ function scr_gameoverb() {
   global.hp = 0;
 
   if (global.battlegroup === 22) {
-    _with("obj_torielboss", function() {
+    _with("obj_torielboss", function () {
       this.sprite_index = "spr_torielboss_mouthcover";
-    })
+    });
   }
 
   if (instance_exists("obj_asgoreb")) {
@@ -2251,87 +2176,69 @@ function scr_gameoverb() {
   caster_free("all");
 
   if (instance_exists("obj_heart")) {
-    _with(obj_heart, function() {
+    _with(obj_heart, function () {
       global.myxb = this.x;
       global.myyb = this.y;
-    })
+    });
   }
 
   if (instance_exists(obj_fakeheart)) {
-    _with(obj_fakeheart, function() {
+    _with(obj_fakeheart, function () {
       global.myxb = this.x;
       global.myyb = this.y;
-    })
+    });
   }
 
-  room_goto("room_gameover")
+  room_goto("room_gameover");
 }
 
 function snd_isplaying(snd) {
-  return audio_is_playing(snd)
+  return audio_is_playing(snd);
 }
 
 function scr_depth() {
-  this.depth = 50000 - ((this.y * 10) + (this.sprite_height * 10));
+  this.depth = 50000 - (this.y * 10 + this.sprite_height * 10);
 }
 
 function caster_is_playing(argument0) {
-  if (audio_is_playing(argument0))
-    return 1;
-  else
-    return 0;
+  if (audio_is_playing(argument0)) return 1;
+  else return 0;
 }
 
 function scr_murderlv() {
   let mrd = 0;
 
-  if (global.flag[202] >= 20)
-    mrd = 1;
+  if (global.flag[202] >= 20) mrd = 1;
 
-  if (mrd == 1 && global.flag[45] == 4)
-    mrd = 2;
+  if (mrd == 1 && global.flag[45] == 4) mrd = 2;
 
-  if (mrd == 2 && global.flag[52] == 1)
-    mrd = 3;
+  if (mrd == 2 && global.flag[52] == 1) mrd = 3;
 
-  if (mrd == 3 && global.flag[53] == 1)
-    mrd = 4;
+  if (mrd == 3 && global.flag[53] == 1) mrd = 4;
 
-  if (mrd == 4 && global.flag[54] == 1)
-    mrd = 5;
+  if (mrd == 4 && global.flag[54] == 1) mrd = 5;
 
-  if (mrd == 5 && global.flag[57] == 2)
-    mrd = 6;
+  if (mrd == 5 && global.flag[57] == 2) mrd = 6;
 
-  if (mrd == 6 && global.flag[203] >= 16)
-    mrd = 7;
+  if (mrd == 6 && global.flag[203] >= 16) mrd = 7;
 
-  if (mrd == 7 && global.flag[67] == 1)
-    mrd = 8;
+  if (mrd == 7 && global.flag[67] == 1) mrd = 8;
 
-  if (mrd == 8 && global.flag[81] == 1)
-    mrd = 9;
+  if (mrd == 8 && global.flag[81] == 1) mrd = 9;
 
-  if (mrd == 9 && global.flag[252] == 1)
-    mrd = 10;
+  if (mrd == 9 && global.flag[252] == 1) mrd = 10;
 
-  if (mrd == 10 && global.flag[204] >= 18)
-    mrd = 11;
+  if (mrd == 10 && global.flag[204] >= 18) mrd = 11;
 
-  if (mrd == 11 && global.flag[251] == 1 && global.flag[350] == 1)
-    mrd = 12;
+  if (mrd == 11 && global.flag[251] == 1 && global.flag[350] == 1) mrd = 12;
 
-  if (mrd == 12 && global.flag[402] == 1)
-    mrd = 13;
+  if (mrd == 12 && global.flag[402] == 1) mrd = 13;
 
-  if (mrd == 13 && global.flag[397] == 1)
-    mrd = 14;
+  if (mrd == 13 && global.flag[397] == 1) mrd = 14;
 
-  if (mrd == 14 && global.flag[205] >= 40)
-    mrd = 15;
+  if (mrd == 14 && global.flag[205] >= 40) mrd = 15;
 
-  if (mrd == 15 && global.flag[425] == 1 && global.flag[27] == 0)
-    mrd = 16;
+  if (mrd == 15 && global.flag[425] == 1 && global.flag[27] == 0) mrd = 16;
 
   this.murderboy = mrd;
 
@@ -2343,47 +2250,47 @@ function scr_murderlv() {
 }
 
 function ossafe_ini_open(argument0) {
-  ini_open(argument0)
+  ini_open(argument0);
 }
 
 function ossafe_ini_close(argument0) {
-  ini_close(argument0)
+  ini_close(argument0);
 }
 
 function ossafe_file_text_open_read(argument0) {
-  return file_text_open_read(argument0)
+  return file_text_open_read(argument0);
 }
 
 function ossafe_file_text_open_write(argument0) {
-  return file_text_open_write(argument0)
+  return file_text_open_write(argument0);
 }
 
 function ossafe_file_text_write_real(argument0, argument1) {
-  return file_text_write_real(argument0, argument1)
+  return file_text_write_real(argument0, argument1);
 }
 
 function ossafe_file_text_write_string(argument0, argument1) {
-  return file_text_write_string(argument0, argument1)
+  return file_text_write_string(argument0, argument1);
 }
 
 function ossafe_file_text_writeln(argument0) {
-  return file_text_writeln(argument0)
+  return file_text_writeln(argument0);
 }
 
 function ossafe_file_text_read_real(argument0, argument1) {
-  return file_text_read_real(argument0, argument1)
+  return file_text_read_real(argument0, argument1);
 }
 
 function ossafe_file_text_read_string(argument0, argument1) {
-  return file_text_read_string(argument0, argument1)
+  return file_text_read_string(argument0, argument1);
 }
 
 function ossafe_file_text_readln(argument0) {
-  return file_text_readln(argument0)
+  return file_text_readln(argument0);
 }
 
 function ossafe_file_text_close(argument0) {
-  file_text_close(argument0)
+  file_text_close(argument0);
 }
 
 function scr_save() {
@@ -2391,13 +2298,21 @@ function scr_save() {
   let filechoicebk2 = global.filechoice;
   global.filechoice = 9;
   script_execute.call(this, scr_saveprocess);
-  global.filechoice = filechoicebk2
+  global.filechoice = filechoicebk2;
   let iniwrite = ossafe_ini_open("undertale.ini");
   ini_write_string("General", "Name", global.charname);
   ini_write_real("General", "Love", global.lv);
   ini_write_real("General", "Time", global.time);
   ini_write_real("General", "Kills", global.kills);
-  ini_write_real("General", "Room", rooms.indexOf(`${window.location.href.slice(35, 39)}_${window.location.href.slice(40).split("/")[0]}`));
+  ini_write_real(
+    "General",
+    "Room",
+    rooms.indexOf(
+      `${window.location.href.slice(35, 39)}_${
+        window.location.href.slice(40).split("/")[0]
+      }`
+    )
+  );
   ossafe_ini_close();
 }
 
@@ -2465,7 +2380,7 @@ function scr_load() {
   global.filechoice = filechoicebk;
   const file = "file" + string(global.filechoice);
   const myfileid = ossafe_file_text_open_read(file);
-  global.charname =  ossafe_file_text_read_string(myfileid);
+  global.charname = ossafe_file_text_read_string(myfileid);
   ossafe_file_text_readln(myfileid);
   global.lv = ossafe_file_text_read_real(myfileid);
   ossafe_file_text_readln(myfileid);
@@ -2499,9 +2414,9 @@ function scr_load() {
   ossafe_file_text_readln(myfileid);
   global.armor = ossafe_file_text_read_real(myfileid);
   ossafe_file_text_readln(myfileid);
-  for (let i = 0; i < 512; i ++) {
+  for (let i = 0; i < 512; i++) {
     global.flag[i] = ossafe_file_text_read_real(myfileid);
-  ossafe_file_text_readln(myfileid);
+    ossafe_file_text_readln(myfileid);
   }
   global.plot = ossafe_file_text_read_real(myfileid);
   ossafe_file_text_readln(myfileid);
@@ -2514,7 +2429,7 @@ function scr_load() {
   ossafe_file_text_readln(myfileid);
   global.currentroom = room_get_name(ossafe_file_text_read_real(myfileid));
   ossafe_file_text_readln(myfileid);
-  global.time =  ossafe_file_text_read_real(myfileid);
+  global.time = ossafe_file_text_read_real(myfileid);
   global.lastsavedkills = global.kills;
   global.lastsavedtime = global.time;
   global.lastsavedlv = global.lv;
@@ -2535,7 +2450,7 @@ function scr_load() {
   global.flag[364] = 0;
   scr_dogcheck.call(this);
   if (this.dogcheck == 1) {
-    room_goto(global.currentroom)
+    room_goto(global.currentroom);
   }
 }
 
@@ -2550,8 +2465,14 @@ function scr_dogcheck() {
     this.dogcheck = 0;
   }
 
-  if (global.currentroom === "room_castle_exit" || global.currentroom === "room_outsideworld" || global.currentroom === "room_undertale_end" || global.currentroom === "room_tundra_sansroom" || global.currentroom === "room_tundra_sansroom_dark" || global.currentroom === "room_tundra_basement") {
-    console.log("you shouldnt spawn here");
+  if (
+    global.currentroom === "room_castle_exit" ||
+    global.currentroom === "room_outsideworld" ||
+    global.currentroom === "room_undertale_end" ||
+    global.currentroom === "room_tundra_sansroom" ||
+    global.currentroom === "room_tundra_sansroom_dark" ||
+    global.currentroom === "room_tundra_basement"
+  ) {
     this.dogcheck = 0;
   }
 
@@ -2565,6 +2486,22 @@ function scr_tempsave() {
   global.filechoice = 9;
   script_execute.call(this, scr_saveprocess);
   global.filechoice = filechoicebk2;
+}
+
+function scr_onscreen(argument0, argument1) {
+  this.onscreen = 0;
+  if (
+    this.x > view_xview[view_current] - argument0 &&
+    this.x < view_xview[view_current] + view_wview[view_current] + argument0
+  ) {
+    if (
+      this.y >
+        view_hview[view_current] + view_yview[view_current] + argument1 &&
+      this.x < view_yview[view_current] - argument1
+    ) {
+      this.onscreen = 1;
+    }
+  }
 }
 
 export {
@@ -2627,4 +2564,5 @@ export {
   scr_load,
   scr_tempsave,
   scr_dogcheck,
+  scr_onscreen,
 };

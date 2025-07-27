@@ -1,5 +1,5 @@
 import { ogCtx, ctx, ogCanvas, canvas } from "/imports/canvasSetup.js"
-import { view_xview, view_yview, view_current, view_hview, view_wview } from "/imports/view.js"
+import { final_view_xview, final_view_yview, view_current, final_view_hview, final_view_wview } from "/imports/view.js"
 import global from "/imports/assets/global.js"
 import { keyboard_check, room_goto, ord, keyboard_check_pressed, instance_exists, instance_create, ini_open, ini_close, ini_read_real, ini_read_string } from "/imports/assets/gamemakerFunctions.js";
 import { vk_up, vk_down, vk_left, vk_right, vk_escape } from "/imports/input.js"
@@ -8,10 +8,10 @@ import * as obj_quittingmessage from "/obj/quittingmessage/index.js"
 import { textdata_en } from "/imports/assets/text.js";
 
 function updateScreen() {
-	const viewX = view_xview[view_current];
-	const viewY = view_yview[view_current];
-	const viewW = view_wview[view_current];
-	const viewH = view_hview[view_current];
+	const viewX = final_view_xview[view_current];
+	const viewY = final_view_yview[view_current];
+	const viewW = final_view_wview[view_current];
+	const viewH = final_view_hview[view_current];
 
 	const scale = ogCanvas.height / viewH;
 	const scaledWidth = viewW * scale;

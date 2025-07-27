@@ -543,7 +543,7 @@ function room_goto(index) {
     if (typeof index === "number") {
       index = room_get_name(index);
     } else {
-      console.error("room is nonexistant / not a valid type");
+      console.error(`room ${index} is nonexistant / not a valid type`);
       return;
     }
   }
@@ -872,8 +872,6 @@ function draw_sprite_part_ext(
   const img = cached.img;
 
   // Calculate origin for centering
-  const ox = img.width / 2;
-  const oy = img.height / 2;
 
   ctx.save();
 
@@ -893,9 +891,9 @@ function draw_sprite_part_ext(
     offctx.fillStyle = colour;
     offctx.fillRect(0, 0, width, height);
 
-    ctx.drawImage(offscreen, -ox, -oy);
+    ctx.drawImage(offscreen, 0, 0);
   } else {
-    ctx.drawImage(img, left, top, width, height, -ox, -oy, width, height);
+    ctx.drawImage(img, left, top, width, height, 0, 0, width, height);
   }
 
   ctx.restore();
@@ -1116,10 +1114,14 @@ function rgbToHex(r, g, b) {
  * @returns {number}
  */
 function room_next(numb) {
-  if (typeof numb !== "number") return;
+  if (typeof numb !== "number") {
+    if (typeof numb === "string") {
+      console.warn("please input index to room_next()");
+      numb = rooms.indexOf(numb);
+    } else return;
+  }
 
-  let roomIndex = rooms.indexOf(rooms[numb]);
-
+  const roomIndex = rooms.indexOf(room_get_name(numb));
   if (roomIndex === -1) return -1;
 
   return roomIndex + 1;
@@ -1132,10 +1134,14 @@ function room_next(numb) {
  * @returns {number}
  */
 function room_previous(numb) {
-  if (typeof numb !== "number") return;
+  if (typeof numb !== "number") {
+    if (typeof numb === "string") {
+      console.warn("please input index to room_previous()");
+      numb = rooms.indexOf(numb);
+    } else return;
+  }
 
-  let roomIndex = rooms.indexOf(numb);
-
+  const roomIndex = rooms.indexOf(room_get_name(numb));
   if (roomIndex === -1) return -1;
 
   return roomIndex - 1;
@@ -1567,7 +1573,6 @@ function ini_export() {
   ini_parse(ini_data);
 
   const blob = new Blob([iniText], { type: "text/plain" });
-  console.log(iniText);
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `${ini_filename}`;

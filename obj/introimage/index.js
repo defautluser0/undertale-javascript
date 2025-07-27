@@ -4,6 +4,7 @@ import {
   caster_stop,
   caster_free,
   caster_set_volume,
+  scr_gettext,
 } from "/imports/customFunctions.js";
 import { mus_story } from "/imports/assets.js";
 import {
@@ -15,16 +16,19 @@ import {
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
 import { ogCanvas, ogCtx, canvas, ctx } from "/imports/canvasSetup.js"
-import { view_current, view_hview, view_wview, view_xview, view_yview } from "/imports/view.js"
+import { view_current, final_view_hview, final_view_wview, final_view_xview, final_view_yview } from "/imports/view.js"
 import { control_check_pressed } from "/imports/input.js";
+import { textdata_en } from "/imports/assets/text.js";
 import roomSize from "/imports/assets/roomSize.js";
 import * as OBJ_WRITER from '/obj/writer/index.js';
 import * as obj_introfader from '/obj/introfader/index.js';
 import * as obj_unfader from '/obj/unfader/index.js';
 import * as obj_introlast from '/obj/introlast/index.js';
 
+// holy shit this code is so outdated compared to new objects i cant
 // create
 function create() {
+  textdata_en();
   const alarm = new Array(12).fill(-1);
   alarm[2] = 4;
   return {
@@ -81,14 +85,14 @@ function updateGamemakerFunctions() {
   ogCtx.clearRect(0, 0, ogCanvas.width, ogCanvas.height);
   ogCtx.drawImage(
     canvas,
-    view_xview[view_current],
-    view_yview[view_current],
+    final_view_xview[view_current],
+    final_view_yview[view_current],
     roomSize.width,
     roomSize.height,
     0,
     0,
-    view_wview[view_current],
-    view_hview[view_current],
+    final_view_wview[view_current],
+    final_view_hview[view_current],
   );
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -111,23 +115,21 @@ function alarm2() {
   global.msc = 0;
   this.fadercreator = 0;
   this.skip = 0;
-
-  global.msg[0] = " Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^6. \\E1 ^1 %";
-  global.msg[1] = " One day^1, war broke&out between the two&races^6. \\E0 ^1 %";
-  global.msg[2] = " After a long battle^1,&the humans were&victorious^6. \\E1 ^1 %";
-  global.msg[3] = " They sealed the monsters&underground with a magic&spell^6. \\E0 ^1 %";
-  global.msg[4] = " Many years later^2.^2.^5.  \\E1 ^1 %";
-  global.msg[5] = "       MT. EBOTT&         201X^9 \\E0 %";
-  global.msg[6] = " Legends say that those&who climb the mountain&never return^5.^3 \\E1 %";
-  global.msg[7] = "  \\E1 %";
-  global.msg[8] = "  ^9 ^5 \\E0 %";
-  global.msg[9] = "  ^9 ^5 ^2 \\E1 %";
-  global.msg[10] = "  ^9 ^5 ^2 \\E2 %";
-  global.msg[11] = "  ^9 ^9 ^9 ^9 ^9 ^9 \\E2 %%";
-  global.msg[12] = "  ^9 ^9 ^9 ^9 ^9  \\E0 %%";
-  global.msg[13] = "  ^9 ^9 ^9 ^9 ^9 ^9 \\E0 %";
-  global.msg[14] = "  %%";
-
+  global.msg[0] = scr_gettext("obj_introimage_70"); // Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^6. \E1 ^1 %
+  global.msg[1] = scr_gettext("obj_introimage_71"); // One day^1, war broke&out between the two&races^6. \E0 ^1 %
+  global.msg[2] = scr_gettext("obj_introimage_72"); // After a long battle^1,&the humans were&victorious^6. \E1 ^1 %
+  global.msg[3] = scr_gettext("obj_introimage_73"); // They sealed the monsters&underground with a magic&spell^6. \E0 ^1 %
+  global.msg[4] = scr_gettext("obj_introimage_74"); // Many years later^2.^2.^5.  \E1 ^1 %
+  global.msg[5] = scr_gettext("obj_introimage_75"); //       MT. EBOTT&         201X^9 \E0 %
+  global.msg[6] = scr_gettext("obj_introimage_76"); // Legends say that those&who climb the mountain&never return^5.^3 \E1 %
+  global.msg[7] = scr_gettext("obj_introimage_78"); //  \E1 %
+  global.msg[8] = scr_gettext("obj_introimage_79"); //  ^9 ^5 \E0 %
+  global.msg[9] = scr_gettext("obj_introimage_80"); //  ^9 ^5 ^2 \E1 %
+  global.msg[10] = scr_gettext("obj_introimage_81"); //  ^9 ^5 ^2 \E2 %
+  global.msg[11] = scr_gettext("obj_introimage_82"); //  ^9 ^9 ^9 ^9 ^9 ^9 \E2 %%
+  global.msg[12] = scr_gettext("obj_introimage_83"); //  ^9 ^9 ^9 ^9 ^9  \E0 %%
+  global.msg[13] = scr_gettext("obj_introimage_84"); //  ^9 ^9 ^9 ^9 ^9 ^9 \E0 %
+  global.msg[14] = scr_gettext("obj_introimage_85"); //  %%
   this.mywriter = instance_create(40, 140, OBJ_WRITER);
   this.alarm[0] = 5;
 }
