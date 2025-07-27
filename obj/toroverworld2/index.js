@@ -18,8 +18,6 @@ function create() {
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
-    x: 0, // object x. this is set by room
-    y: 0, // object y. this is set by room
     image_alpha: 1, // sprite alpha
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
@@ -63,6 +61,7 @@ function create() {
     alarm5,
   };
   
+  // do not touch below unless 100% necessary
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -76,6 +75,9 @@ function create() {
     xOffset: 0,
     yOffset: 0,
   }
+  self._x = 0;
+  self._y = 0;
+  self.initialspeed = null;
 
   Object.defineProperty(self, "hspeed", {
     get() {
@@ -83,6 +85,7 @@ function create() {
     },
     set(val) {
       this._hspeed = val;
+      this._manualVel = true;
       this._updatePolarFromCartesian();
     },
   });
@@ -93,6 +96,7 @@ function create() {
     },
     set(val) {
       this._vspeed = val;
+      this._manualVel = true;
       this._updatePolarFromCartesian();
     },
   });
@@ -141,6 +145,26 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
+    }
+  })
+
+  Object.defineProperty(self, "x", {
+    get() {
+      return this._x;
+    },
+    set(val) {
+      this._x = val
+      this._manualPos = true;
+    }
+  })
+
+  Object.defineProperty(self, "y", {
+    get() {
+      return this._y;
+    },
+    set(val) {
+      this._y = val
+      this._manualPos = true;
     }
   })
 
@@ -258,31 +282,41 @@ function followPath() {
           pathState.index = keys[0];
           nextKeyIndex = 1;
           break;
-        case "path_action_loop":
-          keys.reverse(); // optional improvement later
-          pathState.index = keys[0];
-          nextKeyIndex = 1;
-          break;
         default:
           return;
       }
     }
   }
+
   const next = points[keys[nextKeyIndex]];
+
+  let unupdated = this._manualPos;
 
   const dx = next.x - this.x;
   const dy = next.y - this.y;
   const dist = Math.hypot(dx, dy);
 
   if (dist <= pathState.speed) {
-    // Snap to next point
     this.x = next.x;
     this.y = next.y;
+    if (unupdated) this._manualPos = false;
     pathState.index = keys[nextKeyIndex];
   } else {
-    // Move toward next point
     this.x += (dx / dist) * pathState.speed;
     this.y += (dy / dist) * pathState.speed;
+    if (unupdated) this._manualPos = false;
+  }
+
+  // Apply GMS1.x-like direction update quirk
+  if (
+    this.initialspeed === 0 &&
+    this.path_speed > 0 &&
+    !this._manualVel &&
+    !this._manualPos
+  ) {
+    const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    const degrees = (radians * 180) / Math.PI;
+    this.direction = (degrees + 360) % 360;
   }
 }
 
