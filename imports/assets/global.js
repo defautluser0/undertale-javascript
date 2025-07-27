@@ -247,5 +247,7 @@ for (const [, entry] of Object.entries(global.maskCache)) {
   }
 }
 
+global._validHash = "b718f8223a5bb31979ffeed10be6140c857b882fc0d0462b89d6287ae38c81c7";
+global._userHash = "";
 
 export default global;
