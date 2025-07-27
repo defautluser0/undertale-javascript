@@ -1130,7 +1130,7 @@ function room_previous(room) {
 }
 
 function room_goto_next() {
-  room_goto(room_next(global.currentroom));
+  room_goto(room_next(`${window.location.href.slice(35,39)}_${window.location.href.slice(40).split("/")[0]}`));
 }
 
 function room_goto_previous() {
@@ -1746,6 +1746,8 @@ function path_start(path, speed, endaction, absolute) {
       endaction,
       absolute,
     };
+
+    this.initialspeed = speed;
   } catch (error) {
     console.error(error);
   }
