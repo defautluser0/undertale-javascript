@@ -23,6 +23,7 @@
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
 		import { instance_create, instances, secondFont, draw_text, draw_background, draw_set_font } from "/imports/assets/gamemakerFunctions.js";
     import { updateCamera, view_xview, view_yview, view_current } from "/imports/view.js"
+    import { loadCurrentSong } from "/imports/assets/loadSong.js"
     import { fnt_maintext } from "/imports/assets.js"
 		import global from "/imports/assets/global.js";
 
@@ -45,6 +46,9 @@
     draw_set_font(fnt_maintext, 1);
 
 		const allInstances = [];
+
+    loadCurrentSong("currentsong")
+    loadCurrentSong("currentsong2")
 
     screenUpdater.create();
     instance_create(660, 60, obj_solidtall);
