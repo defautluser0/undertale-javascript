@@ -43,6 +43,8 @@ const instances = new Map();
 
 const spriteCache = {};
 const maskCache = {};
+const tileCache = {};
+const bgCache = {};
 const globalTintCache = new Map();
 
 function getBoundingBox() {
@@ -1042,12 +1044,14 @@ function ord(string) {
 function draw_background(background, x, y) {
   if (!background) return;
 
-  const img = new Image();
-  img.src = `/bg/${background}.png`;
+  const key = `/bg/${background}.png`
+  const cached = loadImageCached(key, bgCache);
 
-  img.onload = () => {
-    ctx.drawImage(img, round(x), round(y));
-  };
+  if (!cached.loaded) return;
+
+  const img = cached.img;
+
+  ctx.drawImage(img, round(x), round(y));
 }
 
 /**
@@ -1997,6 +2001,63 @@ function file_text_export(filename) {
   document.body.removeChild(a);
 }
 
+function draw_tile(tileset, tiledata, frame = 0, x = 0, y = 0) {
+  if (!tileset || !tiledata) return;
+
+  const {
+    sprite,
+    width: tilew,
+    height: tileh,
+    xoffset = 0,
+    yoffset = 0,
+    xsep = 0,
+    ysep = 0,
+    xbord = 0,
+    ybord = 0,
+    gms2 = 0
+  } = tileset;
+
+  // Load the tileset image
+  const key = `/bg/${sprite}.png`;
+  const cached = loadImageCached(key, spriteCache);
+  if (!cached.loaded) return;
+
+  const img = cached.img;
+
+  // Calculate columns in the tileset image
+  const columns = Math.floor((img.width - xbord * 2 + xsep) / (tilew + xsep));
+
+  // GameMaker Studio 2 has a blank tile at the top-left (tile index starts at 1)
+  let tile_index = tiledata.tile_index + (frame || 0);
+  if (gms2) tile_index += 1;
+
+  const col = tile_index % columns;
+  const row = Math.floor(tile_index / columns);
+
+  const sx = xbord + col * (tilew + xsep);
+  const sy = ybord + row * (tileh + ysep);
+
+  ctx.save();
+
+  // Apply position and offset
+  ctx.translate(x - xoffset, y - yoffset);
+
+  // Handle flipping
+  if (tiledata.hflip || tiledata.vflip) {
+    ctx.scale(tiledata.hflip ? -1 : 1, tiledata.vflip ? -1 : 1);
+    ctx.translate(tiledata.hflip ? -tilew : 0, tiledata.vflip ? -tileh : 0);
+  }
+
+  // Draw the tile image
+  ctx.drawImage(
+    img,
+    sx, sy, tilew, tileh, // source
+    0, 0, tilew, tileh    // destination
+  );
+
+  ctx.restore();
+}
+
 export {
   audio_play_sound,
   audio_is_playing,
@@ -2091,4 +2152,5 @@ export {
   file_text_close,
   file_text_import,
   file_text_export,
+  draw_tile,
 };

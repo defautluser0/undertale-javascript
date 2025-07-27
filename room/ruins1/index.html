@@ -21,9 +21,10 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-		import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
+		import { instance_create, instances, secondFont, draw_text, draw_background, draw_tile } from "/imports/assets/gamemakerFunctions.js"
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
+    import { bg_ruinsplaceholder, bg_ruinsplaceholder2, bg_ruinseasynam2, bg_ruinseasynam3 } from "/imports/assets.js"
 		import global from "/imports/assets/global.js"
     import * as obj_solidtall from '/obj/solidtall/index.js'
     import * as obj_solidlong from '/obj/solidlong/index.js'
@@ -105,13 +106,357 @@
     instance_create(160, 420, obj_markerA);
     instance_create(150, 112, obj_markerB);
     instance_create(142, 320, obj_toroverworld2);
-    instance_create(140, 100, obj_doorA);
-    instance_create(160, 100, obj_doorA);
+    instance_create(140, 101, obj_doorA);
+    instance_create(160, 101, obj_doorA);
     instance_create(150, 190, obj_savepoint);
     instance_create(150, 86, obj_toribuster);
     instance_create(150, 200, obj_mainchara);
     instance_create(20, 220, obj_overworldcontroller);
     screenUpdater.create()
+
+    function draw_tiles() {
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 20);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 40);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 60);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 80);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 100);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 120);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 140);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 160);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 180);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 200);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 220);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 240);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 260);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 280);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 300);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 320);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 340);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 360);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 380);
+      draw_tile(bg_ruinseasynam2, {tile_index:3, hflip:false, vflip:false}, 0, 20, 400);
+      draw_tile(bg_ruinseasynam3, {tile_index:15, hflip:false, vflip:false}, 0, 20, 20);
+      draw_tile(bg_ruinseasynam3, {tile_index:23, hflip:false, vflip:false}, 0, 20, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 40, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 60, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 80, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 100, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 120, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 140, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 160, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 180, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 200, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 220, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 240, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 260, 20);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 40, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 60, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 80, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 100, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 120, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 140, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 160, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 180, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 200, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 220, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 240, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 260, 40);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 40, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 60, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 80, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 100, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 120, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 140, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 160, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 180, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 200, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 220, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 240, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 260, 60);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 40, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 60, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 80, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 100, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 120, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 140, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 160, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 180, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 200, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 220, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 240, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 260, 80);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 40, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 60, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 80, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 100, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 120, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 140, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 160, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 180, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 200, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 220, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 240, 100);
+      draw_tile(bg_ruinsplaceholder, {tile_index:1, hflip:false, vflip:false}, 0, 260, 100);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 20);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 40);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 60);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 80);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 100);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 120);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 140);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 160);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 180);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 200);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 220);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 240);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 260);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 280);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 300);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 320);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 340);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 360);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 380);
+      draw_tile(bg_ruinseasynam2, {tile_index:1, hflip:false, vflip:false}, 0, 280, 400);
+      draw_tile(bg_ruinseasynam3, {tile_index:13, hflip:false, vflip:false}, 0, 280, 20);
+      draw_tile(bg_ruinseasynam3, {tile_index:21, hflip:false, vflip:false}, 0, 280, 40);
+      draw_tile(bg_ruinseasynam3, {tile_index:133, hflip:false, vflip:false}, 0, 80, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:149, hflip:false, vflip:false}, 0, 80, 80);
+      draw_tile(bg_ruinseasynam3, {tile_index:135, hflip:false, vflip:false}, 0, 100, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:151, hflip:false, vflip:false}, 0, 100, 80);
+      draw_tile(bg_ruinseasynam2, {tile_index:13, hflip:false, vflip:false}, 0, 140, 80);
+      draw_tile(bg_ruinseasynam2, {tile_index:15, hflip:false, vflip:false}, 0, 160, 80);
+      draw_tile(bg_ruinseasynam2, {tile_index:13, hflip:false, vflip:false}, 0, 140, 100);
+      draw_tile(bg_ruinseasynam2, {tile_index:15, hflip:false, vflip:false}, 0, 160, 100);
+      draw_tile(bg_ruinseasynam3, {tile_index:133, hflip:false, vflip:false}, 0, 140, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:135, hflip:false, vflip:false}, 0, 160, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:133, hflip:false, vflip:false}, 0, 200, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:149, hflip:false, vflip:false}, 0, 200, 80);
+      draw_tile(bg_ruinseasynam3, {tile_index:135, hflip:false, vflip:false}, 0, 220, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:151, hflip:false, vflip:false}, 0, 220, 80);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 120, 20);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 120, 40);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 120, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 120, 80);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 120, 100);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 180, 20);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 180, 40);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 180, 60);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 180, 80);
+      draw_tile(bg_ruinseasynam3, {tile_index:86, hflip:false, vflip:false}, 0, 180, 100);
+      draw_tile(bg_ruinseasynam2, {tile_index:44, hflip:false, vflip:false}, 0, 140, 40);
+      draw_tile(bg_ruinseasynam2, {tile_index:45, hflip:false, vflip:false}, 0, 160, 40);
+      draw_tile(bg_ruinsplaceholder2, {tile_index:1, hflip:false, vflip:false}, 0, 260, 200);
+      draw_tile(bg_ruinseasynam3, {tile_index:21, hflip:false, vflip:false}, 0, 260, 220);
+      draw_tile(bg_ruinseasynam3, {tile_index:1, hflip:false, vflip:false}, 0, 260, 240);
+      draw_tile(bg_ruinseasynam3, {tile_index:1, hflip:false, vflip:false}, 0, 260, 260);
+      draw_tile(bg_ruinseasynam3, {tile_index:1, hflip:false, vflip:false}, 0, 260, 280);
+      draw_tile(bg_ruinseasynam3, {tile_index:1, hflip:false, vflip:false}, 0, 260, 300);
+      draw_tile(bg_ruinseasynam3, {tile_index:1, hflip:false, vflip:false}, 0, 260, 320);
+      draw_tile(bg_ruinseasynam3, {tile_index:1, hflip:false, vflip:false}, 0, 260, 340);
+      draw_tile(bg_ruinseasynam3, {tile_index:9, hflip:false, vflip:false}, 0, 260, 360);
+      draw_tile(bg_ruinseasynam3, {tile_index:23, hflip:false, vflip:false}, 0, 40, 220);
+      draw_tile(bg_ruinseasynam3, {tile_index:4, hflip:false, vflip:false}, 0, 40, 240);
+      draw_tile(bg_ruinseasynam3, {tile_index:4, hflip:false, vflip:false}, 0, 40, 260);
+      draw_tile(bg_ruinseasynam3, {tile_index:4, hflip:false, vflip:false}, 0, 40, 280);
+      draw_tile(bg_ruinseasynam3, {tile_index:4, hflip:false, vflip:false}, 0, 40, 300);
+      draw_tile(bg_ruinseasynam3, {tile_index:4, hflip:false, vflip:false}, 0, 40, 320);
+      draw_tile(bg_ruinseasynam3, {tile_index:4, hflip:false, vflip:false}, 0, 40, 340);
+      draw_tile(bg_ruinseasynam3, {tile_index:12, hflip:false, vflip:false}, 0, 40, 360);
+      draw_tile(bg_ruinsplaceholder, {tile_index:0, hflip:false, vflip:false}, 0, 140, 460)
+      draw_tile(bg_ruinsplaceholder, {tile_index:0, hflip:false, vflip:false}, 0, 160, 460)
+      draw_tile(bg_ruinsplaceholder, {tile_index:0, hflip:false, vflip:false}, 0, 140, 440)
+      draw_tile(bg_ruinsplaceholder, {tile_index:0, hflip:false, vflip:false}, 0, 160, 440)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 140, 420)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 160, 420)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 120, 420)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 180, 420)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 140, 400)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 160, 400)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 120, 400)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 180, 400)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 140, 380)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 160, 380)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 120, 380)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 180, 380)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 380)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 380)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 120, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 180, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 120, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 180, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 120, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 180, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 120, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 180, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 100, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 200, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 80, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 220, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 60, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:16, hflip:false, vflip:false}, 0, 240, 220)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 60, 200)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 80, 200)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 100, 200)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 40, 180)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 60, 180)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 80, 180)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 100, 180)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 80, 160)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 60, 160)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 40, 160)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 60, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 40, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 60, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 40, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 260, 160)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 240, 160)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 260, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 240, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 260, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 240, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 240, 180)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 220, 180)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 220, 200)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 200, 180)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 220, 160)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:63, hflip:false, vflip:false}, 0, 220, 160)
+      draw_tile(bg_ruinsplaceholder, {tile_index:8, hflip:false, vflip:false}, 0, 200, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:8, hflip:false, vflip:false}, 0, 180, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:8, hflip:false, vflip:false}, 0, 160, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:8, hflip:false, vflip:false}, 0, 140, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:8, hflip:false, vflip:false}, 0, 120, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:8, hflip:false, vflip:false}, 0, 100, 140)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:55, hflip:false, vflip:false}, 0, 100, 140)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:54, hflip:false, vflip:false}, 0, 200, 140)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 80, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 100, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 120, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 140, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 160, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 180, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 200, 120)
+      draw_tile(bg_ruinsplaceholder, {tile_index:4, hflip:false, vflip:false}, 0, 220, 120)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:62, hflip:false, vflip:false}, 0, 80, 160)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 200, 200)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 240, 200)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:53, hflip:false, vflip:false}, 0, 260, 180)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:55, hflip:false, vflip:false}, 0, 120, 420)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:54, hflip:false, vflip:false}, 0, 180, 420)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 240, 400)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:54, hflip:false, vflip:false}, 0, 240, 400)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 260, 380)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:54, hflip:false, vflip:false}, 0, 260, 380)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 240, 380)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 220, 400)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 220, 380)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 200, 400)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:78, hflip:false, vflip:false}, 0, 200, 380)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 40, 380)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:55, hflip:false, vflip:false}, 0, 40, 380)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 60, 400)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:55, hflip:false, vflip:false}, 0, 60, 400)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 60, 380)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 80, 400)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 80, 380)
+      draw_tile(bg_ruinsplaceholder, {tile_index:2, hflip:false, vflip:false}, 0, 100, 400)
+      draw_tile(bg_ruinsplaceholder2, {tile_index:79, hflip:false, vflip:false}, 0, 100, 380)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 140, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 160, 340)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 140, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 160, 320)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 140, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 160, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 140, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 160, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 120, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 180, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 120, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 180, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 140, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 160, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 120, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:8, hflip:false, vflip:false}, 0, 180, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:32, hflip:false, vflip:false}, 0, 120, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:33, hflip:false, vflip:false}, 0, 180, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:32, hflip:false, vflip:false}, 0, 140, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:33, hflip:false, vflip:false}, 0, 160, 360)
+      draw_tile(bg_ruinseasynam3, {tile_index:26, hflip:false, vflip:false}, 0, 140, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:27, hflip:false, vflip:false}, 0, 160, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:34, hflip:false, vflip:false}, 0, 140, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:35, hflip:false, vflip:false}, 0, 160, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:98, hflip:false, vflip:false}, 0, 120, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:98, hflip:false, vflip:false}, 0, 120, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:98, hflip:false, vflip:false}, 0, 120, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:98, hflip:false, vflip:false}, 0, 120, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:89, hflip:false, vflip:false}, 0, 120, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:89, hflip:false, vflip:false}, 0, 140, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:89, hflip:false, vflip:false}, 0, 160, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:89, hflip:false, vflip:false}, 0, 180, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:96, hflip:false, vflip:false}, 0, 180, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:96, hflip:false, vflip:false}, 0, 180, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:96, hflip:false, vflip:false}, 0, 180, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:104, hflip:false, vflip:false}, 0, 181, 235)
+      draw_tile(bg_ruinseasynam3, {tile_index:90, hflip:false, vflip:false}, 0, 200, 219)
+      draw_tile(bg_ruinseasynam3, {tile_index:106, hflip:false, vflip:false}, 0, 201, 238)
+      draw_tile(bg_ruinseasynam3, {tile_index:90, hflip:false, vflip:false}, 0, 200, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:96, hflip:false, vflip:false}, 0, 100, 220)
+      draw_tile(bg_ruinseasynam3, {tile_index:96, hflip:false, vflip:false}, 0, 100, 240)
+      draw_tile(bg_ruinseasynam3, {tile_index:96, hflip:false, vflip:false}, 0, 100, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:96, hflip:false, vflip:false}, 0, 100, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:104, hflip:false, vflip:false}, 0, 100, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:105, hflip:false, vflip:false}, 0, 120, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:105, hflip:false, vflip:false}, 0, 140, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:105, hflip:false, vflip:false}, 0, 160, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:105, hflip:false, vflip:false}, 0, 180, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:106, hflip:false, vflip:false}, 0, 200, 300)
+      draw_tile(bg_ruinseasynam3, {tile_index:98, hflip:false, vflip:false}, 0, 200, 280)
+      draw_tile(bg_ruinseasynam3, {tile_index:98, hflip:false, vflip:false}, 0, 200, 260)
+      draw_tile(bg_ruinseasynam3, {tile_index:98, hflip:false, vflip:false}, 0, 200, 240)
+    }
 
     if (global.room_persistent === window.location.href) {
       const save = global._roomSaves?.[window.location.href];
@@ -217,6 +562,9 @@
         }
 
         allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
+
+        draw_tiles();
+        draw_background("bg_ruinsfixedstairs", 20, 110)
 
         for (const { obj,  instance } of allInstances) {
           obj.updateSprite?.call(instance);
