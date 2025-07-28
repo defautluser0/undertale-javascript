@@ -449,7 +449,7 @@ function SCR_TEXT(argument0) {
       global.msg[0] = scr_gettext("SCR_TEXT_311"); // \\E2* The RUINS are full of&  puzzles./
       global.msg[1] = scr_gettext("SCR_TEXT_312"); // * Ancient fusions between &  diversions and doorkeys./
       global.msg[2] = scr_gettext("SCR_TEXT_313"); // * One must solve them&  to move from room to&  room./
-      global.msg[3] = scr_gettext("SCR_TEXT_314"); // * Please adjust yourself    to the sight of them./%
+      global.msg[3] = scr_gettext("SCR_TEXT_314"); // * Please adjust yourself &  to the sight of them./%
       break;
 
     case 204:
@@ -8324,7 +8324,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_314",
-    " * Please adjust yourself    to the sight of them./%"
+    " * Please adjust yourself &  to the sight of them./%"
   );
   ds_map_add(
     global.text_data_en,

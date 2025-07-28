@@ -80,4 +80,39 @@ const path_torielwalk1 = {
 	}
 }
 
-export { path_bedjump, path_unbed, path_hand1, path_hand2, path_slimedrop, path_torielwalk1 };
+const path_torielwalk2 = {
+	smooth: false,
+	closed: false,
+	precision: 4,
+	points: {
+		1: {x: 140, y: 100, speed: 100},
+		2: {x: 220, y: 100, speed: 100},
+		3: {x: 220, y: 60, speed: 100},
+		4: {x: 180, y: 60, speed: 100},
+		5: {x: 180, y: 40, speed: 100},
+		6: {x: 195, y: 40, speed: 100},
+	}
+}
+
+const path_torielwalk2_2 = {
+	smooth: false,
+	closed: false,
+	precision: 4,
+	points: {
+		1: {x: 200, y: 40, speed: 100},
+		2: {x: 125, y: 40, speed: 100},
+		3: {x: 125, y: 80, speed: 100},
+	}
+}
+
+const path_walkup = {
+	smooth: false,
+	closed: false,
+	precision: 4,
+	points: {
+		1: {x: 160, y: 144, speed: 100},
+		2: {x: 160, y: -128, speed: 100},
+	}
+}
+
+export { path_bedjump, path_unbed, path_hand1, path_hand2, path_slimedrop, path_torielwalk1, path_torielwalk2, path_torielwalk2_2, path_walkup };

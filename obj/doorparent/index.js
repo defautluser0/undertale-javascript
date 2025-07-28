@@ -9,7 +9,7 @@ function create() {
   // create code
 
   return {
-    name: "objectname", // sprite name
+    name: "doorparent", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale

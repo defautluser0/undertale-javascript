@@ -29,6 +29,10 @@ const spriteOffsets = {
     xoffset: 2,
     yoffset: 2,
   },
+  spr_switch: {
+    xoffset: 10,
+    yoffset: 10,
+  }
 };
 
 const offCanvas = document.createElement("canvas");
@@ -65,8 +69,8 @@ function getBoundingBox() {
 
     if (!mask.loaded || !mask.imageData) {
       // Fallback to dummy bounds if still not loaded
-      const fallbackWidth = 32 * scaleX;
-      const fallbackHeight = 32 * scaleY;
+      const fallbackWidth = 0 * scaleX;
+      const fallbackHeight = 0 * scaleY;
       this.bbox_left = this.x;
       this.bbox_top = this.y;
       this.bbox_right = this.x + fallbackWidth;
@@ -2405,6 +2409,13 @@ function draw_tile(tileset, tiledata, frame = 0, x = 0, y = 0) {
   ctx.restore();
 }
 
+/**
+ * Calling this function will end the current path that the instance is following, as set when the function path_start() was called..
+ */
+function path_end() {
+  this._path.data = {};
+}
+
 export {
   audio_play_sound,
   audio_is_playing,
@@ -2500,4 +2511,5 @@ export {
   file_text_import,
   file_text_export,
   draw_tile,
+  path_end,
 };
