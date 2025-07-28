@@ -28,7 +28,7 @@ function create() {
     image_angle: 0,
     image_blend: c_white,
     sprite_index: "spr_interactable", // sprite object
-    visible: true, // sprite visibility
+    visible: false, // sprite visibility
     friction: 0,
     gravity: 0,
     gravity_direction: 270, // gravity direction
