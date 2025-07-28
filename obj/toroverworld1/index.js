@@ -204,8 +204,6 @@ function roomStart() {
     this.direction = 90;
     this.sprite_index = "spr_toriel_u"
   }
-
-  global.plot = 1;
 }
 
 function step() {

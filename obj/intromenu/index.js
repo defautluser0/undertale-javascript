@@ -112,7 +112,7 @@ function create() {
 	const namingscreen_setup = scr_namingscreen_setup(truereset)
 
 	return {
-		objName: "intromenu", // sprite name
+		name: "intromenu", // sprite name
 		depth: 0, // object depth
 		image_xscale: 1, // sprite scale
 		image_yscale: 1, // sprite scale
