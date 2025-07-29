@@ -1,11 +1,20 @@
-import { draw_sprite_ext, getBoundingBox, instance_find, instance_create, instance_destroy, collision_rectangle, _with, path_start } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_find,
+  instance_create,
+  instance_destroy,
+  collision_rectangle,
+  _with,
+  path_start,
+} from "/imports/assets/gamemakerFunctions.js";
 import { scr_depth, scr_npcdir } from "/imports/customFunctions.js";
 import { c_white, path_torielwalk1 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
 import * as obj_toribuster from "/obj/toribuster/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js";
-import * as obj_stalkerflowey from "/obj/stalkerflowey/index.js"
+import * as obj_stalkerflowey from "/obj/stalkerflowey/index.js";
 
 import * as parent from "/obj/toroverworld1/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -61,7 +70,7 @@ function create() {
     step,
     alarm5,
   };
-  
+
   // do not touch below unless 100% necessary
   self._hspeed = 0;
   self._vspeed = 0;
@@ -75,7 +84,7 @@ function create() {
     absolute: false,
     xOffset: 0,
     yOffset: 0,
-  }
+  };
   self._x = 0;
   self._y = 0;
   self.initialspeed = null;
@@ -128,8 +137,8 @@ function create() {
     },
     set(val) {
       this._path.data = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_speed", {
     get() {
@@ -137,8 +146,8 @@ function create() {
     },
     set(val) {
       this._path.speed = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_endaction", {
     get() {
@@ -146,28 +155,28 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "x", {
     get() {
       return this._x;
     },
     set(val) {
-      this._x = val
+      this._x = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "y", {
     get() {
       return this._y;
     },
     set(val) {
-      this._y = val
+      this._y = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
@@ -179,7 +188,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -203,19 +212,25 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  if ((this.sprite_index === this.dtsprite || this.sprite_index === this.utsprite || this.sprite_index === this.ltsprite || this.sprite_index === this.rtsprite) && this.image_index >= this.image_number_t) {
+  if (
+    (this.sprite_index === this.dtsprite ||
+      this.sprite_index === this.utsprite ||
+      this.sprite_index === this.ltsprite ||
+      this.sprite_index === this.rtsprite) &&
+    this.image_index >= this.image_number_t
+  ) {
     this.image_index -= this.image_number_t;
   }
 
-  getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
+  getBoundingBox.call(this); // uncomment if bounding box is needed for something (collision checks from this or others)
 
   this.updateCol();
 
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+  this.previousx = this.x;
+  this.xprevious = this.x;
+  this.previousy = this.y;
+  this.yprevious = this.y;
+
   // Apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -229,7 +244,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // Recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -250,11 +267,11 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
     if (img) {
       this.sprite_width = img.width;
-      this.sprite_height = img.height
+      this.sprite_height = img.height;
     }
   }
 }
@@ -264,7 +281,9 @@ function followPath() {
   if (!pathState) return;
 
   const points = pathState.data.points;
-  const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
+  const keys = Object.keys(points)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   let currKey = pathState.index;
   let nextKeyIndex = keys.indexOf(currKey) + 1;
@@ -315,16 +334,19 @@ function followPath() {
     !this._manualVel &&
     !this._manualPos
   ) {
-    const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    const radians = Math.atan2(
+      -(this.y - this.yprevious),
+      this.x - this.xprevious
+    );
     const degrees = (radians * 180) / Math.PI;
     this.direction = (degrees + 360) % 360;
   }
 }
 
 function roomStart() {
-  scr_depth.call(this, 0, 0, 0, 0, 0)
+  scr_depth.call(this, 0, 0, 0, 0, 0);
 
-  path_start.call(this, path_torielwalk1, 0, "path_action_stop", true)
+  path_start.call(this, path_torielwalk1, 0, "path_action_stop", true);
 
   if (global.plot > 1) {
     instance_destroy(this);
@@ -336,7 +358,7 @@ function step() {
 
   const mainchara = instance_find(obj_mainchara, 0);
 
-  if (mainchara.y > (this.y + 80)) {
+  if (mainchara.y > this.y + 80) {
     if (this.t === 0) {
       this.alarm[5] = 30;
       this.t = 1;
@@ -344,25 +366,25 @@ function step() {
   } else {
     this.alarm[5] = 24;
     this.path_speed = 2;
-    
-    if (mainchara.y < (this.y + 65)) {
+
+    if (mainchara.y < this.y + 65) {
       this.path_speed = 3;
     }
 
-    if (mainchara.y < (this.y + 50)) {
+    if (mainchara.y < this.y + 50) {
       this.path_speed = 4;
     }
 
     this.image_speed = 0.2;
   }
 
-  scr_npcdir.call(this, 0)
+  scr_npcdir.call(this, 0);
 }
 
 function alarm5() {
   const mainchara = instance_find(obj_mainchara, 0);
 
-  if (mainchara.y > (this.y + 80)) {
+  if (mainchara.y > this.y + 80) {
     this.path_speed = 0;
     this.direction = 270;
     this.image_speed = 0;
@@ -372,7 +394,16 @@ function alarm5() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_toribuster, false, false)
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_toribuster,
+    false,
+    false
+  );
   if (other) {
     global.plot = 2;
     instance_create(147, 440, obj_stalkerflowey);
@@ -380,4 +411,15 @@ function updateCol() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, parent, roomStart, step, alarm5, updateCol };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  followPath,
+  parent,
+  roomStart,
+  step,
+  alarm5,
+  updateCol,
+};

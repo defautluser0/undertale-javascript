@@ -1,10 +1,15 @@
-import { draw_sprite_ext, instance_exists, instance_create, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_exists,
+  instance_create,
+  getBoundingBox,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-import global from "/imports/assets/global.js"
+import global from "/imports/assets/global.js";
 
 import * as obj_unfader from "/obj/unfader/index.js";
-import * as obj_undyneachaser from "/obj/undyneachaser/index.js"
-import * as obj_musfadeout from "/obj/musfadeout/index.js"
+import * as obj_undyneachaser from "/obj/undyneachaser/index.js";
+import * as obj_musfadeout from "/obj/musfadeout/index.js";
 import * as parent from "/obj/doorA/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -61,12 +66,12 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-	getBoundingBox.call(this);
+  getBoundingBox.call(this);
 
-	this.xprevious = this.x;
-	this.yprevious = this.y;
-	this.previousx = this.x;
-	this.previousy = this.y;
+  this.xprevious = this.x;
+  this.yprevious = this.y;
+  this.previousx = this.x;
+  this.previousy = this.y;
 }
 
 function updateSprite() {
@@ -86,7 +91,7 @@ function updateSprite() {
 }
 
 function alarm2() {
-  parent.alarm2.call(this)
+  parent.alarm2.call(this);
 }
 
 function user9() {
@@ -94,7 +99,10 @@ function user9() {
   instance_create(0, 0, obj_unfader);
   this.ok = 1;
 
-  if (global.currentroom === "room_water_undynefinal3" && instance_exists(obj_undyneachaser) === true) {
+  if (
+    global.currentroom === "room_water_undynefinal3" &&
+    instance_exists(obj_undyneachaser) === true
+  ) {
     this.ok = 0;
   }
 
@@ -110,4 +118,12 @@ function user9() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm2, user9 };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  alarm2,
+  user9,
+};

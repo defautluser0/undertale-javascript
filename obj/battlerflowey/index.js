@@ -1,12 +1,21 @@
-import { draw_sprite_ext, draw_sprite, instances, instance_create, instance_exists, instance_destroy, room_goto, _with } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  draw_sprite,
+  instances,
+  instance_create,
+  instance_exists,
+  instance_destroy,
+  room_goto,
+  _with,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white, snd_noise } from "/imports/assets.js";
-import { snd_play } from "/imports/customFunctions.js"
-import global from "/imports/assets/global.js"
+import { snd_play } from "/imports/customFunctions.js";
+import global from "/imports/assets/global.js";
 
 import * as obj_tempblack from "/obj/tempblack/index.js";
 import * as obj_fader from "/obj/fader/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js";
-import * as obj_transheart from "/obj/transheart/index.js"
+import * as obj_transheart from "/obj/transheart/index.js";
 import * as parent from "/obj/battler/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -114,7 +123,11 @@ function alarm4() {
   this.on = 0;
 
   if (this.clap > 2) {
-    instance_create(instances.get(obj_mainchara)[0].x + 5, instances.get(obj_mainchara)[0].y + 17, obj_transheart);
+    instance_create(
+      instances.get(obj_mainchara)[0].x + 5,
+      instances.get(obj_mainchara)[0].y + 17,
+      obj_transheart
+    );
     this.heartdraw = 0;
     instances.get(obj_mainchara)[0].depth = 100;
   } else {
@@ -125,12 +138,17 @@ function alarm4() {
 function alarm3() {
   instance_create(0, 0, obj_fader);
 
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/area1_2/") {
+  if (
+    window.location.href === "https://undertale.defautluser0.xyz/room/area1_2/"
+  ) {
     room_goto("room_floweybattle");
     global.room_persistent = window.location.href;
   }
 
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_papdoor/") {
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/tundra_papdoor/"
+  ) {
     room_goto("room_papdate");
   }
 
@@ -156,13 +174,24 @@ function draw() {
     mainchara.depth = this.depp;
   }
   if (instance_exists(obj_fader)) {
-    _with (obj_fader, function() {
+    _with(obj_fader, function () {
       instance_destroy(this);
-    })
+    });
   }
   if (this.heartdraw === 1 && mainchara) {
     draw_sprite("spr_heartsmall", 0, mainchara.x + 5, mainchara.y + 17);
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm4, alarm3, alarm2, roomEnd, draw, };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  alarm4,
+  alarm3,
+  alarm2,
+  roomEnd,
+  draw,
+};

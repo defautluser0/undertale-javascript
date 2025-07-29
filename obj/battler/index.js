@@ -1,6 +1,17 @@
-import { draw_sprite_ext, draw_sprite, _with, instance_create, instance_destroy, room_goto } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  draw_sprite,
+  _with,
+  instance_create,
+  instance_destroy,
+  room_goto,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white, snd_noise } from "/imports/assets.js";
-import { caster_set_volume, caster_pause, snd_play } from "/imports/customFunctions.js";
+import {
+  caster_set_volume,
+  caster_pause,
+  snd_play,
+} from "/imports/customFunctions.js";
 
 import global from "/imports/assets/global.js";
 
@@ -13,17 +24,17 @@ function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-	global.interact = 3;
-	alarm[2] = 30;
-	alarm[4] = 1;
-	global.flag[201] = global.kills;
+  global.interact = 3;
+  alarm[2] = 30;
+  alarm[4] = 1;
+  global.flag[201] = global.kills;
 
-	if (global.flag[15] === 0) {
-		caster_set_volume(global.currentsong, 0);
-		caster_pause(global.currentsong);
-	}
+  if (global.flag[15] === 0) {
+    caster_set_volume(global.currentsong, 0);
+    caster_pause(global.currentsong);
+  }
 
-	const tb = instance_create(0, 0, obj_tempblack)
+  const tb = instance_create(0, 0, obj_tempblack);
 
   const self = {
     name: "battler", // sprite name
@@ -50,24 +61,24 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-		heartdraw: 0,
-		on: 0,
-		clap: 0,
-		depp: -600,
-		claptimer: 2,
-		tb,
+    heartdraw: 0,
+    on: 0,
+    clap: 0,
+    depp: -600,
+    claptimer: 2,
+    tb,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		alarm4,
-		alarm3,
-		alarm2,
-		roomEnd,
-		draw,
+    alarm4,
+    alarm3,
+    alarm2,
+    roomEnd,
+    draw,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -123,7 +134,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -149,11 +160,11 @@ function updateGamemakerFunctions() {
 
   // getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
 
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+  this.previousx = this.x;
+  this.xprevious = this.x;
+  this.previousy = this.y;
+  this.yprevious = this.y;
+
   // Apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -167,7 +178,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // Recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -188,80 +201,93 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
     if (img) {
       this.sprite_width = img.width;
-      this.sprite_height = img.height
+      this.sprite_height = img.height;
     }
   }
 }
 
 function alarm4() {
-	if (this.on === 0) {
-		if (this.heartdraw === 1) {
-			this.heartdraw = 0;
-			this.on = 1;
-			this.clap += 1;
-		}
-	}
+  if (this.on === 0) {
+    if (this.heartdraw === 1) {
+      this.heartdraw = 0;
+      this.on = 1;
+      this.clap += 1;
+    }
+  }
 
-	if (this.on === 0) {
-		if (this.heartdraw === 0) {
-			snd_play(snd_noise);
-			this.on = 1;
-			this.heartdraw = 1;
-		}
-	}
+  if (this.on === 0) {
+    if (this.heartdraw === 0) {
+      snd_play(snd_noise);
+      this.on = 1;
+      this.heartdraw = 1;
+    }
+  }
 
-	this.on = 0;
+  this.on = 0;
 
-	if (this.clap > 2) {
-		if (global.battlegroup === 200) {
-			_with(this.tb, function() {
-				instance_destroy(this);
-			})
+  if (this.clap > 2) {
+    if (global.battlegroup === 200) {
+      _with(this.tb, function () {
+        instance_destroy(this);
+      });
 
-			instance_destroy(this);
-		} else {
-			const mainchara = instances.get(obj_mainchara)[0]
-			instance_create(mainchara.x + 5, mainchara.y + 17, obj_transheart);
-			this.heartdraw = 0;
-			mainchara.depth = 100;
-		}
-	} else {
-		this.alarm[4] = claptimer;
-	}
+      instance_destroy(this);
+    } else {
+      const mainchara = instances.get(obj_mainchara)[0];
+      instance_create(mainchara.x + 5, mainchara.y + 17, obj_transheart);
+      this.heartdraw = 0;
+      mainchara.depth = 100;
+    }
+  } else {
+    this.alarm[4] = claptimer;
+  }
 }
 
 function alarm3() {
-  global.currentroom = `${window.location.href.slice(35, 39)}_${window.location.href.slice(40).split("/")[0]}`;
+  global.currentroom = `${window.location.href.slice(35, 39)}_${
+    window.location.href.slice(40).split("/")[0]
+  }`;
 
-	if (global.currentroom !== "room_water_undynehouse") {
-		global.room_persistent = window.location.href;
-	}
+  if (global.currentroom !== "room_water_undynehouse") {
+    global.room_persistent = window.location.href;
+  }
 
-	instance_create(0, 0, obj_fader);
-	room_goto("room_battle")
+  instance_create(0, 0, obj_fader);
+  room_goto("room_battle");
 }
 
 function alarm2() {
-	this.alarm[3] = 2;
+  this.alarm[3] = 2;
 }
 
 function roomEnd() {
-	instance_destroy(this);
+  instance_destroy(this);
 }
 
 function draw() {
-	const mainchara = instances.get(obj_mainchara)[0]
-	if (this.clap < 3) {
-		mainchara.depth = this.depp;
-	}
+  const mainchara = instances.get(obj_mainchara)[0];
+  if (this.clap < 3) {
+    mainchara.depth = this.depp;
+  }
 
-	if (this.heartdraw === 1) {
-		draw_sprite("spr_heartsmall", 0, mainchara.x + 5, mainchara.y + 17);
-	}
+  if (this.heartdraw === 1) {
+    draw_sprite("spr_heartsmall", 0, mainchara.x + 5, mainchara.y + 17);
+  }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm4, alarm3, alarm2, roomEnd, draw };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  alarm4,
+  alarm3,
+  alarm2,
+  roomEnd,
+  draw,
+};

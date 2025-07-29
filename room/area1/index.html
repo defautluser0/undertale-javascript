@@ -21,11 +21,11 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-		import { instance_create, instances, secondFont, draw_text, draw_background, draw_set_font } from "/imports/assets/gamemakerFunctions.js";
+    import { instance_create, instances, secondFont, draw_text, draw_background, draw_set_font } from "/imports/assets/gamemakerFunctions.js";
     import { updateCamera, view_xview, view_yview, view_current } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
     import { fnt_maintext } from "/imports/assets.js"
-		import global from "/imports/assets/global.js";
+    import global from "/imports/assets/global.js";
 
     import * as obj_solidtall from '/obj/solidtall/index.js';
     import * as obj_sur from '/obj/sur/index.js';
@@ -41,11 +41,11 @@
     import * as obj_unfader from '/obj/unfader/index.js';
     import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js';
     import * as obj_sdl from '/obj/sdl/index.js';
-		import * as screenUpdater from '/obj/screen/index.js';
+    import * as screenUpdater from '/obj/screen/index.js';
 
     draw_set_font(fnt_maintext, 1);
 
-		const allInstances = [];
+    const allInstances = [];
 
     loadCurrentSong("currentsong")
     loadCurrentSong("currentsong2")
@@ -102,7 +102,7 @@
           fpsCounter = 0;
           lastFpsUpdate = now;
         }
-        
+
         screenUpdater.beginStep()
         control_update();
         for (const [obj, instanceList] of instances) {
@@ -143,11 +143,11 @@
 
         allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
 
-        for (const { obj,  instance } of allInstances) {
+        for (const { obj, instance } of allInstances) {
           obj.updateSprite?.call(instance);
         }
 
-        for (const { obj,  instance } of allInstances) {
+        for (const { obj, instance } of allInstances) {
           obj.draw?.call(instance);
         }
 
@@ -181,7 +181,7 @@
       requestAnimationFrame(game_loop);
     }
 
-		window.addEventListener("keydown", e => {
+    window.addEventListener("keydown", e => {
       keyboard[e.code] = true;
       _key_state[e.code] = true;
     });

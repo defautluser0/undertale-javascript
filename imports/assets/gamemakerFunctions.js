@@ -6,13 +6,27 @@ import global from "/imports/assets/global.js";
 let ini_filename = null;
 let ini_data = {};
 let ini_loaded = false;
-let text_data = Array(32).fill().map(() => ({ name: null, data: "" }));
-let text_loaded = Array(32).fill().map(() => ({ name: null, loaded: false }));
-let text_read = Array(32).fill().map(() => ({ name: null }));
-let text_write = Array(32).fill().map(() => ({ name: null }));
-let text_total = Array(32).fill().map(() => ({ name: null }));
-let text_read_line = Array(32).fill().map(() => ({ name: null, line: 0 }));
-let text_write_line = Array(32).fill().map(() => ({ name: null, line: 0 }));
+let text_data = Array(32)
+  .fill()
+  .map(() => ({ name: null, data: "" }));
+let text_loaded = Array(32)
+  .fill()
+  .map(() => ({ name: null, loaded: false }));
+let text_read = Array(32)
+  .fill()
+  .map(() => ({ name: null }));
+let text_write = Array(32)
+  .fill()
+  .map(() => ({ name: null }));
+let text_total = Array(32)
+  .fill()
+  .map(() => ({ name: null }));
+let text_read_line = Array(32)
+  .fill()
+  .map(() => ({ name: null, line: 0 }));
+let text_write_line = Array(32)
+  .fill()
+  .map(() => ({ name: null, line: 0 }));
 const __ds_map_store = {};
 let __ds_map_next_id = 0;
 
@@ -32,7 +46,7 @@ const spriteOffsets = {
   spr_switch: {
     xoffset: 10,
     yoffset: 10,
-  }
+  },
 };
 
 const offCanvas = document.createElement("canvas");
@@ -50,6 +64,9 @@ const maskCache = {};
 const tileCache = {};
 const bgCache = {};
 const globalTintCache = new Map();
+if (global.debug === 1) {
+  globalThis.instances = instances;
+}
 
 function getBoundingBox() {
   const scaleX = this.image_xscale ?? 1;
@@ -600,7 +617,18 @@ function instance_create(x, y, obj) {
     }
     instances.get(obj).push(instance);
 
-    obj.roomStart?.call(instance);
+    if (instance.create2 === true) {
+      obj.createContext?.call(instance);
+      if (global.newRoom[0]) {
+        global.newRoom.forEach((name) => {
+          if (instance.name === name) {
+            instance.roomStart?.call(instance);
+          }
+        });
+      }
+    } else {
+      obj.roomStart?.call(instance);
+    }
 
     return instance;
   } catch (error) {
@@ -1046,7 +1074,7 @@ function ord(string) {
 function draw_background(background, x, y) {
   if (!background) return;
 
-  const key = `/bg/${background}.png`
+  const key = `/bg/${background}.png`;
   const cached = loadImageCached(key, bgCache);
 
   if (!cached.loaded) return;
@@ -1113,7 +1141,7 @@ function rgbToHex(r, g, b) {
 
 /**
  * With this function you can retrieve the index of the room after the room input into the function. For example you can use the variable room to get the index of the current room and then use this function to find the room that follows it, as listed in the Room Manager. If there is no room after the one you input then -1 is returned. Note that this function will not recognise or take into consideration rooms that have been added dynamically using room_add() or room_duplicate().
- * 
+ *
  * @param {number} numb The index of the room to get the next one after.
  * @returns {number}
  */
@@ -1133,7 +1161,7 @@ function room_next(numb) {
 
 /**
  * With this function you can retrieve the index of the room before the room input into the function. For example you can use the variable room to get the index of the current room and then use this function to find the room that comes before it, as listed in the rooms.js file. If there is no room before the one you input then -1 is returned. Note that this function will not recognise or take into consideration rooms that have been added dynamically using room_add() or room_duplicate().
- * 
+ *
  * @param {number} numb The index of the room to get the one before from.
  * @returns {number}
  */
@@ -1155,25 +1183,53 @@ function room_previous(numb) {
  * With this function you can make your game go to the next one as listed in the rooms.js file at the time the game was opened. If this room does not exist, an error will be thrown and the game will be stopped. Note that the room will not change until the end of the event where the function was called, so any code after this has been called will still run if in the same event. This function will also trigger the Room End event.
  */
 function room_goto_next() {
-  if (room_next(`${window.location.href.slice(35,39)}_${window.location.href.slice(40).split("/")[0]}`) === -1) {
-    throw new Error("room_goto_next: next room is nonexistant")
+  if (
+    room_next(
+      `${window.location.href.slice(35, 39)}_${
+        window.location.href.slice(40).split("/")[0]
+      }`
+    ) === -1
+  ) {
+    throw new Error("room_goto_next: next room is nonexistant");
   }
-  room_goto(room_get_name(room_next(`${window.location.href.slice(35,39)}_${window.location.href.slice(40).split("/")[0]}`)));
+  room_goto(
+    room_get_name(
+      room_next(
+        `${window.location.href.slice(35, 39)}_${
+          window.location.href.slice(40).split("/")[0]
+        }`
+      )
+    )
+  );
 }
 
 /**
  * With this function you can make your game go to the previous one as listed in the rooms.js file at the time the game was opened. If this room does not exist, an error will be thrown and the game will be stopped. Note that the room will not change until the end of the event where the function was called, so any code after this has been called will still run if in the same event. This function will also trigger the Room End event.
  */
 function room_goto_previous() {
-  if (room_previous(`${window.location.href.slice(35,39)}_${window.location.href.slice(40).split("/")[0]}`) === -1) {
-    throw new Error("room_goto_previous: next room is nonexistant")
+  if (
+    room_previous(
+      `${window.location.href.slice(35, 39)}_${
+        window.location.href.slice(40).split("/")[0]
+      }`
+    ) === -1
+  ) {
+    throw new Error("room_goto_previous: next room is nonexistant");
   }
-  room_goto(room_get_name(room_previous(`${window.location.href.slice(35,39)}_${window.location.href.slice(40).split("/")[0]}`)));
+  room_goto(
+    room_get_name(
+      room_previous(
+        `${window.location.href.slice(35, 39)}_${
+          window.location.href.slice(40).split("/")[0]
+        }`
+      )
+    )
+  );
 }
 
 /**
- * Collision_rectangle uses the first four arguments (x1,y1,x2,y2) to define an area within the current room and then checks to see if any object that is defined by the "obj" argument is in collision with that area. This collision can be checked as precise or not, and you may also choose to check for the instance running the code itself or not. 
- * 
+ * Collision_rectangle uses the first four arguments (x1,y1,x2,y2) to define an area within the current room and then checks to see if any object that is defined by the "obj" argument is in collision with that area. This collision can be checked as precise or not, and you may also choose to check for the instance running the code itself or not.
+ *
  * @param {number} x1 The x coordinate of the left side of the rectangle to check.
  * @param {number} y1 The y coordinate of the top side of the rectangle to check.
  * @param {number} x2 The x coordinate of the right side of the rectangle to check.
@@ -1318,7 +1374,7 @@ function collision_rectangle(x1, y1, x2, y2, obj, prec = false, notme = false) {
 
 /**
  * Collision_point checks the point specified by the arguments x1,y1 for a collision with any instance of the object specified by the argument "obj". this check can be either precise or not, but for precise collisions to be enabled, the object or instance that you are checking for must also have precise collisions enabled for their sprite. If not, the default check is based on bounding boxes.
- * 
+ *
  * @param {number} x The x coordinate of the point to check.
  * @param {number} y The y coordinate of the point to check.
  * @param {object} obj The object or instance to check for.
@@ -1399,8 +1455,8 @@ function collision_point(x, y, obj, notme = false) {
 }
 
 /**
- * Collision_line checks along a line from point x1,y1 to point x2,y2 for a collision with any instance of the object specified by the argument "obj". this check can be either precise or not, but for precise collisions to be enabled, the object or instance that you are checking for must also have precise collisions enabled for their sprite. If not, the default check is based on bounding boxes. 
- * 
+ * Collision_line checks along a line from point x1,y1 to point x2,y2 for a collision with any instance of the object specified by the argument "obj". this check can be either precise or not, but for precise collisions to be enabled, the object or instance that you are checking for must also have precise collisions enabled for their sprite. If not, the default check is based on bounding boxes.
+ *
  * @param {number} x1 The x coordinate of the start of the line.
  * @param {number} y1 The y coordinate of the start of the line.
  * @param {number} x2 The x coordinate of the end of the line.
@@ -1438,7 +1494,7 @@ function collision_line(x1, y1, x2, y2, obj, prec = false, notme = false) {
 /**
  * This opens an ini_file for reading and/writing. If the ini_file does not exist at the location you are checking, GameMaker may create one, but only if you write data to it. If you have only read information from the ini file, then the default values for the read function will be returned, but the ini file will not actually be created.
  * Please note that you can only have one ini file open at any one time and remember to use ini_close() once you're finished reading/writing from the .ini file as the information is not actually stored to disk until then (it is also stored in memory until the file is closed).
- * 
+ *
  * @param {string} name The filename for the .ini file
  * @returns {void}
  */
@@ -1479,7 +1535,7 @@ function ini_parse(data) {
 
 /**
  * You can use this function to read a string (text) from an ini data file.
- * 
+ *
  * @param {string} section The section of the .ini file to read from.
  * @param {string} key The key within the relevant section of the .ini to read from.
  * @param {string} defaultValue The string to return if a string is not found in the defined place (or the .ini does not exist). Must be a string.
@@ -1491,7 +1547,7 @@ function ini_read_string(section, key, defaultValue) {
 
 /**
  * You can use this function to read a number from an ini data file.
- * 
+ *
  * @param {string} section The section of the .ini file to read from.
  * @param {string} key The key within the relevant section of the .ini to read from.
  * @param {number} defaultValue The value to return if a value is not found in the defined place (or the .ini does not exist). Must be a real number.
@@ -1503,7 +1559,7 @@ function ini_read_real(section, key, defaultValue) {
 
 /**
  * You can use this function to write a string (text) to an ini data file.
- * 
+ *
  * @param {string} section The section of the .ini file to write to.
  * @param {string} key The key within the relevant section of the .ini to write to.
  * @param {string} value The string to write to the relevant destination.
@@ -1515,7 +1571,7 @@ function ini_write_string(section, key, value) {
 
 /**
  * You can use this function to write a value (numeric) to an ini data file.
- * 
+ *
  * @param {string} section The section of the .ini file to write to.
  * @param {string} key The key within the relevant section of the .ini to write to.
  * @param {number} value The real value to write to the relevant destination.
@@ -1526,7 +1582,7 @@ function ini_write_real(section, key, value) {
 
 /**
  * This function checks to see if a section exists in the currently open ini and will return true if it does or false otherwise. This is not a necessary check to prevent errors as, when a section does not exist, reading from a non-existent section will just return a default value, however it can be useful to see if an ini file has saved specific data.
- * 
+ *
  * @param {string} section The section in the open .ini file to check for.
  * @returns {boolean}
  */
@@ -1536,7 +1592,7 @@ function ini_section_exists(section) {
 
 /**
  * This function checks to see if a key exists in the currently open ini and will return true if it does or false otherwise. This is not a necessary check to prevent errors as, when a key does not exist, reading from a non-existent key will just return a default value. It can be useful to see if an ini file has saved specific data and a few other things, however.
- * 
+ *
  * @param {string} section The section in the open .ini file to check a key in.
  * @param {string} key The key to check for.
  * @returns {boolean}
@@ -1547,7 +1603,7 @@ function ini_key_exists(section, key) {
 
 /**
  * With this function you can remove the selected key (and its corresponding value) from an ini file.
- * 
+ *
  * @param {string} section The section to delete  a key from.
  * @param {string} key The key to delete.
  */
@@ -1559,7 +1615,7 @@ function ini_key_delete(section, key) {
 
 /**
  * With this function you can delete a whole section of an ini file, which will also remove all key-value pairs that are associated with it.
- * 
+ *
  * @param {string} section The section to delete.
  */
 function ini_section_delete(section) {
@@ -1568,7 +1624,7 @@ function ini_section_delete(section) {
 
 /**
  * (ENGINE EXCLUSIVE) With this function you can export an open .ini file as an ini file openable by GameMaker. The ini file must be opened by ini_open(filename) first.
- * 
+ *
  * @returns {void}
  */
 function ini_export() {
@@ -1587,7 +1643,7 @@ function ini_export() {
 
 /**
  * (ENGINE EXCLUSIVE) With this function you can import a .ini file, parse it and store it as filename so this game engine can operate with it, eg. ini_open(filename). The ini file must be valid ini syntax with crlf line endings or else you wont get a valid JSON object out of it.
- * 
+ *
  * @param {string} iniText The ini text to import to the filename.
  * @param {string} filename The filename that the ini text will be imported to.
  */
@@ -1629,7 +1685,7 @@ function ini_import(iniText, filename) {
 
 /**
  * This function will return true if the specified file exists and false if it does not. Note that the function can only be used to check local files, but not any files stored on a remote server.
- * 
+ *
  * @param {string} fname The name of the file to check for
  * @returns {boolean}
  */
@@ -1639,7 +1695,7 @@ function file_exists(fname) {
 
 /**
  * Sometimes you want to specify something other than numbers for a random selection, or the numbers you want are not in any real order or within any set range. In these cases you would use choose() to generate a random result. For example, say you want to create an object with a random sprite at the start, then you could use this function to set the sprite index to one of a set of given sprites. Note that you can have as many as you require (note that more arguments will mean that the function will be slower to parse).
- * 
+ *
  * @param  {...any} args Any type of value(s).
  * @returns {any} One of the given arguments
  */
@@ -1671,7 +1727,7 @@ function draw_circle(x, y, r, outline) {
 
 /**
  * This function is used to create a new, empty DS map and will return a Handle to it which is then used to access the data structure in all other DS map functions.
- * 
+ *
  * @returns {number}
  */
 function ds_map_create() {
@@ -1681,7 +1737,7 @@ function ds_map_create() {
 }
 
 /**
- * 
+ *
  * @param {number} id The id of the map to check for
  * @param {string} key The key of the value to add.
  * @param {any} val The value to add tothe map.
@@ -1694,7 +1750,7 @@ function ds_map_add(id, key, val) {
 
 /**
  * With this function you can get the value from a specified key. The input values of the function are the (previously created) DS map to use and the key to check for.
- * 
+ *
  * @param {number} id The id of the map to use.
  * @param {string} key The key to find.
  * @returns {any} The value of the key (or undefined if it doesnt exist).
@@ -1707,7 +1763,7 @@ function ds_map_find_value(id, key) {
 
 /**
  * With this function you can easily select a number of characters from within a string to be copied to another one. The first character in a string is always indexed as 1 and not 0 as you may expect, so to copy (for example) the first five characters of string you would have string_copy(str, 1, 5).
- * 
+ *
  * @param {string} str The string to copy from.
  * @param {number} index The position of the first character in the string to copy from (numbered from 1)
  * @param {number} count The number of characters, starting from the position of the first, to copy.
@@ -1719,7 +1775,7 @@ function string_copy(str, index, count = 1) {
 
 /**
  * This function returns the number of characters comprising a given string. It can be useful for things like working out when to limit a custom text entry's character length (e.g.: capping a player's name to 10 characters). Remember that this is different to string_width() in that it measures the number of characters in the string, not its width as drawn on the screen in pixels.
- * 
+ *
  * @param {string} string The string to measure the number of characters of.
  * @returns {number}
  */
@@ -1729,37 +1785,37 @@ function string_length(string) {
 
 /**
  * This function creates a new string from a variety of data types.
- * 
+ *
  * When only one argument is provided to the function, this argument is considered to be a value, which will be converted to a string from its original data type. When more than one argument is given, the first argument is considered a Format String and the arguments that follow it are considered the values to insert into the format string.
  * Conversion From Non-String Types
- * 
+ *
  * Values of type Real that are an integer will have no decimal places in the string. Values of type Real that have a fractional part will have two decimal places in the string. If you need more decimal places in the output string you can use the function string_format.
- * 
+ *
  * Values of type Struct or Instance will be converted to a string using that struct's or instance's toString() Method if one exists, or converted to a string implicitly.
- * 
+ *
  * Values of type Handle will be converted to a string that shows the handle info:  .
- * 
+ *
  * Values of type Array will be converted to a string of the format [element1, element2, element3, element4, element5], i.e. the concatenation of all elements in the array. If any of the elements in the array is a struct or an instance then its toString() Method will be called to convert it to a string.
  * Format String
- * 
+ *
  * When you pass more than one argument to the string function, the first argument will be treated as a format string. In a format string you can use placeholders of the form "{0}", "{1}", "{2}", etc.
- * 
+ *
  * These placeholders will be replaced with the arguments at the positions they refer to, i.e. "{0}" will be replaced with the second argument, "{1}" will be replaced with the third argument, "{2}" will be replaced with the fourth argument, and so on.
- * 
+ *
  * string_variable = string("This is a string with two placeholders that will be replaced. They are {0} and {1}.", "this", "that");
- * 
+ *
  * // Results in:
- * 
+ *
  * // "This is a string with two placeholders that will be replaced. They are this and that."
- * 
- * If you only pass a single argument to the function, then this argument will not be considered a format string. If you add placeholders of the kind "{0}" in this case, then they will be output as normal text as there are no values to replace them with: 
- * 
+ *
+ * If you only pass a single argument to the function, then this argument will not be considered a format string. If you add placeholders of the kind "{0}" in this case, then they will be output as normal text as there are no values to replace them with:
+ *
  * string_variable = string("This is a string with two placeholders that won't be replaced. They are {0} and {1}.");
- * 
+ *
  * // Results in:
- * 
- * // "This is a string with two placeholders that won't be replaced. They are {0} and {1}." 
- * 
+ *
+ * // "This is a string with two placeholders that won't be replaced. They are {0} and {1}."
+ *
  * @param {anyOrString} value_or_format The value to be turned into a string.
  * @param  {...any} replacements The values to be inserted at the placeholder positions.
  * @returns {string}
@@ -1768,11 +1824,15 @@ function string(value_or_format, ...replacements) {
   let stringed = String(value_or_format);
   for (let j = 0; j < 101; j++) {
     for (let i = 0; i < stringed.length; i++) {
-      if (stringed[i] === "{" && stringed[i+1] === j && stringed[i+2] === "}") {
+      if (
+        stringed[i] === "{" &&
+        stringed[i + 1] === j &&
+        stringed[i + 2] === "}"
+      ) {
         stringed[i] = replacements?.[j];
         if (stringed[i] !== "{") {
-          stringed[i+1] = "";
-          stringed[i+2] = "";
+          stringed[i + 1] = "";
+          stringed[i + 2] = "";
         } else {
           stringed[i] = "{";
         }
@@ -1784,7 +1844,7 @@ function string(value_or_format, ...replacements) {
 
 /**
  * This function can be used to return the name of the specified room as a string. Please note that this is only a string and cannot be used to reference the room directly - for that you would need the room index.
- * 
+ *
  * @param {number} index The index of the room to check the name of.
  * @returns {string}
  */
@@ -1794,7 +1854,7 @@ function room_get_name(index) {
 
 /**
  * This function returns the length of a vector formed by the specified components [x1,y1] and [x2,y2].
- * 
+ *
  * @param {number} x1 The x coordinate of the first component of the vector.
  * @param {number} y1 The y coordinate of the first component of the vector.
  * @param {number} x2 The x coordinate of the second component of the vector.
@@ -1809,7 +1869,7 @@ function point_distance(x1, y1, x2, y2) {
 
 /**
  * This function calculates the distance from the edge of the bounding box of the calling instance to the specified x/y position in the room, with the return value being in pixels. Note that if the calling object have no sprite or no mask defined, the results will be incorrect.
- * 
+ *
  * @param {number} x The x position to check.
  * @param {number} y The y position to check.
  * @returns {number}
@@ -1848,7 +1908,7 @@ function move_towards_point(x, y, sp) {
 
 /**
  * This is the with() help.
- * 
+ *
  * @param {object} obj The object (or instance) to execute fn as.
  * @param {function} fn The function to execute as obj. Must not be an arrow function (must not be () => {}).
  */
@@ -1863,7 +1923,8 @@ function _with(obj, fn) {
     }
 
     if (obj._object) {
-      obj = obj._object;
+      fn.call(obj);
+      return;
     }
 
     const instancesOfObj = instances.get(obj) || [];
@@ -1881,7 +1942,7 @@ function abs(val) {
 
 /**
  * Deprecated GM1.x function. Please use this.direction and this.speed instead.
- * 
+ *
  * @param {number} direction Direction to move the instance to
  * @param {number} speed Speed to move the instance at
  */
@@ -2027,7 +2088,7 @@ function path_start(path, speed, endaction, absolute) {
 
 /**
  * This function will return the width (in pixels) of the input string, taking into account any line-breaks the text may have. It is very handy for calculating distances between text elements based on the total width of the letters that make up the string as it would be drawn with draw_text() using the currently defined font.
- * 
+ *
  * @param {string} string The string to measure the width of
  * @returns {number}
  */
@@ -2038,7 +2099,7 @@ function string_width(string) {
 
 /**
  * This function opens the text file with the indicated filename for reading only, returning the unique id of the file that which should be stored in a variable as it will be used for all further actions to do with that file. If the file does not exists then the function will return the value -1.
- * 
+ *
  * @param {string} fname The name of the file to read from.
  * @returns {number}
  */
@@ -2049,7 +2110,10 @@ function file_text_open_read(fname) {
     if (text_total[31].name !== null) {
       break;
     }
-    if (text_read[i].name === null && text_data[i].name === null || text_read[i].name === fname && text_data[i].name === fname) {
+    if (
+      (text_read[i].name === null && text_data[i].name === null) ||
+      (text_read[i].name === fname && text_data[i].name === fname)
+    ) {
       text_read[i].name = fname;
       text_data[i].name = fname;
       file = text_read[i];
@@ -2068,13 +2132,15 @@ function file_text_open_read(fname) {
   }
   file.name = fname;
   fileData.name = fname;
-  if (!fileData.data && localStorage.getItem(fname)) fileData.data = localStorage.getItem(fname); else return -1;
+  if (!fileData.data && localStorage.getItem(fname))
+    fileData.data = localStorage.getItem(fname);
+  else return -1;
   return file;
 }
 
 /**
  * This function opens the text file with the indicated filename for writing only (if the file does not exist, it is created), returning the unique id of the file that which should be stored in a variable as it will be used for all further actions to do with that file.
- * 
+ *
  * @param {string} fname The name of the file to write to
  * @returns {number}
  */
@@ -2085,7 +2151,10 @@ function file_text_open_write(fname) {
     if (text_total[31].name !== null) {
       break;
     }
-    if (text_write[i].name === null && text_data[i].name === null || text_write[i].name === fname && text_data[i].name === fname) {
+    if (
+      (text_write[i].name === null && text_data[i].name === null) ||
+      (text_write[i].name === fname && text_data[i].name === fname)
+    ) {
       text_write[i].name = fname;
       text_data[i].name = fname;
       file = text_write[i];
@@ -2104,13 +2173,14 @@ function file_text_open_write(fname) {
   }
   file.name = fname;
   fileData.name = fname;
-  if (localStorage.getItem(fname)) fileData.data = localStorage.getItem(fname); else localStorage.setItem(fname, fileData.data)
+  if (localStorage.getItem(fname)) fileData.data = localStorage.getItem(fname);
+  else localStorage.setItem(fname, fileData.data);
   return file;
 }
 
 /**
  * With this function you can read a real number value from a text file and the function returns that value to be used or stored in a variable.
- * 
+ *
  * @param {number} fileid The id of the file to read from.
  * @returns {number}
  */
@@ -2120,7 +2190,7 @@ function file_text_read_real(fileid) {
 
 /**
  * With this function you can read a string from a text file and the function returns that value to be used or stored in a variable.
- * 
+ *
  * @param {number} fileid The id of the file to read from.
  * @returns {string}
  */
@@ -2131,7 +2201,7 @@ function file_text_read_string(fileid) {
     return str.split(substr, index).join(substr).length;
   }
 
-  let file = null
+  let file = null;
   let fileData = null;
   let fileLine = 0;
   let str = "";
@@ -2141,22 +2211,26 @@ function file_text_read_string(fileid) {
       fileData = text_data[i];
       fileLine = text_read_line[i].line;
       break;
-    };
+    }
   }
 
   if (!file || !fileData) return;
 
   if (fileLine === 0) {
     for (let i = 0; i < fileData.data.length; i++) {
-      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+      if (fileData.data[i] !== "\r" && fileData.data[i + 1] !== "\n") {
         str = str.concat("", fileData.data[i]);
       } else {
         break;
       }
     }
   } else {
-    for (let i = getPos(fileData.data, "\r\n", fileLine) + 2; i < fileData.data.length; i++) {
-      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+    for (
+      let i = getPos(fileData.data, "\r\n", fileLine) + 2;
+      i < fileData.data.length;
+      i++
+    ) {
+      if (fileData.data[i] !== "\r" && fileData.data[i + 1] !== "\n") {
         str = str.concat("", fileData.data[i]);
       } else {
         break;
@@ -2168,7 +2242,7 @@ function file_text_read_string(fileid) {
 
 /**
  * With this function you can skip the remainder of the current line from a given opened text file and move to the start of the next one. The function will also return the full line as a string, making it an easy way to read complete "chunks" of data for parsing later.
- * 
+ *
  * @param {number} fileid The id of the file to read from.
  * @returns {string}
  */
@@ -2179,7 +2253,7 @@ function file_text_readln(fileid) {
     return str.split(substr, index).join(substr).length;
   }
 
-  let file = null
+  let file = null;
   let fileData = null;
   let fileLine = 0;
   let index = 0;
@@ -2189,16 +2263,16 @@ function file_text_readln(fileid) {
       file = text_read[i];
       fileData = text_data[i];
       fileLine = text_read_line[i].line;
-      index=i;
+      index = i;
       break;
-    };
+    }
   }
 
   if (!file || !fileData) return;
 
   if (fileLine === 0) {
     for (let i = 0; i < fileData.data.length; i++) {
-      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+      if (fileData.data[i] !== "\r" && fileData.data[i + 1] !== "\n") {
         str = str.concat("", fileData.data[i]);
       } else {
         fileLine++;
@@ -2206,8 +2280,12 @@ function file_text_readln(fileid) {
       }
     }
   } else {
-    for (let i = getPos(fileData.data, "\r\n", fileLine) + 2; i < fileData.data.length; i++) {
-      if (fileData.data[i] !== "\r" && fileData.data[i+1] !== "\n") {
+    for (
+      let i = getPos(fileData.data, "\r\n", fileLine) + 2;
+      i < fileData.data.length;
+      i++
+    ) {
+      if (fileData.data[i] !== "\r" && fileData.data[i + 1] !== "\n") {
         str = str.concat("", fileData.data[i]);
       } else {
         fileLine++;
@@ -2222,28 +2300,28 @@ function file_text_readln(fileid) {
 
 /**
  * With this function you can write a number to the previously opened text file. Note that as the value to be written can be a real number, all decimals will be written with a "." point as separator. If the file already contains information, this information will be erased and the string will be written at the beginning of the file, or at the file's current line.
- * 
+ *
  * @param {number} fileid The id of the file to edit.
  * @param {number} val The real value to write to the file.
  */
 function file_text_write_real(fileid, val) {
-  file_text_write_string(fileid, string(val))
+  file_text_write_string(fileid, string(val));
 }
 
 /**
  * With this function you can write a string to a previously opened text file. If the file already contains information, this information will be erased and the string will be written at the beginning of the file, or at the file's current line.
- * 
+ *
  * @param {number} fileid The id of the file to edit.
  * @param {string} str The string to write to the file.
  * @returns {number}
  */
 function file_text_write_string(fileid, str) {
   if (typeof fileid !== "object") return undefined;
-  
-  let fileData = null
+
+  let fileData = null;
   let fileLine = 0;
   for (let i = 0; i < text_write.length; i++) {
-    if (text_write[i]  === fileid) {
+    if (text_write[i] === fileid) {
       fileData = text_data[i];
       fileLine = text_write_line[i].line;
       break;
@@ -2263,13 +2341,13 @@ function file_text_write_string(fileid, str) {
 
 /**
  * With this function you can write a new line to an opened text file. In this way you can skip lines or write information on a line by line basis.
- * 
+ *
  * @param {number} fileid The id of the file to edit.
  * @returns {number}
  */
 function file_text_writeln(fileid) {
   if (typeof fileid !== "object") return;
-  
+
   for (let i = 0; i < text_write.length; i++) {
     if (text_write[i] === fileid) {
       text_write_line[i].line++;
@@ -2280,7 +2358,7 @@ function file_text_writeln(fileid) {
 
 /**
  * Once you have finished working with a given file (whether reading from it or writing to it), you must close the file again, or else you risk losing the information contained within. This also prevents memory leaks and makes sure that you never go over the file limit by having more than 32 files open.
- * 
+ *
  * @param {number} fileid The id of the file to close.
  * @returns {void}
  */
@@ -2305,9 +2383,12 @@ function file_text_close(fileid) {
     }
   }
 
-  if (!fileData) {console.error("file", fileid.name, "not opened"); return;}
+  if (!fileData) {
+    console.error("file", fileid.name, "not opened");
+    return;
+  }
   localStorage.setItem(fileid.name, fileData.data);
-  
+
   text_read[index].name = null;
   text_write[index].name = null;
   text_data[index].name = null;
@@ -2316,7 +2397,7 @@ function file_text_close(fileid) {
 
 /**
  * (ENGINE EXCLUSIVE) With this function you can import a text file and store it as filename so this game engine can operate with it, eg. file_text_open_read(filename). The text file must have crlf line endings or else you wont be able to operate file_text_readln() actions on it.
- * 
+ *
  * @param {string} data The text data to import to the filename.
  * @param {string} filename The filename that the ini text will be imported to.
  */
@@ -2326,7 +2407,7 @@ function file_text_import(data, filename) {
 
 /**
  * (ENGINE EXCLUSIVE) With this function you can export a text file with the name filename as a crlf line ending text file openable by GameMaker.
- * 
+ *
  * @returns {void}
  */
 function file_text_export(filename) {
@@ -2338,13 +2419,13 @@ function file_text_export(filename) {
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   document.body.appendChild(a);
-  a.click()
+  a.click();
   document.body.removeChild(a);
 }
 
 /**
- * With this function you can draw any given tile from a tile set - compete with rotations, flips and mirrors - setting the frame (if animated) and the position within the room. The tile set ID value is the tile set index as set in the IDE and the tile data is the data "blob" that contains all the information about the tile index and the transformations that have been applied. 
- * 
+ * With this function you can draw any given tile from a tile set - compete with rotations, flips and mirrors - setting the frame (if animated) and the position within the room. The tile set ID value is the tile set index as set in the IDE and the tile data is the data "blob" that contains all the information about the tile index and the transformations that have been applied.
+ *
  * @param {object} tileset The ID of the tile set to use
  * @param {object} tiledata The tile data to use
  * @param {number} frame The frame number for the animated tile to use (default 0 for non-animated tiles)
@@ -2365,7 +2446,7 @@ function draw_tile(tileset, tiledata, frame = 0, x = 0, y = 0) {
     ysep = 0,
     xbord = 0,
     ybord = 0,
-    gms2 = 0
+    gms2 = 0,
   } = tileset;
 
   // Load the tileset image
@@ -2402,8 +2483,14 @@ function draw_tile(tileset, tiledata, frame = 0, x = 0, y = 0) {
   // Draw the tile image
   ctx.drawImage(
     img,
-    sx, sy, tilew, tileh, // source
-    0, 0, tilew, tileh    // destination
+    sx,
+    sy,
+    tilew,
+    tileh, // source
+    0,
+    0,
+    tilew,
+    tileh // destination
   );
 
   ctx.restore();

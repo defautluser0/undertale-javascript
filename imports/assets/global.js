@@ -168,7 +168,6 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
 
 if (window.navigator.userAgent === "MEOW Debugger") {
   global.debug = 1;
-  global.interact = 0;
   globalThis.global = global;
 } else {
   global.debug = 0;

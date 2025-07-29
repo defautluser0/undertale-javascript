@@ -16,7 +16,14 @@ import {
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import { canvas, ctx, ogCanvas, ogCtx } from "/imports/canvasSetup.js";
-import { view_current, view_hview, view_wview, view_xview, view_yview, updateCamera } from "/imports/view.js"
+import {
+  view_current,
+  view_hview,
+  view_wview,
+  view_xview,
+  view_yview,
+  updateCamera,
+} from "/imports/view.js";
 // asset imports
 import {
   c_white,
@@ -76,7 +83,7 @@ function draw() {
       120,
       50,
       "Welcome to the Sound Test!#Listen to all your favorites.#Press Left or Right to select.#Press *Z to play a song.#",
-      2,
+      2
     );
     this.buffer++;
 
@@ -139,7 +146,11 @@ function draw() {
 
     this.buffer++;
 
-    if (keyboard_check_pressed(vk_left) && this.buffer > 0 && this.active_l < 0) {
+    if (
+      keyboard_check_pressed(vk_left) &&
+      this.buffer > 0 &&
+      this.active_l < 0
+    ) {
       if (this.gaster === 0) {
         this.songno++;
         if (this.songno > 3) this.songno = 0;
@@ -151,7 +162,11 @@ function draw() {
       }
     }
 
-    if (keyboard_check_pressed(vk_right) && this.buffer > 0 && this.active_r < 0) {
+    if (
+      keyboard_check_pressed(vk_right) &&
+      this.buffer > 0 &&
+      this.active_r < 0
+    ) {
       this.active_r = 10;
       this.songno++;
       if (this.songno > 3) this.songno = 0;

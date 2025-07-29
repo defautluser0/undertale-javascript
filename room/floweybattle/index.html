@@ -21,11 +21,11 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-		import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
+    import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js";
     import roomSize from '/imports/assets/roomSize.js'
-		import global from "/imports/assets/global.js"
+    import global from "/imports/assets/global.js"
     import * as obj_floweydraw from '/obj/floweydraw/index.js'
     import * as obj_floweybattle1 from '/obj/floweybattle1/index.js'
     import * as obj_fakeheart from '/obj/fakeheart/index.js'
@@ -34,9 +34,9 @@
     import * as obj_uborder from '/obj/uborder/index.js'
     import * as obj_rborder from '/obj/rborder/index.js'
     import * as obj_battlefader from '/obj/battlefader/index.js'
-		import * as screenUpdater from '/obj/screen/index.js'
+    import * as screenUpdater from '/obj/screen/index.js'
 
-		const allInstances = [];
+    const allInstances = [];
 
     loadCurrentSong("currentsong")
     loadCurrentSong("currentsong2")
@@ -75,7 +75,7 @@
           fpsCounter = 0;
           lastFpsUpdate = now;
         }
-        
+
         control_update();
         screenUpdater.beginStep();
         for (const [obj, instanceList] of instances) {
@@ -114,7 +114,7 @@
 
         allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
 
-        for (const { obj,  instance } of allInstances) {
+        for (const { obj, instance } of allInstances) {
           obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
@@ -129,7 +129,7 @@
           }
         }
 
-        updateCamera({x:0,y:0}) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
+        updateCamera({ x: 0, y: 0 }) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
         screenUpdater.updateScreen();
 
         input_update();
@@ -159,10 +159,10 @@
 
             return `${folder}_${filename}`;
           }
-          
+
           try {
             localStorage.setItem("global", JSON.stringify(global));
-          } catch(_) {
+          } catch (_) {
             if (global.currentsong !== -1) {
               let currentsong = global.currentsong;
               global.currentsong = {
@@ -197,7 +197,7 @@
       requestAnimationFrame(game_loop);
     }
 
-		window.addEventListener("keydown", e => {
+    window.addEventListener("keydown", e => {
       keyboard[e.code] = true;
       _key_state[e.code] = true;
     });

@@ -1,7 +1,20 @@
-import { draw_sprite_ext, instance_number, instance_destroy, action_move, move_towards_point, instances, random, getBoundingBox, collision_rectangle, instance_create, instance_exists, _with } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_number,
+  instance_destroy,
+  action_move,
+  move_towards_point,
+  instances,
+  random,
+  getBoundingBox,
+  collision_rectangle,
+  instance_create,
+  instance_exists,
+  _with,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white, snd_hurt1 } from "/imports/assets.js";
-import { snd_play } from "/imports/customFunctions.js"
-import global from "/imports/assets/global.js"
+import { snd_play } from "/imports/customFunctions.js";
+import global from "/imports/assets/global.js";
 
 import * as obj_fakeheart from "/obj/fakeheart/index.js";
 import * as obj_floweybattle1 from "/obj/floweybattle1/index.js";
@@ -91,9 +104,9 @@ function updateGamemakerFunctions() {
   this.hspeed = Math.cos(dirRad) * this.speed;
   this.vspeed = Math.sin(dirRad) * this.speed;
 
-	// Update position
-	this.x += this.hspeed;
-	this.y += this.vspeed;
+  // Update position
+  this.x += this.hspeed;
+  this.y += this.vspeed;
   this.updateCol();
 }
 
@@ -127,8 +140,13 @@ function step() {
   const fakeheart = instances.get(obj_fakeheart)[0];
   if (this.attackyou === 1) {
     this.attackratio += 1;
-    move_towards_point.call(this, fakeheart.x, fakeheart.y, (0.1 * this.attackratio * this.attackratio * this.attackratio) + random(0.5));
-    this.direction += (random(4) - random(2));
+    move_towards_point.call(
+      this,
+      fakeheart.x,
+      fakeheart.y,
+      0.1 * this.attackratio * this.attackratio * this.attackratio + random(0.5)
+    );
+    this.direction += random(4) - random(2);
     this.depth = -500;
     this.attackyou = 2;
     this.friction = -0.04 * this.attackratio;
@@ -140,7 +158,16 @@ function step() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_fakeheart, false, false)
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_fakeheart,
+    false,
+    false
+  );
   if (other) {
     if (global.invc < 1) {
       global.hp -= 19;
@@ -151,24 +178,23 @@ function updateCol() {
       instance_create(0, 0, obj_shaker);
       global.invc = 30;
 
-      _with(obj_floweybattle1, function() {
+      _with(obj_floweybattle1, function () {
         this.conversation = 10;
-      })
+      });
 
-      _with(this._object, function() {
+      _with(this._object, function () {
         this.attackyou = 3;
       });
 
       if (instance_exists(OBJ_WRITER)) {
-        _with (OBJ_WRITER, function() {
+        _with(OBJ_WRITER, function () {
           instance_destroy(this);
-        })
+        });
       }
 
-      if (instance_exists(obj_blconwdflowey))
-      {
-        _with (obj_blconwdflowey, function() {
-            instance_destroy(this);
+      if (instance_exists(obj_blconwdflowey)) {
+        _with(obj_blconwdflowey, function () {
+          instance_destroy(this);
         });
       }
     }
@@ -190,4 +216,15 @@ function outsideRoom() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm0, step, updateCol, outsideRoom };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  alarm0,
+  step,
+  updateCol,
+  outsideRoom,
+};

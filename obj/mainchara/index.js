@@ -15,7 +15,7 @@ import {
   instance_create,
   _with,
   draw_rectangle,
-  draw_set_color
+  draw_set_color,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   c_white,
@@ -72,7 +72,9 @@ function create() {
 
   global.phasing = 0;
 
-  global.currentroom = `${window.location.href.slice(35, 39)}_${window.location.href.slice(40).split("/")[0]}`;
+  global.currentroom = `${window.location.href.slice(35, 39)}_${
+    window.location.href.slice(40).split("/")[0]
+  }`;
 
   let dsprite = "";
   let rsprite = "";
@@ -555,85 +557,151 @@ function step() {
 }
 
 function user0() {
-  if (global.interact == 0 && this.uncan == 0)
-  {
-    if (instance_exists("obj_itemswapper") == false)
-    {
-        if (global.facing == 1)
-        {
-            if (collision_rectangle.call(this, this.x + (this.sprite_width / 2), this.y + 19, this.x + this.sprite_width + 15, this.y + this.sprite_height, obj_interactable, 0, 1))
-            {
-                const interactedobject = collision_rectangle.call(this, this.x + (this.sprite_width / 2), this.y + (this.sprite_height / 2), this.x + this.sprite_width + 15, this.y + this.sprite_height, obj_interactable, 0, 1);
-                
-                if (interactedobject != -4)
-                {
-                    _with (interactedobject, function() {
-                        this.facing = 3;
-                    })
-                    
-                    _with (interactedobject, function() {
-                        script_execute.call(this, scr_interact);
-                    })
-                }
-            }
+  if (global.interact == 0 && this.uncan == 0) {
+    if (instance_exists("obj_itemswapper") == false) {
+      if (global.facing == 1) {
+        if (
+          collision_rectangle.call(
+            this,
+            this.x + this.sprite_width / 2,
+            this.y + 19,
+            this.x + this.sprite_width + 15,
+            this.y + this.sprite_height,
+            obj_interactable,
+            0,
+            1
+          )
+        ) {
+          const interactedobject = collision_rectangle.call(
+            this,
+            this.x + this.sprite_width / 2,
+            this.y + this.sprite_height / 2,
+            this.x + this.sprite_width + 15,
+            this.y + this.sprite_height,
+            obj_interactable,
+            0,
+            1
+          );
+
+          if (interactedobject != -4) {
+            _with(interactedobject, function () {
+              this.facing = 3;
+            });
+
+            _with(interactedobject, function () {
+              script_execute.call(this, scr_interact);
+            });
+          }
         }
-        
-        if (global.facing == 3)
-        {
-            if (collision_rectangle.call(this, this.x + (this.sprite_width / 2), this.y + 19, this.x - 15, this.y + this.sprite_height, obj_interactable, 0, 1))
-            {
-                const interactedobject = collision_rectangle.call(this, this.x + (this.sprite_width / 2), this.y + 3 + (this.sprite_height / 2), this.x - 15, this.y + this.sprite_height + 3, obj_interactable, 0, 1);
-                
-                if (interactedobject != null)
-                {
-                    _with (interactedobject, function() {
-                        this.facing = 1;
-                    })
-                    
-                    _with (interactedobject, function() {
-                        script_execute.call(this, scr_interact);
-                    })
-                }
-            }
+      }
+
+      if (global.facing == 3) {
+        if (
+          collision_rectangle.call(
+            this,
+            this.x + this.sprite_width / 2,
+            this.y + 19,
+            this.x - 15,
+            this.y + this.sprite_height,
+            obj_interactable,
+            0,
+            1
+          )
+        ) {
+          const interactedobject = collision_rectangle.call(
+            this,
+            this.x + this.sprite_width / 2,
+            this.y + 3 + this.sprite_height / 2,
+            this.x - 15,
+            this.y + this.sprite_height + 3,
+            obj_interactable,
+            0,
+            1
+          );
+
+          if (interactedobject != null) {
+            _with(interactedobject, function () {
+              this.facing = 1;
+            });
+
+            _with(interactedobject, function () {
+              script_execute.call(this, scr_interact);
+            });
+          }
         }
-        
-        if (global.facing == 0)
-        {
-            if (collision_rectangle.call(this, this.x + 4, this.y + 20, (this.x + this.sprite_width) - 4, this.y + this.sprite_height + 15, obj_interactable, 0, 1))
-            {
-                const interactedobject = collision_rectangle.call(this, this.x + 4, this.y + 20, (this.x + this.sprite_width) - 4, this.y + this.sprite_height + 15, obj_interactable, 0, 1);
-                
-                if (interactedobject != null)
-                {
-                    _with (interactedobject, function() {
-                        this.facing = 2;
-                    })
-                    
-                    _with (interactedobject, function() {
-                        script_execute.call(this, scr_interact);
-                    })
-                }
-            }
+      }
+
+      if (global.facing == 0) {
+        if (
+          collision_rectangle.call(
+            this,
+            this.x + 4,
+            this.y + 20,
+            this.x + this.sprite_width - 4,
+            this.y + this.sprite_height + 15,
+            obj_interactable,
+            0,
+            1
+          )
+        ) {
+          const interactedobject = collision_rectangle.call(
+            this,
+            this.x + 4,
+            this.y + 20,
+            this.x + this.sprite_width - 4,
+            this.y + this.sprite_height + 15,
+            obj_interactable,
+            0,
+            1
+          );
+
+          if (interactedobject != null) {
+            _with(interactedobject, function () {
+              this.facing = 2;
+            });
+
+            _with(interactedobject, function () {
+              script_execute.call(this, scr_interact);
+            });
+          }
         }
-        
-        if (global.facing == 2)
-        {
-            if (collision_rectangle.call(this, this.x + 4, (this.y + this.sprite_height) - 5, (this.x + this.sprite_width) - 4, this.y + 5, obj_interactable, 0, 1))
-            {
-                const interactedobject = collision_rectangle.call(this, this.x + 4, (this.y + this.sprite_height) - 5, (this.x + this.sprite_width) - 4, this.y + 8, obj_interactable, 0, 1);
-                
-                if (interactedobject != null)
-                {
-                    _with (interactedobject, function() {
-                        this.facing = 0;
-                    })
-                    
-                    _with (interactedobject, function() {
-                        script_execute.call(this, scr_interact);
-                    })
-                }
-            }
+      }
+
+      if (global.facing == 2) {
+        if (
+          collision_rectangle.call(
+            this,
+            this.x + 4,
+            this.y + this.sprite_height - 5,
+            this.x + this.sprite_width - 4,
+            this.y + 5,
+            obj_interactable,
+            0,
+            1
+          )
+        ) {
+          const interactedobject = collision_rectangle.call(
+            this,
+            this.x + 4,
+            this.y + this.sprite_height - 5,
+            this.x + this.sprite_width - 4,
+            this.y + 8,
+            obj_interactable,
+            0,
+            1
+          );
+
+          if (interactedobject != null) {
+            _with(interactedobject, function () {
+              this.facing = 0;
+            });
+
+            _with(interactedobject, function () {
+              script_execute.call(this, scr_interact);
+            });
+          }
         }
+      }
     }
   }
 }

@@ -13,10 +13,10 @@ function loadCurrentSong(key = "currentsong") {
 
   global[key] = howl;
   // Apply saved settings
-	const id = howl.play()
+	const id = howl.play();
   howl.volume(songData.volume, id);
   howl.rate(songData.rate, id);
-  howl.loop(songData.loop, id);
+  howl.loop(songData.loop);
   howl.seek(songData.pos, id);
   if (songData.paused) howl.pause(id);
 }

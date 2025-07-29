@@ -1,4 +1,10 @@
-import { draw_sprite_ext, instances, abs, getBoundingBox, ceil } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instances,
+  abs,
+  getBoundingBox,
+  ceil,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
 import global from "/imports/assets/global.js";
@@ -63,7 +69,7 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  getBoundingBox.call(this)
+  getBoundingBox.call(this);
 }
 
 function updateSprite() {
@@ -91,57 +97,53 @@ function roomStart() {
 function endStep() {
   const dborder = instances.get(obj_dborder)[0];
   const uborder = instances.get(obj_uborder)[0];
-  if (this.x != global.idealborder[1])
-  {
+  if (this.x != global.idealborder[1]) {
     if (abs(this.x - global.idealborder[1]) <= 15)
-        this.x = global.idealborder[1];
-    else if (this.x > global.idealborder[1])
-        this.x -= 15;
-    else
-        this.x += 15;
+      this.x = global.idealborder[1];
+    else if (this.x > global.idealborder[1]) this.x -= 15;
+    else this.x += 15;
   }
 
-  if (this.y != global.idealborder[3])
-  {
-    if (abs(this.y - global.idealborder[3]) <= 15)
-    {
-        this.y = global.idealborder[3];
-    }
-    else
-    {
-        if (this.y > global.idealborder[3])
-            this.y -= 15;
-        else
-            this.y += 15;
+  if (this.y != global.idealborder[3]) {
+    if (abs(this.y - global.idealborder[3]) <= 15) {
+      this.y = global.idealborder[3];
+    } else {
+      if (this.y > global.idealborder[3]) this.y -= 15;
+      else this.y += 15;
     }
   }
 
   let size = ceil((global.idealborder[2] - global.idealborder[3]) / 5);
 
-  if (this.x == global.idealborder[1] || global.idealborder[2] > (this.y + (this.image_yscale * 5)))
-  {
-    if (this.image_yscale != size)
-    {
-        if (abs(size - this.image_yscale) <= 3)
-            this.image_yscale = size;
-        
-        if (this.image_yscale > size)
-            this.image_yscale -= 3;
-        
-        if (this.image_yscale < size)
-            this.image_yscale += 3;
+  if (
+    this.x == global.idealborder[1] ||
+    global.idealborder[2] > this.y + this.image_yscale * 5
+  ) {
+    if (this.image_yscale != size) {
+      if (abs(size - this.image_yscale) <= 3) this.image_yscale = size;
+
+      if (this.image_yscale > size) this.image_yscale -= 3;
+
+      if (this.image_yscale < size) this.image_yscale += 3;
     }
   }
 
   this.y = dborder.y;
   this.image_yscale = (uborder.y - dborder.y) / 5;
 
-  if (this.instaborder == 1)
-  {
+  if (this.instaborder == 1) {
     this.x = global.idealborder[0];
     this.y = global.idealborder[2];
     this.image_yscale = (global.idealborder[3] - global.idealborder[2]) / 5;
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, endStep };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  endStep,
+};

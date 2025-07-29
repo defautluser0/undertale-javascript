@@ -29,6 +29,7 @@ function create() {
     gravity: 0,
     gravity_direction: 270, // gravity direction
     parent: parent,
+    create2: true, // for createContext() to be called (true) or roomStart() to be called (false) on creation
 
     alarm: alarm, // alarm array
 
@@ -40,6 +41,7 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
+    createContext
   };
   
   self._hspeed = 0;
@@ -236,7 +238,7 @@ function updateSprite() {
 
 function followPath() {
   const pathState = this._path;
-  if (!pathState) return;
+  if (!pathState || !pathState.data.points) return;
 
   const points = pathState.data.points;
   const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
@@ -310,4 +312,8 @@ function updateCol() {
   // and do another if (other) {} to run scripts.
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent };
+function createContext() {
+  // here goes anything to do when you need context creation, so like calling any script with context you do here
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, createContext };

@@ -15,15 +15,21 @@ import {
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import global from "/imports/assets/global.js";
-import { ogCanvas, ogCtx, canvas, ctx } from "/imports/canvasSetup.js"
-import { view_current, final_view_hview, final_view_wview, final_view_xview, final_view_yview } from "/imports/view.js"
+import { ogCanvas, ogCtx, canvas, ctx } from "/imports/canvasSetup.js";
+import {
+  view_current,
+  final_view_hview,
+  final_view_wview,
+  final_view_xview,
+  final_view_yview,
+} from "/imports/view.js";
 import { control_check_pressed } from "/imports/input.js";
 import { textdata_en } from "/imports/assets/text.js";
 import roomSize from "/imports/assets/roomSize.js";
-import * as OBJ_WRITER from '/obj/writer/index.js';
-import * as obj_introfader from '/obj/introfader/index.js';
-import * as obj_unfader from '/obj/unfader/index.js';
-import * as obj_introlast from '/obj/introlast/index.js';
+import * as OBJ_WRITER from "/obj/writer/index.js";
+import * as obj_introfader from "/obj/introfader/index.js";
+import * as obj_unfader from "/obj/unfader/index.js";
+import * as obj_introlast from "/obj/introlast/index.js";
 
 // holy shit this code is so outdated compared to new objects i cant
 // create
@@ -92,16 +98,23 @@ function updateGamemakerFunctions() {
     0,
     0,
     final_view_wview[view_current],
-    final_view_hview[view_current],
+    final_view_hview[view_current]
   );
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
 
-  draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale);
+  draw_sprite_ext(
+    this.sprite_index,
+    this.image_index,
+    this.x,
+    this.y,
+    this.image_xscale,
+    this.image_yscale
+  );
 }
 
 function alarm2() {
@@ -147,7 +160,6 @@ function alarm0() {
   this.alarm[0] = 3;
   this.fadercreator = global.faceemotion;
 }
-
 
 /**
  * Called every frame in the Begin Step event

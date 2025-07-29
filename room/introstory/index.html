@@ -26,9 +26,9 @@
     import { instances, instance_create, draw_text, draw_set_font, currentFont } from '/imports/assets/gamemakerFunctions.js';
     import { fnt_maintext } from '/imports/assets.js'
     import global from '/imports/assets/global.js';
-    
+
     const allInstances = [];
-    
+
     instance_create(0, 0, introimage);
     instance_create(0, 0, obj_introtangle);
 
@@ -58,7 +58,7 @@
           fpsCounter = 0;
           lastFpsUpdate = now;
         }
-        
+
         control_update();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {

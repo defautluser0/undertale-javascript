@@ -100,7 +100,10 @@ function user9() {
   instance_create(0, 0, obj_unfader);
   this.ok = 1;
 
-  if ((global.currentroom === "room_fire1" && instance_exists(obj_undyneachaser) === true)) {
+  if (
+    global.currentroom === "room_fire1" &&
+    instance_exists(obj_undyneachaser) === true
+  ) {
     this.ok = 0;
   }
 
@@ -116,7 +119,10 @@ function user9() {
   }
 
   if (global.flag[7] == 0) {
-    if (window.location.href === "https://undertale.defautluser0.xyz/room/torhouse1")
+    if (
+      window.location.href ===
+      "https://undertale.defautluser0.xyz/room/torhouse1"
+    )
       caster_free(global.currentsong2);
   }
 }

@@ -203,38 +203,62 @@ function SCR_TEXT(argument0) {
       break;
 
     case 15:
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins1/") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/ruins1/"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_127"); // * (The shadow of the ruins&  looms above^1, filling you with&  determination.)/
         global.msg[1] = scr_gettext("SCR_TEXT_128"); // * (HP fully restored.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins7") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/ruins7"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_129"); // * (Playfully crinkling through&  the leaves fills you with&  determination.)/
         global.msg[1] = scr_gettext("SCR_TEXT_130"); // * (HP fully restored.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins12A") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/ruins12A"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_131"); // * (Knowing the mouse might one&  day leave its hole and&  get the cheese...)/
         global.msg[1] = scr_gettext("SCR_TEXT_132"); // * (It fills you with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins19")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/ruins19"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_133"); // * (Seeing such a cute^1, tidy&  house in the RUINS gives&  you determination.)/%%
 
       if (global.flag[202] >= 20) global.msg[0] = scr_gettext("SCR_TEXT_134"); // * Determination./%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra1")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra1"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_135"); // * (The cold atmosphere of a&  new land... it fills you&  with determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra3")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra3"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_136"); // * (The convenience of that&  lamp still fills you&  with determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_spaghetti") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra_spaghetti"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_137"); // * (Knowing the mouse might one&  day find a way to heat&  up the spaghetti...)/
         global.msg[1] = scr_gettext("SCR_TEXT_138"); // * (It fills you with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_lesserdog") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra_lesserdog"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_140"); // * (Knowing that dog will&  never give up trying to&  make the perfect snowdog...)/
         global.msg[1] = scr_gettext("SCR_TEXT_141"); // * (It fills you with&  determination.)/%%
 
@@ -244,21 +268,36 @@ function SCR_TEXT(argument0) {
         }
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_town")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/tundra_town"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_144"); // * (The sight of such a friendly&  town fills you with&  determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water2")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water2"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_145"); // * (The sound of rushing water&  fills you with&  determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water4")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water4"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_146"); // * (A feeling of dread hangs&  over you...^1)&* (But you stay determined.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_savepoint1") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_savepoint1"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_147"); // * (Knowing the mouse might one&  day extract the cheese from&  the mystical crystal...)/
         global.msg[1] = scr_gettext("SCR_TEXT_148"); // * (It fills you with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_preundyne") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_preundyne"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_150"); // * (The sound of muffled rain&  on the cavetop...)/
 
         if (global.flag[86] == 1) global.msg[0] = scr_gettext("SCR_TEXT_151"); // * (The serene sound of a&  distant music box...)/
@@ -266,10 +305,16 @@ function SCR_TEXT(argument0) {
         global.msg[1] = scr_gettext("SCR_TEXT_152"); // * (It fills you with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_trashzone2")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_trashzone2"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_153"); // * (The feeling of your socks&  squishing as you step&  gives you determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_trashsavepoint") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_trashsavepoint"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_156"); // * (The waterfall here seems&  to flow from the&  ceiling of the cavern...)/
         global.msg[1] = scr_gettext("SCR_TEXT_157"); // * (Occasionally^1, a piece of&  trash will flow&  through...)/
         global.msg[2] = scr_gettext("SCR_TEXT_158"); // * (... and fall into the&  bottomless abyss below.)/
@@ -281,13 +326,22 @@ function SCR_TEXT(argument0) {
         global.flag[91] = 1;
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_friendlyhub")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_friendlyhub"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_164"); // * (You feel a calming&  tranquility^1. You're filled&  with determination...)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_temvillage")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_temvillage"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_165"); // * (You feel..^1. something.)&* (You're filled with&  detemmienation.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/water_undynefinal") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/water_undynefinal"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_168"); // * (The wind is howling^1.&* You're filled with&  determination...)/%%
 
         if (global.flag[99] > 0) global.msg[0] = scr_gettext("SCR_TEXT_169"); // * (The howling wind is&  now a breeze^1. This gives&  you determination...)/%%
@@ -295,40 +349,65 @@ function SCR_TEXT(argument0) {
         if (global.flag[350] == 1) global.msg[0] = scr_gettext("SCR_TEXT_170"); // * (The wind has stopped^1.&* You're filled with&  determination...)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_prelab") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_prelab"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_174"); // * (Seeing such a strange&  laboratory in a place like&  this...)/
         global.msg[1] = scr_gettext("SCR_TEXT_175"); // * (You're filled with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire6"
+      if (
+        window.location.href === "https://undertale.defautluser0.xyz/room/fire6"
       )
         global.msg[0] = scr_gettext("SCR_TEXT_180"); // * (The wooshing sound of steam&  and cogs..^1. it fills you&  with determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_savepoint1") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_savepoint1"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_184"); // * (An ominous structure looms&  in the distance...)/
         global.msg[1] = scr_gettext("SCR_TEXT_185"); // * (You're filled with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_mewmew2") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_mewmew2"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_187"); // * (Knowing the mouse might one&  day hack the computerized&  safe and get the cheese...)/
         global.msg[1] = scr_gettext("SCR_TEXT_188"); // * (It fills you with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_hotelfront_1")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_hotelfront_1"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_191"); // * (A huge structure lies north.^1)&* (You're filled with&  determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_hotellobby")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_hotellobby"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_195"); // * (The relaxing atmosphere&  of this hotel..^1. it fills&  you with determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_core_branch")
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_core_branch"
+      )
         global.msg[0] = scr_gettext("SCR_TEXT_199"); // * (The air is filled with&  the smell of ozone..^1. it fills&  you with determination.)/%%
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_core_premett") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_core_premett"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_203"); // * (Behind this door must be&  the elevator to the King's&  castle.)/
         global.msg[1] = scr_gettext("SCR_TEXT_204"); // * (You're filled with&  determination.)/%%
       }
 
-      if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_savepoint2") {
+      if (
+        window.location.href ===
+        "https://undertale.defautluser0.xyz/room/fire_savepoint2"
+      ) {
         global.msg[0] = scr_gettext("SCR_TEXT_208"); // * (The smell of cobwebs fills&  the air...)/
         global.msg[1] = scr_gettext("SCR_TEXT_209"); // * (You're filled with&  determination.)/%%
       }
@@ -1650,7 +1729,7 @@ function SCR_TEXT(argument0) {
       break;
 
     case 501:
-      global.msg[0] = scr_gettext("SCR_TEXT_1540"); // * "Press \\*Z to read signs!"/%%
+      global.msg[0] = scr_gettext("SCR_TEXT_1540"); // * "Press *Z to read signs!"/%%
       break;
 
     case 502:
@@ -1743,7 +1822,7 @@ function SCR_TEXT(argument0) {
 
         if (noroom == 0) {
           if (global.flag[34] == 1)
-            global.msg[0] = scr_gettext("SCR_TEXT_1624"); // * You took a piece of candy.&* (Press \\*C to open the menu.)/%%
+            global.msg[0] = scr_gettext("SCR_TEXT_1624"); // * You took a piece of candy.&* (Press *C to open the menu.)/%%
 
           if (global.flag[34] == 2)
             global.msg[0] = scr_gettext("SCR_TEXT_1625"); // * You took more candy^1.&* How disgusting../%%
@@ -1937,17 +2016,29 @@ function SCR_TEXT(argument0) {
       if (global.choice == 0) {
         global.msg[0] = scr_gettext("SCR_TEXT_1806"); // * You hear a clicking sound./%%
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins15B/" && global.plot < 14) {
+        if (
+          window.location.href ===
+            "https://undertale.defautluser0.xyz/room/ruins15B/" &&
+          global.plot < 14
+        ) {
           global.plot = 14;
           snd_play(snd_switchpull_n);
         }
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins15C/" && global.plot < 15) {
+        if (
+          window.location.href ===
+            "https://undertale.defautluser0.xyz/room/ruins15C/" &&
+          global.plot < 15
+        ) {
           global.plot = 15;
           snd_play(snd_switchpull_n);
         }
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins15D/" && global.plot < 16) {
+        if (
+          window.location.href ===
+            "https://undertale.defautluser0.xyz/room/ruins15D/" &&
+          global.plot < 16
+        ) {
           global.plot = 16;
           snd_play(snd_switchpull_n);
         }
@@ -3180,21 +3271,21 @@ function SCR_TEXT(argument0) {
         if (global.gold == 0) {
           global.msg[0] = scr_gettext("SCR_TEXT_3045"); // * um..^1.&* you don't have any money?/
           global.msg[1] = scr_gettext("SCR_TEXT_3046"); // * n-no^1, you can still play^1,&  don't worry about it.../
-          global.msg[2] = scr_gettext("SCR_TEXT_3047"); // * okay..^1.&* press \\*Z repeatedly to&  encourage your snail./
+          global.msg[2] = scr_gettext("SCR_TEXT_3047"); // * okay..^1.&* press *Z repeatedly to&  encourage your snail./
           global.msg[3] = scr_gettext("SCR_TEXT_3048"); // * ready?/%%
         }
 
         if (global.gold < 10 && global.gold > 0) {
           global.msg[0] = scr_gettext("SCR_TEXT_3052"); // * um..^1. that's less than 10G./
           global.msg[1] = scr_gettext("SCR_TEXT_3053"); // * but since you're my only&  real customer^1, i guess i'll&  just take what you have.../
-          global.msg[2] = scr_gettext("SCR_TEXT_3054"); // * okay..^1.&* press \\*Z repeatedly to&  encourage your snail./
+          global.msg[2] = scr_gettext("SCR_TEXT_3054"); // * okay..^1.&* press *Z repeatedly to&  encourage your snail./
           global.msg[3] = scr_gettext("SCR_TEXT_3055"); // * ready?/%%
           global.gold = 0;
         }
 
         if (global.gold >= 10) {
           global.gold -= 10;
-          global.msg[0] = scr_gettext("SCR_TEXT_3061"); // * okay..^1.&* press \\*Z repeatedly to&  encourage your snail./
+          global.msg[0] = scr_gettext("SCR_TEXT_3061"); // * okay..^1.&* press *Z repeatedly to&  encourage your snail./
           global.msg[1] = scr_gettext("SCR_TEXT_3062"); // * ready?/%%
         }
 
@@ -4758,13 +4849,22 @@ function SCR_TEXT(argument0) {
       if (global.choice == 0) {
         global.msg[0] = scr_gettext("SCR_TEXT_4678"); // * Where will we go today?& &         Error       Error\\C
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_dock")
+        if (
+          window.location.href ===
+          "https://undertale.defautluser0.xyz/room/fire_dock"
+        )
           global.msg[0] = scr_gettext("SCR_TEXT_4680"); // * Where will we go today?& &         Snowdin     Waterfall\\C
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/water_dock")
+        if (
+          window.location.href ===
+          "https://undertale.defautluser0.xyz/room/water_dock"
+        )
           global.msg[0] = scr_gettext("SCR_TEXT_4682"); // * Where will we go today?& &         Snowdin     Hotland\\C
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_dock")
+        if (
+          window.location.href ===
+          "https://undertale.defautluser0.xyz/room/tundra_dock"
+        )
           global.msg[0] = scr_gettext("SCR_TEXT_4684"); // * Where will we go today?& &         Waterfall   Hotland\\C
 
         global.msg[1] = scr_gettext("SCR_TEXT_4686"); //
@@ -4776,18 +4876,34 @@ function SCR_TEXT(argument0) {
 
     case 772:
       if (global.choice == 0) {
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_dock" || window.location.href === "https://undertale.defautluser0.xyz/room/water_dock")
+        if (
+          window.location.href ===
+            "https://undertale.defautluser0.xyz/room/fire_dock" ||
+          window.location.href ===
+            "https://undertale.defautluser0.xyz/room/water_dock"
+        )
           global.flag[459] = 1;
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_dock")
+        if (
+          window.location.href ===
+          "https://undertale.defautluser0.xyz/room/tundra_dock"
+        )
           global.flag[459] = 2;
       }
 
       if (global.choice == 1) {
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/tundra_dock" || window.location.href === "https://undertale.defautluser0.xyz/room/water_dock")
+        if (
+          window.location.href ===
+            "https://undertale.defautluser0.xyz/room/tundra_dock" ||
+          window.location.href ===
+            "https://undertale.defautluser0.xyz/room/water_dock"
+        )
           global.flag[459] = 3;
 
-        if (window.location.href === "https://undertale.defautluser0.xyz/room/fire_dock")
+        if (
+          window.location.href ===
+          "https://undertale.defautluser0.xyz/room/fire_dock"
+        )
           global.flag[459] = 2;
       }
 
@@ -5846,7 +5962,7 @@ function SCR_TEXT(argument0) {
         global.msg[0] = scr_gettext("SCR_TEXT_5823"); // * (KA-SIGH...^1)&* (THE SHOW MUST GO ON!)/%%
 
         // with (obj_playmovement)
-          con = 240;
+        con = 240;
       }
 
       break;
@@ -8360,7 +8476,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_334",
-    " \\E1* Do you need some help..^1?&* Press the switch on the   wall./"
+    " \\E1* Do you need some help..^1?&* Press the switch on the&  wall./"
   );
   ds_map_add(
     global.text_data_en,
@@ -9969,7 +10085,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1540",
-    '* "Press \\*Z to read signs!"/%%'
+    ' * "Press *Z to read signs!"/%%'
   );
   ds_map_add(
     global.text_data_en,
@@ -10066,7 +10182,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1624",
-    " * You took a piece of candy.&* (Press \\*C to open the menu.)/%%"
+    " * You took a piece of candy.&* (Press *C to open the menu.)/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -11693,7 +11809,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3047",
-    " * okay..^1.&* press \\*Z repeatedly to&  encourage your snail./"
+    " * okay..^1.&* press *Z repeatedly to&  encourage your snail./"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_3048", " * ready?/%%");
   ds_map_add(
@@ -11709,13 +11825,13 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3054",
-    " * okay..^1.&* press \\*Z repeatedly to&  encourage your snail./"
+    " * okay..^1.&* press *Z repeatedly to&  encourage your snail./"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_3055", " * ready?/%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3061",
-    " * okay..^1.&* press \\*Z repeatedly to&  encourage your snail./"
+    " * okay..^1.&* press *Z repeatedly to&  encourage your snail./"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_3062", " * ready?/%%");
   ds_map_add(global.text_data_en, "SCR_TEXT_3068", " * oh.........../%%");
@@ -21596,12 +21712,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_controlspear_89",
-    " * Aim with arrows and select with \\*Z."
+    " * Aim with arrows and select with *Z."
   );
   ds_map_add(
     global.text_data_en,
     "obj_controlspear_90",
-    " * Aim with \\*A \\*D and select with \\*Z."
+    " * Aim with *A *D and select with *Z."
   );
   ds_map_add(
     global.text_data_en,
@@ -21637,7 +21753,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_controlspear_select",
-    " * Select with \\*Z."
+    " * Select with *Z."
   );
   ds_map_add(
     global.text_data_en,
@@ -34133,11 +34249,7 @@ function textdata_en() {
     " * since you left^1,&  things down here.../"
   );
   ds_map_add(global.text_data_en, "obj_mainend_785", " \\E3* are different./");
-  ds_map_add(
-    global.text_data_en,
-    "obj_mainend_786",
-    " * with ASGORE gone.../"
-  );
+  ds_map_add(global.text_data_en, "obj_mainend_786", " * with ASGORE gone.../");
   ds_map_add(
     global.text_data_en,
     "obj_mainend_787",
@@ -35643,7 +35755,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_mettatonb_second_703",
-    " Now press \\*Z!!!"
+    " Now press *Z!!!"
   );
   ds_map_add(global.text_data_en, "obj_mettatonb_second_746", " OOOH!/");
   ds_map_add(global.text_data_en, "obj_mettatonb_second_747", " OOOOOOOH!/");
@@ -41361,14 +41473,14 @@ function textdata_en() {
     "obj_papdate_206",
     "\\XSTEP ONE..^1. PRESS&YOUR CONTROLLER" +
       "'" +
-      'S&\\*C BUTTON FOR&"\\RDATING HUD\\X."/'
+      'S&*C BUTTON FOR&"\\RDATING HUD\\X."/'
   );
   ds_map_add(
     global.text_data_en,
     "obj_papdate_207",
     "\\XSTEP ONE..^1. PRESS&YOUR CONTROLLER" +
       "'" +
-      'S&\\*C BUTTON FOR&"\\RFRIENDSHIP HUD\\X."/'
+      'S&*C BUTTON FOR&"\\RFRIENDSHIP HUD\\X."/'
   );
   ds_map_add(
     global.text_data_en,
@@ -41684,7 +41796,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_papdate_705",
-    " * (Move and inspect with \\*Z.)"
+    " * (Move and inspect with *Z.)"
   );
   ds_map_add(global.text_data_en, "obj_papdate_721", " \\E3MY HAT...?/");
   ds_map_add(global.text_data_en, "obj_papdate_722", " \\E8MY HAT./");
@@ -45549,7 +45661,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_potheat_73",
-    " * Hold \\*D to turn up the heat!"
+    " * Hold *D to turn up the heat!"
   );
   ds_map_add(global.text_data_en, "obj_potheat_108", " * Left^1? You fool^2!%");
   ds_map_add(
@@ -45582,7 +45694,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_potstir_64",
-    " * Press \\*Z repeatedly to stir!"
+    " * Press *Z repeatedly to stir!"
   );
   ds_map_add(global.text_data_en, "obj_potstir_81", " * Stir harder^2!%%");
   ds_map_add(global.text_data_en, "obj_potstir_93", " * HARDER^2!%%");
@@ -47202,9 +47314,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_469",
-    "* i" +
-      "'" +
-      'll just keep injecting&  everything with& "determination."/'
+    "* i" + "'" + 'll just keep injecting&  everything with& "determination."/'
   );
   ds_map_add(
     global.text_data_en,
@@ -55197,12 +55307,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_smallfrog_xadvice_61",
-    " * (Whenever I talk^1, they skip&  through my words by pressing&  \\*X.)/"
+    " * (Whenever I talk^1, they skip&  through my words by pressing&  *X.)/"
   );
   ds_map_add(
     global.text_data_en,
     "obj_smallfrog_xadvice_62",
-    " * (That's right.......^1)&* (Pressing \\*X............^1)&* (................)/"
+    " * (That's right.......^1)&* (Pressing *X............^1)&* (................)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -55222,12 +55332,12 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_smallfrog_xadvice_69",
-    " * (Since most people just&  press \\*X to skip through&  my dialogue.)/"
+    " * (Since most people just&  press *X to skip through&  my dialogue.)/"
   );
   ds_map_add(
     global.text_data_en,
     "obj_smallfrog_xadvice_70",
-    " * (That's right.......^1)&* (Pressing \\*X............^1)&* (................)/"
+    " * (That's right.......^1)&* (Pressing *X............^1)&* (................)/"
   );
   ds_map_add(
     global.text_data_en,
@@ -60988,11 +61098,7 @@ function textdata_en() {
   );
   ds_map_add(global.text_data_en, "obj_truechara_119", " .../");
   ds_map_add(global.text_data_en, "obj_truechara_120", " You./");
-  ds_map_add(
-    global.text_data_en,
-    "obj_truechara_121",
-    " with your guidance./"
-  );
+  ds_map_add(global.text_data_en, "obj_truechara_121", " with your guidance./");
   ds_map_add(
     global.text_data_en,
     "obj_truechara_122",
@@ -71611,7 +71717,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "soundtest_welcome",
-    " Welcome to the Sound Test!#Listen to all your favorites.#Press Left or Right to select.#Press \\*Z to play a song.#"
+    " Welcome to the Sound Test!#Listen to all your favorites.#Press Left or Right to select.#Press *Z to play a song.#"
   );
   ds_map_add(global.text_data_en, "soundtest_title", " SOUND TEST");
   ds_map_add(global.text_data_en, "soundtest_track_happytown", " Happy Town");
@@ -71720,7 +71826,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "elevator_cancel", " Cancel");
   ds_map_add(global.text_data_en, "itembox_title_inventory", " INVENTORY");
   ds_map_add(global.text_data_en, "itembox_title_box", " BOX");
-  ds_map_add(global.text_data_en, "itembox_close", " Press \\*X to Finish");
+  ds_map_add(global.text_data_en, "itembox_close", " Press *X to Finish");
   ds_map_add(
     global.text_data_en,
     "item_drop_27",
