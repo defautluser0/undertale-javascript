@@ -71,6 +71,12 @@ const mus_toriel = new Howl({
 const mus_toomuch = new Howl({
   src: ["/imports/assets/mus/toomuch.ogg"]
 })
+const mus_battle1 = new Howl({
+  src: ["/imports/assets/mus/battle1.ogg"]
+})
+const mus_prebattle1 = new Howl({
+  src: ["/imports/assets/mus/prebattle1.ogg"]
+})
 
 // snd_*
 const SND_TXT1 = new Howl({
@@ -154,6 +160,15 @@ const snd_wrongvictory = new Howl({
 const snd_screenshake = new Howl({
   src: ["/imports/assets/snd/screenshake.wav"]
 })
+const snd_damage = new Howl({
+  src: ["/imports/assets/snd/damage.wav"]
+})
+const snd_slidewhist = new Howl({
+  src: ["/imports/assets/snd/slidewhist.wav"]
+})
+const snd_levelup = new Howl({
+  src: ["/imports/assets/snd/levelup.wav"]
+})
 
 // currently playing sounds map
 const playingSounds = new Map();
@@ -183,6 +198,8 @@ export {
   mus_options_summer,
   mus_toriel,
   mus_toomuch,
+  mus_prebattle1,
+  mus_battle1,
   SND_TXT1,
   SND_TXT2,
   snd_txttor,
@@ -210,5 +227,8 @@ export {
   snd_phone,
   snd_wrongvictory,
   snd_screenshake,
+  snd_damage,
+  snd_slidewhist,
+  snd_levelup,
   playingSounds,
 };

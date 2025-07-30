@@ -193,9 +193,11 @@ function roomStart() {
     if (global.flag[221] == 0) {
       global.currentsong = caster_load(mus_ruins);
       caster_loop(global.currentsong, 1, 1);
+      global.playing1 = 1;
     } else {
       global.currentsong = caster_load(mus_toomuch);
       caster_loop(global.currentsong, 1, 1);
+      global.playing1 = 1;
     }
   }
 }

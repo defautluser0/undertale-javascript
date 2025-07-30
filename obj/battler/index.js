@@ -5,6 +5,7 @@ import {
   instance_create,
   instance_destroy,
   room_goto,
+  instances,
 } from "/imports/assets/gamemakerFunctions.js";
 import { c_white, snd_noise } from "/imports/assets.js";
 import {
@@ -18,6 +19,7 @@ import global from "/imports/assets/global.js";
 import * as obj_tempblack from "/obj/tempblack/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js";
 import * as obj_fader from "/obj/fader/index.js";
+import * as obj_transheart from "/obj/transheart/index.js";
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -31,7 +33,7 @@ function create() {
 
   if (global.flag[15] === 0) {
     caster_set_volume(global.currentsong, 0);
-    caster_pause(global.currentsong);
+    caster_pause(global.currentsong, 1);
   }
 
   const tb = instance_create(0, 0, obj_tempblack);
@@ -243,7 +245,7 @@ function alarm4() {
       mainchara.depth = 100;
     }
   } else {
-    this.alarm[4] = claptimer;
+    this.alarm[4] = this.claptimer;
   }
 }
 

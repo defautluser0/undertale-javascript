@@ -1,8 +1,13 @@
-import { draw_sprite_ext, instance_exists, instance_destroy, instances } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_exists,
+  instance_destroy,
+  instances,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
 import * as obj_heart from "/obj/heart/index.js";
-import * as obj_fakeheart from "/obj/fakeheart/index.js"
+import * as obj_fakeheart from "/obj/fakeheart/index.js";
 
 const parent = null;
 
@@ -12,8 +17,8 @@ function create() {
   // create code
   let heart;
   if (instances.get(obj_heart)) {
-    heart = instances.get(obj_heart)[0]
-  };
+    heart = instances.get(obj_heart)[0];
+  }
 
   if (instance_exists(obj_fakeheart)) {
     heart = instances.get(obj_fakeheart)[0];
@@ -94,4 +99,11 @@ function step() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  step,
+};

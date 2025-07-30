@@ -15,79 +15,63 @@
     import roomSize from '/imports/assets/roomSize.js'
 
     roomSize.width = 320;  // room width in px
-    roomSize.height = 420; // room height in px
+    roomSize.height = 240; // room height in px
 
   </script>
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-    import { instance_create, instances, secondFont, draw_text, draw_background } from "/imports/assets/gamemakerFunctions.js"
+    import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
     import global from "/imports/assets/global.js"
-
-    import * as obj_mainchara from '/obj/mainchara/index.js'
-    import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js'
-    import * as screenUpdater from '/obj/screen/index.js'
-    import * as obj_doorB from '/obj/doorB/index.js'
-    import * as obj_doorAmusicfade from '/obj/doorAmusicfade/index.js'
-    import * as obj_markerA from '/obj/markerA/index.js'
-    import * as obj_markerB from '/obj/markerB/index.js'
     import * as obj_solidtall from '/obj/solidtall/index.js'
     import * as obj_solidsmall from '/obj/solidsmall/index.js'
+    import * as obj_doorB from '/obj/doorB/index.js'
+    import * as obj_markerA from '/obj/markerA/index.js'
+    import * as obj_doorA from '/obj/doorA/index.js'
+    import * as obj_markerB from '/obj/markerB/index.js'
+    import * as obj_torieltrigger3 from '/obj/torieltrigger3/index.js'
+    import * as obj_torinteractable4 from '/obj/torinteractable4/index.js'
+    import * as obj_dummy1 from '/obj/dummy1/index.js'
+    import * as obj_toribuster from '/obj/toribuster/index.js'
     import * as obj_solidlong from '/obj/solidlong/index.js'
-    import * as obj_floweytalker1 from '/obj/floweytalker1/index.js'
-    import * as obj_floweytrigger from '/obj/floweytrigger/index.js'
+    import * as obj_mainchara from '/obj/mainchara/index.js'
+    import * as obj_overwordlcontroller from '/obj/overworldcontroller/index.js'
+    import * as screenUpdater from '/obj/screen/index.js'
 
     const allInstances = [];
 
     loadCurrentSong("currentsong", global.playing1)
     loadCurrentSong("currentsong2", global.playing2)
 
-    global.newRoom = ["mainchara"]
-    screenUpdater.create();
-    instance_create(0, 100, obj_solidtall);
-    instance_create(300, 80, obj_solidtall);
-    instance_create(0, 200, obj_solidsmall);
+    screenUpdater.create()
+    global.newRoom = ["solidtall", "mainchara", "doorB", "markerA", "doorA", "markerB", "torieltrigger3", "torinteractable4", "dummy1", "solidlong", "overworldcontroller"];
+    instance_create(0, 0, obj_solidtall);
+    instance_create(280, 0, obj_solidtall);
+    instance_create(240, 160, obj_mainchara);
     instance_create(40, 180, obj_solidsmall);
+    instance_create(60, 200, obj_solidsmall);
+    instance_create(240, 200, obj_solidsmall);
+    instance_create(260, 100, obj_solidsmall);
+    instance_create(240, 80, obj_solidsmall);
+    instance_create(20, 120, obj_solidsmall);
+    instance_create(40, 100, obj_solidsmall);
+    instance_create(60, 80, obj_solidsmall);
     instance_create(20, 180, obj_solidsmall);
     instance_create(260, 180, obj_solidsmall);
-    instance_create(280, 180, obj_solidsmall);
-    instance_create(300, 200, obj_solidsmall);
-    instance_create(300, 300, obj_solidsmall);
-    instance_create(280, 320, obj_solidsmall);
-    instance_create(260, 340, obj_solidsmall);
-    instance_create(200, 380, obj_solidsmall);
-    instance_create(200, 400, obj_solidsmall);
-    instance_create(100, 400, obj_solidsmall);
-    instance_create(100, 380, obj_solidsmall);
-    instance_create(80, 360, obj_solidsmall);
-    instance_create(40, 340, obj_solidsmall);
-    instance_create(20, 320, obj_solidsmall);
-    instance_create(0, 300, obj_solidsmall);
-    instance_create(60, 360, obj_solidsmall);
-    instance_create(220, 360, obj_solidsmall);
-    instance_create(240, 360, obj_solidsmall);
-    instance_create(60, 160, obj_solidsmall);
-    instance_create(120, 150, obj_solidsmall);
-    instance_create(100, 150, obj_solidsmall);
-    instance_create(80, 160, obj_solidsmall);
-    instance_create(240, 160, obj_solidsmall);
-    instance_create(220, 160, obj_solidsmall);
-    instance_create(120, 410, obj_doorB);
-    instance_create(140, 410, obj_doorB);
-    instance_create(160, 410, obj_doorB);
-    instance_create(180, 410, obj_doorB);
-    instance_create(150, 379, obj_markerA);
-    instance_create(148, 285, obj_floweytalker1);
-    instance_create(40, 330, obj_floweytrigger);
-    instance_create(140, 150, obj_doorAmusicfade);
-    instance_create(160, 150, obj_doorAmusicfade);
-    instance_create(150, 175, obj_markerB);
-    instance_create(180, 150, obj_solidlong);
-    instance_create(170, 360, obj_mainchara);
-    instance_create(0, 60, obj_overworldcontroller);
-    instance_create(180, 150, obj_solidlong);
+    instance_create(2, 140, obj_doorB);
+    instance_create(2, 160, obj_doorB);
+    instance_create(23, 140, obj_markerA);
+    instance_create(150, 62, obj_doorA);
+    instance_create(150, 75, obj_markerB);
+    instance_create(300, 40, obj_torieltrigger3);
+    instance_create(144, 41, obj_torinteractable4);
+    instance_create(200, 90, obj_dummy1);
+    instance_create(149, 38, obj_toribuster);
+    instance_create(0, 220, obj_solidlong)
+    instance_create(0, 60, obj_solidlong)
+    instance_create(20, 20, obj_overwordlcontroller);
     if (global.newRoom[0] && global.execStart) {
       for (const [_, list] of instances.entries()) {
         for (const instance of list) {
@@ -186,13 +170,17 @@
             obj.step?.call(instance);
           }
         }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.followPath?.call(instance);
+          }
+        }
         screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.endStep?.call(instance);
           }
         }
-        draw_background("bg_floweyglow", 0, 0)
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             allInstances.push({ obj, instance });

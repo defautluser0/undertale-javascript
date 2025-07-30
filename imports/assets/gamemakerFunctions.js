@@ -262,6 +262,8 @@ function audio_is_playing(index, id = null) {
 function audio_stop_all() {
   Howler.stop();
   playingSounds.clear();
+  global.playing1 = false;
+  global.playing2 = false;
 }
 
 /**
@@ -270,9 +272,15 @@ function audio_stop_all() {
  * @param {string} index The index of the sound to stop.
  */
 
-function audio_stop_sound(index, id = null) {
+function audio_stop_sound(index, id = null, currentsong) {
   id = id ?? index._sounds[0]?._id;
   if (id !== null) index.stop(id);
+  if (currentsong === 1) {
+    global.playing1 = false;
+  }
+  if (currentsong === 2) {
+    global.playing2 = false;
+  }
 }
 
 /**
@@ -620,11 +628,7 @@ function instance_create(x, y, obj) {
     if (instance.create2 === true) {
       obj.createContext?.call(instance);
       if (global.newRoom[0]) {
-        global.newRoom.forEach((name) => {
-          if (instance.name === name) {
-            instance.roomStart?.call(instance);
-          }
-        });
+        global.execStart = true;
       }
     } else {
       obj.roomStart?.call(instance);
@@ -643,6 +647,7 @@ function instance_create(x, y, obj) {
  * @returns {void}
  */
 function instance_destroy(target) {
+  if (typeof target !== "object") return;
   // Helper: is the instance of (or child of) obj?
   function isInstanceOf(inst, objToMatch) {
     let currentObj = inst._object;
@@ -1904,6 +1909,7 @@ function move_towards_point(x, y, sp) {
   const rad = this.direction * (Math.PI / 180);
   this.hspeed = Math.cos(rad) * sp;
   this.vspeed = -Math.sin(rad) * sp;
+  console.log(this.vspeed, this.hspeed);
 }
 
 /**
@@ -1973,8 +1979,14 @@ function action_move(direction, speed) {
  * @returns {void}
  */
 function audio_resume_sound(index, id = null) {
-  id = id ?? index._sounds[0]?._id;
-  if (id !== null) index.play(id);
+  id = id ?? index?._sounds?.[0]?._id;
+  if (id !== null && id !== undefined) index.play(id);
+  if (global.currentsong === index) {
+    global.playing1 = true;
+  }
+  if (global.currentsong2 === index) {
+    global.playing2 = true;
+  }
 }
 
 /**
@@ -1983,9 +1995,15 @@ function audio_resume_sound(index, id = null) {
  * @param {object} index The index of the sound to pause.
  * @returns {void}
  */
-function audio_pause_sound(index, id = null) {
+function audio_pause_sound(index, id = null, currentsong) {
   id = id ?? index._sounds[0]?._id;
   if (id !== null) index.pause(id);
+  if (currentsong === 1) {
+    global.playing1 = false;
+  }
+  if (currentsong === 2) {
+    global.playing2 = false;
+  }
 }
 
 /**

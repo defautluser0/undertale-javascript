@@ -198,6 +198,7 @@ function step() {
     if (this.conversation === 0) {
       global.currentsong = caster_load(mus_toriel);
       caster_loop(global.currentsong, 0.7, 0.86);
+      global.playing1 = 1;
       this.conversation = 1;
       this.hspeed = 0;
       this.blcon = instance_create((this.x + 40 + this.sprite_width) - 10, this.y + 2, obj_blconwdflowey);

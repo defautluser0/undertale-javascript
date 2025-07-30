@@ -48,9 +48,10 @@
 
     const allInstances = [];
 
-    loadCurrentSong("currentsong")
-    loadCurrentSong("currentsong2")
+    loadCurrentSong("currentsong", global.playing1)
+    loadCurrentSong("currentsong2", global.playing2)
 
+    global.newRoom = ["mainchara"]
     screenUpdater.create()
     instance_create(180, 138, obj_floorswitch1);
     instance_create(220, 138, obj_floorswitch1);
@@ -84,6 +85,18 @@
     instance_create(0, 60, obj_solidlong)
     instance_create(140, 100, obj_mainchara);
     instance_create(20, 20, obj_overworldcontroller);
+    if (global.newRoom[0] && global.execStart) {
+      for (const [_, list] of instances.entries()) {
+        for (const instance of list) {
+          global.newRoom.forEach((name) => {
+            if (instance.name === name) {
+              instance.roomStart?.call(instance);
+            }
+          });
+        }
+      }
+    }
+    global.newRoom = [];
 
     function draw_tiles() {
       draw_tile(bg_ruinsplaceholder, { tile_index: 5, hflip: false, vflip: false }, 0, 140, 220);
@@ -366,7 +379,7 @@
         draw_tiles();
 
         for (const { obj, instance } of allInstances) {
-          obj.updateSprite?.call(instance);
+          if (!obj.draw) obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
 
@@ -445,7 +458,7 @@
                 name: extractNameFromSrc(currentsong._src) ?? "unknown",
                 rate: currentsong.rate?.() ?? 1,
                 volume: currentsong.volume?.() ?? 1,
-                paused: !currentsong.playing?.() ?? false,
+                paused: !global.playing1 ?? false,
                 pos: currentsong.seek?.() ?? 0,
                 loop: currentsong.loop?.() ?? false,
               };
@@ -458,7 +471,7 @@
                 name: extractNameFromSrc(currentsong2._src) ?? "unknown",
                 rate: currentsong2.rate?.() ?? 1,
                 volume: currentsong2.volume?.() ?? 1,
-                paused: !currentsong2.playing?.() ?? false,
+                paused: !global.playing2 ?? false,
                 pos: currentsong2.seek?.() ?? 0,
                 loop: currentsong2.loop?.() ?? false,
               };

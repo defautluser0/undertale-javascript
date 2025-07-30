@@ -178,6 +178,7 @@ function user0() {
   if (caster_is_playing(global.currentsong) != 1 && global.flag[7] == 1) {
     global.currentsong = caster_load(mus_reunited);
     caster_loop(global.currentsong, 1, 1);
+    global.playing1 = 1;
     instance_destroy(this);
     return;
   }

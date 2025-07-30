@@ -1,7 +1,10 @@
 /// global
 let global = {};
 
-if (localStorage.getItem("global") !== null && localStorage.getItem("global") !== "") {
+if (
+  localStorage.getItem("global") !== null &&
+  localStorage.getItem("global") !== ""
+) {
   global = JSON.parse(localStorage.getItem("global"));
 } else {
   global = {
@@ -109,6 +112,8 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
     entrance: 0,
     currentsong: -1,
     currentsong2: -1,
+    playing1: false,
+    playing2: false,
     batmusic: -1,
     typer: 5,
     msc: 0,
@@ -117,7 +122,7 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
     gold: 0,
     screen_border_id: 0,
     phone: [],
-  }
+  };
 
   for (let i = 0; i < 8; i += 1) {
     global.item[i] = 0;
@@ -156,8 +161,9 @@ if (localStorage.getItem("global") !== null && localStorage.getItem("global") !=
     global.mnpwr[i] = 0;
     global.bulletpwr[i] = 0;
     global.hurtanim[i] = 0;
+    global.monstertype[i] = -1;
   }
-  
+
   global.menuchoice[0] = 1;
   global.menuchoice[1] = 1;
   global.menuchoice[2] = 0;
@@ -193,7 +199,7 @@ if (!global.maskCache) {
     "/spr/masks/spr_doorB_0.png": "/spr/masks/spr_doorB_0.png",
     "/spr/masks/spr_doorC_0.png": "/spr/masks/spr_doorC_0.png",
     "/spr/masks/spr_doorD_0.png": "/spr/masks/spr_doorD_0.png",
-    "/spr/masks/spr_doorX_0.png": "/spr/masks/spr_doorX_0.png"
+    "/spr/masks/spr_doorX_0.png": "/spr/masks/spr_doorX_0.png",
   };
 
   for (const [path, filename] of Object.entries(requiredMasks)) {
@@ -208,7 +214,7 @@ if (!global.maskCache) {
         canvas.height = img.height;
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        const imageData = ctx.getImageData(0, 0, img.width, img.height)
+        const imageData = ctx.getImageData(0, 0, img.width, img.height);
         const base64 = canvas.toDataURL("image/png");
 
         // Store base64 and meta info in global.maskCache
@@ -226,8 +232,6 @@ if (!global.maskCache) {
   }
 }
 
-
-
 for (const [, entry] of Object.entries(global.maskCache)) {
   if (entry.base64) {
     const img = new Image();
@@ -241,12 +245,13 @@ for (const [, entry] of Object.entries(global.maskCache)) {
       imgCanvas.height = img.height;
       const imgCtx = imgCanvas.getContext("2d");
       imgCtx.drawImage(img, 0, 0);
-      entry.imageData = imgCtx.getImageData(0, 0, img.width, img.height)
+      entry.imageData = imgCtx.getImageData(0, 0, img.width, img.height);
     };
   }
 }
 
-global._validHash = "b718f8223a5bb31979ffeed10be6140c857b882fc0d0462b89d6287ae38c81c7";
+global._validHash =
+  "b718f8223a5bb31979ffeed10be6140c857b882fc0d0462b89d6287ae38c81c7";
 global._userHash = "";
 
 export default global;

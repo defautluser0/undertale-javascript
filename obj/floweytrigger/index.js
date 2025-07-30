@@ -177,6 +177,7 @@ function updateCol() {
         this.IK = ini_read_real("Flowey", "IK", 0);
         this.NK = ini_read_real("Flowey", "NK", 0);
         global.currentsong = caster_load(mus_flowey);
+        global.playing1 = 1;
         caster_loop(mus_flowey, 1, 1);
         global.typer = 9;
         global.facechoice = 2;
@@ -359,6 +360,7 @@ function step() {
     this.temptor.vspeed = 2;
     global.currentsong = caster_load(mus_toriel);
     caster_loop(global.currentsong, 0.7, 0.86);
+    global.playing1 = 1;
     this.conversation = 24;
   }
 

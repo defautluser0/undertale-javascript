@@ -27,7 +27,7 @@ function create() {
 		mychoicey = yy + 116;
 	}
 
-  return {
+  const self =  {
     name: "transheart", // sprite name
     depth: -600, // object depth
     image_xscale: 1, // sprite scale
@@ -62,6 +62,125 @@ function create() {
 		alarm0,
 		step,
   };
+
+  self._hspeed = 0;
+  self._vspeed = 0;
+  self._speed = 0;
+  self._direction = 0;
+  self._path = {
+    data: {},
+    index: 1,
+    speed: 0,
+    endaction: "",
+    absolute: false,
+    xOffset: 0,
+    yOffset: 0,
+  }
+  self._x = 0;
+  self._y = 0;
+  self.initialspeed = null;
+
+  Object.defineProperty(self, "hspeed", {
+    get() {
+      return this._hspeed;
+    },
+    set(val) {
+      this._hspeed = val;
+      this._manualVel = true;
+      this._updatePolarFromCartesian();
+    },
+  });
+
+  Object.defineProperty(self, "vspeed", {
+    get() {
+      return this._vspeed;
+    },
+    set(val) {
+      this._vspeed = val;
+      this._manualVel = true;
+      this._updatePolarFromCartesian();
+    },
+  });
+
+  Object.defineProperty(self, "speed", {
+    get() {
+      return this._speed;
+    },
+    set(val) {
+      this._speed = val;
+      this._updateCartesianFromPolar();
+    },
+  });
+
+  Object.defineProperty(self, "direction", {
+    get() {
+      return this._direction;
+    },
+    set(val) {
+      this._direction = val;
+      this._updateCartesianFromPolar();
+    },
+  });
+
+  Object.defineProperty(self, "path_index", {
+    get() {
+      return this._path.data;
+    },
+    set(val) {
+      this._path.data = val;
+    }
+  })
+
+  Object.defineProperty(self, "path_speed", {
+    get() {
+      return this._path.speed;
+    },
+    set(val) {
+      this._path.speed = val;
+    }
+  })
+
+  Object.defineProperty(self, "path_endaction", {
+    get() {
+      return this._path.endaction;
+    },
+    set(val) {
+      this._path.endaction = val;
+    }
+  })
+
+  Object.defineProperty(self, "x", {
+    get() {
+      return this._x;
+    },
+    set(val) {
+      this._x = val
+      this._manualPos = true;
+    }
+  })
+
+  Object.defineProperty(self, "y", {
+    get() {
+      return this._y;
+    },
+    set(val) {
+      this._y = val
+      this._manualPos = true;
+    }
+  })
+
+  self._updateCartesianFromPolar = function () {
+    const rad = (this._direction * Math.PI) / 180;
+    this._hspeed = Math.cos(rad) * this._speed;
+    this._vspeed = -Math.sin(rad) * this._speed;
+  };
+
+  self._updatePolarFromCartesian = function () {
+    this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
+    this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
+  };
+
+	return self;
 }
 
 function updateAlarms() {
@@ -81,6 +200,27 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
+
+	// apply friction
+  if (this.friction !== 0 && this.speed > 0) {
+    this.speed -= this.friction;
+    if (this.speed < 0) this.speed = 0;
+  }
+
+  // apply gravity vector
+  if (this.gravity) {
+    let gravRad = this.gravity_direction * (Math.PI / 180);
+    this.hspeed += Math.cos(gravRad) * this.gravity;
+    this.vspeed -= Math.sin(gravRad) * this.gravity;
+
+    // recalculate speed and direction based on new velocity
+    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
+  }
+
+  // update position
+  this.x += this.hspeed;
+  this.y += this.vspeed;
 }
 
 function updateSprite() {

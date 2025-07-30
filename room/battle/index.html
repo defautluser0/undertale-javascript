@@ -14,80 +14,52 @@
   <script type="module">
     import roomSize from '/imports/assets/roomSize.js'
 
-    roomSize.width = 320;  // room width in px
-    roomSize.height = 420; // room height in px
+    roomSize.width = 640;  // room width in px
+    roomSize.height = 480; // room height in px
 
   </script>
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-    import { instance_create, instances, secondFont, draw_text, draw_background } from "/imports/assets/gamemakerFunctions.js"
+    import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
+    import roomSize from '/imports/assets/roomSize.js'
     import global from "/imports/assets/global.js"
-
-    import * as obj_mainchara from '/obj/mainchara/index.js'
-    import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js'
+    //import * as obj_battlebg from '/obj/battlebg/index.js'
+    //import * as obj_fightbt from '/obj/fightbt/index.js'
+    //import * as obj_talkbt from '/obj/talkbt/index.js'
+    //import * as obj_sparebt from '/obj/sparebt/index.js'
+    import * as obj_heart from '/obj/heart/index.js'
+    //import * as obj_hpname from '/obj/hpname/index.js'
+    import * as obj_battlecontroller from '/obj/battlecontroller/index.js'
+    import * as obj_uborder from '/obj/uborder/index.js'
+    import * as obj_lborder from '/obj/lborder/index.js'
+    import * as obj_dborder from '/obj/dborder/index.js'
+    import * as obj_rborder from '/obj/rborder/index.js'
+    import * as obj_battlefader from '/obj/battlefader/index.js'
     import * as screenUpdater from '/obj/screen/index.js'
-    import * as obj_doorB from '/obj/doorB/index.js'
-    import * as obj_doorAmusicfade from '/obj/doorAmusicfade/index.js'
-    import * as obj_markerA from '/obj/markerA/index.js'
-    import * as obj_markerB from '/obj/markerB/index.js'
-    import * as obj_solidtall from '/obj/solidtall/index.js'
-    import * as obj_solidsmall from '/obj/solidsmall/index.js'
-    import * as obj_solidlong from '/obj/solidlong/index.js'
-    import * as obj_floweytalker1 from '/obj/floweytalker1/index.js'
-    import * as obj_floweytrigger from '/obj/floweytrigger/index.js'
 
     const allInstances = [];
 
     loadCurrentSong("currentsong", global.playing1)
     loadCurrentSong("currentsong2", global.playing2)
 
-    global.newRoom = ["mainchara"]
-    screenUpdater.create();
-    instance_create(0, 100, obj_solidtall);
-    instance_create(300, 80, obj_solidtall);
-    instance_create(0, 200, obj_solidsmall);
-    instance_create(40, 180, obj_solidsmall);
-    instance_create(20, 180, obj_solidsmall);
-    instance_create(260, 180, obj_solidsmall);
-    instance_create(280, 180, obj_solidsmall);
-    instance_create(300, 200, obj_solidsmall);
-    instance_create(300, 300, obj_solidsmall);
-    instance_create(280, 320, obj_solidsmall);
-    instance_create(260, 340, obj_solidsmall);
-    instance_create(200, 380, obj_solidsmall);
-    instance_create(200, 400, obj_solidsmall);
-    instance_create(100, 400, obj_solidsmall);
-    instance_create(100, 380, obj_solidsmall);
-    instance_create(80, 360, obj_solidsmall);
-    instance_create(40, 340, obj_solidsmall);
-    instance_create(20, 320, obj_solidsmall);
-    instance_create(0, 300, obj_solidsmall);
-    instance_create(60, 360, obj_solidsmall);
-    instance_create(220, 360, obj_solidsmall);
-    instance_create(240, 360, obj_solidsmall);
-    instance_create(60, 160, obj_solidsmall);
-    instance_create(120, 150, obj_solidsmall);
-    instance_create(100, 150, obj_solidsmall);
-    instance_create(80, 160, obj_solidsmall);
-    instance_create(240, 160, obj_solidsmall);
-    instance_create(220, 160, obj_solidsmall);
-    instance_create(120, 410, obj_doorB);
-    instance_create(140, 410, obj_doorB);
-    instance_create(160, 410, obj_doorB);
-    instance_create(180, 410, obj_doorB);
-    instance_create(150, 379, obj_markerA);
-    instance_create(148, 285, obj_floweytalker1);
-    instance_create(40, 330, obj_floweytrigger);
-    instance_create(140, 150, obj_doorAmusicfade);
-    instance_create(160, 150, obj_doorAmusicfade);
-    instance_create(150, 175, obj_markerB);
-    instance_create(180, 150, obj_solidlong);
-    instance_create(170, 360, obj_mainchara);
-    instance_create(0, 60, obj_overworldcontroller);
-    instance_create(180, 150, obj_solidlong);
+    const newRoom = ["battlebg", "fightbt", "talkbt", "itembt", "sparebt", "heart", "hpname", "battlecontroller", "uborder", "lborder", "rborder", "dborder", "battlefader"]
+    screenUpdater.create()
+    //instance_create(0, 0, obj_battlebg);
+    //instance_create(32, 432, obj_fightbt);
+    //instance_create(185, 432, obj_talkbt);
+    //instance_create(345, 432, obj_itembt);
+    //instance_create(500, 432, obj_sparebt);
+    instance_create(362, 346, obj_heart);
+    //instance_create(240, 400, obj_hpname);
+    instance_create(556, 82, obj_battlecontroller);
+    instance_create(32, 250, obj_uborder);
+    instance_create(32, 385, obj_lborder);
+    instance_create(32, 385, obj_dborder);
+    instance_create(602, 385, obj_rborder);
+    instance_create(0, 0, obj_battlefader);
     if (global.newRoom[0] && global.execStart) {
       for (const [_, list] of instances.entries()) {
         for (const instance of list) {
@@ -144,6 +116,20 @@
       }
     }
 
+    function callInheritedFunction(instance, funcName) {
+      let currentObj = instance._object;
+
+      while (currentObj) {
+        const func = currentObj[funcName];
+        if (typeof func === "function") {
+          return func.call(instance);
+        }
+        currentObj = currentObj.parent ?? null;
+      }
+      // No function found in hierarchy
+      return undefined;
+    }
+
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
     const FPS = 30;
@@ -173,7 +159,7 @@
         control_update();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.beginStep?.call(instance);
+            callInheritedFunction(instance, "beginStep");
           }
         }
         for (const [obj, instanceList] of instances) {
@@ -183,40 +169,90 @@
         }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.step?.call(instance);
+            obj.updateKeyboard?.call(instance);
+            obj.updateMouse?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateIndex?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "step")
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            if (instance.x > roomSize.width || instance.x < 0 || instance.y > roomSize.height || instance.y < 0) {
+              callInheritedFunction(instance, "step")
+            }
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateSpeed?.call(instance);
+            obj.followPath?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateCol?.call(instance);
           }
         }
         screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.endStep?.call(instance);
+            callInheritedFunction(instance, "endStep");
           }
         }
-        draw_background("bg_floweyglow", 0, 0)
+
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             allInstances.push({ obj, instance });
           }
         }
-
         allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
-
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "preDraw");
+        }
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "drawBegin");
+        }
         for (const { obj, instance } of allInstances) {
           if (!obj.draw) obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
-
-        if (global.debug === 1 && secondFont) {
-          draw_text(15 + view_xview[view_current], 15 + view_yview[view_current], currentFps, 1);
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "drawEnd");
+        }
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "postDraw");
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUIBegin");
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUI");
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUIEnd");
+          }
         }
 
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.updateGamemakerFunctions?.call(instance);
+            obj.updateGamemakerFunctions?.call(instance); // legacy function
           }
         }
 
-        updateCamera(instances.get(obj_mainchara)[0]) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
+        updateCamera({x: 0, y: 0}) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
         screenUpdater.updateScreen();
 
         input_update();

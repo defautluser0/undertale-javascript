@@ -114,6 +114,7 @@ function create() {
     sprite_height: 0,
     sprite_width: 0,
     image_blend: c_white,
+    create2: true,
 
     alarm: alarm, // alarm array
 

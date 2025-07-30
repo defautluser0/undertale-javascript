@@ -48,9 +48,11 @@
 
     const allInstances = [];
 
-    loadCurrentSong("currentsong")
-    loadCurrentSong("currentsong2")
+    loadCurrentSong("currentsong", global.playing1)
+    loadCurrentSong("currentsong2", global.playing2)
 
+    global.newRoom = ["mainchara"]
+    screenUpdater.create()
     instance_create(20, 0, obj_solidtall);
     instance_create(280, 0, obj_solidtall);
     instance_create(100, 180, obj_sur);
@@ -112,7 +114,18 @@
     instance_create(150, 86, obj_toribuster);
     instance_create(150, 200, obj_mainchara);
     instance_create(20, 220, obj_overworldcontroller);
-    screenUpdater.create()
+    if (global.newRoom[0] && global.execStart) {
+      for (const [_, list] of instances.entries()) {
+        for (const instance of list) {
+          global.newRoom.forEach((name) => {
+            if (instance.name === name) {
+              instance.roomStart?.call(instance);
+            }
+          });
+        }
+      }
+    }
+    global.newRoom = [];
 
     function draw_tiles() {
       draw_tile(bg_ruinseasynam2, { tile_index: 3, hflip: false, vflip: false }, 0, 20, 20);
@@ -566,7 +579,7 @@
         draw_background("bg_ruinsfixedstairs", 20, 110)
 
         for (const { obj, instance } of allInstances) {
-          obj.updateSprite?.call(instance);
+          if (!obj.draw) obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
 
@@ -645,7 +658,7 @@
                 name: extractNameFromSrc(currentsong._src) ?? "unknown",
                 rate: currentsong.rate?.() ?? 1,
                 volume: currentsong.volume?.() ?? 1,
-                paused: !currentsong.playing?.() ?? false,
+                paused: !global.playing1 ?? false,
                 pos: currentsong.seek?.() ?? 0,
                 loop: currentsong.loop?.() ?? false,
               };
@@ -658,7 +671,7 @@
                 name: extractNameFromSrc(currentsong2._src) ?? "unknown",
                 rate: currentsong2.rate?.() ?? 1,
                 volume: currentsong2.volume?.() ?? 1,
-                paused: !currentsong2.playing?.() ?? false,
+                paused: !global.playing2 ?? false,
                 pos: currentsong2.seek?.() ?? 0,
                 loop: currentsong2.loop?.() ?? false,
               };

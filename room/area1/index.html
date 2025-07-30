@@ -47,9 +47,10 @@
 
     const allInstances = [];
 
-    loadCurrentSong("currentsong")
-    loadCurrentSong("currentsong2")
+    loadCurrentSong("currentsong", global.playing1)
+    loadCurrentSong("currentsong2", global.playing2)
 
+    global.newRoom = ["mainchara"]
     screenUpdater.create();
     instance_create(660, 60, obj_solidtall);
     instance_create(0, 56, obj_solidtall);
@@ -77,6 +78,18 @@
     instance_create(16, 14, obj_overworldcontroller);
     instance_create(20, 60, obj_solidsmall);
     instance_create(260, 60, obj_solidsmall);
+    if (global.newRoom[0] && global.execStart) {
+      for (const [_, list] of instances.entries()) {
+        for (const instance of list) {
+          global.newRoom.forEach((name) => {
+            if (instance.name === name) {
+              instance.roomStart?.call(instance);
+            }
+          });
+        }
+      }
+    }
+    global.newRoom = [];
 
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above

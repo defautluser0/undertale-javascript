@@ -37,7 +37,8 @@ function create() {
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
-    updateGamemakerFunctions,
+    updateSpeed,
+    updateIndex,
     updateSprite,
     updateCol,
     followPath,
@@ -178,21 +179,14 @@ function updateAlarms() {
   }
 }
 
-function updateGamemakerFunctions() {
+function updateIndex() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
-
-		this.animationEnd?.();
   }
+}
 
-  getBoundingBox.call(this);
-
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+function updateSpeed() {
   // apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -217,7 +211,7 @@ function updateGamemakerFunctions() {
 
 function updateSprite() {
   if (this.visible === true) {
-    let img = draw_sprite_ext(
+    draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -225,14 +219,9 @@ function updateSprite() {
       this.image_xscale,
       this.image_yscale,
       this.image_angle,
-      this.image_blend,
-      this.image_alpha,
-      1,
+      c_white,
+      this.image_alpha
     );
-    if (img) {
-      this.sprite_width = img.width;
-      this.sprite_height = img.height
-    }
   }
 }
 
@@ -316,4 +305,4 @@ function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, createContext };
+export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext };

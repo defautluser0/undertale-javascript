@@ -1,10 +1,12 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle, instance_destroy, _with } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, instance_create, instance_destroy, instance_exists, script_execute, instance_find } from "/imports/assets/gamemakerFunctions.js";
+import { scr_depth, scr_npcdir } from "/imports/customFunctions.js";
 import { c_white } from "/imports/assets.js";
-import global from "/imports/assets/global.js";
+import global from "/imports/assets/global.js"
 
-import * as obj_toribuster from "/obj/toribuster/index.js"; // replace with a valid colliding object. if none, delete this line and any references
-                                                            // to this fake object
-import * as parent from "/obj/toroverworld3/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
+//                                                               // to this fake object
+import * as obj_dialoguer from "/obj/dialoguer/index.js";
+import * as parent from "/obj/torinteractable1/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -12,24 +14,25 @@ function create() {
   // create code
 
   const self = {
-    name: "toroverworld4", // sprite name
+    name: "torinteractable4", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
-    image_number: 4, // sprite frame number
+    image_number: 0, // sprite frame number
     sprite_width: 0, // set to sprite_index's width
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: "spr_toriel_d", // sprite object
+    sprite_index: "spr_toriel_dt", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
     gravity_direction: 270, // gravity direction
     parent: parent,
+    create2: true, // for createContext() to be called (true) or roomStart() to be called (false) on creation
 
     alarm: alarm, // alarm array
 
@@ -43,9 +46,8 @@ function create() {
     ltsprite: "spr_toriel_lt",
     rtsprite: "spr_toriel_rt",
     myinteract: 0,
-    facing: 0,
-    phone: 0,
-    fader: 0,
+    facing: 1,
+    talkedto: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
@@ -53,16 +55,17 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
-    roomStart,
-    beginStep,
+    createContext,
     step,
-    animationEnd,
+    alarm0,
+    beginStep,
+    roomStart,
   };
   
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
-  self._direction = 0;
+  self._direction = 180;
   self._path = {
     data: {},
     index: 1,
@@ -207,8 +210,6 @@ function updateGamemakerFunctions() {
 	this.xprevious = this.x;
 	this.previousy = this.y;
 	this.yprevious = this.y;
-
-  this.updateCol();
  
   // apply friction
   if (this.friction !== 0 && this.speed > 0) {
@@ -221,7 +222,6 @@ function updateGamemakerFunctions() {
     let gravRad = this.gravity_direction * (Math.PI / 180);
     this.hspeed += Math.cos(gravRad) * this.gravity;
     this.vspeed -= Math.sin(gravRad) * this.gravity;
-    this._manualVel = false;
 
     // recalculate speed and direction based on new velocity
     this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
@@ -231,7 +231,6 @@ function updateGamemakerFunctions() {
   // update position
   this.x += this.hspeed;
   this.y += this.vspeed;
-  this._manualPos = false;
 }
 
 function updateSprite() {
@@ -265,41 +264,7 @@ function followPath() {
   let currKey = pathState.index;
   let nextKeyIndex = keys.indexOf(currKey) + 1;
 
-  if (nextKeyIndex < keys.length) {
-    const next = points[keys[nextKeyIndex]];
-
-    let unupdated = this._manualPos;
-
-    const dx = next.x - this.x;
-    const dy = next.y - this.y;
-    const dist = Math.hypot(dx, dy);
-
-    if (dist <= pathState.speed) {
-      this.x = next.x;
-      this.y = next.y;
-      if (!unupdated) this._manualPos = false;
-      pathState.index = keys[nextKeyIndex];
-    } else {
-      this.x += (dx / dist) * pathState.speed;
-      this.y += (dy / dist) * pathState.speed;
-      if (!unupdated) this._manualPos = false;
-    }
-
-    // apply GMS1.x-like direction update quirk
-    if (
-      this.path_speed > 0 &&
-      !this._manualVel &&
-      !this._manualPos
-    ) {
-      const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
-      const degrees = (radians * 180) / Math.PI;
-      this.direction = (degrees + 360) % 360;
-    }
-  } else {
-    if (currKey === keys.length) {
-      this.path_position = 1;
-    }
-
+  if (nextKeyIndex >= keys.length) {
     if (pathState.data.closed) {
       nextKeyIndex = 0;
     } else {
@@ -318,16 +283,46 @@ function followPath() {
       }
     }
   }
+
+  const next = points[keys[nextKeyIndex]];
+
+  let unupdated = this._manualPos;
+
+  const dx = next.x - this.x;
+  const dy = next.y - this.y;
+  const dist = Math.hypot(dx, dy);
+
+  if (dist <= pathState.speed) {
+    this.x = next.x;
+    this.y = next.y;
+    if (!unupdated) this._manualPos = false;
+    pathState.index = keys[nextKeyIndex];
+  } else {
+    this.x += (dx / dist) * pathState.speed;
+    this.y += (dy / dist) * pathState.speed;
+    if (!unupdated) this._manualPos = false;
+  }
+
+  // apply GMS1.x-like direction update quirk
+  if (
+    this.initialspeed === 0 &&
+    this.path_speed > 0 &&
+    !this._manualVel &&
+    !this._manualPos
+  ) {
+    const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    const degrees = (radians * 180) / Math.PI;
+    this.direction = (degrees + 360) % 360;
+  }
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_toribuster, false, false);
+  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   if (other) {
     // collision updates with an object here. other
     // is the colliding instance, so use 
     // other.property for instance properties, like
     // x, y and such.
-    instance_destroy(this);
   }
   // to add more collision checks, set other to 
   // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
@@ -335,28 +330,39 @@ function updateCol() {
   // and do another if (other) {} to run scripts.
 }
 
-function roomStart() {
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins3/" && global.plot >= 4) {
-    instance_destroy(this);
-  }
-  
-  if (global.plot >= 5.5) {
-      instance_destroy(this);
-  }
-
-  this.direction = 270;
-}
-
-function beginStep() {
-  this.parent.beginStep.call(this);
+function createContext() {
+  // here goes anything to do when you need context creation, so like calling any script with context you do here
 }
 
 function step() {
   this.parent.step.call(this);
 }
 
-function animationEnd() {
-  this.parent.animationEnd.call(this);
+function alarm0() {
+  this.myinteract = 3;
+  global.msc = 214;
+
+  if (this.talkedto > 0) {
+    global.msc = 215;
+  }
+
+  global.typer = 4;
+  global.facechoice = 1;
+  global.faceemotion = 2;
+  this.mydialoguer = instance_create(0, 0, obj_dialoguer);
+  this.talkedto += 1;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, roomStart, beginStep, step, animationEnd };
+function beginStep() {
+  this.parent.beginStep.call(this);
+}
+
+function roomStart() {
+  if (global.plot < 5.4 || global.plot > 6.5) {
+    instance_destroy(this);
+  }
+
+  this.direction = 270;
+}
+
+export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, createContext, step, alarm0, beginStep, roomStart };

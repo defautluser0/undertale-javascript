@@ -47,32 +47,34 @@ function updateScreen() {
   try {
     localStorage.setItem("global", JSON.stringify(global));
   } catch(_) {
-    if (global.currentsong !== -1) {
-      let currentsong = global.currentsong;
+    let currentsong = global.currentsong;
+    if (currentsong !== -1) {
       global.currentsong = {
         name: extractNameFromSrc(currentsong._src) ?? "unknown",
         rate: currentsong.rate?.() ?? 1,
         volume: currentsong.volume?.() ?? 1,
-        paused: !currentsong.playing?.() ?? false,
+        paused: !global.playing1 ?? false,
         pos: currentsong.seek?.() ?? 0,
-        loop: currentsong._loop
+        loop: currentsong.loop?.() ?? false,
       };
-      localStorage.setItem("global", JSON.stringify(global));
-      global.currentsong = currentsong;
     }
-    if (global.currentsong2 !== -1) {
-      let currentsong2 = global.currentsong2;
+    let currentsong2 = global.currentsong2;
+    if (currentsong2 !== -1) {
       global.currentsong2 = {
         name: extractNameFromSrc(currentsong2._src) ?? "unknown",
         rate: currentsong2.rate?.() ?? 1,
         volume: currentsong2.volume?.() ?? 1,
-        paused: !currentsong2.playing?.() ?? false,
+        paused: !global.playing2 ?? false,
         pos: currentsong2.seek?.() ?? 0,
-        loop: currentsong2._loop ?? false,
+        loop: currentsong2.loop?.() ?? false,
       };
-      localStorage.setItem("global", JSON.stringify(global));
-      global.currentsong2 = currentsong2;
     }
+    const batmusic = global.batmusic;
+    global.batmusic = -1;
+    localStorage.setItem("global", JSON.stringify(global));
+    global.currentsong = currentsong;
+    global.currentsong2 = currentsong2;
+    global.batmusic = batmusic;
   }
 }
 

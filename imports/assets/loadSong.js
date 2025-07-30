@@ -1,7 +1,7 @@
 import global from "/imports/assets/global.js";
 import * as sounds from "/imports/assets/sound.js";
 
-function loadCurrentSong(key = "currentsong") {
+function loadCurrentSong(key, playing) {
   const songData = global[key];
   if (!songData || typeof songData !== "object" || !songData.name) return;
 
@@ -18,7 +18,7 @@ function loadCurrentSong(key = "currentsong") {
   howl.rate(songData.rate, id);
   howl.loop(songData.loop);
   howl.seek(songData.pos, id);
-  if (songData.paused) howl.pause(id);
+  if (!playing) howl.pause(id);
 }
 
 export { loadCurrentSong };

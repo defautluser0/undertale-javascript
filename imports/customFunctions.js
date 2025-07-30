@@ -75,6 +75,8 @@ import {
   c_ltgray,
   c_yellow,
   mus_cymbal,
+  mus_battle1,
+  mus_prebattle1,
 } from "/imports/assets.js";
 import {
   vk_down,
@@ -110,6 +112,7 @@ import * as obj_face_alphys from "/obj/face_alphys/index.js";
 import * as obj_face_asgore from "/obj/face_asgore/index.js";
 import * as obj_face_mettaton from "/obj/face_mettaton/index.js";
 import * as obj_face_asriel from "/obj/face_asriel/index.js";
+import * as obj_dummymonster from "/obj/dummymonster/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_fakeheart from "/obj/fakeheart/index.js";
 
@@ -310,9 +313,9 @@ function caster_play(sound, volume = 1, pitch = 1) {
   return this_song_i;
 }
 
-function caster_stop(sound) {
+function caster_stop(sound, current) {
   if (sound === -1) return;
-  caster_free(sound);
+  caster_free(sound, current);
 }
 
 function caster_free(sound) {
@@ -2144,8 +2147,8 @@ function caster_resume(sound) {
   audio_resume_sound(sound);
 }
 
-function caster_pause(sound) {
-  audio_pause_sound(sound);
+function caster_pause(sound, current) {
+  audio_pause_sound(sound, null, current);
 }
 
 function scr_gameoverb() {
@@ -2504,6 +2507,187 @@ function scr_onscreen(argument0, argument1) {
   }
 }
 
+function scr_battlegroup() {
+  global.monster[0] = 0;
+  global.monster[1] = 0;
+  global.monster[2] = 0;
+  global.monster[3] = 0;
+  global.turn = 0;
+
+  switch (global.battlegroup) {
+    case 1:
+      global.monstertype[0] = 1;
+      global.monstertype[1] = 1;
+      global.monstertype[2] = 1;
+      global.batmusic = caster_load(mus_battle1);
+      caster_loop(global.batmusic, 0.5, 1);
+      global.msc = 2;
+      global.battlelv = 1;
+      global.actfirst = 0;
+      global.extrainfo = 0;
+      global.monsterinstance[0] = instance_create(216, 136, obj_testmonster);
+      global.monsterinstance[1] = instance_create(418, 136, obj_testmonster);
+      global.monsterinstance[2] = instance_create(14, 136, obj_testmonster);
+      break;
+    
+    case 2:
+    global.monstertype[0] = 2;
+    global.monstertype[1] = 0;
+    global.monstertype[2] = 0;
+    global.batmusic = caster_load(mus_prebattle1);
+    caster_loop(global.batmusic, 0.5, 1);
+    global.msc = global.battlegroup + 3000;
+    global.battlelv = 0;
+    global.actfirst = 0;
+    global.extraintro = 0;
+    global.monsterinstance[0] = instance_create(216, 136, obj_dummymonster);
+    break;
+  }
+}
+
+function scr_monstersetup() {
+  this.myself = 0;
+
+  if (global.monster[1] === 1) {
+    this.myself = 2;
+    global.monster[2] = 1;
+  }
+
+  if (global.monster[0] === 1 && myself !== 2) {
+    this.myself = 1;
+    global.monster[1] = 1;
+  }
+
+  if (global.monster[0] === 0) {
+    this.myself = 0;
+    global.monster[0] = 1;
+  }
+
+  switch (global.monstertype[this.myself]) {
+    case 1:
+      global.monstername[this.myself] = scr_gettext("monstername_1"); // TestFroggit
+      global.monstermaxhp[this.myself] = 23;
+      global.monsterhp[this.myself] = 23;
+      global.monsteratk[this.myself] = 4;
+      global.monsterdef[this.myself] = 1;
+      global.xpreward[this.myself] = 2;
+      global.goldreward[this.myself] = 2;
+      global.itemrewardid = 1;
+      global.itemrewardchance = 50;
+      break;
+
+    case 2:
+      global.monstername[this.myself] = scr_gettext("monstername_2"); // Dummy
+      global.monstermaxhp[this.myself] = 15;
+      global.monsterhp[this.myself] = 15;
+      global.monsteratk[this.myself] = 0;
+      global.monsterdef[this.myself] = -5;
+      global.xpreward[this.myself] = 0;
+      global.goldreward[this.myself] = 0;
+      global.itemrewardid = 0;
+      global.itemrewardchance = 0;
+      break;
+  }
+}
+
+function scr_mercystandard() {
+  this.mercy = ((global.monsterhp[this.myself] - global.at - global.wstrength) + global.monsterdef[this.myself]) - this.mercymod;
+}
+
+function scr_enable_screen_border(flag) {
+  flag = flag !== 0;
+
+  if (flag !== global.screen_border_active) {
+    global.screen_border_active = flag !== false;
+    global.screen_border_state = 0;
+    global.screen_border_dynamic_fade_id = 0;
+    global.screen_border_dynamic_fade_level = 0;
+  }
+}
+
+function scr_levelup() {
+  this.currentlevel = global.lv;
+
+  if (global.xp >= 10)
+    global.lv = 2;
+
+  if (global.xp >= 30)
+    global.lv = 3;
+
+  if (global.xp >= 70)
+    global.lv = 4;
+
+  if (global.xp >= 120)
+    global.lv = 5;
+
+  if (global.xp >= 200)
+    global.lv = 6;
+
+  if (global.xp >= 300)
+    global.lv = 7;
+
+  if (global.xp >= 500)
+    global.lv = 8;
+
+  if (global.xp >= 800)
+    global.lv = 9;
+
+  if (global.xp >= 1200)
+    global.lv = 10;
+
+  if (global.xp >= 1700)
+    global.lv = 11;
+
+  if (global.xp >= 2500)
+    global.lv = 12;
+
+  if (global.xp >= 3500)
+    global.lv = 13;
+
+  if (global.xp >= 5000)
+    global.lv = 14;
+
+  if (global.xp >= 7000)
+    global.lv = 15;
+
+  if (global.xp >= 10000)
+    global.lv = 16;
+
+  if (global.xp >= 15000)
+    global.lv = 17;
+
+  if (global.xp >= 25000)
+    global.lv = 18;
+
+  if (global.xp >= 50000)
+    global.lv = 19;
+
+  if (global.xp >= 99999)
+  {
+    global.lv = 20;
+    global.xp = 99999;
+  }
+
+  if (global.lv != this.currentlevel)
+  {
+    this.levelup = 1;
+    global.maxhp = 16 + (global.lv * 4);
+    global.at = 8 + (global.lv * 2);
+    global.df = 9 + ceil(global.lv / 4);
+    
+    if (global.lv == 20)
+    {
+        global.maxhp = 99;
+        global.at = 99;
+        global.df = 99;
+    }
+  }
+  else
+  {
+    this.levelup = 0;
+  }
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -2565,4 +2749,9 @@ export {
   scr_tempsave,
   scr_dogcheck,
   scr_onscreen,
+  scr_battlegroup,
+  scr_monstersetup,
+  scr_mercystandard,
+  scr_enable_screen_border,
+  scr_levelup
 };
