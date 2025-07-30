@@ -90,6 +90,7 @@ function step() {
 	if (this.volume === 0) {
 		caster_stop(this.mysong);
 		caster_free(this.mysong);
+    global.currentsong = -1;
 		instance_destroy(this);
 	}
 }
