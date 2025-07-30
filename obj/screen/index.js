@@ -44,37 +44,43 @@ function updateScreen() {
   }
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let currentsong = global.currentsong;
+  let currentsong2 = global.currentsong2;
+  let batmusic = global.batmusic;
   try {
     localStorage.setItem("global", JSON.stringify(global));
   } catch(_) {
-    let currentsong = global.currentsong;
-    if (currentsong !== -1) {
-      global.currentsong = {
-        name: extractNameFromSrc(currentsong._src) ?? "unknown",
-        rate: currentsong.rate?.() ?? 1,
-        volume: currentsong.volume?.() ?? 1,
-        paused: !global.playing1 ?? false,
-        pos: currentsong.seek?.() ?? 0,
-        loop: currentsong.loop?.() ?? false,
-      };
+    try {
+      if (currentsong !== -1) {
+        global.currentsong = {
+          name: extractNameFromSrc(currentsong._src) ?? "unknown",
+          rate: currentsong.rate?.() ?? 1,
+          volume: currentsong.volume?.() ?? 1,
+          paused: !global.playing1 ?? false,
+          pos: currentsong.seek?.() ?? 0,
+          loop: currentsong.loop?.() ?? false,
+        };
+      }
+      if (currentsong2 !== -1) {
+        global.currentsong2 = {
+          name: extractNameFromSrc(currentsong2._src) ?? "unknown",
+          rate: currentsong2.rate?.() ?? 1,
+          volume: currentsong2.volume?.() ?? 1,
+          paused: !global.playing2 ?? false,
+          pos: currentsong2.seek?.() ?? 0,
+          loop: currentsong2.loop?.() ?? false,
+        };
+      }
+      global.batmusic = -1;
+      localStorage.setItem("global", JSON.stringify(global));
+      global.currentsong = currentsong;
+      global.currentsong2 = currentsong2;
+      global.batmusic = batmusic;
+    } catch(e) {
+      global.currentsong = currentsong;
+      global.currentsong2 = currentsong2;
+      global.batmusic = batmusic;
     }
-    let currentsong2 = global.currentsong2;
-    if (currentsong2 !== -1) {
-      global.currentsong2 = {
-        name: extractNameFromSrc(currentsong2._src) ?? "unknown",
-        rate: currentsong2.rate?.() ?? 1,
-        volume: currentsong2.volume?.() ?? 1,
-        paused: !global.playing2 ?? false,
-        pos: currentsong2.seek?.() ?? 0,
-        loop: currentsong2.loop?.() ?? false,
-      };
-    }
-    const batmusic = global.batmusic;
-    global.batmusic = -1;
-    localStorage.setItem("global", JSON.stringify(global));
-    global.currentsong = currentsong;
-    global.currentsong2 = currentsong2;
-    global.batmusic = batmusic;
   }
 }
 

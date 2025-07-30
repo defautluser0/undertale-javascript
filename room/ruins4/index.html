@@ -21,9 +21,11 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-    import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
+    import { instance_create, instances, secondFont, draw_text, draw_tile } from "/imports/assets/gamemakerFunctions.js"
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
+    import { bg_ruinsplaceholder, bg_ruinsplaceholder2, bg_ruinseasynam1, bg_ruinseasynam3 } from "/imports/assets.js";
+    import roomSize from "/imports/assets/roomSize.js";
     import global from "/imports/assets/global.js"
     import * as obj_solidtall from '/obj/solidtall/index.js'
     import * as obj_solidsmall from '/obj/solidsmall/index.js'
@@ -128,6 +130,220 @@
       }
     }
 
+    function draw_tiles() {
+      const T0 = {tile_index: 0,hflip: false,vflip: false};
+      const T1 = {tile_index: 1,hflip: false,vflip: false};
+      const T2 = {tile_index: 2,hflip: false,vflip: false};
+      const T3 = {tile_index: 3,hflip: false,vflip: false};
+      const T5 = {tile_index: 5,hflip: false,vflip: false};
+      const T6 = {tile_index: 6,hflip: false,vflip: false};
+      const T7 = {tile_index: 7,hflip: false,vflip: false};
+      const T9 = {tile_index: 9,hflip: false,vflip: false};
+      const T10 = {tile_index: 10,hflip: false,vflip: false};
+      const T11 = {tile_index: 11,hflip: false,vflip: false};
+      const T13 = {tile_index: 13,hflip: false,vflip: false};
+      const T15 = {tile_index: 15,hflip: false,vflip: false};
+      const T21 = {tile_index: 21,hflip: false,vflip: false};
+      const T22 = {tile_index: 22,hflip: false,vflip: false};
+      const T23 = {tile_index: 23,hflip: false,vflip: false};
+      const T24 = {tile_index: 24,hflip: false,vflip: false};
+      const T25 = {tile_index: 25,hflip: false,vflip: false};
+      const T29 = {tile_index: 29,hflip: false,vflip: false};
+      const T30 = {tile_index: 30,hflip: false,vflip: false};
+      const T32 = {tile_index: 32,hflip: false,vflip: false};
+      const T33 = {tile_index: 33,hflip: false,vflip: false};
+      const T37 = {tile_index: 37,hflip: false,vflip: false};
+      const T38 = {tile_index: 38,hflip: false,vflip: false};
+      const T86 = {tile_index: 86,hflip: false,vflip: false};
+
+      draw_tile(bg_ruinseasynam1, T29, 0, 60, 0);
+      draw_tile(bg_ruinseasynam1, T22, 0, 80, 0);
+      draw_tile(bg_ruinseasynam1, T22, 0, 100, 0);
+      draw_tile(bg_ruinseasynam1, T23, 0, 120, 0);
+      draw_tile(bg_ruinseasynam1, T21, 0, 180, 0);
+      draw_tile(bg_ruinseasynam1, T22, 0, 200, 0);
+      draw_tile(bg_ruinseasynam1, T22, 0, 220, 0);
+      draw_tile(bg_ruinseasynam1, T30, 0, 240, 0);
+      draw_tile(bg_ruinseasynam1, T29, 0, 40, 20);
+      draw_tile(bg_ruinseasynam1, T23, 0, 60, 20);
+      draw_tile(bg_ruinseasynam1, T2, 0, 80, 20);
+      draw_tile(bg_ruinseasynam1, T2, 0, 100, 20);
+      draw_tile(bg_ruinseasynam3, T86, 0, 100, 20);
+      draw_tile(bg_ruinseasynam1, T3, 0, 120, 20);
+      draw_tile(bg_ruinseasynam1, T1, 0, 180, 20);
+      draw_tile(bg_ruinseasynam1, T2, 0, 200, 20);
+      draw_tile(bg_ruinseasynam3, T86, 0, 200, 20);
+      draw_tile(bg_ruinseasynam1, T2, 0, 220, 20);
+      draw_tile(bg_ruinseasynam1, T21, 0, 240, 20);
+      draw_tile(bg_ruinseasynam1, T30, 0, 260, 20);
+      draw_tile(bg_ruinseasynam1, T29, 0, 20, 40);
+      draw_tile(bg_ruinseasynam1, T23, 0, 40, 40);
+      draw_tile(bg_ruinseasynam1, T3, 0, 60, 40);
+      draw_tile(bg_ruinseasynam1, T2, 0, 80, 40);
+      draw_tile(bg_ruinseasynam1, T2, 0, 100, 40);
+      draw_tile(bg_ruinseasynam3, T86, 0, 100, 40);
+      draw_tile(bg_ruinseasynam1, T3, 0, 120, 40);
+      draw_tile(bg_ruinseasynam1, T1, 0, 180, 40);
+      draw_tile(bg_ruinseasynam1, T2, 0, 200, 40);
+      draw_tile(bg_ruinseasynam3, T86, 0, 200, 40);
+      draw_tile(bg_ruinseasynam1, T2, 0, 220, 40);
+      draw_tile(bg_ruinseasynam1, T1, 0, 240, 40);
+      draw_tile(bg_ruinseasynam1, T21, 0, 260, 40);
+      draw_tile(bg_ruinseasynam1, T30, 0, 280, 40);
+      draw_tile(bg_ruinseasynam1, T22, 0, 0, 60);
+      draw_tile(bg_ruinseasynam1, T23, 0, 20, 60);
+      draw_tile(bg_ruinseasynam1, T3, 0, 40, 60);
+      draw_tile(bg_ruinseasynam1, T3, 0, 60, 60);
+      draw_tile(bg_ruinseasynam1, T10, 0, 80, 60);
+      draw_tile(bg_ruinseasynam1, T10, 0, 100, 60);
+      draw_tile(bg_ruinseasynam3, T86, 0, 100, 60);
+      draw_tile(bg_ruinseasynam1, T11, 0, 120, 60);
+      draw_tile(bg_ruinseasynam1, T9, 0, 180, 60);
+      draw_tile(bg_ruinseasynam1, T10, 0, 200, 60);
+      draw_tile(bg_ruinseasynam3, T86, 0, 200, 60);
+      draw_tile(bg_ruinseasynam1, T10, 0, 220, 60);
+      draw_tile(bg_ruinseasynam1, T1, 0, 240, 60);
+      draw_tile(bg_ruinseasynam1, T1, 0, 260, 60);
+      draw_tile(bg_ruinseasynam1, T13, 0, 280, 60);
+      draw_tile(bg_ruinseasynam1, T2, 0, 0, 80);
+      draw_tile(bg_ruinseasynam1, T3, 0, 20, 80);
+      draw_tile(bg_ruinseasynam1, T3, 0, 40, 80);
+      draw_tile(bg_ruinseasynam1, T11, 0, 60, 80);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 80, 80);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 100, 80);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 120, 80);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 140, 80);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 160, 80);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 180, 80);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 200, 80);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 220, 80);
+      draw_tile(bg_ruinseasynam1, T9, 0, 240, 80);
+      draw_tile(bg_ruinseasynam1, T1, 0, 260, 80);
+      draw_tile(bg_ruinseasynam1, T13, 0, 280, 80);
+      draw_tile(bg_ruinseasynam1, T2, 0, 0, 100);
+      draw_tile(bg_ruinseasynam1, T3, 0, 20, 100);
+      draw_tile(bg_ruinseasynam1, T11, 0, 40, 100);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 60, 100);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 80, 100);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 100, 100);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 120, 100);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 140, 100);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 160, 100);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 180, 100);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 200, 100);
+      draw_tile(bg_ruinseasynam1, T25, 0, 220, 100);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 240, 100);
+      draw_tile(bg_ruinseasynam1, T9, 0, 260, 100);
+      draw_tile(bg_ruinseasynam1, T13, 0, 280, 100);
+      draw_tile(bg_ruinseasynam1, T10, 0, 0, 120);
+      draw_tile(bg_ruinseasynam1, T11, 0, 20, 120);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 40, 120);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 60, 120);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 80, 120);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 100, 120);
+      draw_tile(bg_ruinsplaceholder2, T15, 0, 120, 120);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 140, 120);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 160, 120);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 180, 120);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 200, 120);
+      draw_tile(bg_ruinseasynam1, T33, 0, 220, 120);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 240, 120);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 260, 120);
+      draw_tile(bg_ruinseasynam1, T13, 0, 280, 120);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 0, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 20, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 40, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 60, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 80, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 100, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 120, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 140, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 160, 140);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 180, 140);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 200, 140);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 220, 140);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 240, 140);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 260, 140);
+      draw_tile(bg_ruinseasynam1, T13, 0, 280, 140);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 0, 160);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 20, 160);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 40, 160);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 60, 160);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 80, 160);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 100, 160);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 120, 160);
+      draw_tile(bg_ruinsplaceholder, T5, 0, 140, 160);
+      draw_tile(bg_ruinsplaceholder2, T29, 0, 160, 160);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 180, 160);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 200, 160);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 220, 160);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 240, 160);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 260, 160);
+      draw_tile(bg_ruinseasynam1, T13, 0, 280, 160);
+      draw_tile(bg_ruinseasynam1, T6, 0, 0, 180);
+      draw_tile(bg_ruinseasynam1, T6, 0, 20, 180);
+      draw_tile(bg_ruinseasynam1, T7, 0, 40, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 60, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 80, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 100, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 120, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 140, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 160, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 180, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 200, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 220, 180);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 240, 180);
+      draw_tile(bg_ruinseasynam1, T5, 0, 260, 180);
+      draw_tile(bg_ruinseasynam1, T38, 0, 280, 180);
+      draw_tile(bg_ruinseasynam1, T37, 0, 40, 200);
+      draw_tile(bg_ruinseasynam1, T7, 0, 60, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 80, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 100, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 120, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 140, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 160, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 180, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 200, 200);
+      draw_tile(bg_ruinsplaceholder, T0, 0, 220, 200);
+      draw_tile(bg_ruinseasynam1, T5, 0, 240, 200);
+      draw_tile(bg_ruinseasynam1, T38, 0, 260, 200);
+      draw_tile(bg_ruinseasynam1, T37, 0, 60, 220);
+      draw_tile(bg_ruinseasynam1, T38, 0, 240, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 80, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 100, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 120, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 140, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 160, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 180, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 200, 220);
+      draw_tile(bg_ruinseasynam1, T6, 0, 220, 220);
+    }
+
+    function callInheritedFunction(instance, funcName) {
+      let currentObj = instance._object;
+
+      while (currentObj) {
+        const func = currentObj[funcName];
+        if (typeof func === "function") {
+          return func.call(instance);
+        }
+        currentObj = currentObj.parent ?? null;
+      }
+      // No function found in hierarchy
+      return undefined;
+    }
+
+    function filterDestroyed() {
+      for (const [obj, instanceList] of instances) {
+        // Remove all destroyed instances
+        for (let i = instanceList.length - 1; i >= 0; i--) {
+          if (instanceList[i]._destroyed) {
+            instanceList.splice(i, 1);
+          }
+        }
+      }
+    }
+
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
     const FPS = 30;
@@ -157,9 +373,10 @@
         control_update();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.beginStep?.call(instance);
+            callInheritedFunction(instance, "beginStep");
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateAlarms?.call(instance);
@@ -167,40 +384,101 @@
         }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.step?.call(instance);
+            obj.updateKeyboard?.call(instance);
+            obj.updateMouse?.call(instance);
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateIndex?.call(instance);
           }
         }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
+            callInheritedFunction(instance, "step")
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            if (instance.x > roomSize.width || instance.x < 0 || instance.y > roomSize.height || instance.y < 0) {
+              callInheritedFunction(instance, "outsideRoom")
+            }
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateSpeed?.call(instance);
             obj.followPath?.call(instance);
           }
         }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateCol?.call(instance);
+          }
+        }
+        filterDestroyed();
         screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.endStep?.call(instance);
+            callInheritedFunction(instance, "endStep");
           }
         }
+        filterDestroyed();
+
+        draw_tiles();
+
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             allInstances.push({ obj, instance });
           }
         }
-
         allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
-
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "preDraw");
+        }
+        filterDestroyed();
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "drawBegin");
+        }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
           if (!obj.draw) obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
-
-        if (global.debug === 1 && secondFont) {
-          draw_text(15 + view_xview[view_current], 15 + view_yview[view_current], currentFps, 1);
+        filterDestroyed();
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "drawEnd");
         }
+        filterDestroyed();
+        for (const { obj, instance } of allInstances) {
+            callInheritedFunction(instance, "postDraw");
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUIBegin");
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUI");
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUIEnd");
+          }
+        }
+        filterDestroyed();
 
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.updateGamemakerFunctions?.call(instance);
+            obj.updateGamemakerFunctions?.call(instance); // legacy function
           }
         }
 
@@ -263,31 +541,41 @@
           try {
             localStorage.setItem("global", JSON.stringify(global));
           } catch (_) {
-            if (global.currentsong !== -1) {
+            try {
               let currentsong = global.currentsong;
-              global.currentsong = {
-                name: extractNameFromSrc(currentsong._src) ?? "unknown",
-                rate: currentsong.rate?.() ?? 1,
-                volume: currentsong.volume?.() ?? 1,
-                paused: !global.playing1 ?? false,
-                pos: currentsong.seek?.() ?? 0,
-                loop: currentsong.loop?.() ?? false,
-              };
+              let currentsong2 = global.currentsong2;
+              let batmusic = global.batmusic;
+              if (global.currentsong !== -1) {
+                global.currentsong = {
+                  name: extractNameFromSrc(currentsong._src) ?? "unknown",
+                  rate: currentsong.rate?.() ?? 1,
+                  volume: currentsong.volume?.() ?? 1,
+                  paused: !global.playing1 ?? false,
+                  pos: currentsong.seek?.() ?? 0,
+                  loop: currentsong.loop?.() ?? false,
+                };
+              }
+              if (global.currentsong2 !== -1) {
+                global.currentsong2 = {
+                  name: extractNameFromSrc(currentsong2._src) ?? "unknown",
+                  rate: currentsong2.rate?.() ?? 1,
+                  volume: currentsong2.volume?.() ?? 1,
+                  paused: !global.playing2 ?? false,
+                  pos: currentsong2.seek?.() ?? 0,
+                  loop: currentsong2.loop?.() ?? false,
+                };
+              }
+              global.batmusic = -1;
               localStorage.setItem("global", JSON.stringify(global));
               global.currentsong = currentsong;
-            }
-            if (global.currentsong2 !== -1) {
-              let currentsong2 = global.currentsong2;
-              global.currentsong2 = {
-                name: extractNameFromSrc(currentsong2._src) ?? "unknown",
-                rate: currentsong2.rate?.() ?? 1,
-                volume: currentsong2.volume?.() ?? 1,
-                paused: !global.playing2 ?? false,
-                pos: currentsong2.seek?.() ?? 0,
-                loop: currentsong2.loop?.() ?? false,
-              };
-              localStorage.setItem("global", JSON.stringify(global));
               global.currentsong2 = currentsong2;
+              global.batmusic = batmusic;
+            } catch(_) {
+              console.log("WHAT??");
+              const newGlob = global;
+              newGlob.monsterinstance = [];
+              newGlob.mntrg = {};
+              localStorage.setItem("global", JSON.stringify(newGlob));
             }
           }
           window.location.href = nextRoom;

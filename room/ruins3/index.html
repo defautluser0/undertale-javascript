@@ -670,6 +670,17 @@
       }
     }
 
+    function filterDestroyed() {
+      for (const [obj, instanceList] of instances) {
+        // Remove all destroyed instances
+        for (let i = instanceList.length - 1; i >= 0; i--) {
+          if (instanceList[i]._destroyed) {
+            instanceList.splice(i, 1);
+          }
+        }
+      }
+    }
+
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
     const FPS = 30;
@@ -702,6 +713,7 @@
             obj.beginStep?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateAlarms?.call(instance);
@@ -712,6 +724,7 @@
             obj.step?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.followPath?.call(instance);
@@ -723,6 +736,7 @@
             obj.endStep?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             allInstances.push({ obj, instance });
@@ -737,6 +751,7 @@
           if (!obj.draw) obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
+        filterDestroyed();
 
         if (global.debug === 1 && secondFont) {
           draw_text(15 + view_xview[view_current], 15 + view_yview[view_current], currentFps, 1);

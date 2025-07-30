@@ -56,6 +56,9 @@ if (
     itemrewardid: [],
     itemrewardchance: [],
     monster: [],
+    monstertype: [],
+    monsteratk: [],
+    monsterinstance: [],
     attacker: [],
     mnpwr: [],
     bulletpwr: [],
@@ -122,6 +125,7 @@ if (
     gold: 0,
     screen_border_id: 0,
     phone: [],
+    choices: [],
   };
 
   for (let i = 0; i < 8; i += 1) {

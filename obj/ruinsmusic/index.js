@@ -187,8 +187,6 @@ function alarm0() {
 function roomStart() {
   this.user0();
 
-  console.log(global.currentsong, caster_is_playing(global.currentsong))
-
   if (caster_is_playing(global.currentsong) !== 1) {
     if (global.flag[221] == 0) {
       global.currentsong = caster_load(mus_ruins);

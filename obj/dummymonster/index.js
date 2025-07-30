@@ -1,4 +1,4 @@
-import { draw_sprite_ext, getBoundingBox, instance_find, instance_destroy, instance_create, script_execute, action_move, round, random } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, instance_find, instance_destroy, instance_create, script_execute, action_move, round, random, _with, instance_exists } from "/imports/assets/gamemakerFunctions.js";
 import { scr_monstersetup, scr_gettext, scr_mercystandard, snd_play } from "/imports/customFunctions.js";
 import { control_check_pressed } from "/imports/input.js";
 import { c_white, snd_slidewhist } from "/imports/assets.js";
@@ -6,8 +6,10 @@ import global from "/imports/assets/global.js";
 
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
 //                                                               // to this fake object
+import * as OBJ_NOMSCWRITER from "/obj/nomscwriter/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_lborder from "/obj/lborder/index.js";
+import * as obj_blconsm from "/obj/blconsm/index.js";
 import * as parent from "/obj/monsterparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -24,8 +26,8 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
     image_number: 0, // sprite frame number
-    sprite_width: 0, // set to sprite_index's width
-    sprite_height: 0, // set to sprite_index's height
+    sprite_width: 98, // set to sprite_index's width
+    sprite_height: 106, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
     sprite_index: "spr_dummybattle", // sprite object
@@ -371,6 +373,7 @@ function step() {
     this.attacked = 0;
   }
 
+
   if (this.alarm[5] > 0) {
     if (global.monster[0] === 1) {
       if (global.monsterinstance[0].alarm[5] > this.alarm[5]) {
@@ -489,13 +492,15 @@ function step() {
     }
   }
 
-  if (global.mnfight === 2) {
+  if (global.myfight === 2) {
     if (this.whatiheard !== -1) {
       if (global.heard === 0) {
         if (this.whatiheard === 0) {
           global.msc = 0;
           global.msg[0] = scr_gettext("obj_dummymonster_437");
-          instance_find(OBJ_WRITER, 0).halt = 3;
+          _with (OBJ_WRITER, function() {
+            this.halt = 3;
+          });
           this.iii = instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER)
 
           _with (this.iii, function() {
@@ -509,7 +514,9 @@ function step() {
           global.msg[1] = scr_gettext("obj_dummymonster_446");
           global.msg[2] = scr_gettext("obj_dummymonster_447");
           global.flag[14] = 2;
-          instance_find(OBJ_WRITER, 0).halt = 3;
+          _with (OBJ_WRITER, function() {
+            this.halt = 3;
+          });
           this.iii = instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER);
 
           _with (this.iii, function() {
@@ -535,7 +542,7 @@ function alarm7() {
 }
 
 function alarm6() {
-  this.blcon = instance_create(this.x + this.sprite_width, this.y, "obj_blconsm");
+  this.blcon = instance_create(this.x + this.sprite_width, this.y, obj_blconsm);
   this.mycommand = round(random(100));
 
   if (this.mycommand >= 0 && this.mycommand < 100) {
@@ -544,7 +551,7 @@ function alarm6() {
 
   global.msg[1] = scr_gettext("obj_dummymonster_222");
   global.typer = 2;
-  //this.blconwd = instance_create(this.blcon.x + 15, this.blcon.y + 10, "OBJ_NOMSCWRITER");
+  this.blconwd = instance_create(this.blcon.x + 15, this.blcon.y + 10, OBJ_NOMSCWRITER);
 }
 
 function alarm5() {

@@ -48,6 +48,10 @@ import {
   string_width,
   room_goto_next,
   room_next,
+  instance_find,
+  merge_color,
+  instance_destroy,
+  ord,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   draw_text,
@@ -77,6 +81,10 @@ import {
   mus_cymbal,
   mus_battle1,
   mus_prebattle1,
+  c_maroon,
+  c_fuchsia,
+  fnt_curs,
+  c_red,
 } from "/imports/assets.js";
 import {
   vk_down,
@@ -99,6 +107,7 @@ import {
   final_view_yview,
 } from "/imports/view.js";
 import { rooms } from "/imports/assets/rooms.js";
+import roomSize from "/imports/assets/roomSize.js";
 
 import * as obj_whitefader from "/obj/whitefader/index.js";
 import * as obj_persistentfader from "/obj/persistentfader/index.js";
@@ -114,7 +123,10 @@ import * as obj_face_mettaton from "/obj/face_mettaton/index.js";
 import * as obj_face_asriel from "/obj/face_asriel/index.js";
 import * as obj_dummymonster from "/obj/dummymonster/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
+import * as OBJ_INSTAWRITER from "/obj/instawriter/index.js";
 import * as obj_fakeheart from "/obj/fakeheart/index.js";
+import * as obj_heart from "/obj/heart/index.js";
+import * as obj_hpname from "/obj/hpname/index.js";
 
 function scr_replace_buttons_pc(str) {
   try {
@@ -1906,36 +1918,36 @@ function SCR_BORDERSETUP() {
   }
 
   if (global.border == 12) {
-    global.idealborder[0] = room_width / 2 - 40;
-    global.idealborder[1] = room_width / 2 + 40;
-    global.idealborder[2] = room_height / 2 - 40;
-    global.idealborder[3] = room_height / 2 + 40;
+    global.idealborder[0] = roomSize.width / 2 - 40;
+    global.idealborder[1] = roomSize.width / 2 + 40;
+    global.idealborder[2] = roomSize.height / 2 - 40;
+    global.idealborder[3] = roomSize.height / 2 + 40;
   }
 
   if (global.border == 13) {
-    global.idealborder[0] = room_width / 2 - 40;
-    global.idealborder[1] = room_width / 2 + 40;
+    global.idealborder[0] = roomSize.width / 2 - 40;
+    global.idealborder[1] = roomSize.width / 2 + 40;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
   if (global.border == 14) {
-    global.idealborder[0] = room_width / 2 - 35;
-    global.idealborder[1] = room_width / 2 + 35;
+    global.idealborder[0] = roomSize.width / 2 - 35;
+    global.idealborder[1] = roomSize.width / 2 + 35;
     global.idealborder[2] = 300;
     global.idealborder[3] = 385;
   }
 
   if (global.border == 15) {
-    global.idealborder[0] = room_width / 2 - 50;
-    global.idealborder[1] = room_width / 2 + 50;
+    global.idealborder[0] = roomSize.width / 2 - 50;
+    global.idealborder[1] = roomSize.width / 2 + 50;
     global.idealborder[2] = 250;
     global.idealborder[3] = 385;
   }
 
   if (global.border == 16) {
-    global.idealborder[0] = room_width / 2 - 50;
-    global.idealborder[1] = room_width / 2 + 50;
+    global.idealborder[0] = roomSize.width / 2 - 50;
+    global.idealborder[1] = roomSize.width / 2 + 50;
     global.idealborder[2] = 50;
     global.idealborder[3] = 385;
   }
@@ -1976,10 +1988,10 @@ function SCR_BORDERSETUP() {
   }
 
   if (global.border == 22) {
-    offpurple = 0;
+    let offpurple = 0;
 
-    if (instance_exists(obj_purpleheart)) {
-      offpurple = obj_purpleheart.yzero;
+    if (instance_exists("obj_purpleheart")) {
+      offpurple = instance_find(obj_purpleheart, 0).yzero;
 
       if (offpurple > 250) offpurple = 250;
     }
@@ -1994,10 +2006,10 @@ function SCR_BORDERSETUP() {
   }
 
   if (global.border == 23) {
-    offpurple = 0;
+    let offpurple = 0;
 
-    if (instance_exists(obj_purpleheart)) {
-      offpurple = obj_purpleheart.yzero;
+    if (instance_exists("obj_purpleheart")) {
+      offpurple = instance_find(obj_purpleheart, 0).yzero;
 
       if (offpurple > 250) offpurple = 250;
     }
@@ -2688,6 +2700,187 @@ function scr_levelup() {
   }
 }
 
+function scr_itemnameb() {
+  for (let i = 0; i < 8; i++) {
+    let itemid = global.item[i];
+    let name;
+
+    if (global.seriousbattle === 1) {
+      name = scr_gettext("item_names_" + string(itemid));
+    } else {
+      name = scr_gettext("item_nameb_" + string(itemid));
+    }
+
+    global.itemnameb[i] = name;
+  }
+}
+
+function scr_attack() {
+  if (global.weapon === 3 || global.weapon === 13 || global.weapon === 14 || global.weapon === 51 || global.weapon === 52) {
+    instance_create(global.idealborder[0] + 6, global.idealborder[2] + 6, "obj_target");
+  }
+
+  if (global.weapon === 25 || global.weapon === 49 || global.weapon === 47 || global.weapon === 45) {
+    instance_create(global.idealborder[0] + 6, global.idealborder[2] + 6, "obj_shoetargettest");
+  }
+}
+
+function scr_itemuseb(argument0, argument1) {
+  console.log("TODO: finish the rest. arguments passed:", argument0, ",", argument1);
+  global.msg[0] = scr_gettext("item_use_" + string(argument1));
+}
+
+function scr_runaway() {
+  if (global.flag[6] === 0) {
+    this.runvalue = random(100) + (10 * global.turn);
+  } else {
+    if (global.turn === 0) {
+      this.runvalue = 0;
+    }
+
+    if (global.turn >= 1) {
+      this.runvalue = random(100) + (10 * (global.turn - 1));
+    }
+  }
+
+  if (instance_exists("obj_undyneboss")) {
+    this.runvalue = 100;
+  }
+
+  if (global.flag[6] === 0) {
+    if (global.armor === 4) {
+      this.runvalue = 100;
+    }
+  }
+
+  if (this.runvalue > 50) {
+    const heart = instance_find(obj_heart, 0);
+    this.runaway = 1;
+    snd_play(snd_escaped);
+    heart.hspeed =-3;
+    heart.sprite_index = "spr_heartgtfo";
+    heart.image_speed = 0.5;
+    instance_find(OBJ_WRITER, 0).halt = 3;
+    global.xp += global.xpreward[3];
+    global.gold += global.goldreward[3];
+    this.tlvl = global.lv;
+    script_execute.call(this, scr_levelup);
+
+    if (this.levelup === 1) {
+      snd_play(snd_levelup);
+    }
+
+    global.msc = 14;
+    instance_create(global.idealborder[0], global.idealborder[2], OBJ_INSTAWRITER);
+    global.flag[11] = 1;
+    global.flag[24] += 1;
+  }
+}
+
+function scr_battlemenu_cursor_y(argument0) {
+  this.line = argument0
+
+  if (global.language === "ja") {
+    console.log("bro??");
+    return global.idealborder[2] + 28 + (this.line * 32);
+  } else {
+    return global.idealborder[2] + 28 + (this.line * 32);
+  }
+}
+
+function scr_draw_name_curs(xx, yy) {
+  let use_font = fnt_curs;
+
+  for (let i = 1; i < strlen(global.charname); i++) {
+    if (ord(string_char_at(global.charname, i)) >= 12288) {
+      console.log("what");
+      break;
+    }
+  }
+
+  draw_set_font(use_font);
+  draw_text(xx, yy, global.charname);
+  return string_width(global.charname);
+}
+
+function scr_binfowrite() {
+  draw_set_color(c_white);
+  let namex = 30;
+  let namey = 400;
+  let namewidth = scr_draw_name_curs(namex, namey);
+  draw_set_font(fnt_curs);
+  draw_text(namex + namewidth, 400, "   LV " + string(global.lv));
+
+  if (global.flag[271] === 0) {
+    draw_set_color(c_red);
+    ossafe_fill_rectangle(275, 400, 275 + (global.maxhp * 1.2), 420);
+    draw_set_color(c_yellow);
+    ossafe_fill_rectangle(275, 400, 275 + (global.hp * 1.2), 420);
+    draw_set_color(c_white);
+    draw_set_font(fnt_curs);
+    let hpwrite = string(global.hp);
+
+    if (global.hp < 10)
+      hpwrite = "0" + string(global.hp);
+
+    if (global.hp < 0)
+      hpwrite = "0";
+
+    if (global.flag[509] === 1)
+      hpwrite = "00.001";
+
+    if (global.flag[509] === 2)
+      hpwrite = "00.0001";
+
+    if (global.flag[509] === 3)
+      hpwrite = "00.000001";
+
+    if (global.flag[509] === 4)
+      hpwrite = "00.0000000001";
+
+    draw_text(290 + (global.maxhp * 1.2), 400, hpwrite + " / " + string(global.maxhp));
+  } else {
+    draw_set_color(merge_color(c_red, c_maroon, 0.5));
+    ossafe_fill_rectangle(255, 400, 255 + (global.maxhp * 1.2), 420);
+    draw_set_color(c_yellow);
+    ossafe_fill_rectangle(255, 400, 255 + (global.hp * 1.2), 420);
+    draw_set_color(c_fuchsia);
+
+    if (global.km > 40) {
+      global.km = 40;
+    }
+
+    if (global.km >= global.hp)
+      global.km = global.hp - 1;
+
+    ossafe_fill_rectangle(255 + (global.hp * 1.2), 400, (255 + (global.hp * 1.2)) - (global.km * 1.2), 420);
+    draw_sprite("spr_krmeter", 0, 265 + (global.maxhp * 1.2), 405);
+    draw_set_color(c_white);
+    draw_set_font(fnt_curs);
+    let hpwrite = string(global.hp);
+
+    if (global.km > 0)
+      draw_set_color(c_fuchsia);
+
+    if (global.hp < 10)
+      hpwrite = "0" + string(global.hp);
+
+    if (global.hp < 0)
+      hpwrite = "0";
+
+    draw_text(305 + (global.maxhp * 1.2), 400, hpwrite + " / " + string(global.maxhp));
+    draw_set_color(c_white);
+
+    if (instance_exists(obj_hpname)) {
+      _with (obj_hpname, function() {
+        instance_destroy(this);
+      })
+    }
+
+    draw_sprite("spr_hpname",  0, 220, 400)
+  }
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -2753,5 +2946,11 @@ export {
   scr_monstersetup,
   scr_mercystandard,
   scr_enable_screen_border,
-  scr_levelup
+  scr_levelup,
+  scr_itemnameb,
+  scr_attack,
+  scr_itemuseb,
+  scr_runaway,
+  scr_battlemenu_cursor_y,
+  scr_binfowrite,
 };

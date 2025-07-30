@@ -26,12 +26,13 @@
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
     import roomSize from '/imports/assets/roomSize.js'
     import global from "/imports/assets/global.js"
-    //import * as obj_battlebg from '/obj/battlebg/index.js'
-    //import * as obj_fightbt from '/obj/fightbt/index.js'
-    //import * as obj_talkbt from '/obj/talkbt/index.js'
-    //import * as obj_sparebt from '/obj/sparebt/index.js'
+    import * as obj_battlebg from '/obj/battlebg/index.js'
+    import * as obj_fightbt from '/obj/fightbt/index.js'
+    import * as obj_talkbt from '/obj/talkbt/index.js'
+    import * as obj_itembt from '/obj/itembt/index.js'
+    import * as obj_sparebt from '/obj/sparebt/index.js'
     import * as obj_heart from '/obj/heart/index.js'
-    //import * as obj_hpname from '/obj/hpname/index.js'
+    import * as obj_hpname from '/obj/hpname/index.js'
     import * as obj_battlecontroller from '/obj/battlecontroller/index.js'
     import * as obj_uborder from '/obj/uborder/index.js'
     import * as obj_lborder from '/obj/lborder/index.js'
@@ -47,13 +48,13 @@
 
     const newRoom = ["battlebg", "fightbt", "talkbt", "itembt", "sparebt", "heart", "hpname", "battlecontroller", "uborder", "lborder", "rborder", "dborder", "battlefader"]
     screenUpdater.create()
-    //instance_create(0, 0, obj_battlebg);
-    //instance_create(32, 432, obj_fightbt);
-    //instance_create(185, 432, obj_talkbt);
-    //instance_create(345, 432, obj_itembt);
-    //instance_create(500, 432, obj_sparebt);
+    instance_create(0, 0, obj_battlebg);
+    instance_create(32, 432, obj_fightbt);
+    instance_create(185, 432, obj_talkbt);
+    instance_create(345, 432, obj_itembt);
+    instance_create(500, 432, obj_sparebt);
     instance_create(362, 346, obj_heart);
-    //instance_create(240, 400, obj_hpname);
+    instance_create(240, 400, obj_hpname);
     instance_create(556, 82, obj_battlecontroller);
     instance_create(32, 250, obj_uborder);
     instance_create(32, 385, obj_lborder);
@@ -130,6 +131,17 @@
       return undefined;
     }
 
+    function filterDestroyed() {
+      for (const [obj, instanceList] of instances) {
+        // Remove all destroyed instances
+        for (let i = instanceList.length - 1; i >= 0; i--) {
+          if (instanceList[i]._destroyed) {
+            instanceList.splice(i, 1);
+          }
+        }
+      }
+    }
+
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
     const FPS = 30;
@@ -162,6 +174,7 @@
             callInheritedFunction(instance, "beginStep");
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateAlarms?.call(instance);
@@ -173,6 +186,7 @@
             obj.updateMouse?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateIndex?.call(instance);
@@ -180,16 +194,23 @@
         }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            callInheritedFunction(instance, "step")
+            callInheritedFunction(instance, "step");
           }
         }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
+            callInheritedFunction(instance, "step");
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
             if (instance.x > roomSize.width || instance.x < 0 || instance.y > roomSize.height || instance.y < 0) {
-              callInheritedFunction(instance, "step")
+              callInheritedFunction(instance, "outsideRoom")
             }
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateSpeed?.call(instance);
@@ -201,12 +222,14 @@
             obj.updateCol?.call(instance);
           }
         }
+        filterDestroyed();
         screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             callInheritedFunction(instance, "endStep");
           }
         }
+        filterDestroyed();
 
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
@@ -217,34 +240,42 @@
         for (const { obj, instance } of allInstances) {
             callInheritedFunction(instance, "preDraw");
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
             callInheritedFunction(instance, "drawBegin");
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
           if (!obj.draw) obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
             callInheritedFunction(instance, "drawEnd");
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
             callInheritedFunction(instance, "postDraw");
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             callInheritedFunction(instance, "drawGUIBegin");
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             callInheritedFunction(instance, "drawGUI");
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             callInheritedFunction(instance, "drawGUIEnd");
           }
         }
+        filterDestroyed();
 
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
@@ -311,31 +342,41 @@
           try {
             localStorage.setItem("global", JSON.stringify(global));
           } catch (_) {
-            if (global.currentsong !== -1) {
+            try {
               let currentsong = global.currentsong;
-              global.currentsong = {
-                name: extractNameFromSrc(currentsong._src) ?? "unknown",
-                rate: currentsong.rate?.() ?? 1,
-                volume: currentsong.volume?.() ?? 1,
-                paused: !global.playing1 ?? false,
-                pos: currentsong.seek?.() ?? 0,
-                loop: currentsong.loop?.() ?? false,
-              };
+              let currentsong2 = global.currentsong2;
+              let batmusic = global.batmusic;
+              if (global.currentsong !== -1) {
+                global.currentsong = {
+                  name: extractNameFromSrc(currentsong._src) ?? "unknown",
+                  rate: currentsong.rate?.() ?? 1,
+                  volume: currentsong.volume?.() ?? 1,
+                  paused: !global.playing1 ?? false,
+                  pos: currentsong.seek?.() ?? 0,
+                  loop: currentsong.loop?.() ?? false,
+                };
+              }
+              if (global.currentsong2 !== -1) {
+                global.currentsong2 = {
+                  name: extractNameFromSrc(currentsong2._src) ?? "unknown",
+                  rate: currentsong2.rate?.() ?? 1,
+                  volume: currentsong2.volume?.() ?? 1,
+                  paused: !global.playing2 ?? false,
+                  pos: currentsong2.seek?.() ?? 0,
+                  loop: currentsong2.loop?.() ?? false,
+                };
+              }
+              global.batmusic = -1;
               localStorage.setItem("global", JSON.stringify(global));
               global.currentsong = currentsong;
-            }
-            if (global.currentsong2 !== -1) {
-              let currentsong2 = global.currentsong2;
-              global.currentsong2 = {
-                name: extractNameFromSrc(currentsong2._src) ?? "unknown",
-                rate: currentsong2.rate?.() ?? 1,
-                volume: currentsong2.volume?.() ?? 1,
-                paused: !global.playing2 ?? false,
-                pos: currentsong2.seek?.() ?? 0,
-                loop: currentsong2.loop?.() ?? false,
-              };
-              localStorage.setItem("global", JSON.stringify(global));
               global.currentsong2 = currentsong2;
+              global.batmusic = batmusic;
+            } catch(_) {
+              console.log("WHAT??");
+              const newGlob = global;
+              newGlob.monsterinstance = [ -4, -4, -4 ];
+              newGlob.mntrg = {};
+              localStorage.setItem("global", JSON.stringify(newGlob));
             }
           }
           window.location.href = nextRoom;

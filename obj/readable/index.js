@@ -88,7 +88,7 @@ function alarm0() {
   global.msg[3] = " cool /";
   global.msg[4] =
     " no but seriously if this is actually ingame please report this error /%%";
-  global.msg[5] = " %%%";
+  global.msg[5] = "%%%";
   global.typer = 5;
   global.facechoice = 0;
   global.faceemotion = 0;

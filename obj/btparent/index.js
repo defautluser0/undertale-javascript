@@ -1,12 +1,9 @@
-import { draw_sprite_ext, getBoundingBox, instance_create, instance_destroy, instance_exists, script_execute, instance_find } from "/imports/assets/gamemakerFunctions.js";
-import { scr_depth, scr_npcdir } from "/imports/customFunctions.js";
+import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-import global from "/imports/assets/global.js"
 
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
 //                                                               // to this fake object
-import * as obj_dialoguer from "/obj/dialoguer/index.js";
-import * as parent from "/obj/torinteractable1/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -14,8 +11,8 @@ function create() {
   // create code
 
   const self = {
-    name: "torinteractable4", // sprite name
-    depth: 0, // object depth
+    name: "btparent", // sprite name
+    depth: 2, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
@@ -26,7 +23,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: "spr_toriel_dt", // sprite object
+    sprite_index: "spr_fightbt", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -37,35 +34,23 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-    dsprite: "spr_toriel_d",
-    usprite: "spr_toriel_u",
-    lsprite: "spr_toriel_l",
-    rsprite: "spr_toriel_r",
-    dtsprite: "spr_toriel_dt",
-    utsprite: "spr_toriel_ut",
-    ltsprite: "spr_toriel_lt",
-    rtsprite: "spr_toriel_rt",
-    myinteract: 0,
-    facing: 1,
-    talkedto: 0,
+    spec: 0,
+    spec_x: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
-    updateGamemakerFunctions,
+    updateSpeed,
+    updateIndex,
     updateSprite,
     updateCol,
     followPath,
-    createContext,
-    step,
-    alarm0,
-    beginStep,
-    roomStart,
+    createContext
   };
   
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
-  self._direction = 180;
+  self._direction = 0;
   self._path = {
     data: {},
     index: 1,
@@ -196,21 +181,14 @@ function updateAlarms() {
   }
 }
 
-function updateGamemakerFunctions() {
+function updateIndex() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
-
-		this.animationEnd?.();
   }
+}
 
-  getBoundingBox.call(this);
-
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+function updateSpeed() {
   // apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -235,7 +213,7 @@ function updateGamemakerFunctions() {
 
 function updateSprite() {
   if (this.visible === true) {
-    let img = draw_sprite_ext(
+    draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -243,14 +221,9 @@ function updateSprite() {
       this.image_xscale,
       this.image_yscale,
       this.image_angle,
-      this.image_blend,
-      this.image_alpha,
-      1,
+      c_white,
+      this.image_alpha
     );
-    if (img) {
-      this.sprite_width = img.width;
-      this.sprite_height = img.height
-    }
   }
 }
 
@@ -334,35 +307,4 @@ function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
 }
 
-function step() {
-  this.parent.step.call(this);
-}
-
-function alarm0() {
-  this.myinteract = 3;
-  global.msc = 214;
-
-  if (this.talkedto > 0) {
-    global.msc = 215;
-  }
-
-  global.typer = 4;
-  global.facechoice = 1;
-  global.faceemotion = 2;
-  this.mydialoguer = instance_create(0, 0, obj_dialoguer);
-  this.talkedto += 1;
-}
-
-function beginStep() {
-  this.parent.beginStep.call(this);
-}
-
-function roomStart() {
-  if (global.plot < 5.4 || global.plot > 6.5) {
-    instance_destroy(this);
-  }
-
-  this.direction = 270;
-}
-
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, createContext, step, alarm0, beginStep, roomStart };
+export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext };

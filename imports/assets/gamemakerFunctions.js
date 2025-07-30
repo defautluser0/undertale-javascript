@@ -555,9 +555,6 @@ function draw_set_font(font, second) {
     img.onload = () => {
       targetFont.image = img;
       targetFont.loading = false;
-      if (global.debug === 1 && img) {
-        document.body.appendChild(img);
-      }
     };
   }
 }
@@ -662,11 +659,7 @@ function instance_destroy(target) {
   if (target && typeof target === "object" && "_object" in target) {
     target.destroy?.call(target);
     target.cleanUp?.call(target);
-    const list = instances.get(target._object);
-    if (list) {
-      const i = list.indexOf(target);
-      if (i !== -1) list.splice(i, 1);
-    }
+    target._destroyed = true;
     return;
   }
 
@@ -677,8 +670,7 @@ function instance_destroy(target) {
     for (const inst of toDestroy) {
       inst.destroy?.call(inst);
       inst.cleanUp?.call(inst);
-      const i = list.indexOf(inst);
-      if (i !== -1) list.splice(i, 1);
+      inst._destroyed = true;
     }
   }
 }
@@ -1909,7 +1901,6 @@ function move_towards_point(x, y, sp) {
   const rad = this.direction * (Math.PI / 180);
   this.hspeed = Math.cos(rad) * sp;
   this.vspeed = -Math.sin(rad) * sp;
-  console.log(this.vspeed, this.hspeed);
 }
 
 /**
@@ -2110,9 +2101,25 @@ function path_start(path, speed, endaction, absolute) {
  * @param {string} string The string to measure the width of
  * @returns {number}
  */
-function string_width(string) {
-  // TODO: make it work and not return string.length
-  return string_length(string);
+function string_width(string, second = 0) {
+  let font;
+  if (second === 0) font = currentFont;
+  if (second === 1) font = secondFont;
+  if (second === 2) font = thirdFont;
+  if (!font) return;
+  let width = 0;
+
+  for (const char of string) {
+    const glyph = font.glyphs[char];
+    if (!glyph) {
+      width += font.size; // fallback spacing for missing glyphs
+      continue;
+    }
+
+    width += glyph.shift ?? (glyph.w + (glyph.offset || 0));
+  }
+
+  return width;
 }
 
 /**
@@ -2521,6 +2528,65 @@ function path_end() {
   this._path.data = {};
 }
 
+/**
+ * GameMaker provides this function (as well as others) to permit the user to make their own colours. This particular function takes three component parts, the hue, the saturation and the value (also know as "luminosity") to create the colour desired. These values are taken as being between 0 and 255 so you can make 16,777,216 (256*256*256) colours with this!
+ * 
+ * @param {number} hue The hue of the colour
+ * @param {number} sat How saturated the colour is
+ * @param {number} val How dark the colour is
+ * @returns {string} A hex code representing the color
+ */
+function make_colour_hsv(hue, sat, val) {
+  let red, green, blue;
+  if (sat === 0) {
+    red = green = blue = val;
+  } else {
+    let chroma = val * sat;
+    let hueSection = hue / 60;
+    let secComp = chroma * (1 - abs((hueSection % 2) - 1));
+    let match = val - chroma;
+
+    let rPrime, gPrime, bPrime;
+
+    if (0 <= hue && hue < 60) {
+      rPrime = chroma;
+      gPrime = secComp;
+      bPrime = 0;
+    } else if (60 <= hue && hue < 120) {
+      rPrime = secondComponent;
+      gPrime = chroma;
+      bPrime = 0;
+    } else if (120 <= hue && hue < 180) {
+      rPrime = 0;
+      gPrime = chroma;
+      bPrime = secondComponent;
+    } else if (180 <= hue && hue < 240) {
+      rPrime = 0;
+      gPrime = secondComponent;
+      bPrime = chroma;
+    } else if (240 <= hue && hue < 300) {
+      rPrime = secondComponent;
+      gPrime = 0;
+      bPrime = chroma;
+    } else if (300 <= hue && hue < 360) {
+      rPrime = chroma;
+      gPrime = 0;
+      bPrime = secondComponent;
+    }
+
+    red   = Math.round((rPrime + matchValue) * 255);
+    green = Math.round((gPrime + matchValue) * 255);
+    blue  = Math.round((bPrime + matchValue) * 255);
+  }
+
+  function toHex(value) {
+    const hex = value.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  }
+
+  return `#${toHex(red)}${toHex(green)}${toHex(blue)}`.toLowerCase();
+}
+
 export {
   audio_play_sound,
   audio_is_playing,
@@ -2617,4 +2683,5 @@ export {
   file_text_export,
   draw_tile,
   path_end,
+  make_colour_hsv,
 };

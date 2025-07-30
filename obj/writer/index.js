@@ -70,11 +70,8 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     alarm0,
-    parent_beginStep,
-    parent_step,
     user0,
     user1,
-    parent_draw,
     draw,
     step,
     beginStep,
@@ -333,7 +330,7 @@ function updateGamemakerFunctions() {
   }
 }
 
-function parent_beginStep() {
+function beginStep() {
   if (this.shake > 38) {
     this.speed = 2;
     this.direction += 20;
@@ -347,7 +344,7 @@ function parent_beginStep() {
   }
 }
 
-function parent_step() {
+function step() {
   if (control_check_pressed(0) === true) {
     this.user0();
   }
@@ -382,7 +379,7 @@ function user1() {
   }
 }
 
-function parent_draw() {
+function draw() {
   let myx = 0;
   let myy = 0;
   let offsetx = 0;
@@ -839,18 +836,6 @@ function parent_draw() {
   }
 }
 
-function step() {
-  this.parent_step();
-}
-
-function beginStep() {
-  this.parent_beginStep();
-}
-
-function draw() {
-  this.parent_draw();
-}
-
 function roomStart() {
   script_execute.call(this, SCR_TEXT, global.msc);
   SCR_TEXTTYPE.call(this, global.typer, 0, 0);
@@ -877,13 +862,10 @@ export {
   create,
   updateAlarms,
   updateGamemakerFunctions,
-  parent_beginStep,
   beginStep,
-  parent_step,
   step,
   user0,
   user1,
-  parent_draw,
   draw,
   roomStart,
   alarm0,

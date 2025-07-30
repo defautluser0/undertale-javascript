@@ -4,7 +4,7 @@ import { c_white } from "/imports/assets.js";
 import { control_check_pressed, control_check, vk_up, vk_down, vk_left, vk_right } from "/imports/input.js"
 import global from "/imports/assets/global.js";
 
-// import * as obj_battlecontroller from "/obj/battlecontroller/index.js";
+import * as obj_battlecontroller from "/obj/battlecontroller/index.js";
 import * as obj_uborder from "/obj/uborder/index.js";
 import * as obj_rborder from "/obj/rborder/index.js";
 import * as obj_dborder from "/obj/dborder/index.js";
@@ -273,7 +273,7 @@ function step() {
 
   global.invc -= 1;
 
-  if (global.invc > 0/* || instance_find(obj_battlecontroller, 0).runaway === 1 */) {
+  if (global.invc > 0 || instance_find(obj_battlecontroller, 0).runaway === 1) {
     this.image_speed = 0.5;
   } else {
     this.image_speed = 0;
@@ -445,7 +445,7 @@ if (this.jumpstage == 2 && this.movement == 11)
     console.log("what how");
   }
 
-  if (instance_exists("obj_battlecontroller")) {
+  if (instance_exists(obj_battlecontroller)) {
     if (instance_find(obj_battlecontroller, 0).runaway === 1 && this.x < -20) {
       if (!instance_exists(obj_unfader)) {
         instance_create(0, 0, obj_unfader);
@@ -574,7 +574,7 @@ function updateCol() {
       this.vspeed = 0;
     }
 
-    if (this.confuse === 1/* && instance_find(obj_battlecontroller).runaway !== 1*/) {
+    if (this.confuse === 1 && instance_find(obj_battlecontroller).runaway !== 1) {
       this.y = other.y - 8;
     }
   }

@@ -3,11 +3,13 @@ import {
   scr_gettext,
   ossafe_ini_open,
   ossafe_ini_close,
+  scr_mercystandard,
 } from "/imports/customFunctions.js";
 import {
   ds_map_create,
   ds_map_add,
   script_execute,
+  _with,
 } from "/imports/assets/gamemakerFunctions.js";
 
 import * as obj_mainchara from "/obj/mainchara/index.js";
@@ -23,27 +25,28 @@ function SCR_TEXT(argument0) {
         " \\XLa, la.^3 &Time to wake&up and\\R smell\\X &the^4 pain./";
       global.msg[1] = " * Though^2.^4.^6.^8.&It's still a&little shaky./";
       global.msg[2] = " fhuehfuehfuehfuheufhe/%";
-      global.msg[3] = " %%%";
+      global.msg[3] = "%%%";
       break;
 
     case 2:
       global.msg[0] = " * TestMonster and its cohorts&draw near!";
-      global.msg[1] = " %%%";
+      global.msg[1] = "%%%";
       break;
 
     case 3:
       global.msg[0] = " ";
 
       if (global.monster[0] == 1) {
-        // with (global.monsterinstance[0])
-        // script_execute.call(global.monsterinstance[0], scr_mercystandard);
+        _with(global.monsterinstance[0], function () {
+          script_execute.call(this, scr_mercystandard);
+        });
 
-        adder = "\\W";
+        adder = " \\W";
 
         if (global.monsterinstance[0].mercy < 0) {
-          if (global.flag[22] == 0) adder = "\\Y";
+          if (global.flag[22] == 0) adder = " \\Y";
 
-          if (global.flag[22] == 2) adder = "\\p";
+          if (global.flag[22] == 2) adder = " \\p";
         }
 
         global.msg[0] = adder;
@@ -60,14 +63,15 @@ function SCR_TEXT(argument0) {
       global.msg[0] += "\\W &";
 
       if (global.monster[1] == 1) {
-        // with (global.monsterinstance[1])
-        // script_execute.call(global.monsterinstance[1], scr_mercystandard);
+        _with(global.monsterinstance[1], function () {
+          script_execute.call(this, scr_mercystandard);
+        });
 
         if (global.monsterinstance[1].mercy < 0 && global.flag[22] == 0)
-          global.msg[0] += "\\Y";
+          global.msg[0] += " \\Y";
 
         if (global.monsterinstance[1].mercy < 0 && global.flag[22] == 2)
-          global.msg[0] += "\\p";
+          global.msg[0] += " \\p";
 
         global.msg[0] +=
           scr_gettext("battle_name_header") + global.monstername[1]; //    *
@@ -76,17 +80,18 @@ function SCR_TEXT(argument0) {
           global.msg[0] += scr_gettext("battle_name_b"); //  B
       }
 
-      global.msg[0] += "\\W &";
+      global.msg[0] += " \\W &";
 
       if (global.monster[2] == 1) {
-        // with (global.monsterinstance[2])
-        // script_execute.call(global.monsterinstance[2], scr_mercystandard);
+        _with(global.monsterinstance[0], function () {
+          script_execute.call(this, scr_mercystandard);
+        });
 
         if (global.monsterinstance[2].mercy < 0 && global.flag[22] == 0)
-          global.msg[0] += "\\Y";
+          global.msg[0] += " \\Y";
 
         if (global.monsterinstance[2].mercy < 0 && global.flag[22] == 2)
-          global.msg[0] += "\\p";
+          global.msg[0] += " \\p";
 
         global.msg[0] +=
           scr_gettext("battle_name_header") + global.monstername[2]; //    *
@@ -101,23 +106,24 @@ function SCR_TEXT(argument0) {
     case 7:
       global.msg[0] = "";
 
-      for (i = 0; i < 3; i += 1) {
+      for (let i = 0; i < 3; i += 1) {
         if (global.monster[i] == 1) {
-          // with (global.monsterinstance[i])
-          script_execute.call(global.monsterinstance[i], scr_mercystandard);
+          _with(global.monsterinstance[i], function () {
+            script_execute.call(this, scr_mercystandard);
+          });
 
           if (global.monsterinstance[i].mercy < 0 && global.flag[22] == 0)
-            global.msg[0] = "\\Y";
+            global.msg[0] = " \\Y";
 
           if (global.monsterinstance[i].mercy < 0 && global.flag[22] == 2)
-            global.msg[0] = "\\p";
+            global.msg[0] = " \\p";
         }
       }
 
       global.msg[0] += scr_gettext("battle_mercy_spare"); //    * Spare
 
       if (global.mercy == 0)
-        global.msg[0] += " &\\W" + scr_gettext("battle_mercy_flee"); //    * Flee
+        global.msg[0] += "&\\W" + scr_gettext("battle_mercy_flee"); //    * Flee
 
       break;
 
@@ -1421,7 +1427,7 @@ function SCR_TEXT(argument0) {
           doak = 1;
           script_execute(scr_itemget, 0);
 
-          for (i = 0; i < 8; i += 1) {
+          for (let i = 0; i < 8; i += 1) {
             if (global.item[i] == 27) noroom = 2;
           }
         }
@@ -8411,7 +8417,7 @@ function textdata_en() {
     " * Ready^2?&* Here we go!/%%"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_301", " \\E2* This way./%%");
-  ds_map_add(global.text_data_en, "SCR_TEXT_302", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_302", "%%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_306",
@@ -10081,7 +10087,7 @@ function textdata_en() {
     "SCR_TEXT_1535",
     " * (Golden flowers.^1)&* (They must have&  broken your fall.)/%%"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_1536", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_1536", "%%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_1540",
@@ -12585,7 +12591,7 @@ function textdata_en() {
     "SCR_TEXT_3509",
     " Move around^1!&Get as many as&you can^2!%%%"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_3510", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_3510", "%%%");
   ds_map_add(global.text_data_en, "SCR_TEXT_3514", " You idiot./");
   ds_map_add(
     global.text_data_en,
@@ -12658,7 +12664,7 @@ function textdata_en() {
     "SCR_TEXT_3541",
     " \\E2Come^2!&I will guide you&through the&catacombs./%%"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_3542", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_3542", "%%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_3548",
@@ -15977,182 +15983,202 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5937",
-    "   * Check         * Compliment&   * Threat"
+    "    * Check         * Compliment&   * Threat"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_5948", "   * Check         * Talk");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_5948",
+    "    * Check         * Talk"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5959",
-    "   * Check         * Compliment&   * Threat"
+    "    * Check         * Compliment&   * Threat"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5970",
-    "   * Check         * Compliment&   * Threat"
+    "    * Check         * Compliment&   * Threat"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5981",
-    "   * Check         * Console&   * Terrorize"
+    "    * Check         * Console&   * Terrorize"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_5991",
-    "   * Check         * Imitate&   * Flirt"
+    "    * Check         * Imitate&   * Flirt"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6001", "   * Check         * Talk");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6001",
+    "    * Check         * Talk"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6011",
-    "   * Check         * Talk&   * Devour        * Dinner"
+    "    * Check         * Talk&   * Devour        * Dinner"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6021",
-    "   * Check         * Pick On&   * Don't Pick On"
+    "    * Check         * Pick On&   * Don't Pick On"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6031", "   * Check         * Talk");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6031",
+    "    * Check         * Talk"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6041",
-    "   * Check         * Flirt&   * Threat        * Cheer"
+    "    * Check         * Flirt&   * Threat        * Cheer"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6051",
-    "   * Check         * Imitate&   * Flirt"
+    "    * Check         * Imitate&   * Flirt"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6061", "   * Check         * Pet");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6061", "    * Check         * Pet");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6071",
-    "   * Check         * Pet&   * Pet           * Pet  &   * Pet           * Pet  "
+    "    * Check         * Pet&   * Pet           * Pet  &   * Pet           * Pet  "
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6081",
-    "   * Check         * Pet&   * Re-sniff      * Roll Around"
+    "    * Check         * Pet&   * Re-sniff      * Roll Around"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6091",
-    "   * Check         * Pet&   * Re-sniff      * Roll Around"
+    "    * Check         * Pet&   * Re-sniff      * Roll Around"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6101",
-    "   * Check         * Pet&   * Beckon        * Play &   * Ignore"
+    "    * Check         * Pet&   * Beckon        * Play &   * Ignore"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6114",
-    "   * Check         * Agree&   * Clash         * Joke"
+    "    * Check         * Agree&   * Clash         * Joke"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6124",
-    "   * Check         * Laugh&   * Heckle        * Joke"
+    "    * Check         * Laugh&   * Heckle        * Joke"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6135",
-    "   * Check         * Compliment&   * Ignore        * Steal"
+    "    * Check         * Compliment&   * Ignore        * Steal"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6145",
-    "   * Check         * Compliment"
+    "    * Check         * Compliment"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6155",
-    "   * Check         * Ditch"
+    "    * Check         * Ditch"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6165",
-    "   * Check         * Decorate&   * Undecorate    * Gift"
+    "    * Check         * Decorate&   * Undecorate    * Gift"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6175",
-    "   * Check         * Flex&   * Shoo"
+    "    * Check         * Flex&   * Shoo"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6185",
-    "   * Check         * Flex&   * Feed Temmie   * Talk&     Flakes  "
+    "    * Check         * Flex&   * Feed Temmie   * Talk&     Flakes  "
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6196",
-    "   * Check         * Flirt&   * Insult"
+    "    * Check         * Flirt&   * Insult"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6206", "   * Check");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6206", "    * Check");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6221",
-    "   * Check         * Imitate&   * Flirt"
+    "    * Check         * Imitate&   * Flirt"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6234",
-    "   * Check         * Lie Down&   * Hug           * Unhug"
+    "    * Check         * Lie Down&   * Hug           * Unhug"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6244",
-    "   * Check         * Lie Down&   * Hug           * Unhug"
+    "    * Check         * Lie Down&   * Hug           * Unhug"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6259",
-    "   * Check         * Clean&   * Touch         * Joke"
+    "    * Check         * Clean&   * Touch         * Joke"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6269",
-    "   * Check         * Smile&   * Hum           * Conduct"
+    "    * Check         * Smile&   * Hum           * Conduct"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6279", "   * Check         * Talk");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6279",
+    "    * Check         * Talk"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6289",
-    "   * Check         * Plead&   * Challenge"
+    "    * Check         * Plead&   * Challenge"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6300", "   * Check");
-  ds_map_add(global.text_data_en, "SCR_TEXT_6313", "   * Check         * Cry");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6300", "    * Check");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6313", "    * Check         * Cry");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6323",
-    "   * Check         * Whisper&   * Clean Armor"
+    "    * Check         * Whisper&   * Clean Armor"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6333",
-    "   * Check         * Whisper&   * Clean Armor"
+    "    * Check         * Whisper&   * Clean Armor"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6343",
-    "   * Check         * Flirt&   * Approach"
+    "    * Check         * Flirt&   * Approach"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6353",
-    "   * Check         * Criticize&   * Encourage     * Hug"
+    "    * Check         * Criticize&   * Encourage     * Hug"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6363",
-    "   * Check         * Cool Down&   * Heat Up       * Invite"
+    "    * Check         * Cool Down&   * Heat Up       * Invite"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6374",
     " \\W   * Check         * Struggle&   * Pay \\[1]G&         \\YYour Money: \\[G]G \\W "
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6384", "   * Check         * Yell");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6384",
+    "    * Check         * Yell"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6387",
@@ -16161,49 +16187,53 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6398",
-    "   * Check         * Fake Attack"
+    "    * Check         * Fake Attack"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6408",
-    "   * Check         * Talk     &   * Stare         * Clear Mind"
+    "    * Check         * Talk     &   * Stare         * Clear Mind"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6418",
-    "   * Check         * Talk     &   * Sing"
+    "    * Check         * Talk     &   * Sing"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6428",
-    "   * Check         * Compliment&   * Threaten      * Mystify"
+    "    * Check         * Compliment&   * Threaten      * Mystify"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6438",
-    "   * Check         * Pick On&   * Don't Pick    * Challenge&     On"
+    "    * Check         * Pick On&   * Don't Pick    * Challenge&     On"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6449",
-    "   * Check         * Console&   * Terrorize     * Pray"
+    "    * Check         * Console&   * Terrorize     * Pray"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6460",
-    "   * Check         * Defuse Bomb"
+    "    * Check         * Defuse Bomb"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6470",
-    "   * Check         * Whisper&   * Touch Glove"
+    "    * Check         * Whisper&   * Touch Glove"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6480",
-    "   * Check         * Whisper&   * Touch Glove"
+    "    * Check         * Whisper&   * Touch Glove"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6490", "   * Check         * Burn");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6490",
+    "    * Check         * Burn"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6493",
@@ -16212,9 +16242,13 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6504",
-    "   * Check         * Boast&   * Pose          * Heel Turn"
+    "    * Check         * Boast&   * Pose          * Heel Turn"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6514", "   * Check         * Talk");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6514",
+    "    * Check         * Talk"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6524",
@@ -16223,27 +16257,27 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6534",
-    "   * Check         * Pick On&   * Mystify       * Clean&   * Hum           * Pray"
+    "    * Check         * Pick On&   * Mystify       * Clean&   * Hum           * Pray"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6544",
-    "   * Check         * Laugh&   * Heckle        * Joke"
+    "    * Check         * Laugh&   * Heckle        * Joke"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6554",
-    "   * Check         * ITEM &   * STAT          * CELL"
+    "    * Check         * ITEM &   * STAT          * CELL"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6565",
-    "   * Check         * Join&   * Refuse"
+    "    * Check         * Join&   * Refuse"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6579",
-    "   * Check         * Pet&   * Beckon        * Play &   * Ignore"
+    "    * Check         * Pet&   * Beckon        * Play &   * Ignore"
   );
   ds_map_add(
     global.text_data_en,
@@ -16275,52 +16309,60 @@ function textdata_en() {
     "SCR_TEXT_6639",
     "   * Talk          * Mercy  &   * Stare         * Hug"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6649", "   * Check");
-  ds_map_add(global.text_data_en, "SCR_TEXT_6659", "   * Check");
-  ds_map_add(global.text_data_en, "SCR_TEXT_6669", "   * Check");
-  ds_map_add(global.text_data_en, "SCR_TEXT_6679", "   * Check");
-  ds_map_add(global.text_data_en, "SCR_TEXT_6689", "   * Check");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6649", "    * Check");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6659", "    * Check");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6669", "    * Check");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6679", "    * Check");
+  ds_map_add(global.text_data_en, "SCR_TEXT_6689", "    * Check");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6699",
-    "   * Check         * Compliment&   * Threaten      * Mystify"
+    "    * Check         * Compliment&   * Threaten      * Mystify"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6709",
-    "   * Check         * Pick On&   * Don't Pick    * Challenge&     On"
+    "    * Check         * Pick On&   * Don't Pick    * Challenge&     On"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6720",
-    "   * Check         * Console&   * Terrorize     * Pray"
+    "    * Check         * Console&   * Terrorize     * Pray"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6731", "   * Check         * Talk");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6731",
+    "    * Check         * Talk"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6741",
-    "   * Check         * Switch&   * Fix           * Lie Down"
+    "    * Check         * Switch&   * Fix           * Lie Down"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6751",
-    "   * Check         * Hiss&   * Devour        * Snack"
+    "    * Check         * Hiss&   * Devour        * Snack"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6761",
-    "   * Check         * Applaud&   * Boo           * Nothing"
+    "    * Check         * Applaud&   * Boo           * Nothing"
   );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6772",
-    "   * Check         * Something"
+    "    * Check         * Something"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_6783", "   * Check         * Draw");
+  ds_map_add(
+    global.text_data_en,
+    "SCR_TEXT_6783",
+    "    * Check         * Draw"
+  );
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_6793",
-    "   * Check         * Hope  &   * Dream"
+    "    * Check         * Hope  &   * Dream"
   );
   ds_map_add(global.text_data_en, "SCR_TEXT_6804", "   * Error");
   ds_map_add(global.text_data_en, "SCR_TEXT_6814", "   * Struggle");
@@ -16591,29 +16633,29 @@ function textdata_en() {
     "SCR_TEXT_7079",
     " * You encountered the Dummy."
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_7080", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_7080", "%%%");
   ds_map_add(global.text_data_en, "SCR_TEXT_7084", " * Froggit attacks you!");
-  ds_map_add(global.text_data_en, "SCR_TEXT_7085", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_7085", "%%%");
   ds_map_add(global.text_data_en, "SCR_TEXT_7089", " * Froggit hopped close!");
-  ds_map_add(global.text_data_en, "SCR_TEXT_7090", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_7090", "%%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_7094",
     " * Whimsun approached meekly!"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_7095", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_7095", "%%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_7099",
     " * Froggit and Whimsun drew near!"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_7100", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_7100", "%%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_7104",
     " * Moldsmal blocked the way!"
   );
-  ds_map_add(global.text_data_en, "SCR_TEXT_7105", " %%%");
+  ds_map_add(global.text_data_en, "SCR_TEXT_7105", "%%%");
   ds_map_add(
     global.text_data_en,
     "SCR_TEXT_dogshrine_5913",
@@ -16916,7 +16958,7 @@ function textdata_en() {
     "obj_6book_master_384",
     " You&called&for&help&..."
   );
-  ds_map_add(global.text_data_en, "obj_6book_master_385", " %%%");
+  ds_map_add(global.text_data_en, "obj_6book_master_385", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_6book_act_179",
@@ -16957,31 +16999,31 @@ function textdata_en() {
     "obj_6glove_act_148",
     " * You called for help..."
   );
-  ds_map_add(global.text_data_en, "obj_6glove_act_149", " %%%");
+  ds_map_add(global.text_data_en, "obj_6glove_act_149", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_6gun_act_149",
     " * You called for help..."
   );
-  ds_map_add(global.text_data_en, "obj_6gun_act_150", " %%%");
+  ds_map_add(global.text_data_en, "obj_6gun_act_150", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_6knife_act_284",
     " * You called for help..."
   );
-  ds_map_add(global.text_data_en, "obj_6knife_act_285", " %%%");
+  ds_map_add(global.text_data_en, "obj_6knife_act_285", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_6pan_act_163",
     " * You called for help..."
   );
-  ds_map_add(global.text_data_en, "obj_6pan_act_164", " %%%");
+  ds_map_add(global.text_data_en, "obj_6pan_act_164", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_6shoe_act_184",
     " * You called for help..."
   );
-  ds_map_add(global.text_data_en, "obj_6shoe_act_185", " %%%");
+  ds_map_add(global.text_data_en, "obj_6shoe_act_185", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_aaron_243",
@@ -17041,7 +17083,7 @@ function textdata_en() {
     " Just the&two of&us, huh?&; )"
   );
   ds_map_add(global.text_data_en, "obj_aaron_279", " Hi?&; )");
-  ds_map_add(global.text_data_en, "obj_aaron_282", " %%%");
+  ds_map_add(global.text_data_en, "obj_aaron_282", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_aaron_478",
@@ -20170,7 +20212,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_asrielfinal_732", " ");
   ds_map_add(global.text_data_en, "obj_asrielfinal_737", " ");
   ds_map_add(global.text_data_en, "obj_asrielfinal_741", " ");
-  ds_map_add(global.text_data_en, "obj_asrielfinal_746", " %%%");
+  ds_map_add(global.text_data_en, "obj_asrielfinal_746", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_asrielfinal_767",
@@ -20425,7 +20467,7 @@ function textdata_en() {
     " ...&Don't&pick on&me."
   );
   ds_map_add(global.text_data_en, "obj_astigmatism_249", " ...&Pick on&me.");
-  ds_map_add(global.text_data_en, "obj_astigmatism_254", " %%%");
+  ds_map_add(global.text_data_en, "obj_astigmatism_254", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_astigmatism_456",
@@ -20550,7 +20592,7 @@ function textdata_en() {
     " 02...&I never&told&him..."
   );
   ds_map_add(global.text_data_en, "obj_bara01_293", " 02!?&B-but&why!?");
-  ds_map_add(global.text_data_en, "obj_bara01_300", " %%%");
+  ds_map_add(global.text_data_en, "obj_bara01_300", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_bara01_524",
@@ -20703,7 +20745,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_bara02_282", " ...");
   ds_map_add(global.text_data_en, "obj_bara02_285", " 01...&you...!&..!!!!");
   ds_map_add(global.text_data_en, "obj_bara02_287", " 01...!?&What&the...!?");
-  ds_map_add(global.text_data_en, "obj_bara02_292", " %%%");
+  ds_map_add(global.text_data_en, "obj_bara02_292", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_bara02_527",
@@ -20801,7 +20843,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_battlebomb_220", " Tock.");
   ds_map_add(global.text_data_en, "obj_battlebomb_222", " Zzz...");
   ds_map_add(global.text_data_en, "obj_battlebomb_223", " Swish.");
-  ds_map_add(global.text_data_en, "obj_battlebomb_245", " %%%");
+  ds_map_add(global.text_data_en, "obj_battlebomb_245", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_battlebomb_485",
@@ -21131,7 +21173,7 @@ function textdata_en() {
     "obj_boysnightout_116",
     " * Well^1, just stay chill^1.&* We'll bring you someplace&  safe^1, OK?/%%"
   );
-  ds_map_add(global.text_data_en, "obj_boysnightout_117", " %%%");
+  ds_map_add(global.text_data_en, "obj_boysnightout_117", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_boysnightout_156",
@@ -21368,7 +21410,7 @@ function textdata_en() {
     "obj_chilldrake_288",
     " Nice&try,&laugh&Picasso."
   );
-  ds_map_add(global.text_data_en, "obj_chilldrake_296", " %%%");
+  ds_map_add(global.text_data_en, "obj_chilldrake_296", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_chilldrake_493",
@@ -22379,13 +22421,13 @@ function textdata_en() {
     " * Napstablook eagerly awaits&  your response."
   );
   ds_map_add(global.text_data_en, "obj_crygen3_80", " do you&like&it...");
-  ds_map_add(global.text_data_en, "obj_crygen3_81", " %%%");
+  ds_map_add(global.text_data_en, "obj_crygen3_81", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_crygen3_108",
     'i call&it&"dapper&blook"'
   );
-  ds_map_add(global.text_data_en, "obj_crygen3_109", " %%%");
+  ds_map_add(global.text_data_en, "obj_crygen3_109", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_darkfridge_116",
@@ -23598,7 +23640,7 @@ function textdata_en() {
   );
   ds_map_add(global.text_data_en, "obj_doublesans_77", " * are you lost?/%%");
   ds_map_add(global.text_data_en, "obj_dummymonster_213", " ^1.^1.^1.^1.^1.");
-  ds_map_add(global.text_data_en, "obj_dummymonster_222", " %%%");
+  ds_map_add(global.text_data_en, "obj_dummymonster_222", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_dummymonster_394",
@@ -23617,7 +23659,7 @@ function textdata_en() {
   ds_map_add(
     global.text_data_en,
     "obj_dummymonster_437",
-    " * DUMMY - ATK 0 DEF 0^1 &* A cotton heart and a button ey^1e* You are the apple of my eye/%%"
+    " * DUMMY - ATK 0 DEF 0^1 &* A cotton heart and a button ey^1e&* You are the apple of my eye/%%"
   );
   ds_map_add(
     global.text_data_en,
@@ -25440,7 +25482,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_f_frasier_33", " %");
   ds_map_add(global.text_data_en, "obj_f_frasier_34", " %");
   ds_map_add(global.text_data_en, "obj_f_frasier_35", " %");
-  ds_map_add(global.text_data_en, "obj_f_frasier_36", " %%%");
+  ds_map_add(global.text_data_en, "obj_f_frasier_36", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_f_frasier_40",
@@ -25595,7 +25637,7 @@ function textdata_en() {
     "obj_finalfroggit_235",
     " (Impress&-ed&ribbit)"
   );
-  ds_map_add(global.text_data_en, "obj_finalfroggit_240", " %%%");
+  ds_map_add(global.text_data_en, "obj_finalfroggit_240", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_finalfroggit_440",
@@ -25662,13 +25704,13 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_finalknight_287", " Close&your&eyes...");
   ds_map_add(global.text_data_en, "obj_finalknight_291", " Goodbye.");
   ds_map_add(global.text_data_en, "obj_finalknight_295", " Zzzz...");
-  ds_map_add(global.text_data_en, "obj_finalknight_298", " %%%");
+  ds_map_add(global.text_data_en, "obj_finalknight_298", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_finalknight_308",
     " ......& ......& ......& ......& ......& ......& ......& ......& It's OK."
   );
-  ds_map_add(global.text_data_en, "obj_finalknight_309", " %%%");
+  ds_map_add(global.text_data_en, "obj_finalknight_309", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_finalknight_515",
@@ -25749,7 +25791,7 @@ function textdata_en() {
     "obj_flowey_bulletmaster_562",
     " * Flowey's DEFENSE&  dropped to 0^4! %%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_bulletmaster_564", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_bulletmaster_564", "%%%");
   ds_map_add(global.text_data_en, "obj_flowey_master_1067", " * No... NO!!!/");
   ds_map_add(
     global.text_data_en,
@@ -25761,7 +25803,7 @@ function textdata_en() {
     "obj_flowey_master_1069",
     " * You... YOU.../%%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1070", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1070", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_flowey_master_1124",
@@ -25829,10 +25871,10 @@ function textdata_en() {
     "obj_flowey_master_1194",
     " \\E5* See what good&  it does you!/%%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1195", " %%%");
-  ds_map_add(global.text_data_en, "obj_flowey_master_1196", " %%%");
-  ds_map_add(global.text_data_en, "obj_flowey_master_1197", " %%%");
-  ds_map_add(global.text_data_en, "obj_flowey_master_1198", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1195", "%%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1196", "%%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1197", "%%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1198", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_flowey_master_1216",
@@ -25853,7 +25895,7 @@ function textdata_en() {
     "obj_flowey_master_1260",
     " (You called for help.^4) %%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1261", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1261", "%%%");
   ds_map_add(global.text_data_en, "obj_flowey_master_1276", " * .../");
   ds_map_add(
     global.text_data_en,
@@ -25875,7 +25917,7 @@ function textdata_en() {
     "obj_flowey_master_1280",
     " * Is gonna get to&  see you DIE!!!/%%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1281", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1281", "%%%");
   ds_map_add(global.text_data_en, "obj_flowey_master_1320", " * What^4? %");
   ds_map_add(
     global.text_data_en,
@@ -25887,14 +25929,14 @@ function textdata_en() {
     "obj_flowey_master_1322",
     " \\E2* Well^1, I'll jus^4t%%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1323", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1323", "%%%");
   ds_map_add(global.text_data_en, "obj_flowey_master_1347", " \\E4* Wh..^4. %");
   ds_map_add(
     global.text_data_en,
     "obj_flowey_master_1348",
     " * Where are my&  powers!^5? %%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1349", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1349", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_flowey_master_1374",
@@ -25905,7 +25947,7 @@ function textdata_en() {
     "obj_flowey_master_1375",
     " * What are they&  doing^5? %%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1376", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1376", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_flowey_master_1401",
@@ -25926,13 +25968,13 @@ function textdata_en() {
     "obj_flowey_master_1404",
     " * STOP!!^1!&  STOP IT!!!!^4! %%"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1405", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1405", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_flowey_master_1422",
     " * STOOOOPPPP!!!!!"
   );
-  ds_map_add(global.text_data_en, "obj_flowey_master_1423", " %%%");
+  ds_map_add(global.text_data_en, "obj_flowey_master_1423", "%%%");
   ds_map_add(global.text_data_en, "obj_flowey_wilt_309", " * Flowey ran away.");
   ds_map_add(
     global.text_data_en,
@@ -27540,7 +27582,7 @@ function textdata_en() {
     " (Blushes&deeply.)&Ribbit.."
   );
   ds_map_add(global.text_data_en, "obj_froggit_39", " Shiver,&shiver.");
-  ds_map_add(global.text_data_en, "obj_froggit_42", " %%%");
+  ds_map_add(global.text_data_en, "obj_froggit_42", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_froggit_184",
@@ -27760,7 +27802,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_gladdummy_221", " Bravo!");
   ds_map_add(global.text_data_en, "obj_gladdummy_222", " OK!");
   ds_map_add(global.text_data_en, "obj_gladdummy_223", " ...");
-  ds_map_add(global.text_data_en, "obj_gladdummy_232", " %%%");
+  ds_map_add(global.text_data_en, "obj_gladdummy_232", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_gladdummy_405",
@@ -27808,7 +27850,7 @@ function textdata_en() {
     "obj_glydeb_176",
     " HELLO??&I'M&RIGHT&HERE!!!"
   );
-  ds_map_add(global.text_data_en, "obj_glydeb_181", " %%%");
+  ds_map_add(global.text_data_en, "obj_glydeb_181", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_glydeb_414",
@@ -28789,7 +28831,7 @@ function textdata_en() {
     " A weight&has been&lifted."
   );
   ds_map_add(global.text_data_en, "obj_gyftrot_304", " Thanks&for&nothing!");
-  ds_map_add(global.text_data_en, "obj_gyftrot_312", " %%%");
+  ds_map_add(global.text_data_en, "obj_gyftrot_312", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_gyftrot_507",
@@ -29260,7 +29302,7 @@ function textdata_en() {
     "obj_icecap_177",
     " That's&the best&one in&a while!"
   );
-  ds_map_add(global.text_data_en, "obj_icecap_182", " %%%");
+  ds_map_add(global.text_data_en, "obj_icecap_182", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_icecap_374",
@@ -29451,7 +29493,7 @@ function textdata_en() {
     "obj_icecube_190",
     " That's&the best&one in&a while!"
   );
-  ds_map_add(global.text_data_en, "obj_icecube_196", " %%%");
+  ds_map_add(global.text_data_en, "obj_icecube_196", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_icecube_377",
@@ -29682,7 +29724,7 @@ function textdata_en() {
     "obj_jerry_201",
     " Hahaha!&Where do you get&your ideas!?!"
   );
-  ds_map_add(global.text_data_en, "obj_jerry_207", " %%%");
+  ds_map_add(global.text_data_en, "obj_jerry_207", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_jerry_407",
@@ -31965,7 +32007,7 @@ function textdata_en() {
     "obj_lemonbread_203",
     " I've&felt&this&before."
   );
-  ds_map_add(global.text_data_en, "obj_lemonbread_207", " %%%");
+  ds_map_add(global.text_data_en, "obj_lemonbread_207", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_lemonbread_429",
@@ -32061,7 +32103,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_lesserdoge_221", " (...)");
   ds_map_add(global.text_data_en, "obj_lesserdoge_222", " (Bark)");
   ds_map_add(global.text_data_en, "obj_lesserdoge_223", " (Pant&pant)");
-  ds_map_add(global.text_data_en, "obj_lesserdoge_224", " %%%");
+  ds_map_add(global.text_data_en, "obj_lesserdoge_224", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_lesserdoge_420",
@@ -32483,7 +32525,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_loox_202", " Please&don't&pick on&me.");
   ds_map_add(global.text_data_en, "obj_loox_205", " Finally&someone&gets it.");
   ds_map_add(global.text_data_en, "obj_loox_209", " You rude&little&snipe!");
-  ds_map_add(global.text_data_en, "obj_loox_213", " %%%");
+  ds_map_add(global.text_data_en, "obj_loox_213", "%%%");
   ds_map_add(global.text_data_en, "obj_loox_403", " * Loox is gazing at you.");
   ds_map_add(
     global.text_data_en,
@@ -32619,7 +32661,7 @@ function textdata_en() {
     "obj_maddummy_459",
     " (Wait^1, is DUMMY& a compliment...?)"
   );
-  ds_map_add(global.text_data_en, "obj_maddummy_465", " %%%");
+  ds_map_add(global.text_data_en, "obj_maddummy_465", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_maddummy_1152",
@@ -35333,7 +35375,7 @@ function textdata_en() {
   );
   ds_map_add(global.text_data_en, "obj_mandog_280", " Whine.");
   ds_map_add(global.text_data_en, "obj_mandog_281", " Whimper.");
-  ds_map_add(global.text_data_en, "obj_mandog_284", " %%%");
+  ds_map_add(global.text_data_en, "obj_mandog_284", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_mandog_474",
@@ -35414,7 +35456,7 @@ function textdata_en() {
     "obj_memoryhead_190",
     " You'll&be with&us&shortly."
   );
-  ds_map_add(global.text_data_en, "obj_memoryhead_195", " %%%");
+  ds_map_add(global.text_data_en, "obj_memoryhead_195", "%%%");
   ds_map_add(global.text_data_en, "obj_memoryhead_420", " * But nobody came.");
   ds_map_add(global.text_data_en, "obj_memoryhead_421", " * But nobody came.");
   ds_map_add(global.text_data_en, "obj_memoryhead_422", " * But nobody came.");
@@ -35639,7 +35681,7 @@ function textdata_en() {
     "obj_mettatonb_quiz_286",
     " TIME TO BREAK OUT&THE BIG GUNS!!/%%"
   );
-  ds_map_add(global.text_data_en, "obj_mettatonb_quiz_294", " %%%");
+  ds_map_add(global.text_data_en, "obj_mettatonb_quiz_294", "%%%");
   ds_map_add(global.text_data_en, "obj_mettatonb_quiz_490", " * Mettaton.");
   ds_map_add(
     global.text_data_en,
@@ -37647,7 +37689,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_migosp_242", " Mmm, cha&cha cha!");
   ds_map_add(global.text_data_en, "obj_migosp_243", " Swing&your&arms,&baby");
   ds_map_add(global.text_data_en, "obj_migosp_246", " Hiya~");
-  ds_map_add(global.text_data_en, "obj_migosp_251", " %%%");
+  ds_map_add(global.text_data_en, "obj_migosp_251", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_migosp_441",
@@ -37709,7 +37751,7 @@ function textdata_en() {
     "obj_migospel_236",
     " Laughter&hides&the&pain."
   );
-  ds_map_add(global.text_data_en, "obj_migospel_241", " %%%");
+  ds_map_add(global.text_data_en, "obj_migospel_241", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_migospel_435",
@@ -37785,7 +37827,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_mkid_battle_208", " ...");
   ds_map_add(global.text_data_en, "obj_mkid_battle_209", " ...");
   ds_map_add(global.text_data_en, "obj_mkid_battle_210", " ...");
-  ds_map_add(global.text_data_en, "obj_mkid_battle_215", " %%%");
+  ds_map_add(global.text_data_en, "obj_mkid_battle_215", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_mkid_battle_450",
@@ -38014,7 +38056,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_moldessa_205", " Shh...");
   ds_map_add(global.text_data_en, "obj_moldessa_206", " Hsh...");
   ds_map_add(global.text_data_en, "obj_moldessa_207", " Krr...");
-  ds_map_add(global.text_data_en, "obj_moldessa_212", " %%%");
+  ds_map_add(global.text_data_en, "obj_moldessa_212", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_moldessa_418",
@@ -38089,7 +38131,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_moldsmal_194", " Squorch&...");
   ds_map_add(global.text_data_en, "obj_moldsmal_195", " *Slime&sounds*");
   ds_map_add(global.text_data_en, "obj_moldsmal_196", " *Sexy&wiggle*");
-  ds_map_add(global.text_data_en, "obj_moldsmal_198", " %%%");
+  ds_map_add(global.text_data_en, "obj_moldsmal_198", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_moldsmal_391",
@@ -38141,7 +38183,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_moldsmalx_202", " *Chaste&wiggle*");
   ds_map_add(global.text_data_en, "obj_moldsmalx_206", " ...");
   ds_map_add(global.text_data_en, "obj_moldsmalx_214", " Guoooh!");
-  ds_map_add(global.text_data_en, "obj_moldsmalx_220", " %%%");
+  ds_map_add(global.text_data_en, "obj_moldsmalx_220", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_moldsmalx_451",
@@ -38635,7 +38677,7 @@ function textdata_en() {
     " WELL,&THIS IS&THOROUGH&!!!"
   );
   ds_map_add(global.text_data_en, "obj_movedoge_277", " OK.&That's&enough.");
-  ds_map_add(global.text_data_en, "obj_movedoge_283", " %%%");
+  ds_map_add(global.text_data_en, "obj_movedoge_283", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_movedoge_392",
@@ -38665,13 +38707,13 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_movedoge_514", " * You pet Doggo./^");
   ds_map_add(global.text_data_en, "obj_movedoge_515", " * You pet Doggo./^");
   ds_map_add(global.text_data_en, "obj_movedogehead_103", " FETCH?");
-  ds_map_add(global.text_data_en, "obj_movedogehead_104", " %%%");
+  ds_map_add(global.text_data_en, "obj_movedogehead_104", "%%%");
   ds_map_add(global.text_data_en, "obj_movedogehead_185", " PET?");
   ds_map_add(global.text_data_en, "obj_movedogehead_186", " PAT?");
   ds_map_add(global.text_data_en, "obj_movedogehead_187", " POT?");
-  ds_map_add(global.text_data_en, "obj_movedogehead_188", " %%%");
+  ds_map_add(global.text_data_en, "obj_movedogehead_188", "%%%");
   ds_map_add(global.text_data_en, "obj_movedogehead_263", " MOVING?");
-  ds_map_add(global.text_data_en, "obj_movedogehead_264", " %%%");
+  ds_map_add(global.text_data_en, "obj_movedogehead_264", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_muffetnpc2_75",
@@ -39145,7 +39187,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_napstablook_305", " i knew&it...");
   ds_map_add(global.text_data_en, "obj_napstablook_311", " oh&no...");
   ds_map_add(global.text_data_en, "obj_napstablook_317", " oh&gee...");
-  ds_map_add(global.text_data_en, "obj_napstablook_329", " %%%");
+  ds_map_add(global.text_data_en, "obj_napstablook_329", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_napstablook_339",
@@ -44532,7 +44574,7 @@ function textdata_en() {
     "obj_papyrusboss_560",
     " THEN^1, LET'S SEE& IF YOU CAN HANDLE& MY FABLED& 'BLUE ATTACK!'/%%"
   );
-  ds_map_add(global.text_data_en, "obj_papyrusboss_561", " %%%");
+  ds_map_add(global.text_data_en, "obj_papyrusboss_561", "%%%");
   ds_map_add(global.text_data_en, "obj_papyrusboss_570", " BEHOLD!");
   ds_map_add(
     global.text_data_en,
@@ -44896,7 +44938,7 @@ function textdata_en() {
     "obj_parsnik_219",
     " Eat Your&Green&Tasty&Snakes"
   );
-  ds_map_add(global.text_data_en, "obj_parsnik_225", " %%%");
+  ds_map_add(global.text_data_en, "obj_parsnik_225", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_parsnik_431",
@@ -46091,7 +46133,7 @@ function textdata_en() {
     "obj_pyrope_289",
     " Sorry!!&I'm all&tied&up!!"
   );
-  ds_map_add(global.text_data_en, "obj_pyrope_294", " %%%");
+  ds_map_add(global.text_data_en, "obj_pyrope_294", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_pyrope_492",
@@ -49562,7 +49604,7 @@ function textdata_en() {
     "obj_readable_switch1_91",
     " * This switch doesn't even&  work.../%%"
   );
-  ds_map_add(global.text_data_en, "obj_reaperbird_160", " %%%");
+  ds_map_add(global.text_data_en, "obj_reaperbird_160", "%%%");
   ds_map_add(global.text_data_en, "obj_reaperbird_165", " Don't&pick on&me.");
   ds_map_add(
     global.text_data_en,
@@ -49591,15 +49633,15 @@ function textdata_en() {
     " I'm not&afraid&of you."
   );
   ds_map_add(global.text_data_en, "obj_reaperbird_190", " There's&still&hope.");
-  ds_map_add(global.text_data_en, "obj_reaperbird_202", " %%%");
+  ds_map_add(global.text_data_en, "obj_reaperbird_202", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_reaperbird_205",
     " Someone&finally&gets it."
   );
-  ds_map_add(global.text_data_en, "obj_reaperbird_214", " %%%");
+  ds_map_add(global.text_data_en, "obj_reaperbird_214", "%%%");
   ds_map_add(global.text_data_en, "obj_reaperbird_217", " Courage&...");
-  ds_map_add(global.text_data_en, "obj_reaperbird_229", " %%%");
+  ds_map_add(global.text_data_en, "obj_reaperbird_229", "%%%");
   ds_map_add(global.text_data_en, "obj_reaperbird_232", " Ribbit&ribbit.");
   ds_map_add(global.text_data_en, "obj_reaperbird_446", " * ,");
   ds_map_add(global.text_data_en, "obj_reaperbird_447", " * ,");
@@ -49712,7 +49754,7 @@ function textdata_en() {
     "obj_ripoff_alphys_259",
     " All I do&is hurt&people."
   );
-  ds_map_add(global.text_data_en, "obj_ripoff_alphys_267", " %%%");
+  ds_map_add(global.text_data_en, "obj_ripoff_alphys_267", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_alphys_473",
@@ -49790,7 +49832,7 @@ function textdata_en() {
   );
   ds_map_add(global.text_data_en, "obj_ripoff_asgore_217", " This is&my&duty.");
   ds_map_add(global.text_data_en, "obj_ripoff_asgore_218", " ...");
-  ds_map_add(global.text_data_en, "obj_ripoff_asgore_248", " %%%");
+  ds_map_add(global.text_data_en, "obj_ripoff_asgore_248", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_asgore_488",
@@ -49903,7 +49945,7 @@ function textdata_en() {
     " THEN&EVERY&ONE&WILL,"
   );
   ds_map_add(global.text_data_en, "obj_ripoff_papyrus_246", " ...");
-  ds_map_add(global.text_data_en, "obj_ripoff_papyrus_277", " %%%");
+  ds_map_add(global.text_data_en, "obj_ripoff_papyrus_277", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_papyrus_570",
@@ -50030,7 +50072,7 @@ function textdata_en() {
     "obj_ripoff_sans_214",
     " you'll&never&see 'em&again."
   );
-  ds_map_add(global.text_data_en, "obj_ripoff_sans_244", " %%%");
+  ds_map_add(global.text_data_en, "obj_ripoff_sans_244", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_sans_486",
@@ -50148,7 +50190,7 @@ function textdata_en() {
     " No one&will&leave&again."
   );
   ds_map_add(global.text_data_en, "obj_ripoff_toriel_253", " ...");
-  ds_map_add(global.text_data_en, "obj_ripoff_toriel_262", " %%%");
+  ds_map_add(global.text_data_en, "obj_ripoff_toriel_262", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_toriel_465",
@@ -50285,7 +50327,7 @@ function textdata_en() {
     "obj_ripoff_undyne_290",
     " Mercy&is for&the&weak."
   );
-  ds_map_add(global.text_data_en, "obj_ripoff_undyne_322", " %%%");
+  ds_map_add(global.text_data_en, "obj_ripoff_undyne_322", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_ripoff_undyne_563",
@@ -51218,7 +51260,7 @@ function textdata_en() {
     "obj_sansb_422",
     " you gotta learn&when to QUIT./%%"
   );
-  ds_map_add(global.text_data_en, "obj_sansb_423", " %%%");
+  ds_map_add(global.text_data_en, "obj_sansb_423", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_sansb_427",
@@ -52096,7 +52138,7 @@ function textdata_en() {
     "obj_savepoint_fake_275",
     " \\E6And I'VE got the human&SOULS!/%%"
   );
-  ds_map_add(global.text_data_en, "obj_savepoint_fake_278", " %%%");
+  ds_map_add(global.text_data_en, "obj_savepoint_fake_278", "%%%");
   ds_map_add(global.text_data_en, "obj_savepoint_fake_332", " \\E0Boy!/");
   ds_map_add(
     global.text_data_en,
@@ -52155,7 +52197,7 @@ function textdata_en() {
     "obj_savepoint_fake_346",
     " \\E8I'll show them all the REAL&meaning of this world./%%"
   );
-  ds_map_add(global.text_data_en, "obj_savepoint_fake_347", " %%%");
+  ds_map_add(global.text_data_en, "obj_savepoint_fake_347", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_savepoint_fake_435",
@@ -54250,7 +54292,7 @@ function textdata_en() {
     "obj_shop4_646",
     " \\E4* Everyone calls me Burgerpants&  now./%%"
   );
-  ds_map_add(global.text_data_en, "obj_shop4_647", " %%%");
+  ds_map_add(global.text_data_en, "obj_shop4_647", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_shop4_651",
@@ -54714,7 +54756,7 @@ function textdata_en() {
   );
   ds_map_add(global.text_data_en, "obj_shyren_281", " (agg-&ressive&tooting)");
   ds_map_add(global.text_data_en, "obj_shyren_282", " (final&toot)");
-  ds_map_add(global.text_data_en, "obj_shyren_283", " %%%");
+  ds_map_add(global.text_data_en, "obj_shyren_283", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_shyren_470",
@@ -55518,7 +55560,7 @@ function textdata_en() {
     "obj_snowdrake_301",
     " It's&better&when I&do it..."
   );
-  ds_map_add(global.text_data_en, "obj_snowdrake_309", " %%%");
+  ds_map_add(global.text_data_en, "obj_snowdrake_309", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_snowdrake_507",
@@ -55751,7 +55793,7 @@ function textdata_en() {
     "obj_snowdrakemom_167",
     " haha...& thank...& you..."
   );
-  ds_map_add(global.text_data_en, "obj_snowdrakemom_173", " %%%");
+  ds_map_add(global.text_data_en, "obj_snowdrakemom_173", "%%%");
   ds_map_add(global.text_data_en, "obj_snowdrakemom_387", " * It's so cold.");
   ds_map_add(global.text_data_en, "obj_snowdrakemom_388", " * It's so cold.");
   ds_map_add(global.text_data_en, "obj_snowdrakemom_389", " * It's so cold.");
@@ -56610,7 +56652,7 @@ function textdata_en() {
     "obj_spiderb_232",
     " Ahuhuhu~&What are you&doing~/%%"
   );
-  ds_map_add(global.text_data_en, "obj_spiderb_236", " %%%");
+  ds_map_add(global.text_data_en, "obj_spiderb_236", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_spiderb_240",
@@ -58196,7 +58238,7 @@ function textdata_en() {
   );
   ds_map_add(global.text_data_en, "obj_tembattle_298", " hOI!!!&i'm&tEMMIE!!");
   ds_map_add(global.text_data_en, "obj_tembattle_302", " FOOB!!!");
-  ds_map_add(global.text_data_en, "obj_tembattle_307", " %%%");
+  ds_map_add(global.text_data_en, "obj_tembattle_307", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_tembattle_504",
@@ -58258,7 +58300,7 @@ function textdata_en() {
     "obj_tembattle_617",
     " NO!!!!!&muscles&r.....&NOT CUTE/%%"
   );
-  ds_map_add(global.text_data_en, "obj_tembattle_621", " %%%");
+  ds_map_add(global.text_data_en, "obj_tembattle_621", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_tembattle_635",
@@ -58269,9 +58311,9 @@ function textdata_en() {
     "obj_tembattle_636",
     " Temmie^1,&are you&okay?&; )/%%"
   );
-  ds_map_add(global.text_data_en, "obj_tembattle_637", " %%%");
+  ds_map_add(global.text_data_en, "obj_tembattle_637", "%%%");
   ds_map_add(global.text_data_en, "obj_tembattle_652", " NO!!!!!&!!!!!!!/%%");
-  ds_map_add(global.text_data_en, "obj_tembattle_653", " %%%");
+  ds_map_add(global.text_data_en, "obj_tembattle_653", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_temnpc_72",
@@ -61321,7 +61363,7 @@ function textdata_en() {
     " No way!&Why&would I&like YOU"
   );
   ds_map_add(global.text_data_en, "obj_tsunderplane_263", " Human,&I...");
-  ds_map_add(global.text_data_en, "obj_tsunderplane_266", " %%%");
+  ds_map_add(global.text_data_en, "obj_tsunderplane_266", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_tsunderplane_465",
@@ -62036,7 +62078,7 @@ function textdata_en() {
     "obj_undynebattle2_295",
     " IT'S GETTING&HOT IN HERE!"
   );
-  ds_map_add(global.text_data_en, "obj_undynebattle2_299", " %%%");
+  ds_map_add(global.text_data_en, "obj_undynebattle2_299", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_undynebattle2_488",
@@ -62238,7 +62280,7 @@ function textdata_en() {
     "obj_undyneboss_412",
     " \\E5  DIE ALREADY, YOU&  LITTLE BRAT!"
   );
-  ds_map_add(global.text_data_en, "obj_undyneboss_416", " %%%");
+  ds_map_add(global.text_data_en, "obj_undyneboss_416", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_undyneboss_427",
@@ -64433,7 +64475,7 @@ function textdata_en() {
     " Plants&Can't&Talk&Dummy"
   );
   ds_map_add(global.text_data_en, "obj_vegetoid_186", " Eat&Your&Greens");
-  ds_map_add(global.text_data_en, "obj_vegetoid_190", " %%%");
+  ds_map_add(global.text_data_en, "obj_vegetoid_190", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_vegetoid_383",
@@ -64490,7 +64532,7 @@ function textdata_en() {
     "obj_vsflowey_heartdefeated_198",
     "  This is all just&  a bad dream...^4 %%"
   );
-  ds_map_add(global.text_data_en, "obj_vsflowey_heartdefeated_199", " %%%");
+  ds_map_add(global.text_data_en, "obj_vsflowey_heartdefeated_199", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_vulkin_271",
@@ -64523,7 +64565,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_vulkin_323", " Ahh...&So...&LOVEY!");
   ds_map_add(global.text_data_en, "obj_vulkin_325", " Hug...&continue&...");
   ds_map_add(global.text_data_en, "obj_vulkin_327", " Starting&to get&weird.");
-  ds_map_add(global.text_data_en, "obj_vulkin_332", " %%%");
+  ds_map_add(global.text_data_en, "obj_vulkin_332", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_vulkin_538",
@@ -64656,7 +64698,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_whimsalot_232", " Don't&give&up!");
   ds_map_add(global.text_data_en, "obj_whimsalot_234", " There's&still&hope.");
   ds_map_add(global.text_data_en, "obj_whimsalot_237", " Courage&...");
-  ds_map_add(global.text_data_en, "obj_whimsalot_242", " %%%");
+  ds_map_add(global.text_data_en, "obj_whimsalot_242", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_whimsalot_449",
@@ -64717,7 +64759,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_whimsun_196", " Forgive&me...");
   ds_map_add(global.text_data_en, "obj_whimsun_197", " *sniff&sniff*");
   ds_map_add(global.text_data_en, "obj_whimsun_200", " I&can't&handle&this...");
-  ds_map_add(global.text_data_en, "obj_whimsun_203", " %%%");
+  ds_map_add(global.text_data_en, "obj_whimsun_203", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_whimsun_383",
@@ -64769,7 +64811,7 @@ function textdata_en() {
   ds_map_add(global.text_data_en, "obj_wizard_287", " Hocus&pocus.");
   ds_map_add(global.text_data_en, "obj_wizard_289", " Please&and&thank&you.");
   ds_map_add(global.text_data_en, "obj_wizard_294", " Ah^1!&A fellow&wizard!");
-  ds_map_add(global.text_data_en, "obj_wizard_297", " %%%");
+  ds_map_add(global.text_data_en, "obj_wizard_297", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_wizard_520",
@@ -64923,7 +64965,7 @@ function textdata_en() {
     "obj_womandog_278",
     " (I'll&chop you&in&half!)"
   );
-  ds_map_add(global.text_data_en, "obj_womandog_284", " %%%");
+  ds_map_add(global.text_data_en, "obj_womandog_284", "%%%");
   ds_map_add(
     global.text_data_en,
     "obj_womandog_472",
@@ -65104,7 +65146,7 @@ function textdata_en() {
     "obj_woshua_272",
     " NO. THAT&JOKE'S&TOO...&DIRTY"
   );
-  ds_map_add(global.text_data_en, "obj_woshua_276", " %%%");
+  ds_map_add(global.text_data_en, "obj_woshua_276", "%%%");
   ds_map_add(global.text_data_en, "obj_woshua_283", " \\Xtweet");
   ds_map_add(
     global.text_data_en,
@@ -71458,9 +71500,9 @@ function textdata_en() {
     "item_menub_page2",
     "                     PAGE 2"
   );
-  ds_map_add(global.text_data_en, "battle_mercy_spare", "   * Spare");
+  ds_map_add(global.text_data_en, "battle_mercy_spare", "    * Spare");
   ds_map_add(global.text_data_en, "battle_mercy_flee", "   * Flee");
-  ds_map_add(global.text_data_en, "battle_name_header", "   * ");
+  ds_map_add(global.text_data_en, "battle_name_header", "   *");
   ds_map_add(global.text_data_en, "battle_name_a", " A");
   ds_map_add(global.text_data_en, "battle_name_b", " B");
   ds_map_add(global.text_data_en, "battle_name_c", " C");

@@ -1,12 +1,18 @@
-import { draw_sprite_ext, getBoundingBox, instance_create, instance_destroy, instance_exists, script_execute, instance_find } from "/imports/assets/gamemakerFunctions.js";
-import { scr_depth, scr_npcdir } from "/imports/customFunctions.js";
+import {
+  draw_sprite_ext,
+  getBoundingBox,
+  round,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  SCR_TEXTTYPE,
+  scr_replace_buttons_pc,
+} from "/imports/customFunctions.js";
 import { c_white } from "/imports/assets.js";
-import global from "/imports/assets/global.js"
+import global from "/imports/assets/global.js";
 
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
 //                                                               // to this fake object
-import * as obj_dialoguer from "/obj/dialoguer/index.js";
-import * as parent from "/obj/torinteractable1/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as parent from "/obj/writer/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -14,8 +20,8 @@ function create() {
   // create code
 
   const self = {
-    name: "torinteractable4", // sprite name
-    depth: 0, // object depth
+    name: "nomscwriter", // sprite name
+    depth: -500, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
@@ -26,7 +32,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: "spr_toriel_dt", // sprite object
+    sprite_index: null, // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -37,35 +43,22 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-    dsprite: "spr_toriel_d",
-    usprite: "spr_toriel_u",
-    lsprite: "spr_toriel_l",
-    rsprite: "spr_toriel_r",
-    dtsprite: "spr_toriel_dt",
-    utsprite: "spr_toriel_ut",
-    ltsprite: "spr_toriel_lt",
-    rtsprite: "spr_toriel_rt",
-    myinteract: 0,
-    facing: 1,
-    talkedto: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
-    updateGamemakerFunctions,
+    updateSpeed,
+    updateIndex,
     updateSprite,
     updateCol,
     followPath,
     createContext,
-    step,
-    alarm0,
-    beginStep,
-    roomStart,
+    user0,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
-  self._direction = 180;
+  self._direction = 0;
   self._path = {
     data: {},
     index: 1,
@@ -74,7 +67,7 @@ function create() {
     absolute: false,
     xOffset: 0,
     yOffset: 0,
-  }
+  };
   self._x = 0;
   self._y = 0;
   self.initialspeed = null;
@@ -127,8 +120,8 @@ function create() {
     },
     set(val) {
       this._path.data = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_speed", {
     get() {
@@ -136,8 +129,8 @@ function create() {
     },
     set(val) {
       this._path.speed = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_endaction", {
     get() {
@@ -145,28 +138,28 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "x", {
     get() {
       return this._x;
     },
     set(val) {
-      this._x = val
+      this._x = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "y", {
     get() {
       return this._y;
     },
     set(val) {
-      this._y = val
+      this._y = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
@@ -178,17 +171,31 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
 function updateAlarms() {
+  function callInheritedFunction(funcName) {
+    let currentObj = this._object;
+
+    while (currentObj) {
+      const func = currentObj[funcName];
+      if (typeof func === "function") {
+        return func.call(instance);
+      }
+      currentObj = currentObj.parent ?? null;
+    }
+    // No function found in hierarchy
+    return;
+  }
+
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
-        if (typeof handler === "function") handler.call(this); // call with instance context
+        if (typeof handler === "function") callInheritedFunction(handler); // call with instance context
       }
     } else if (this.alarm[i] === 0) {
       this.alarm[i]--;
@@ -196,21 +203,14 @@ function updateAlarms() {
   }
 }
 
-function updateGamemakerFunctions() {
+function updateIndex() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
-
-		this.animationEnd?.();
   }
+}
 
-  getBoundingBox.call(this);
-
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+function updateSpeed() {
   // apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -224,7 +224,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -235,7 +237,7 @@ function updateGamemakerFunctions() {
 
 function updateSprite() {
   if (this.visible === true) {
-    let img = draw_sprite_ext(
+    draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -243,14 +245,9 @@ function updateSprite() {
       this.image_xscale,
       this.image_yscale,
       this.image_angle,
-      this.image_blend,
-      this.image_alpha,
-      1,
+      c_white,
+      this.image_alpha
     );
-    if (img) {
-      this.sprite_width = img.width;
-      this.sprite_height = img.height
-    }
   }
 }
 
@@ -259,7 +256,9 @@ function followPath() {
   if (!pathState || !pathState.data.points) return;
 
   const points = pathState.data.points;
-  const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
+  const keys = Object.keys(points)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   let currKey = pathState.index;
   let nextKeyIndex = keys.indexOf(currKey) + 1;
@@ -310,7 +309,10 @@ function followPath() {
     !this._manualVel &&
     !this._manualPos
   ) {
-    const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    const radians = Math.atan2(
+      -(this.y - this.yprevious),
+      this.x - this.xprevious
+    );
     const degrees = (radians * 180) / Math.PI;
     this.direction = (degrees + 360) % 360;
   }
@@ -319,50 +321,67 @@ function followPath() {
 function updateCol() {
   //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   //if (other) {
-    // collision updates with an object here. other
-    // is the colliding instance, so use 
-    // other.property for instance properties, like
-    // x, y and such.
+  // collision updates with an object here. other
+  // is the colliding instance, so use
+  // other.property for instance properties, like
+  // x, y and such.
   //}
-  // to add more collision checks, set other to 
-  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
-  // obj_solidobject2 being a different solid object 
+  // to add more collision checks, set other to
+  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
+  // obj_solidobject2 being a different solid object
   // and do another if (other) {} to run scripts.
 }
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  SCR_TEXTTYPE.call(this, global.typer);
+  this.x = round(this.x);
+  this.y = round(this.y);
+  this.writingx = round(this.writingx);
+  this.writingy = round(this.writingy);
+  this.stringno = 0;
+  this.stringpos = 1;
+  this.halt = 0;
+  this.dfy = 0;
+  this.sound_enable = 1;
+  this.mystring = [];
+
+  for (let n = 0; global.msg[n] !== "%%%" && global.msg[n] !== "%%%"; n++) {
+    this.mystring[n] = global.msg[n];
+  }
+
+  this.originalstring = scr_replace_buttons_pc(this.mystring[0]);
+  this.alarm[0] = this.textspeed;
+}
+
+function user0() {
+  this.parent.user0.call(this);
 }
 
 function step() {
   this.parent.step.call(this);
 }
 
-function alarm0() {
-  this.myinteract = 3;
-  global.msc = 214;
-
-  if (this.talkedto > 0) {
-    global.msc = 215;
-  }
-
-  global.typer = 4;
-  global.facechoice = 1;
-  global.faceemotion = 2;
-  this.mydialoguer = instance_create(0, 0, obj_dialoguer);
-  this.talkedto += 1;
+function draw() {
+  this.parent.draw.call(this);
 }
 
-function beginStep() {
-  this.parent.beginStep.call(this);
+function user1() {
+  this.parent.user1.call(this);
 }
 
-function roomStart() {
-  if (global.plot < 5.4 || global.plot > 6.5) {
-    instance_destroy(this);
-  }
-
-  this.direction = 270;
-}
-
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, createContext, step, alarm0, beginStep, roomStart };
+export {
+  create,
+  updateAlarms,
+  updateSpeed,
+  updateIndex,
+  updateSprite,
+  followPath,
+  updateCol,
+  parent,
+  createContext,
+  user0,
+  step,
+  draw,
+  user1,
+};
