@@ -32,6 +32,16 @@
     instance_create(0, 0, introimage);
     instance_create(0, 0, obj_introtangle);
 
+    function filterDestroyed() {
+      for (const [obj, instanceList] of instances) {
+        // Remove all destroyed instances
+        for (let i = instanceList.length - 1; i >= 0; i--) {
+          if (instanceList[i]._destroyed) {
+            instanceList.splice(i, 1);
+          }
+        }
+      }
+    }
     // gameloop DO NOT EDIT UNLESS NECESSARY (eg. adding new events).
     // IMPORTANT: replace "objectname" with the object name (eg. mainchara) and import it from /obj/object name/index.js above
     const FPS = 30;
@@ -65,6 +75,7 @@
             obj.beginStep?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateAlarms?.call(instance);
@@ -75,11 +86,13 @@
             obj.step?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.endStep?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             allInstances.push({ obj, instance });
@@ -92,6 +105,7 @@
           obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
+        filterDestroyed();
 
         if (global.debug === 1 && currentFont) {
           draw_text(15, 15, currentFps);
