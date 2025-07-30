@@ -62,7 +62,7 @@ function updateGamemakerFunctions() {
     ogCanvas.width,
     ogCanvas.height
   );
-  updateCamera(100, 0);
+  updateCamera({x: 0,y: 0});
 }
 
 function step() {
