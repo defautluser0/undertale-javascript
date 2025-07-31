@@ -1,8 +1,8 @@
-import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
-                                                              // to this fake object
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
+//                                                               // to this fake object
 import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -168,6 +168,7 @@ function create() {
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
+      if (!Number.isInteger(this.alarm[i])) this.alarm[i] = floor(this.alarm[i])
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
@@ -183,6 +184,7 @@ function updateIndex() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
+    this.animationEnd?.();
   }
 }
 
@@ -210,8 +212,8 @@ function updateSpeed() {
 }
 
 function updateSprite() {
-  if (this.visible === true) {
-    draw_sprite_ext(
+  if (this.visible === true && this.sprite_index) {
+    const img = draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -220,8 +222,14 @@ function updateSprite() {
       this.image_yscale,
       this.image_angle,
       c_white,
-      this.image_alpha
+      this.image_alpha,
+      1,
     );
+
+    if (img) {
+      this.sprite_width = img.width;
+      this.sprite_height = img.height;
+    }
   }
 }
 
@@ -288,13 +296,17 @@ function followPath() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
-  if (other) {
+  // uncomment the following line if any collision will happen involving this object
+  // getBoundingBox.call(this);
+  
+  // uncomment the if statement if said collision is checked by this object
+  // let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
+  // if (other) {
     // collision updates with an object here. other
     // is the colliding instance, so use 
     // other.property for instance properties, like
     // x, y and such.
-  }
+  //}
   // to add more collision checks, set other to 
   // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
   // obj_solidobject2 being a different solid object 
