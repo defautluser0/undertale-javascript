@@ -221,7 +221,7 @@ function updateSprite() {
       this.image_xscale,
       this.image_yscale,
       this.image_angle,
-      c_white,
+      this.image_blend,
       this.image_alpha,
       1,
     );
