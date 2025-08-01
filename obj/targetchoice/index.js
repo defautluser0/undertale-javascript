@@ -1,9 +1,14 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, instance_destroy, instance_exists, round, random, _with, instance_find, script_execute, abs, instance_create } from "/imports/assets/gamemakerFunctions.js";
+import { scr_attackcalc } from "/imports/customFunctions.js";
 import { c_white } from "/imports/assets.js";
+import { control_check_pressed } from "/imports/input.js"
+import global from "/imports/assets/global.js";
 
-// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
-
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
+//                                                               // to this fake object
+import * as obj_target from "/obj/target/index.js";
+import * as obj_slice from "/obj/slice/index.js";
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -11,19 +16,19 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "targetchoice", // sprite name
+    depth: -2, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
-    image_number: 0, // sprite frame number
-    sprite_width: 0, // set to sprite_index's width
-    sprite_height: 0, // set to sprite_index's height
+    image_number: 2, // sprite frame number
+    sprite_width: 14, // set to sprite_index's width
+    sprite_height: 128, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_targetchoice", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -34,6 +39,7 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
+    xxx: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
@@ -42,7 +48,9 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
-    createContext
+    createContext,
+    destroy,
+    step,
   };
   
   self._hspeed = 0;
@@ -168,7 +176,6 @@ function create() {
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
-      if (!Number.isInteger(this.alarm[i])) this.alarm[i] = floor(this.alarm[i])
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
@@ -184,7 +191,6 @@ function updateIndex() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
-    this.animationEnd?.();
   }
 }
 
@@ -212,8 +218,8 @@ function updateSpeed() {
 }
 
 function updateSprite() {
-  if (this.visible === true && this.sprite_index) {
-    const img = draw_sprite_ext(
+  if (this.visible === true) {
+    draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -222,14 +228,8 @@ function updateSprite() {
       this.image_yscale,
       this.image_angle,
       c_white,
-      this.image_alpha,
-      1,
+      this.image_alpha
     );
-
-    if (img) {
-      this.sprite_width = img.width;
-      this.sprite_height = img.height;
-    }
   }
 }
 
@@ -296,12 +296,8 @@ function followPath() {
 }
 
 function updateCol() {
-  // uncomment the following line if any collision will happen involving this object
-  // getBoundingBox.call(this);
-  
-  // uncomment the if statement if said collision is checked by this object
-  // let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
-  // if (other) {
+  //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
+  //if (other) {
     // collision updates with an object here. other
     // is the colliding instance, so use 
     // other.property for instance properties, like
@@ -315,6 +311,98 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  const target = instance_find(obj_target, 0);
+  if (this.x <= target.x) {
+    this.hspeed = global.attackspeed + random(global.attackspeedr);
+  }
+
+  if (this.x > target.x + target.sprite_width) {
+    this.hspeed = -(global.attackspeed + random(global.attackspeedr));
+  }
+
+  if (global.weapon === 13) {
+    this.hspeed *= 1.25;
+  }
 }
 
-export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext };
+function destroy() {
+  _with (obj_target, function() {
+    this.fade = 1;
+  })
+}
+
+function step() {
+  const target = instance_find(obj_target, 0);
+  if (this.hspeed > 0) {
+    if (this.x > (target.x + target.sprite_width)) {
+      this.xxx = 1;
+    }
+  }
+
+  if (this.hspeed < 0) {
+    if (this.x < target.x) {
+      this.xxx = 1;
+    }
+  }
+
+  if (this.xxx === 1) {
+    global.damage = 0;
+    global.hurtanim[global.mytarget] = 5;
+    instance_destroy(this);
+    return;
+  }
+
+  this.mons = global.monsterinstance[global.mytarget];
+  this.ht = 100;
+  this.wd = 100;
+
+  if (instance_exists(this.mons)) {
+    this.mons.trgtest = this;
+  }
+
+  _with (this.mons, function() {
+    this.trgtest.ht = this.ht;
+    this.trgtest.wd = this.wd;
+  })
+
+  if (this.image_speed === 0) {
+    if (control_check_pressed(0)) {
+      this.mons = global.monsterinstance[global.mytarget];
+      this.hspeed = 0;
+      script_execute.call(this, scr_attackcalc);
+      global.damage = this.damage;
+      global.damage += random(2);
+      this.myx = this.x + (this.sprite_width / 2);
+      this.myperfectx = target.x + (target.sprite_width / 2);
+      this.bonusfactor = abs(this.myx - this.myperfectx);
+
+      if (this.bonusfactor === 0) {
+        this.bonusfactor = 1;
+      }
+
+      global.stretch = (target.sprite_width - this.bonusfactor) / target.sprite_width;
+
+      if (this.bonusfactor <= 12) {
+        global.damage = round(global.damage * 2.2);
+      }
+
+      if (this.bonusfactor > 12) {
+        global.damage = round(global.damage * global.stretch * 2);
+      }
+
+      _with (this.mons, function() {
+        this.takedamage = global.damage;
+      })
+
+      instance_create((this.mons.x + (this.wd / 2)) - 5,  this.mons.y - 5, obj_slice);
+      global.hurtanim[global.mytarget] = 1;
+      this.image_speed = 0.4;
+    }
+  }
+
+  if (global.myfight !== 1) {
+    instance_destroy(this);
+  }
+}
+
+export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext, destroy, step };

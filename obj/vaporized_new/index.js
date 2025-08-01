@@ -1,9 +1,11 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
+import { draw_sprite_ext, getBoundingBox, collision_rectangle, surface_create, draw_clear_alpha, draw_sprite, surface_reset_target, make_colour_rgb, buffer_create, buffer_peek, surface_set_target, surface_free, buffer_get_surface, floor, instance_create, _with, buffer_delete, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import { snd_play } from "/imports/customFunctions.js";
+import { c_white, snd_vaporized, c_black } from "/imports/assets.js";
 
-// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
-
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
+//                                                               // to this fake object
+import * as obj_whtpxlgrav from "/obj/whtpxlgrav/index.js";
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -11,8 +13,8 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "vaporized_new", // sprite name
+    depth: 50, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
@@ -34,6 +36,7 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
+    delay: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
@@ -42,7 +45,8 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
-    createContext
+    createContext,
+    draw,
   };
   
   self._hspeed = 0;
@@ -315,6 +319,62 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  snd_play(snd_vaporized);
 }
 
-export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext };
+function draw() {
+  this.updateSprite();
+  this.w = this.sprite_width * this.image_xscale;
+  this.h = this.sprite_height * this.image_yscale;
+  this.xoff = 0 * this.image_xscale; // TODO: implement dynamic offset getting
+  this.yoff = 0 * this.image_yscale; // TODO: implement dynamic offset getting
+  this.x -= this.xoff;
+  this.y -= this.yoff;
+  this.surf = surface_create(this.w, this.h);
+  surface_set_target(this.surf)
+  draw_clear_alpha(c_black, 0);
+  draw_sprite(this.sprite_index, this.image_index, this.xoff, this.yoff);
+  surface_reset_target();
+  this.buff = buffer_create(4 * this.w * this.h, "buffer_fixed", 1);
+  buffer_get_surface(this.buff, this.surf, 0, 0, 0);
+  surface_free(this.surf)
+  this.blarg = 0;
+
+  if (this.image_xscale === 2) {
+    this.blarg = 1;
+  } else {
+    this.blarg = 2;
+  }
+
+  for (let j = 0; j < this.h; j += this.blarg) {
+    for (let i = 0; i < this.w; i += this.blarg) {
+      this.pixel = buffer_peek(this.buff, 4 * (i + (j * this.w)), "buffer_u32");
+      this.a = (this.pixel >> 24) & 255;
+      this.r = this.pixel & 255;
+      this.g = (this.pixel >> 8) & 255;
+      this.b = (this.pixel >> 16) & 255;
+      this.obj = null;
+
+      if (this.a === 255) {
+        this.obj = obj_whtpxlgrav;
+        this.col = make_colour_rgb(this.b, this.g, this.r);
+      }
+
+      if (this.obj !== null) {
+        this._obj = instance_create(this.x + (i * this.image_xscale), this.y + (j * this.image_yscale), this.obj);
+
+        _with.call(this, this._obj, function() {
+          this.image_blend = this.other.col;
+          this.delay = floor(this.other.delay / 3);
+        })
+      }
+    }
+
+    this.delay += 1;
+  }
+
+  buffer_delete(this.buff);
+  instance_destroy(this);
+}
+
+export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext, draw };

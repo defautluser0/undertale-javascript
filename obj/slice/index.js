@@ -1,9 +1,11 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
+import { draw_sprite_ext, getBoundingBox, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import { snd_play } from "/imports/customFunctions.js"
+import { c_white, snd_laz } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
-// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
-
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
+//                                                               // to this fake object
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -11,19 +13,19 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "slice", // sprite name
+    depth: -2000, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
-    image_number: 0, // sprite frame number
-    sprite_width: 0, // set to sprite_index's width
-    sprite_height: 0, // set to sprite_index's height
+    image_number: 6, // sprite frame number
+    sprite_width: 26, // set to sprite_index's width
+    sprite_height: 110, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_strike", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -42,7 +44,8 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
-    createContext
+    createContext,
+    animationEnd,
   };
   
   self._hspeed = 0;
@@ -168,7 +171,6 @@ function create() {
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
-      if (!Number.isInteger(this.alarm[i])) this.alarm[i] = floor(this.alarm[i])
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
@@ -212,8 +214,8 @@ function updateSpeed() {
 }
 
 function updateSprite() {
-  if (this.visible === true && this.sprite_index) {
-    const img = draw_sprite_ext(
+  if (this.visible === true) {
+    draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -222,14 +224,8 @@ function updateSprite() {
       this.image_yscale,
       this.image_angle,
       c_white,
-      this.image_alpha,
-      1,
+      this.image_alpha
     );
-
-    if (img) {
-      this.sprite_width = img.width;
-      this.sprite_height = img.height;
-    }
   }
 }
 
@@ -296,12 +292,8 @@ function followPath() {
 }
 
 function updateCol() {
-  // uncomment the following line if any collision will happen involving this object
-  // getBoundingBox.call(this);
-  
-  // uncomment the if statement if said collision is checked by this object
-  // let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
-  // if (other) {
+  //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
+  //if (other) {
     // collision updates with an object here. other
     // is the colliding instance, so use 
     // other.property for instance properties, like
@@ -315,6 +307,22 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  this.image_speed = 0.5 - (global.stretch / 4);
+  this.image_xscale = (global.stretch * 2) - 0.5;
+  this.image_yscale = (global.stretch * 2) - 0.5;
+  this.x -=  ((this.image_xscale - 1) * (this.sprite_width / 2));
+  this.y -=  ((this.image_yscale - 1) * (this.sprite_height / 2));
+  snd_play(snd_laz);
+
+  if (this.image_speed === 0) {
+    this.image_speed = 0.1;
+  }
+
+  global.damagetimer = ((1 / this.image_speed) * this.image_number) + 3
 }
 
-export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext };
+function animationEnd() {
+  instance_destroy(this);
+}
+
+export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext, animationEnd };

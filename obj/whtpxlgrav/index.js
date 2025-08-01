@@ -1,9 +1,9 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext, getBoundingBox, collision_rectangle, random, instance_destroy, make_colour_rgb } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object  & uncomment. if none, you can safely ignore
 
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -11,19 +11,19 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "whtpxlgrav", // sprite name
+    depth: 20, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
-    image_number: 0, // sprite frame number
-    sprite_width: 0, // set to sprite_index's width
-    sprite_height: 0, // set to sprite_index's height
+    image_number: 12, // sprite frame number
+    sprite_width: 2, // set to sprite_index's width
+    sprite_height: 2, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_pixwht", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -34,6 +34,7 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
+    delay: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
@@ -42,10 +43,13 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
-    createContext
+    createContext,
+    animationEnd,
+    outsideRoom,
+    step,
   };
   
-  self._hspeed = 0;
+  self._hspeed = random(4) - 2;
   self._vspeed = 0;
   self._speed = 0;
   self._direction = 0;
@@ -221,7 +225,7 @@ function updateSprite() {
       this.image_xscale,
       this.image_yscale,
       this.image_angle,
-      c_white,
+      this.image_blend,
       this.image_alpha,
       1,
     );
@@ -317,4 +321,27 @@ function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
 }
 
-export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext };
+function step() {
+  if (this.image_blend === (make_colour_rgb(0, 0, 0))) {
+    instance_destroy(this);
+  }
+
+  if (this.delay >  0) {
+    this.delay -= 1;
+  } else {
+    this.image_speed = 1;
+    this.gravity_direction = 90;
+    this.gravity = random(0.5) + 0.2;
+    this.hspeed = random(4) - 2;
+    this.delay = 9999;
+  }
+}
+
+function animationEnd() {
+  instance_destroy(this);
+}
+
+function outsideRoom() {
+  instance_destroy(this);
+}
+export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext, step, animationEnd, outsideRoom };

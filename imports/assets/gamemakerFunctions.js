@@ -1,6 +1,6 @@
 import { _key_prev_state, _key_state } from "/imports/input.js";
 import { playingSounds, c_white, c_red, rooms } from "/imports/assets.js";
-import { ctx, ogCanvas } from "/imports/canvasSetup.js";
+import { ctx, canvas } from "/imports/canvasSetup.js";
 import global from "/imports/assets/global.js";
 
 let ini_filename = null;
@@ -30,6 +30,15 @@ let text_write_line = Array(32)
 const __ds_map_store = {};
 let __ds_map_next_id = 0;
 
+const surfaces = [];
+surfaces[-1] = {canvas: canvas, context: ctx};
+let surfaceIdCounter = 0;
+let context = ctx;
+let currCanvas = canvas;
+context.imageSmoothingEnabled = false;
+context.mozImageSmoothingEnabled = false;
+context.webkitImageSmoothingEnabled = false;
+
 const spriteOffsets = {
   spr_tobdog_summer: {
     xoffset: 15,
@@ -49,9 +58,99 @@ const spriteOffsets = {
   },
 };
 
+const SEEK = {
+  start: 0,
+  current: 1,
+  end: 2,
+};
+
+function float32ToFloat16(value) {
+  const floatView = new Float32Array(1);
+  const int32View = new Int32Array(floatView.buffer);
+
+  floatView[0] = value;
+  const x = int32View[0];
+
+  const bits = (x >> 16) & 0x8000; // sign bit
+  const m = (x >> 12) & 0x07ff;    // mantissa
+  const e = (x >> 23) & 0xff;      // exponent
+
+  if (e < 103) {
+    // Too small, become zero
+    return bits;
+  }
+  if (e > 142) {
+    // Too large, become Inf
+    return bits | 0x7c00;
+  }
+
+  let exp = e - 112;
+  let mant = m >> 1;
+
+  // Round mantissa
+  if ((m & 1) === 1) mant++;
+
+  return bits | (exp << 10) | mant;
+}
+
+function float16ToFloat32(value) {
+  const s = (value & 0x8000) >> 15;
+  let e = (value & 0x7C00) >> 10;
+  let f = value & 0x03FF;
+
+  if (e === 0) {
+    if (f === 0) {
+      // Zero
+      return s ? -0 : 0;
+    } else {
+      // Subnormal
+      e = 1;
+      while ((f & 0x0400) === 0) {
+        f <<= 1;
+        e--;
+      }
+      f &= ~0x0400;
+    }
+  } else if (e === 31) {
+    // Inf or NaN
+    return f === 0 ? (s ? -Infinity : Infinity) : NaN;
+  }
+
+  e = e + (127 - 15);
+  f = f << 13;
+
+  const int32 = (s << 31) | (e << 23) | f;
+  const floatView = new Float32Array(1);
+  const int32View = new Int32Array(floatView.buffer);
+
+  int32View[0] = int32;
+  return floatView[0];
+}
+
+// Buffer storage and helper
+function createBuffer(size, type, alignment) {
+  alignment = Math.max(1, Math.floor(alignment));
+
+  if (size % alignment !== 0) {
+    size = size + (alignment - (size % alignment));
+  }
+
+  const ab = new ArrayBuffer(size);
+
+  return {
+    data: ab,
+    dv: new DataView(ab),
+    size: size,
+    pos: 0,
+    type: type,
+    alignment: alignment,
+    surfaceMap: new Map(),
+  };
+}
+
 const offCanvas = document.createElement("canvas");
-const offCtx = offCanvas.getContext("2d");
-offCtx.imageSmoothingEnabled = false;
+const offctx = offCanvas.getContext("2d");
+offctx.imageSmoothingEnabled = false;
 
 let currentDrawColor = c_white;
 let currentFont = null;
@@ -160,10 +259,10 @@ function loadImageCached(path, cache) {
     cache[path].loaded = true;
 
     // create offscreen canvas to get pixel data
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d");
+    const cacheCanvas = document.createElement("canvas");
+    cacheCanvas.width = img.width;
+    cacheCanvas.height = img.height;
+    const ctx = cacheCanvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
     cache[path].imageData = ctx.getImageData(0, 0, img.width, img.height);
   };
@@ -301,6 +400,8 @@ function draw_get_font() {
  */
 function draw_set_color(col) {
   currentDrawColor = col.toLowerCase();
+  context.fillStyle = currentDrawColor;
+  context.strokeStyle = currentDrawColor;
 }
 
 /**
@@ -368,10 +469,10 @@ function draw_text_transformed(
     });
 
     // Save context and apply global transform
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(-((angle * Math.PI) / 180));
-    ctx.scale(xscale, yscale);
+    context.save();
+    context.translate(x, y);
+    context.rotate(-((angle * Math.PI) / 180));
+    context.scale(xscale, yscale);
 
     let yOffset = 0;
 
@@ -389,8 +490,8 @@ function draw_text_transformed(
         const offsetX = glyph.offset || 0;
         const offsetY = glyph.yoffset || 0;
 
-        ctx.save();
-        ctx.translate(xOffset + offsetX, yOffset - offsetY);
+        context.save();
+        context.translate(xOffset + offsetX, yOffset - offsetY);
 
         if (currentDrawColor !== c_white) {
           const tintedGlyphCanvas = get_tinted_glyph(
@@ -399,9 +500,9 @@ function draw_text_transformed(
             char,
             second
           );
-          ctx.drawImage(tintedGlyphCanvas, 0, 0);
+          context.drawImage(tintedGlyphCanvas, 0, 0);
         } else {
-          ctx.drawImage(
+          context.drawImage(
             font.image,
             glyph.x,
             glyph.y,
@@ -414,7 +515,7 @@ function draw_text_transformed(
           );
         }
 
-        ctx.restore();
+        context.restore();
 
         xOffset += glyph.shift ?? glyph.w + (glyph.offset || 0);
       }
@@ -422,7 +523,7 @@ function draw_text_transformed(
       yOffset += lineHeight;
     }
 
-    ctx.restore();
+    context.restore();
   } catch (error) {
     console.error(error);
   }
@@ -430,7 +531,7 @@ function draw_text_transformed(
 
 // draw_text_transformed helper
 function get_tinted_glyph(glyph, tintColor, char, second) {
-  tintColor = tintColor.toLowerCase(); // normalize color case
+  tintColor = tintColor.toLowerCase();
 
   let font;
   if (second === 1) {
@@ -448,11 +549,12 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
     return globalTintCache.get(cacheKey);
   }
 
-  const canvas = document.createElement("canvas");
-  canvas.width = glyph.w;
-  canvas.height = glyph.h;
-  const gctx = canvas.getContext("2d");
+  const cacheCanvas = document.createElement("canvas");
+  cacheCanvas.width = glyph.w;
+  cacheCanvas.height = glyph.h;
+  const gctx = cacheCanvas.getContext("2d");
 
+  // Step 1: Draw the original glyph
   gctx.drawImage(
     font.image,
     glyph.x,
@@ -465,9 +567,26 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
     glyph.h
   );
 
-  gctx.globalCompositeOperation = "source-in";
+  // Step 2: Multiply blend the tint color
+  gctx.globalCompositeOperation = "multiply";
   gctx.fillStyle = tintColor;
   gctx.fillRect(0, 0, glyph.w, glyph.h);
+
+  // Step 3: Preserve alpha only
+  gctx.globalCompositeOperation = "destination-in";
+  gctx.drawImage(
+    font.image,
+    glyph.x,
+    glyph.y,
+    glyph.w,
+    glyph.h,
+    0,
+    0,
+    glyph.w,
+    glyph.h
+  );
+
+  // Reset for safety
   gctx.globalCompositeOperation = "source-over";
 
   globalTintCache.set(cacheKey, canvas);
@@ -678,10 +797,11 @@ function instance_destroy(target) {
 /**
  * This function can be used in two ways depending on what you wish to check. You can give it an object_index to check for, in which case this function will return true if any active instances of the specified object exist in the current room, or you can also supply it with an instance id, in which case this function will return true if that specific instance exists and is active in the current room.
  *
- * @param {object} obj The object or instance to check for the exsistence  of
+ * @param {object} obj The object or instance to check for the exsistence of
  * @returns {boolean}
  */
 function instance_exists(obj) {
+  if (obj._object) obj = obj._object;
   for (const [key, list] of instances) {
     if (!Array.isArray(list) || list.length === 0) continue;
 
@@ -776,12 +896,12 @@ function draw_sprite_ext(
   const ox = offset.xoffset || 0;
   const oy = offset.yoffset || 0;
 
-  ctx.save();
+  context.save();
 
-  ctx.translate(x - ox * xscale, y - oy * yscale);
-  ctx.rotate((rot * Math.PI) / 180);
-  ctx.scale(xscale, yscale);
-  ctx.globalAlpha = alpha;
+  context.translate(x - ox * xscale, y - oy * yscale);
+  context.rotate((rot * Math.PI) / 180);
+  context.scale(xscale, yscale);
+  context.globalAlpha = alpha;
 
   if (colour && colour.toLowerCase() !== c_white) {
     // Tinting logic using offscreen canvas
@@ -789,24 +909,27 @@ function draw_sprite_ext(
     tintCanvas.width = img.width;
     tintCanvas.height = img.height;
 
-    const tintCtx = tintCanvas.getContext("2d");
+    const tintctx = tintCanvas.getContext("2d");
 
     // Draw the sprite image first
-    tintCtx.drawImage(img, 0, 0);
+    tintctx.drawImage(img, 0, 0);
 
-    // Apply the color overlay with source-in
-    tintCtx.globalCompositeOperation = "source-in";
-    tintCtx.fillStyle = colour;
-    tintCtx.fillRect(0, 0, img.width, img.height);
+    // Multiply the color by the sprites color
+    tintctx.globalCompositeOperation = "multiply";
+    tintctx.fillStyle = colour;
+    tintctx.fillRect(0, 0, img.width, img.height);
+
+    tintctx.globalCompositeOperation = "destination-in";
+    tintctx.drawImage(img, 0, 0);
 
     // Draw the tinted canvas onto main canvas
-    ctx.drawImage(tintCanvas, 0, 0);
+    context.drawImage(tintCanvas, 0, 0);
   } else {
     // No tint, just draw normal
-    ctx.drawImage(img, 0, 0);
+    context.drawImage(img, 0, 0);
   }
 
-  ctx.restore();
+  context.restore();
 
   if (returnImg === 1 && img) {
     return img;
@@ -902,11 +1025,11 @@ function draw_sprite_part_ext(
 
   // Calculate origin for centering
 
-  ctx.save();
+  context.save();
 
-  ctx.translate(x, y);
-  ctx.scale(xscale, yscale);
-  ctx.globalAlpha = alpha;
+  context.translate(x, y);
+  context.scale(xscale, yscale);
+  context.globalAlpha = alpha;
 
   if (colour.toLowerCase() !== c_white) {
     const offscreen = document.createElement("canvas");
@@ -920,12 +1043,12 @@ function draw_sprite_part_ext(
     offctx.fillStyle = colour;
     offctx.fillRect(0, 0, width, height);
 
-    ctx.drawImage(offscreen, 0, 0);
+    context.drawImage(offscreen, 0, 0);
   } else {
-    ctx.drawImage(img, left, top, width, height, 0, 0, width, height);
+    context.drawImage(img, left, top, width, height, 0, 0, width, height);
   }
 
-  ctx.restore();
+  context.restore();
 }
 
 /**
@@ -992,19 +1115,6 @@ function random(n) {
 }
 
 /**
- * This function simply returns the width, in pixels, of the indexed surface. It should be noted that if you call this to check the application_surface immediately after having changed its size using surface_resize() it will not return the new value as the change needs a step or two to be fully processed. After waiting a step it should return the new size correctly.
- *
- * @param {string} surface
- * @returns {number}
- */
-function surface_get_width(surface) {
-  console.warn(
-    `STUB: surface_get_width(${surface}). returning gameCanvas.width instead`
-  );
-  return ogCanvas.width;
-}
-
-/**
  * This function calls a Script Function or Method with the given arguments.
  *
  * @param {function} scr  	The function/script or method that you want to call.
@@ -1035,18 +1145,18 @@ function real(n) {
  * @param {boolean} outline Whether the rectangle is drawn filled (false) or as a one pixel wide outline (true)
  */
 function draw_rectangle(x1, y1, x2, y2, outline) {
-  ctx.fillStyle = currentDrawColor;
-  ctx.strokeStyle = currentDrawColor;
+  context.fillStyle = currentDrawColor;
+  context.strokeStyle = currentDrawColor;
   x1 = round(x1);
   x2 = round(x2);
   y1 = round(y1);
   y2 = round(y2);
-  ctx.beginPath();
-  ctx.rect(x1, y1, x2 - x1, y2 - y1);
+  context.beginPath();
+  context.rect(x1, y1, x2 - x1, y2 - y1);
   if (outline) {
-    ctx.stroke();
+    context.stroke();
   } else {
-    ctx.fill();
+    context.fill();
   }
 }
 
@@ -1078,7 +1188,7 @@ function draw_background(background, x, y) {
 
   const img = cached.img;
 
-  ctx.drawImage(img, round(x), round(y));
+  context.drawImage(img, round(x), round(y));
 }
 
 /**
@@ -1711,14 +1821,14 @@ function choose(...args) {
  * @param {boolean} outline Whether the circle is drawn filled (false) or as a one pixel wide outline (true).
  */
 function draw_circle(x, y, r, outline) {
-  ctx.fillStyle = currentDrawColor;
-  ctx.strokeStyle = currentDrawColor;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+  context.fillStyle = currentDrawColor;
+  context.strokeStyle = currentDrawColor;
+  context.beginPath();
+  context.arc(x, y, r, 0, 2 * Math.PI, false);
   if (outline) {
-    ctx.stroke();
+    context.stroke();
   } else {
-    ctx.fill();
+    context.fill();
   }
 }
 
@@ -1920,13 +2030,18 @@ function _with(obj, fn) {
     }
 
     if (obj._object) {
+      if (this) obj.other = this;
       fn.call(obj);
+      obj.other = undefined;
       return;
     }
 
     const instancesOfObj = instances.get(obj) || [];
     for (const inst of instancesOfObj) {
+      if (this) inst.other = this;
       fn.call(inst);
+      inst.other = undefined;
+      return;
     }
   } catch (error) {
     console.error(`with() error on object ${obj?.name || "[unknown]"}`, error);
@@ -2116,7 +2231,7 @@ function string_width(string, second = 0) {
       continue;
     }
 
-    width += glyph.shift ?? (glyph.w + (glyph.offset || 0));
+    width += glyph.shift ?? glyph.w + (glyph.offset || 0);
   }
 
   return width;
@@ -2494,19 +2609,19 @@ function draw_tile(tileset, tiledata, frame = 0, x = 0, y = 0) {
   const sx = xbord + col * (tilew + xsep);
   const sy = ybord + row * (tileh + ysep);
 
-  ctx.save();
+  context.save();
 
   // Apply position and offset
-  ctx.translate(x - xoffset, y - yoffset);
+  context.translate(x - xoffset, y - yoffset);
 
   // Handle flipping
   if (tiledata.hflip || tiledata.vflip) {
-    ctx.scale(tiledata.hflip ? -1 : 1, tiledata.vflip ? -1 : 1);
-    ctx.translate(tiledata.hflip ? -tilew : 0, tiledata.vflip ? -tileh : 0);
+    context.scale(tiledata.hflip ? -1 : 1, tiledata.vflip ? -1 : 1);
+    context.translate(tiledata.hflip ? -tilew : 0, tiledata.vflip ? -tileh : 0);
   }
 
   // Draw the tile image
-  ctx.drawImage(
+  context.drawImage(
     img,
     sx,
     sy,
@@ -2518,7 +2633,7 @@ function draw_tile(tileset, tiledata, frame = 0, x = 0, y = 0) {
     tileh // destination
   );
 
-  ctx.restore();
+  context.restore();
 }
 
 /**
@@ -2530,7 +2645,7 @@ function path_end() {
 
 /**
  * GameMaker provides this function (as well as others) to permit the user to make their own colours. This particular function takes three component parts, the hue, the saturation and the value (also know as "luminosity") to create the colour desired. These values are taken as being between 0 and 255 so you can make 16,777,216 (256*256*256) colours with this!
- * 
+ *
  * @param {number} hue The hue of the colour
  * @param {number} sat How saturated the colour is
  * @param {number} val How dark the colour is
@@ -2574,9 +2689,9 @@ function make_colour_hsv(hue, sat, val) {
       bPrime = secondComponent;
     }
 
-    red   = Math.round((rPrime + matchValue) * 255);
+    red = Math.round((rPrime + matchValue) * 255);
     green = Math.round((gPrime + matchValue) * 255);
-    blue  = Math.round((bPrime + matchValue) * 255);
+    blue = Math.round((bPrime + matchValue) * 255);
   }
 
   function toHex(value) {
@@ -2585,6 +2700,563 @@ function make_colour_hsv(hue, sat, val) {
   }
 
   return `#${toHex(red)}${toHex(green)}${toHex(blue)}`.toLowerCase();
+}
+
+/**
+ * This will return the value of a number multiplied by itself "n" number of times. For example, power(5,3) will multiply 5 by itself 3 times and return 125, which is the same as saying 5*5*5=125. Please note that the "x" value (the number to change) cannot be a negative value.
+ *
+ * @param {number} x The number to change.
+ * @param {number} n How many times to multiply x by itself.
+ * @returns {number}
+ */
+function power(x, n) {
+  try {
+    if (x < 0 && !Number.isInteger(n))
+      throw new Error(
+        `power(${x}, ${n}): x cannot be negative while n is fractional`
+      );
+    return Math.pow(x, n);
+  } catch (e) {
+    console.error(e);
+    return NaN;
+  }
+}
+
+function surface_create(w, h) {
+  try {
+    const surfCanvas = document.createElement("canvas");
+    surfCanvas.width = w;
+    surfCanvas.height = h;
+
+    const context = surfCanvas.getContext("2d");
+    context.imageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+
+    const id = surfaceIdCounter++;
+    surfaces[id] = { canvas: surfCanvas, context: context };
+    document.getElementsByTagName("body")[0].appendChild(canvas);
+    return id;
+  } catch (e) {
+    console.error("surface_create error:", e);
+    return -1;
+  }
+}
+
+/**
+ * This function simply returns the width, in pixels, of the indexed surface. It should be noted that if you call this to check the application_surface immediately after having changed its size using surface_resize() it will not return the new value as the change needs a step or two to be fully processed. After waiting a step it should return the new size correctly.
+ *
+ * @param {number} surface_id	The ID of the surface to get the width of.
+ * @returns {number}
+ */
+function surface_get_width(surface_id) {
+  if (surface_id === "application_surface") 
+    return surfaces[-1].canvas.width;
+  const surf = surfaces[surface_id];
+  if (!surf) return 0;
+  return surf.canvas.width;
+}
+
+function surface_get_height(surface_id) {
+  if (surface_id === "application_surface") return surfaces[-1].canvas.height
+  const surf = surfaces[surface_id];
+  if (!surf) return 0;
+  return surf.canvas.height;
+}
+
+function surface_set_target(surface_id) {
+  try {
+    const surf = surfaces[surface_id];
+    if (!surf) throw new Error(`surface_set_target(${surface_id}): surface ${surface_id} is not a valid surface`);
+    context = surf.context;
+    currCanvas = surf.canvas;
+    return true;
+  } catch(e) {
+    console.error(e);
+    return false;
+  }
+}
+
+function surface_reset_target() {
+  try {
+    context = ctx;
+    currCanvas = canvas;
+    return true;
+  } catch(e) {
+    console.error(e);
+    return false;
+  }
+}
+
+function draw_surface(id, x, y) {
+  draw_surface_ext(id, x, y, 1, 1, 0, c_white, 1);
+}
+
+function draw_surface_ext(id, x, y, xscale, yscale, rot, col, alpha) {
+  try {
+    if (typeof id !== "number" || typeof x !== "number" || typeof y !== "number" || typeof xscale !== "number" || typeof yscale !== "number" ||  typeof rot !== "number" || typeof col !== "string" || typeof alpha !== "number") throw new Error(`draw_surface_ext(${id}, ${x}, ${y}, ${xscale}, ${yscale}, ${rot}, ${col}, ${alpha}): invalid parameters.`);
+    const surf = surfaces[id];
+    if (!surf) throw new Error(`draw_surface_ext(${id}, ${x}, ${y}, ${xscale}, ${yscale}, ${rot}, ${col}, ${alpha}): surface ${id} not valid.`);
+
+    const img = surf.canvas;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate((rot * Math.PI) / 180);
+    ctx.scale(xscale, yscale);
+    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+
+    if (col.toLowerCase() !== c_white) {
+      const tintCanvas = document.createElement("canvas");
+      tintCanvas.width = img.width;
+      tintCanvas.height = img.height;
+
+      const tintCtx = tintCanvas.getContext("2d");
+      tintCtx.drawImage(img, 0, 0);
+
+      tintCtx.globalCompositeOperation = "multiply";
+      tintCtx.fillStyle = col;
+      tintCtx.fillRect(0, 0, tintCanvas.width, tintCanvas.height);
+
+      tintCanvas.globalCompositeOperation = "destination-in";
+      tintCtx.drawImage(img, 0, 0);
+
+      ctx.drawImage(tintCanvas, 0, 0);
+    } else {
+      ctx.drawImage(img, 0, 0);
+    }
+  } catch(e) {
+    console.error(e);
+    return;
+  }
+}
+
+function surface_free(id) {
+  try {
+    if (typeof id !== "number") {
+      if (id === "application_surface")
+        throw new Error("surface_free: tried to free application_surface")
+    }
+    if (id === -1) {
+      throw new Error("surface_free: tried to free application_surface");
+    }
+
+    if (context === surfaces[id].context || canvas === surfaces[id].canvas) {
+      console.warn("freeing surface currently set for drawing. resetting surface target");
+      surface_reset_target();
+    }
+    surfaces[id] = undefined;
+  } catch(e) {
+    console.error(e);
+    return;
+  }
+}
+
+function draw_clear(col) {
+  draw_clear_alpha(col, 1);
+}
+
+function draw_clear_alpha(col, alpha) {
+  const oldColor = currentDrawColor;
+  const oldAlpha = context.globalAlpha;
+  context.fillStyle = col;
+  context.globalAlpha = alpha;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = oldColor;
+  context.globalAlpha = oldAlpha;
+}
+
+function make_colour_rgb(red, green, blue) {
+  function toHex(value) {
+    const hex = value.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  }
+
+  return `#${toHex(red)}${toHex(green)}${toHex(blue)}`.toLowerCase();
+}
+
+function buffer_create(size, type, alignment = 1) {
+  return createBuffer(size, type, alignment);
+}
+
+function buffer_delete(buf) {
+  // JS garbage collector handles this, but let's null refs for safety
+  buf.data = null;
+  buf.dv = null;
+  buf.size = 0;
+  buf.pos = 0;
+}
+
+function buffer_clear(buf, value = 0) {
+  const uint8 = new Uint8Array(buf.data);
+  uint8.fill(value);
+  buf.pos = 0;
+}
+
+function buffer_seek(buf, offset, origin) {
+  let base = 0;
+  switch (origin) {
+    case SEEK.start: base = 0; break;
+    case SEEK.current: base = buf.pos; break;
+    case SEEK.end: base = buf.size; break;
+    default: throw new Error(`Invalid origin ${origin}`);
+  }
+  const newPos = base + offset;
+  if (newPos < 0 || newPos > buf.size) {
+    throw new Error(`buffer_seek out of range: ${newPos}`);
+  }
+  buf.pos = newPos;
+}
+
+function buffer_tell(buf) {
+  return buf.pos;
+}
+
+function buffer_resize(buf, newSize) {
+  if (newSize === buf.size) return;
+
+  const newAb = new ArrayBuffer(newSize);
+  const newUint8 = new Uint8Array(newAb);
+  const oldUint8 = new Uint8Array(buf.data);
+  newUint8.set(oldUint8.subarray(0, Math.min(newSize, buf.size)));
+
+  buf.data = newAb;
+  buf.dv = new DataView(newAb);
+  buf.size = newSize;
+  if (buf.pos > newSize) buf.pos = newSize;
+}
+
+// Core read/write with string type and f16 emulation
+function buffer_write(buf, type, value) {
+  const dv = buf.dv;
+  let pos = buf.pos;
+  const fmt = type.replace("buffer_", "");
+
+  switch (fmt) {
+    case "u8":
+      dv.setUint8(pos, value);
+      pos += 1;
+      break;
+    case "s8":
+      dv.setInt8(pos, value);
+      pos += 1;
+      break;
+    case "u16":
+      dv.setUint16(pos, value, true);
+      pos += 2;
+      break;
+    case "s16":
+      dv.setInt16(pos, value, true);
+      pos += 2;
+      break;
+    case "u32":
+      dv.setUint32(pos, value, true);
+      pos += 4;
+      break;
+    case "s32":
+      dv.setInt32(pos, value, true);
+      pos += 4;
+      break;
+    case "f32":
+      dv.setFloat32(pos, value, true);
+      pos += 4;
+      break;
+    case "f64":
+      dv.setFloat64(pos, value, true);
+      pos += 8;
+      break;
+    case "f16": {
+      const f16 = float32ToFloat16(value);
+      dv.setUint16(pos, f16, true);
+      pos += 2;
+      break;
+    }
+    default:
+      throw new Error(`buffer_write: unknown type '${type}'`);
+  }
+  buf.pos = pos;
+}
+
+function buffer_read(buf, type) {
+  const dv = buf.dv;
+  let pos = buf.pos;
+  const fmt = type.replace("buffer_", "");
+  let result;
+
+  switch (fmt) {
+    case "u8":
+      result = dv.getUint8(pos);
+      pos += 1;
+      break;
+    case "s8":
+      result = dv.getInt8(pos);
+      pos += 1;
+      break;
+    case "u16":
+      result = dv.getUint16(pos, true);
+      pos += 2;
+      break;
+    case "s16":
+      result = dv.getInt16(pos, true);
+      pos += 2;
+      break;
+    case "u32":
+      result = dv.getUint32(pos, true);
+      pos += 4;
+      break;
+    case "s32":
+      result = dv.getInt32(pos, true);
+      pos += 4;
+      break;
+    case "f32":
+      result = dv.getFloat32(pos, true);
+      pos += 4;
+      break;
+    case "f64":
+      result = dv.getFloat64(pos, true);
+      pos += 8;
+      break;
+    case "f16": {
+      const f16 = dv.getUint16(pos, true);
+      result = float16ToFloat32(f16);
+      pos += 2;
+      break;
+    }
+    default:
+      throw new Error(`buffer_read: unknown type '${type}'`);
+  }
+  buf.pos = pos;
+  return result;
+}
+
+function buffer_get_size(buf) {
+  return buf.size;
+}
+
+function buffer_peek(buf, offset, type) {
+  const dv = buf.dv;
+  const fmt = type.replace("buffer_", "");
+  let result;
+
+  switch (fmt) {
+    case "u8":
+      result = dv.getUint8(offset);
+      break;
+    case "s8":
+      result = dv.getInt8(offset);
+      break;
+    case "u16":
+      result = dv.getUint16(offset, true);
+      break;
+    case "s16":
+      result = dv.getInt16(offset, true);
+      break;
+    case "u32":
+      result = dv.getUint32(offset, true);
+      break;
+    case "s32":
+      result = dv.getInt32(offset, true);
+      break;
+    case "f32":
+      result = dv.getFloat32(offset, true);
+      break;
+    case "f64":
+      result = dv.getFloat64(offset, true);
+      break;
+    case "f16": {
+      const f16 = dv.getUint16(offset, true);
+      result = float16ToFloat32(f16);
+      break;
+    }
+    default:
+      throw new Error(`buffer_peek: unknown type '${type}'`);
+  }
+  return result;
+}
+
+function buffer_poke(buf, offset, type, value) {
+  const dv = buf.dv;
+  const fmt = type.replace("buffer_", "");
+
+  switch (fmt) {
+    case "u8":
+      dv.setUint8(offset, value);
+      break;
+    case "s8":
+      dv.setInt8(offset, value);
+      break;
+    case "u16":
+      dv.setUint16(offset, value, true);
+      break;
+    case "s16":
+      dv.setInt16(offset, value, true);
+      break;
+    case "u32":
+      dv.setUint32(offset, value, true);
+      break;
+    case "s32":
+      dv.setInt32(offset, value, true);
+      break;
+    case "f32":
+      dv.setFloat32(offset, value, true);
+      break;
+    case "f64":
+      dv.setFloat64(offset, value, true);
+      break;
+    case "f16": {
+      const f16 = float32ToFloat16(value);
+      dv.setUint16(offset, f16, true);
+      break;
+    }
+    default:
+      throw new Error(`buffer_poke: unknown type '${type}'`);
+  }
+}
+
+function buffer_set_surface(buf, offset, surfaceId) {
+  const surface = surfaces[surfaceId];
+  if (!surface) {
+    console.error(`buffer_set_surface: invalid surface ID ${surfaceId}`);
+    return;
+  }
+
+  const ctx = surface.context;
+  const width = surface.canvas.width;
+  const height = surface.canvas.height;
+  const imageData = ctx.getImageData(0, 0, width, height);
+
+  const dv = buf.dv;
+  let i = 0;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const pixelIndex = (y * width + x) * 4;
+      const r = dv.getUint8(i++);
+      const g = dv.getUint8(i++);
+      const b = dv.getUint8(i++);
+      const a = dv.getUint8(i++);
+
+      imageData.data[pixelIndex + 0] = r;
+      imageData.data[pixelIndex + 1] = g;
+      imageData.data[pixelIndex + 2] = b;
+      imageData.data[pixelIndex + 3] = a;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+function buffer_get_surface(buf, surface, offset) {
+  try {
+    if (
+      typeof buf !== "object" ||
+      !(buf.dv instanceof DataView)
+    ) {
+      throw new Error("Invalid buffer");
+    }
+
+    const surfId = surface;
+    surface = surfaces[surface];
+    if (
+      !surface ||
+      !(surface.canvas instanceof HTMLCanvasElement)
+    ) {
+      throw new Error("Invalid surface ID: " + surfId);
+    }
+
+    const ctx = surface.context;
+    const w = surface.canvas.width;
+    const h = surface.canvas.height;
+
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const pixels = imageData.data;
+
+    if (buf.size < w * h * 4) {
+      throw new Error("Buffer too small for surface");
+    }
+
+    let i = offset;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const index = (y * w + x) * 4;
+        buf.dv.setUint8(i++, pixels[index]);     // R
+        buf.dv.setUint8(i++, pixels[index + 1]); // G
+        buf.dv.setUint8(i++, pixels[index + 2]); // B
+        buf.dv.setUint8(i++, pixels[index + 3]); // A
+      }
+    }
+  } catch (e) {
+    console.error("buffer_get_surface error:", e);
+  }
+}
+
+function show_error(str, abort) {
+  if (abort) 
+    throw new Error(str); // this will automatically abort because its uncaught
+  else {
+    try {
+      throw new Error(str)
+    } catch(error) {
+      console.error(error) // doing this so it shows callstack
+    }
+  }
+}
+
+function show_message(str) {
+  alert(str);
+}
+
+function show_question(str) {
+  return confirm(str);
+}
+
+function code_is_compiled() {
+  return true; // this will always be true for js since HTML5 target is compiled outside of the vm.
+}
+
+function debug_get_callstack(maxdepth = 10) { // why the fuck is this guy so complicated compared to the rest wtf :sob:
+  // Create an error to get the stack trace
+  const err = new Error();
+  const stack = err.stack || "";
+
+  // Split stack into lines (skip first line: it's the error message)
+  const lines = stack.split("\n").slice(1);
+
+  const callstack = [];
+
+  for (let i = 0; i < lines.length && callstack.length < maxdepth; i++) {
+    const line = lines[i].trim();
+
+    // Typical line formats:
+    // Chrome: "at functionName (fileURL:line:col)"
+    // Firefox: "functionName@fileURL:line:col"
+
+    let match = null;
+
+    // Chrome-like
+    match = line.match(/^at (\S+) \((.*):(\d+):(\d+)\)$/);
+    if (!match) {
+      // Firefox-like
+      match = line.match(/^(\S+)@(.+):(\d+):(\d+)$/);
+    }
+
+    if (match) {
+      const funcName = match[1];
+      const lineNum = match[3];
+      callstack.push(`${funcName}:${lineNum}`);
+    } else {
+      // fallback if no match (anonymous or native)
+      callstack.push(line);
+    }
+  }
+
+    let stacklines = '';
+
+    callstack.forEach((line) => {
+    stacklines += `"${line}"\n`;
+  })
+
+  return stacklines;
 }
 
 export {
@@ -2615,7 +3287,6 @@ export {
   ceil,
   round,
   random,
-  surface_get_width,
   script_execute,
   real,
   draw_rectangle,
@@ -2684,4 +3355,34 @@ export {
   draw_tile,
   path_end,
   make_colour_hsv,
+  power,
+  surface_create,
+  surface_get_width,
+  surface_get_height,
+  surface_set_target,
+  surface_reset_target,
+  draw_surface,
+  draw_surface_ext,
+  draw_clear,
+  draw_clear_alpha,
+  make_colour_rgb,
+  buffer_clear,
+  buffer_create,
+  buffer_delete,
+  buffer_get_size,
+  buffer_read,
+  buffer_resize,
+  buffer_seek,
+  buffer_tell,
+  buffer_write,
+  buffer_peek,
+  buffer_poke,
+  buffer_get_surface,
+  buffer_set_surface,
+  surface_free,
+  show_error,
+  show_message,
+  show_question,
+  code_is_compiled,
+  debug_get_callstack,
 };

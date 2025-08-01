@@ -1,7 +1,7 @@
-import { draw_sprite_ext, getBoundingBox, instance_find, instance_destroy, instance_create, script_execute, action_move, round, random, _with, instance_exists } from "/imports/assets/gamemakerFunctions.js";
-import { scr_monstersetup, scr_gettext, scr_mercystandard, snd_play } from "/imports/customFunctions.js";
+import { draw_sprite_ext, getBoundingBox, instance_find, instance_destroy, instance_create, script_execute, action_move, round, random, _with, instance_exists, floor } from "/imports/assets/gamemakerFunctions.js";
+import { scr_monstersetup, scr_gettext, scr_mercystandard, snd_play, scr_newvapordata } from "/imports/customFunctions.js";
 import { control_check_pressed } from "/imports/input.js";
-import { c_white, snd_slidewhist } from "/imports/assets.js";
+import { c_white, snd_slidewhist, snd_damage } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
@@ -10,6 +10,8 @@ import * as OBJ_NOMSCWRITER from "/obj/nomscwriter/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_lborder from "/obj/lborder/index.js";
 import * as obj_blconsm from "/obj/blconsm/index.js";
+import * as obj_dmgwriter  from "/obj/dmgwriter/index.js";
+import * as obj_vaporized_new  from "/obj/vaporized_new/index.js";
 import * as parent from "/obj/monsterparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -192,6 +194,7 @@ function create() {
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
+      if (!Number.isInteger(this.alarm[i])) this.alarm[i] = floor(this.alarm[i]);
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
@@ -339,7 +342,7 @@ function destroy() {
     this.ddd = instance_create(this.x, this.y, obj_vaporized_new);
 
     _with (this.ddd, function() {
-      scr_newvapordata(23);
+      scr_newvapordata.call(this, 23);
     })
 
     this.ddd.sprite_index = this.sprite_index;
@@ -436,9 +439,9 @@ function step() {
 
   if (global.hurtanim[this.myself] === 5) {
     global.damage = 0;
-    instance_create((this.x + (this.sprite_width / 2)) - 48, this.y - 24, "obj_dmgwriter")
+    instance_create((this.x + (this.sprite_width / 2)) - 48, this.y - 24, obj_dmgwriter)
 
-    _with ("obj_dmgwriter", function() {
+    _with (obj_dmgwriter, function() {
       this.alarm[2] = 30;
     })
 
@@ -570,7 +573,7 @@ function alarm5() {
 
 function alarm3() {
   if (this.image_index !== 1) {
-    this.dmgwriter = instance_create((this.x + (this.sprite_width / 2)) - 48, this.y - 24, "obj_dmgwriter");
+    this.dmgwriter = instance_create((this.x + (this.sprite_width / 2)) - 48, this.y - 24, obj_dmgwriter);
     global.damage = this.takedamage;
 
     _with (this.dmgwriter, function() {

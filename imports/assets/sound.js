@@ -169,6 +169,12 @@ const snd_slidewhist = new Howl({
 const snd_levelup = new Howl({
   src: ["/imports/assets/snd/levelup.wav"]
 })
+const snd_laz = new Howl({
+  src: ["/imports/assets/snd/laz.wav"]
+})
+const snd_vaporized = new Howl({
+  src: ["/imports/assets/snd/vaporized.wav"]
+})
 
 // currently playing sounds map
 const playingSounds = new Map();
@@ -230,5 +236,7 @@ export {
   snd_damage,
   snd_slidewhist,
   snd_levelup,
+  snd_laz,
+  snd_vaporized,
   playingSounds,
 };

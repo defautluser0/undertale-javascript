@@ -1,18 +1,23 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
+import { draw_sprite_ext, getBoundingBox, instance_destroy, power, draw_set_color, round, floor, choose, draw_text, string } from "/imports/assets/gamemakerFunctions.js";
+import { ossafe_fill_rectangle, scr_setfont, scr_gettext } from "/imports/customFunctions.js";
+import { c_white, c_black, c_dkgray, c_lime, c_red, c_ltgray, fnt_main } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
-// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
-
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
+//                                                               // to this fake object
+const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
+  alarm[0] = 1;
+
+  let dmg = global.damage
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "dmgwriter", // sprite name
+    depth: -2002, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
@@ -34,6 +39,17 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
+    stretchwidth: global.monsterinstance[global.mytarget].wd,
+    stretchfactor: global.monsterinstance[global.mytarget].wd / global.monstermaxhp[global.mytarget],
+    apparenthp: global.monsterhp[global.mytarget],
+    actualhp: global.monsterhp[global.mytarget],
+    maxhp: global.monstermaxhp[global.mytarget],
+    negative: 0,
+    special: 0,
+    dmg: dmg,
+    i: 1,
+    drawbar: 1,
+    numnum: [],
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
@@ -42,7 +58,10 @@ function create() {
     updateSprite,
     updateCol,
     followPath,
-    createContext
+    createContext,
+    alarm2,
+    alarm0,
+    draw,
   };
   
   self._hspeed = 0;
@@ -213,7 +232,7 @@ function updateSpeed() {
 
 function updateSprite() {
   if (this.visible === true && this.sprite_index) {
-    const img = draw_sprite_ext(
+    draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -222,14 +241,8 @@ function updateSprite() {
       this.image_yscale,
       this.image_angle,
       c_white,
-      this.image_alpha,
-      1,
+      this.image_alpha
     );
-
-    if (img) {
-      this.sprite_width = img.width;
-      this.sprite_height = img.height;
-    }
   }
 }
 
@@ -296,17 +309,14 @@ function followPath() {
 }
 
 function updateCol() {
-  // uncomment the following line if any collision will happen involving this object
   // getBoundingBox.call(this);
-  
-  // uncomment the if statement if said collision is checked by this object
   // let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   // if (other) {
     // collision updates with an object here. other
     // is the colliding instance, so use 
     // other.property for instance properties, like
     // x, y and such.
-  //}
+  // }
   // to add more collision checks, set other to 
   // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
   // obj_solidobject2 being a different solid object 
@@ -315,6 +325,108 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  if (this.dmg !== 0) {
+    this.vspeed = -4;
+    this.gravity = 0.5;
+    this.gravity_direction = 270;
+  }
 }
 
-export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext };
+function alarm2() {
+  instance_destroy(this);
+}
+
+function alarm0() {
+  if (this.i === 0) {
+    this.i = 1;
+  } else {
+    this.i = 0;
+  }
+
+  if (this.apparenthp > (this.actualhp - this.dmg)) {
+    this.apparenthp -= (this.dmg / 15);
+  } else {
+    this.apparenthp = this.actualhp - this.dmg;
+  }
+
+  if (this.negative === 0) {
+    if (this.apparenthp < 0) {
+      this.apparenthp = 0;
+    }
+  }
+
+  this.alarm[0] = 2;
+}
+
+function draw() {
+  this.thisnum = this.dmg;
+
+  if (this.thisnum >= 0) {
+    this.place = 0;
+    this.numadd = 10;
+
+    if (this.thisnum >= this.numadd) {
+      do {
+        this.place += 1;
+        this.numadd *= 10;
+      }
+      while (this.thisnum >= this.numadd);
+    }
+  } else {
+    this.thisnum = 0;
+    this.place = 0;
+  }
+
+  this.thisnum2 = this.thisnum;
+
+  for (let i = this.place; i >= 0; i -= 1) {
+    this.numnum[i] = floor(this.thisnum2 / power(10, i));
+    this.thisnum2 -= (this.numnum[i] * power(10, i));
+  }
+
+  if (this.thisnum > 0) {
+    if (this.drawbar === 1) {
+      draw_set_color(c_black);
+      ossafe_fill_rectangle(this.x - 1, this.ystart + 7, this.x + round((global.monstermaxhp[global.mytarget] * this.stretchfactor) + 1), this.ystart + 21);
+      draw_set_color(c_dkgray);
+      ossafe_fill_rectangle(this.x, this.ystart + 8, this.x + round(global.monstermaxhp[global.mytarget] * this.stretchfactor), this.ystart + 20);
+      draw_set_color(c_lime);
+
+      if (this.apparenthp > 0) {
+        ossafe_fill_rectangle(this.x, this.ystart + 8, round(this.x + (this.apparenthp * this.stretchfactor)), this.ystart + 20);
+      }
+    }
+
+    for (let i = this.place; i >= 0; i -= 1) {
+      draw_set_color(c_red);
+
+      if (this.stretchwidth <= 120)
+        draw_sprite_ext("spr_dmgnum_o", this.numnum[i], ((this.x +30) - (i * 32)) + (this.place * 16), this.y - 28, 1, 1, 0, c_red, 1);
+      else
+        draw_sprite_ext("spr_dmgnum_o", this.numnum[i], (((this.x - 30) + (this.stretchwidth / 2)) - (i * 32)) + (this.place * 16), this.y - 28, 1, 1, 0, c_red, 1);
+    }
+  }
+
+  if (this.thisnum === 0) {
+    draw_set_color(c_white);
+
+    if (this.special === 0) {
+      draw_sprite_ext("spr_dmgmiss_o", 0, this.x - 10, this.y - 16, 1, 1, 0, c_ltgray, 1);
+    }
+
+    if (this.special === 1) {
+        draw_set_color(c_red);
+        scr_setfont(fnt_main);
+        this.ex = choose(0, 1, 2, 3, 4, 5);
+        draw_text(this.x - 10, this.y - 10, scr_gettext("damage_special_" + string(this.ex)));
+    }
+  }
+
+  if (this.y > this.ystart) {
+    this.y = this.ystart;
+    this.vspeed = 0;
+    this.gravity = 0;
+  }
+}
+
+export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext, alarm2, alarm0, draw };
