@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNDERTALE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <canvas id="gameCanvas" width="640" height="480"></canvas>
+  <script type="module">
+    import roomSize from '/imports/assets/roomSize.js'
+
+    roomSize.width = 1200;  // room width in px
+    roomSize.height = 240; // room height in px
+
+  </script>
+  <script src="/imports/howler.js"></script>
+  <script type="module">
+    import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
+    import { instance_create, instances, secondFont, draw_text, draw_tile } from "/imports/assets/gamemakerFunctions.js"
+    import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
+    import { loadCurrentSong } from "/imports/assets/loadSong.js"
+    import roomSize from "/imports/assets/roomSize.js"
+    import global from "/imports/assets/global.js"
+    //import * as obj_spiketile1 from '/obj/spiketile1/index.js'
+    //import * as obj_spiketile2 from '/obj/spiketile2/index.js'
+    import * as obj_fakewateropenr from '/obj/fakewateropenr/index.js'
+    import * as obj_fakewateropenl from '/obj/fakewateropenl/index.js'
+    import * as obj_fakewateropenm from '/obj/fakewateropenm/index.js'
+    import * as obj_fakewaterr from '/obj/fakewaterr/index.js'
+    import * as obj_fakewaterl from '/obj/fakewaterl/index.js'
+    import * as obj_fakewaterm from '/obj/fakewaterm/index.js'
+    import * as obj_fakewatershadowl from '/obj/fakewatershadowl/index.js'
+    import * as obj_fakewatershadowr from '/obj/fakewatershadowr/index.js'
+    import * as obj_fakewatershadowm from '/obj/fakewatershadowm/index.js'
+    import * as obj_solidtall from '/obj/solidtall/index.js'
+    import * as obj_mainchara from '/obj/mainchara/index.js'
+    import * as obj_solidsmall from '/obj/solidsmall/index.js'
+    import * as obj_doorB from '/obj/doorB/index.js'
+    import * as obj_markerA from '/obj/markerA/index.js'
+    import * as obj_markerB from '/obj/markerB/index.js'
+    import * as obj_doorA from '/obj/doorA/index.js'
+    //import * as obj_encountertrigger1 from '/obj/encountertrigger1/index.js'
+    //import * as obj_toroverworld5 from '/obj/toroverworld5/index.js'
+    //import * as obj_plotwall2 from '/obj/plotwall2/index.js'
+    import * as obj_ruinsmusic from '/obj/ruinsmusic/index.js'
+    import * as obj_readable_room1 from '/obj/readable_room1/index.js'
+    import * as obj_solidlong from '/obj/solidlong/index.js'
+    import * as obj_overworldcontroller from '/obj/overworldcontroller/index.js'
+    import * as screenUpdater from '/obj/screen/index.js'
+
+    const allInstances = [];
+
+    loadCurrentSong("currentsong", global.playing1)
+    loadCurrentSong("currentsong2", global.playing2)
+
+    global.newRoom = ["spiketile1", "spiketile2", "fakewateropenr", "fakewateropenl", "fakewateropenm", "fakewaterl", "fakewaterm", "fakewaterr", "fakewatershadowl", "fakewatershadowm", "fakewatershadowr", "solidtall", "mainchara", "solidsmall", "doorB", "markerA", "doorA", "markerB", "encountertrigger1", "toroverworld5", "plotwall2", "ruinsmusic", "readable_room1", "solidlong", "overworldcontroller"] // add all objects created here's names to this array, so the roomStart is executed
+    screenUpdater.create()
+    instance_create(1140, 60, obj_fakewateropenr);
+    instance_create(800, 60, obj_fakewateropenl);
+    instance_create(820, 60, obj_fakewateropenm);
+    instance_create(820, 60, obj_fakewateropenm);
+    instance_create(840, 60, obj_fakewateropenm);
+    instance_create(860, 60, obj_fakewateropenm);
+    instance_create(880, 60, obj_fakewateropenm);
+    instance_create(900, 60, obj_fakewateropenm);
+    instance_create(920, 60, obj_fakewateropenm);
+    instance_create(940, 60, obj_fakewateropenm);
+    instance_create(960, 60, obj_fakewateropenm);
+    instance_create(980, 60, obj_fakewateropenm);
+    instance_create(1000, 60, obj_fakewateropenm);
+    instance_create(1020, 60, obj_fakewateropenm);
+    instance_create(1040, 60, obj_fakewateropenm);
+    instance_create(1060, 60, obj_fakewateropenm);
+    instance_create(1080, 60, obj_fakewateropenm);
+    instance_create(1100, 60, obj_fakewateropenm);
+    instance_create(1120, 60, obj_fakewateropenm);
+    instance_create(800, 100, obj_fakewaterl);
+    instance_create(800, 120, obj_fakewaterl);
+    instance_create(1120, 160, obj_fakewaterm);
+    instance_create(800, 180, obj_fakewatershadowl);
+    instance_create(820, 120, obj_fakewaterm);
+    instance_create(820, 100, obj_fakewaterm);
+    instance_create(820, 180, obj_fakewatershadowm);
+    instance_create(840, 180, obj_fakewatershadowm);
+    instance_create(860, 180, obj_fakewatershadowm);
+    instance_create(880, 180, obj_fakewatershadowm);
+    instance_create(900, 180, obj_fakewatershadowm);
+    instance_create(920, 180, obj_fakewatershadowm);
+    instance_create(940, 180, obj_fakewatershadowm);
+    instance_create(960, 180, obj_fakewatershadowm);
+    instance_create(980, 180, obj_fakewatershadowm);
+    instance_create(1000, 180, obj_fakewatershadowm);
+    instance_create(1020, 180, obj_fakewatershadowm);
+    instance_create(1040, 180, obj_fakewatershadowm);
+    instance_create(1060, 180, obj_fakewatershadowm);
+    instance_create(1080, 180, obj_fakewatershadowm);
+    instance_create(1100, 180, obj_fakewatershadowm);
+    instance_create(1140, 160, obj_fakewaterr);
+    instance_create(1140, 180, obj_fakewaterr);
+    instance_create(1120, 180, obj_fakewaterm);
+    instance_create(1120, 140, obj_fakewatershadowm);
+    instance_create(1140, 140, obj_fakewatershadowr);
+    instance_create(1180, 0, obj_solidtall);
+    instance_create(20, 0, obj_solidtall);
+    instance_create(1140, 100, obj_mainchara);
+    instance_create(40, 200, obj_solidsmall);
+    instance_create(60, 200, obj_solidsmall);
+    instance_create(80, 200, obj_solidsmall);
+    instance_create(100, 200, obj_solidsmall);
+    instance_create(120, 200, obj_solidsmall);
+    instance_create(400, 180, obj_solidsmall);
+    instance_create(400, 160, obj_solidsmall);
+    instance_create(420, 180, obj_solidsmall);
+    instance_create(420, 160, obj_solidsmall);
+    instance_create(440, 180, obj_solidsmall);
+    instance_create(440, 160, obj_solidsmall);
+    instance_create(460, 180, obj_solidsmall);
+    instance_create(460, 160, obj_solidsmall);
+    instance_create(400, 80, obj_solidsmall);
+    instance_create(400, 100, obj_solidsmall);
+    instance_create(420, 100, obj_solidsmall);
+    instance_create(440, 100, obj_solidsmall);
+    instance_create(460, 100, obj_solidsmall);
+    instance_create(480, 100, obj_solidsmall);
+    instance_create(500, 100, obj_solidsmall);
+    instance_create(520, 120, obj_solidsmall);
+    instance_create(520, 140, obj_solidsmall);
+    instance_create(540, 140, obj_solidsmall);
+    instance_create(560, 140, obj_solidsmall);
+    instance_create(580, 140, obj_solidsmall);
+    instance_create(600, 140, obj_solidsmall);
+    instance_create(620, 140, obj_solidsmall);
+    instance_create(640, 140, obj_solidsmall);
+    instance_create(660, 140, obj_solidsmall);
+    instance_create(140, 220, obj_doorB);
+    instance_create(160, 220, obj_doorB);
+    instance_create(150, 190, obj_markerA);
+    instance_create(1158, 100, obj_markerB);
+    instance_create(1178, 100, obj_doorA);
+    instance_create(1178, 120, obj_doorA);
+    //instance_create(520, 0, obj_encountertrigger1);
+    //instance_create(200, 100, obj_toroverworld5);
+    //instance_create(780, 20, obj_plotwall2);
+    //instance_create(40, 0, obj_ruinsmusic);
+    instance_create(580, 140, obj_readable_room1);
+    instance_create(600, 140, obj_readable_room1);
+    instance_create(20, 60, obj_solidlong);
+    instance_create(720, 180, obj_solidlong);
+    instance_create(680, 80, obj_solidlong);
+    instance_create(180, 200, obj_solidlong);
+    instance_create(20, 20, obj_overworldcontroller);
+    if (global.newRoom[0] && global.execStart) {
+      for (const [_, list] of instances.entries()) {
+        for (const instance of list) {
+          global.newRoom.forEach((name) => {
+            if (instance.name === name) {
+              instance.roomStart?.call(instance);
+            }
+          });
+        }
+      }
+    }
+    global.newRoom = [];
+
+    if (global.room_persistent === window.location.href) {
+      const save = global._roomSaves?.[window.location.href];
+      if (save) {
+        for (const { objName, data } of save) {
+          // Try to find the object by name in current instances map keys
+          let obj = null;
+          for (const candidates of instances.values()) {
+            for (const inst of candidates) {
+              if (inst.name === objName) {
+                obj = inst;
+                obj.saved = true;
+                inst.saved = false;
+                break;
+              }
+            }
+          }
+
+          if (!obj) {
+            console.warn(`Object with name "${objName}" not found, skipping instance`);
+            continue;
+          }
+          const instance = obj._object?.create?.();
+          if (!instance) {
+            console.error(`instance ${objName}.create() is invalid or null`); continue;
+          }
+          instance._object = obj._object;
+          Object.defineProperties(instance, Object.getOwnPropertyDescriptors(data));
+          Object.defineProperties(instance, Object.getOwnPropertyDescriptors(instance._object));
+
+          instance.startx = instance.x;
+          instance.starty = instance.y;
+          instance.xstart = instance.x;
+          instance.ystart = instance.y;
+
+          if (!instances.get(obj._object)[0].saved) instances.set(obj._object, []);
+
+          instances.get(obj._object).push(instance);
+
+          obj.roomStart?.call(instance);
+        };
+      }
+    }
+
+    function draw_tiles() {
+      // here you draw_tile() any tiles in this room
+      //                    tile object     tile index     vertical flip          horizontal flip       frame     x      y
+      // EXAMPLE: draw_tile(tile1,        {tile_index:5, vflip:false,           hflip:false},           0,        5,    10);
+    }
+
+    function callInheritedFunction(instance, funcName) {
+      let currentObj = instance._object;
+
+      while (currentObj) {
+        const func = currentObj[funcName];
+        if (typeof func === "function") {
+          return func.call(instance);
+        }
+        currentObj = currentObj.parent ?? null;
+      }
+      // No function found in hierarchy
+      return undefined;
+    }
+
+    function filterDestroyed() {
+      for (const [obj, instanceList] of instances) {
+        // Remove all destroyed instances
+        for (let i = instanceList.length - 1; i >= 0; i--) {
+          if (instanceList[i]._destroyed) {
+            instanceList.splice(i, 1);
+          }
+        }
+      }
+    }
+
+    // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
+    // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
+    const FPS = 30;
+    const FRAME_DURATION = 1000 / FPS;
+    let lastFrameTime = 0;
+    let fpsCounter = 0;
+    let lastFpsUpdate = performance.now();
+    let currentFps = 0;
+    function game_loop(currentTime) {
+      const elapsed = currentTime - lastFrameTime;
+
+      allInstances.length = 0;
+
+      if (elapsed >= FRAME_DURATION) {
+        lastFrameTime = currentTime;
+
+        fpsCounter++;
+
+        const now = currentTime;
+        if (now - lastFpsUpdate >= 1000) {
+          currentFps = fpsCounter;
+          fpsCounter = 0;
+          lastFpsUpdate = now;
+        }
+
+        screenUpdater.beginStep();
+        control_update();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "beginStep");
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateAlarms?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateKeyboard?.call(instance);
+            obj.updateMouse?.call(instance);
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateIndex?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "step")
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            if (instance.x > roomSize.width || instance.x < 0 || instance.y > roomSize.height || instance.y < 0) {
+              callInheritedFunction(instance, "outsideRoom")
+            }
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateSpeed?.call(instance);
+            obj.followPath?.call(instance);
+          }
+        }
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateCol?.call(instance);
+          }
+        }
+        filterDestroyed();
+        screenUpdater.endStep();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "endStep");
+          }
+        }
+        filterDestroyed();
+
+        draw_tiles?.();
+
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            allInstances.push({ obj, instance });
+          }
+        }
+        allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
+        for (const { obj, instance } of allInstances) {
+          callInheritedFunction(instance, "preDraw");
+        }
+        filterDestroyed();
+        for (const { obj, instance } of allInstances) {
+          callInheritedFunction(instance, "drawBegin");
+        }
+        filterDestroyed();
+        for (const { obj, instance } of allInstances) {
+          if (!obj.draw) obj.updateSprite?.call(instance);
+          obj.draw?.call(instance);
+        }
+        filterDestroyed();
+        for (const { obj, instance } of allInstances) {
+          callInheritedFunction(instance, "drawEnd");
+        }
+        filterDestroyed();
+        for (const { obj, instance } of allInstances) {
+          callInheritedFunction(instance, "postDraw");
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUIBegin");
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUI");
+          }
+        }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            callInheritedFunction(instance, "drawGUIEnd");
+          }
+        }
+        filterDestroyed();
+
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            obj.updateGamemakerFunctions?.call(instance); // legacy function
+          }
+        }
+
+        updateCamera(instances.get(obj_mainchara)[0]) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
+        screenUpdater.updateScreen();
+
+        input_update();
+
+        if (global.roomEnd && !global.eventDone) {
+          global.eventDone = true;
+          for (const [obj, instanceList] of instances) {
+            for (const instance of instanceList) {
+              obj.roomEnd?.call(instance);
+            }
+          }
+        }
+
+        if (global.roomEnd && global.eventDone && global.nextRoom !== null && "https://undertale.defautluser0.xyz" + global.nextRoom !== window.location.href) {
+          if (global.room_persistent === window.location.href) {
+            const save = [];
+
+            for (const [obj, list] of instances.entries()) {
+              const objName = list[0]?.name;
+              if (!objName) continue;
+
+              for (const inst of list) {
+                const data = {};
+                for (const key in inst) {
+                  if (key !== "_object" && typeof inst[key] !== "function") {
+                    data[key] = inst[key];
+                  }
+                }
+                save.push({
+                  objName,
+                  data
+                });
+              }
+            }
+
+            global._roomSaves = global._roomSaves || {};
+            global._roomSaves[window.location.href] = save;
+          }
+          global.eventDone = false;
+          global.roomEnd = false;
+          let nextRoom = global.nextRoom
+          global.nextRoom = null;
+
+          function extractNameFromSrc(src) {
+            // src expected: "/imports/assets/mus/xxx.ogg" or "/imports/assets/snd/yyy.ogg"
+            const parts = src.split('/');
+            if (parts.length < 4) return null; // safeguard
+
+            const folder = parts[3]; // 'mus' or 'snd'
+            const filename = parts[4]?.split('.')[0]; // 'xxx' or 'yyy'
+            if (!folder || !filename) return null;
+
+            return `${folder}_${filename}`;
+          }
+
+          try {
+            localStorage.setItem("global", JSON.stringify(global));
+          } catch (_) {
+            try {
+              let currentsong = global.currentsong;
+              let currentsong2 = global.currentsong2;
+              let batmusic = global.batmusic;
+              if (global.currentsong !== -1) {
+                global.currentsong = {
+                  name: extractNameFromSrc(currentsong._src) ?? "unknown",
+                  rate: currentsong.rate?.() ?? 1,
+                  volume: currentsong.volume?.() ?? 1,
+                  paused: !global.playing1 ?? false,
+                  pos: currentsong.seek?.() ?? 0,
+                  loop: currentsong.loop?.() ?? false,
+                };
+              }
+              if (global.currentsong2 !== -1) {
+                global.currentsong2 = {
+                  name: extractNameFromSrc(currentsong2._src) ?? "unknown",
+                  rate: currentsong2.rate?.() ?? 1,
+                  volume: currentsong2.volume?.() ?? 1,
+                  paused: !global.playing2 ?? false,
+                  pos: currentsong2.seek?.() ?? 0,
+                  loop: currentsong2.loop?.() ?? false,
+                };
+              }
+              global.batmusic = -1;
+              localStorage.setItem("global", JSON.stringify(global));
+              global.currentsong = currentsong;
+              global.currentsong2 = currentsong2;
+              global.batmusic = batmusic;
+            } catch (_) {
+              console.log("WHAT??");
+              const newGlob = global;
+              newGlob.monsterinstance = [];
+              newGlob.mntrg = {};
+              localStorage.setItem("global", JSON.stringify(newGlob));
+            }
+          }
+          window.location.href = nextRoom;
+        }
+      }
+
+      requestAnimationFrame(game_loop);
+    }
+
+    window.addEventListener("keydown", e => {
+      keyboard[e.code] = true;
+      _key_state[e.code] = true;
+    });
+    window.addEventListener("keyup", e => {
+      keyboard[e.code] = false;
+      _key_state[e.code] = false;
+    });
+
+    // room code (object positioning and such) goes here
+
+    // starts the game loop once everything has been defined
+    window.addEventListener('load', () => {
+      requestAnimationFrame(game_loop);
+    })
+  </script>
+</body>
+
+</html>
