@@ -1,4 +1,4 @@
-const bg_ruinsplaceholder = {
+export const bg_ruinsplaceholder = {
 	sprite: "bg_ruinsplaceholder",	// sprite name, kinda like sprite_index
 	width: 20,											// width of a singular tile
 	height: 20,											// height of a singular tile
@@ -11,7 +11,7 @@ const bg_ruinsplaceholder = {
 	gms2: 0,												// whether topleft tile is ignored (1) or taken in account (0)
 }
 
-const bg_ruinsplaceholder2 = {
+export const bg_ruinsplaceholder2 = {
 	sprite: "bg_ruinsplaceholder2",
 	width: 20,
 	height: 20,
@@ -24,7 +24,7 @@ const bg_ruinsplaceholder2 = {
 	gms2: 0,
 }
 
-const bg_ruinseasynam1 = {
+export const bg_ruinseasynam1 = {
 	sprite: "bg_ruinseasynam1",
 	width: 20,
 	height: 20,
@@ -37,7 +37,7 @@ const bg_ruinseasynam1 = {
 	gms2: 0,
 }
 
-const bg_ruinseasynam2 = {
+export const bg_ruinseasynam2 = {
 	sprite: "bg_ruinseasynam2",
 	width: 20,
 	height: 20,
@@ -50,7 +50,7 @@ const bg_ruinseasynam2 = {
 	gms2: 0,
 }
 
-const bg_ruinseasynam3 = {
+export const bg_ruinseasynam3 = {
 	sprite: "bg_ruinseasynam3",
 	width: 20,
 	height: 20,
@@ -63,7 +63,7 @@ const bg_ruinseasynam3 = {
 	gms2: 0,
 }
 
-const bg_tundratiles = {
+export const bg_tundratiles = {
 	sprite: "bg_tundratiles",
 	width: 20,
 	height: 20,
@@ -75,5 +75,3 @@ const bg_tundratiles = {
 	ybord: 0,
 	gms2: 0,
 }
-
-export { bg_ruinsplaceholder, bg_ruinsplaceholder2, bg_ruinseasynam1, bg_ruinseasynam2, bg_ruinseasynam3, bg_tundratiles }

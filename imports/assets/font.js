@@ -1007,75 +1007,73 @@ const fnt_curs_glyphs = `32;100;62;9;24;9;0
 127;210;88;12;9;15;0
 `
 
-const fnt_main = { 
+export const fnt_main = { 
 	file: "/imports/assets/fnt/main.png",
 	size: 24,
 	glyphs: parseGlyphCSV(fnt_main_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_maintext = { 
+export const fnt_maintext = { 
 	file: "/imports/assets/fnt/maintext.png",
 	size: 12,
 	glyphs: parseGlyphCSV(fnt_maintext_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_plain = { 
+export const fnt_plain = { 
 	file: "/imports/assets/fnt/plain.png",
 	size: 12,
 	glyphs: parseGlyphCSV(fnt_plain_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_plainbig = { 
+export const fnt_plainbig = { 
 	file: "/imports/assets/fnt/plainbig.png",
 	size: 48,
 	glyphs: parseGlyphCSV(fnt_plainbig_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_comicsans = { 
+export const fnt_comicsans = { 
 	file: "/imports/assets/fnt/comicsans.png",
 	size: 10,
 	glyphs: parseGlyphCSV(fnt_comicsans_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_papyrus	= {
+export const fnt_papyrus	= {
 	file: "/imports/assets/fnt/papyrus.png",
 	size: 8,
 	glyphs: parseGlyphCSV(fnt_papyruns_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_wingdings = {
+export const fnt_wingdings = {
 	file: "/imports/assets/fnt/wingdings.png",
 	size: 12,
 	glyphs: parseGlyphCSV(fnt_wingdings_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_small = {
+export const fnt_small = {
 	file: "/imports/assets/fnt/small.png",
 	size: 6,
 	glyphs: parseGlyphCSV(fnt_small_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_dmg = {
+export const fnt_dmg = {
 	file: "/imports/assets/fnt/dmg.png",
 	size: 24,
 	glyphs: parseGlyphCSV(fnt_dmg_glyphs),
 	image: null,
 	loading: false,
 };
-const fnt_curs = {
+export const fnt_curs = {
 	file: "/imports/assets/fnt/curs.png",
 	size: 18,
 	glyphs: parseGlyphCSV(fnt_curs_glyphs),
 	image: null,
 	loading: false,
 };
-
-export { fnt_main, fnt_maintext, fnt_plain, fnt_plainbig, fnt_comicsans, fnt_papyrus, fnt_wingdings, fnt_small, fnt_dmg, fnt_curs }
