@@ -333,7 +333,7 @@ function createContext() {
 }
 
 function alarm2() {
-  instance_destroy(this);
+  instance_destroy(this._object);
 }
 
 function alarm0() {
