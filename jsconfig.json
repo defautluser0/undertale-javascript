@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "/imports/*": ["imports/*"],
+      "/obj/*": ["obj/*"],
+    },
+    "module": "esnext",
+    "target": "esnext",
+    "checkJs": false
+  },
+  "include": ["imports/**/*.js", "obj/**/index.js"]
+}
