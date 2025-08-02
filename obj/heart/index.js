@@ -1,5 +1,5 @@
-import { draw_sprite_ext, instance_find, instance_number, keyboard_check, instance_exists, getBoundingBox, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
-import { snd_play } from "/imports/customFunctions.js"
+import { draw_sprite_ext, instance_find, instance_number, keyboard_check, instance_exists, getBoundingBox, collision_rectangle, instance_create, room_goto } from "/imports/assets/gamemakerFunctions.js";
+import { snd_play, caster_stop, caster_free } from "/imports/customFunctions.js"
 import { c_white } from "/imports/assets.js";
 import { control_check_pressed, control_check, vk_up, vk_down, vk_left, vk_right } from "/imports/input.js"
 import global from "/imports/assets/global.js";
@@ -9,6 +9,7 @@ import * as obj_uborder from "/obj/uborder/index.js";
 import * as obj_rborder from "/obj/rborder/index.js";
 import * as obj_dborder from "/obj/dborder/index.js";
 import * as obj_lborder from "/obj/lborder/index.js";
+import * as obj_unfader from "/obj/unfader/index.js";
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -32,6 +33,7 @@ function create() {
     sprite_index: "spr_heart", // sprite object
     visible: true, // sprite visibility
     parent: parent,
+    gravity: 0,
     create2: true,
 
     alarm: alarm, // alarm array
@@ -207,14 +209,10 @@ function updateSpeed() {
   }
 
   // apply gravity vector
-  if (this.gravity) {
+  if (this.gravity !== 0) {
     let gravRad = this.gravity_direction * (Math.PI / 180);
     this.hspeed += Math.cos(gravRad) * this.gravity;
     this.vspeed -= Math.sin(gravRad) * this.gravity;
-
-    // recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
-    this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
   // update position
