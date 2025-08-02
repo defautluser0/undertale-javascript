@@ -85,6 +85,7 @@ import {
   c_fuchsia,
   fnt_curs,
   c_red,
+  snd_escaped,
 } from "/imports/assets.js";
 import {
   vk_down,
@@ -419,19 +420,7 @@ function SCR_TEXTTYPE(typer, x, y) {
       break;
 
     case 2:
-      SCR_TEXTSETUP.call(
-        this,
-        fnt_plain,
-        c_black,
-        x,
-        y,
-        x + 190,
-        43,
-        2,
-        SND_TXT1,
-        9,
-        20
-      );
+      SCR_TEXTSETUP.call(this, fnt_plain, c_black, x, y, x + 190, 43, 2, SND_TXT1, 9, 20);
       break;
 
     case 3:
@@ -701,10 +690,6 @@ function SCR_TEXTTYPE(typer, x, y) {
         20
       );
       break;
-  }
-
-  if (global.typer === 11 || global.typer === 112) {
-    this.textspeed += 1;
   }
 }
 
@@ -2758,7 +2743,7 @@ function scr_runaway() {
     const heart = instance_find(obj_heart, 0);
     this.runaway = 1;
     snd_play(snd_escaped);
-    heart.hspeed =-3;
+    heart._hspeed = -3;
     heart.sprite_index = "spr_heartgtfo";
     heart.image_speed = 0.5;
     instance_find(OBJ_WRITER, 0).halt = 3;
