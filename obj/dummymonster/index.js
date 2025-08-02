@@ -315,6 +315,7 @@ function followPath() {
 }
 
 function updateCol() {
+  getBoundingBox.call(this);
   //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   //if (other) {
     // collision updates with an object here. other
@@ -356,7 +357,7 @@ function destroy() {
 
 function outsideRoom() {
   if (this.outside === 0) {
-    instance_find(OBJ_WRITER).halt = 3;
+    instance_find(OBJ_WRITER, 0).halt = 3;
     global.monster[this.myself] = 0;
 
     if (global.mnfight === 2) {
