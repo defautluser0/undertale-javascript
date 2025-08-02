@@ -3675,6 +3675,7 @@ export function code_is_compiled() {
  * This function is not very useful, since it doesnt return a javascript callstack, but an emulated gamemaker one (for parity).
  *
  * @param {Real} [maxdepth] The maximum depth of the callstack that is returned
+ * @returns {Array}
  */
 export function debug_get_callstack(maxdepth = 10) {
   // why the fuck is this guy so complicated compared to the rest wtf :sob:
