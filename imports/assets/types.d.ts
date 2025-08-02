@@ -81,7 +81,6 @@ declare enum BufferType {
 	buffer_u32 = "buffer_u32",
 	buffer_s32 = "buffer_s32",
 	buffer_u64 = "buffer_u64",
-	buffer_s64 = "buffer_s64",
 	buffer_f16 = "buffer_f16",
 	buffer_f32 = "buffer_f32",
 	buffer_f64 = "buffer_f64",
