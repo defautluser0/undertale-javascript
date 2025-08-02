@@ -205,7 +205,7 @@
         filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            if (instance.x > roomSize.width || instance.x < 0 || instance.y > roomSize.height || instance.y < 0) {
+            if (instance.bbox_right <= 0 || instance.bbox_left >= roomSize.width || instance.bbox_bottom <= 0 || instance.bbox_top >= roomSize.height) {
               callInheritedFunction(instance, "outsideRoom")
             }
           }
