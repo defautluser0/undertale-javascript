@@ -63,6 +63,7 @@ function create() {
     step,
     roomStart,
     alarm9,
+    alarm0,
   };
 
   self._hspeed = 0;
@@ -214,24 +215,21 @@ function step() {
 
   if (
     global.faceemotion == 0 &&
-    this.sprite_index != "spr_face_torielhappytalk"
+    this.sprite_index != "spr_face_torielhappyblink"
   )
-    this.sprite_index = "spr_face_torielhappytalk";
+    this.sprite_index = "spr_face_torielhappyblink";
 
-  if (global.faceemotion == 1 && this.sprite_index != "spr_face_torieltalkside")
-    this.sprite_index = "spr_face_torieltalkside";
+  if (global.faceemotion == 1 && this.sprite_index != "spr_face_torielblinkside")
+    this.sprite_index = "spr_face_torielblinkside";
 
-  if (global.faceemotion == 2 && this.sprite_index != "spr_face_torieltalk")
-    this.sprite_index = "spr_face_torieltalk";
+  if (global.faceemotion == 2 && this.sprite_index != "spr_face_torielblink")
+    this.sprite_index = "spr_face_torielblink";
 
   if (global.faceemotion == 3 && this.sprite_index != "spr_face_torielwhat")
     this.sprite_index = "spr_face_torielwhat";
 
   if (global.faceemotion == 4 && this.sprite_index != "spr_face_torielwhatside")
     this.sprite_index = "spr_face_torielwhatside";
-
-  if (global.faceemotion == 5 && this.sprite_index != "spr_face_torielrevenge")
-    this.sprite_index = "spr_face_torielrevengetalk";
 
   if (global.faceemotion == 6 && this.sprite_index != "spr_face_torielcold")
     this.sprite_index = "spr_face_torielcold";
@@ -295,24 +293,21 @@ function roomStart() {
 
   if (
     global.faceemotion == 0 &&
-    this.sprite_index != "spr_face_torielhappytalk"
+    this.sprite_index != "spr_face_torielhappyblink"
   )
-    this.sprite_index = "spr_face_torielhappytalk";
+    this.sprite_index = "spr_face_torielhappyblink";
 
-  if (global.faceemotion == 1 && this.sprite_index != "spr_face_torieltalkside")
-    this.sprite_index = "spr_face_torieltalkside";
+  if (global.faceemotion == 1 && this.sprite_index != "spr_face_torielblinkside")
+    this.sprite_index = "spr_face_torielblinkside";
 
-  if (global.faceemotion == 2 && this.sprite_index != "spr_face_torieltalk")
-    this.sprite_index = "spr_face_torieltalk";
+  if (global.faceemotion == 2 && this.sprite_index != "spr_face_torielblink")
+    this.sprite_index = "spr_face_torielblink";
 
   if (global.faceemotion == 3 && this.sprite_index != "spr_face_torielwhat")
     this.sprite_index = "spr_face_torielwhat";
 
   if (global.faceemotion == 4 && this.sprite_index != "spr_face_torielwhatside")
     this.sprite_index = "spr_face_torielwhatside";
-
-  if (global.faceemotion == 5 && this.sprite_index != "spr_face_torielrevenge")
-    this.sprite_index = "spr_face_torielrevengetalk";
 
   if (global.faceemotion == 6 && this.sprite_index != "spr_face_torielcold")
     this.sprite_index = "spr_face_torielcold";
@@ -337,6 +332,11 @@ function alarm9() {
   parent.alarm9.call(this);
 }
 
+function alarm0() {
+  this.image_speed = 0.25;
+  this.alarm[0] = 30 + round(random(60));
+}
+
 export {
   create,
   updateAlarms,
@@ -347,4 +347,5 @@ export {
   step,
   roomStart,
   alarm9,
+  alarm0,
 };

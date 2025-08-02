@@ -180,14 +180,14 @@ if (global.debug === 1) {
 }
 
 export function getBoundingBox() {
-  // @ts-ignore
+  // @ts-expect-error
   const scaleX = this.image_xscale ?? 1;
-  // @ts-ignore
+  // @ts-expect-error
   const scaleY = this.image_yscale ?? 1;
 
-  // @ts-ignore
+  // @ts-expect-error
   const sprite = this.sprite_index;
-  // @ts-ignore
+  // @ts-expect-error
   const frame = Math.round(this.image_index) || 0;
 
   // Try exact mask path first
@@ -203,13 +203,13 @@ export function getBoundingBox() {
       // Fallback to dummy bounds if still not loaded
       const fallbackWidth = 0 * scaleX;
       const fallbackHeight = 0 * scaleY;
-      // @ts-ignore
+      // @ts-expect-error
       this.bbox_left = this.x;
-      // @ts-ignore
+      // @ts-expect-error
       this.bbox_top = this.y;
-      // @ts-ignore
+      // @ts-expect-error
       this.bbox_right = this.x + fallbackWidth;
-      // @ts-ignore
+      // @ts-expect-error
       this.bbox_bottom = this.y + fallbackHeight;
       return;
     }
@@ -244,25 +244,25 @@ export function getBoundingBox() {
 
   if (!found) {
     // No white pixels — treat as empty hitbox
-    // @ts-ignore
+    // @ts-expect-error
     this.bbox_left = this.x;
-    // @ts-ignore
+    // @ts-expect-error
     this.bbox_top = this.y;
-    // @ts-ignore
+    // @ts-expect-error
     this.bbox_right = this.x;
-    // @ts-ignore
+    // @ts-expect-error
     this.bbox_bottom = this.y;
     return;
   }
 
   // Apply position and scale
-  // @ts-ignore
+  // @ts-expect-error
   const bboxX1 = this.x + left * scaleX;
-  // @ts-ignore
+  // @ts-expect-error
   const bboxX2 = this.x + (right + 1) * scaleX;
-  // @ts-ignore
+  // @ts-expect-error
   const bboxY1 = this.y + top * scaleY;
-  // @ts-ignore
+  // @ts-expect-error
   const bboxY2 = this.y + (bottom + 1) * scaleY;
 
   this.bbox_left = Math.min(bboxX1, bboxX2);
@@ -387,7 +387,7 @@ export function audio_is_playing(index, id = null) {
  * @returns {void}
  */
 export function audio_stop_all() {
-  // @ts-ignore
+  // @ts-expect-error
   Howler.stop();
   playingSounds.clear();
   global.playing1 = false;
@@ -416,7 +416,7 @@ export function audio_stop_sound(index, id = null, currentsong) {
  * @returns {Font} The font name, or -1 if none.
  */
 export function draw_get_font() {
-  // @ts-ignore
+  // @ts-expect-error
   if (currentFont === null) return -1;
   return currentFont;
 }
@@ -1792,7 +1792,7 @@ export function ini_export() {
 
   ini_parse(ini_data);
 
-  // @ts-ignore
+  // @ts-expect-error
   const blob = new Blob([iniText], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -2038,9 +2038,9 @@ export function distance_to_point(x, y) {
  * @returns {void}
  */
 export function move_towards_point(x, y, sp) {
-  // @ts-ignore
+  // @ts-expect-error
   const dx = x - this.x;
-  // @ts-ignore
+  // @ts-expect-error
   const dy = y - this.y;
   const dist = Math.hypot(dx, dy);
 
@@ -2218,69 +2218,47 @@ export function instance_change(obj, perf) {
     if (!obj || typeof obj !== "object") {
       throw new Error(`instance_change: invalid object ${obj}`);
     }
-
+    
     const inst = this;
-    // @ts-ignore
-    const x = inst.x ?? 0;
-    // @ts-ignore
-    const y = inst.y ?? 0;
+    // @ts-expect-error
+    const x = inst.x;
+    // @ts-expect-error
+    const y = inst.y;
 
-    let newInstance;
+    let newInst;
 
-    if (perf) {
-      newInstance = instance_create(x, y, obj);
+    if (perf === true) {
+      newInst = instance_create(x, y, obj);
+      // @ts-expect-error
+      inst._object?.destroy?.call(inst);
+      // @ts-expect-error
+      inst._object?.cleanUp?.call(inst);
     } else {
-      // Silent instance creation without calling create2/roomStart
-      if (typeof obj.create !== "function") {
-        throw new Error("instance_change: obj has no create() method");
-      }
+      newInst = obj.create?.();
 
-      newInstance = obj.create();
-      if (!newInstance) {
-        throw new Error(
-          "instance_change: obj.create() returned null/undefined"
-        );
-      }
+      if (!newInst) throw new Error("instance_change: " + obj + ".create is undefined/doesnt return properly");
 
-      newInstance._object = obj;
-
-      newInstance.x = x;
-      newInstance.y = y;
-      newInstance.startx = x;
-      newInstance.starty = y;
-      newInstance.xstart = x;
-      newInstance.ystart = y;
-      newInstance.previousx = x;
-      newInstance.previousy = y;
-      newInstance.xprevious = x;
-      newInstance.yprevious = y;
+      newInst._object = obj;
+      newInst.x = x;
+      newInst.y = y;
+      newInst.startx = x;
+      newInst.starty = y;
+      newInst.xstart = x;
+      newInst.ystart = y;
+      newInst.previousx = x;
+      newInst.previousy = y;
+      newInst.xprevious = x;
+      newInst.yprevious = y;
 
       if (!instances.has(obj)) {
         instances.set(obj, []);
       }
-      instances.get(obj).push(newInstance);
-    }
-
-    // Remove old instance from instances map
-    // @ts-ignore
-    const oldObj = inst._object;
-    const list = instances.get(oldObj);
-    if (Array.isArray(list)) {
-      const i = list.indexOf(inst);
-      if (i !== -1) list.splice(i, 1);
-    }
-
-    // Handle destroy and cleanup if perf is true
-    if (perf) {
-      // @ts-expect-error
-      inst.destroy?.call(inst);
-      // @ts-expect-error
-      inst.cleanUp?.call(inst);
+      instances.get(obj).push(newInst);
     }
 
     inst._destroyed = true;
+    newInst._destroyed = false;
 
-    return newInstance;
   } catch (e) {
     console.error(e);
   }
