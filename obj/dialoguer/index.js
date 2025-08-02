@@ -233,7 +233,7 @@ function roomStart() {
 				this.writer = instance_create(this.xx + 68, this.yy - 5, OBJ_WRITER);
 				script_execute.call(this, scr_facechoice);
 			} else {
-				writer = instance_create(this.xx + 10, this.yy - 5, OBJ_WRITER);
+				this.writer = instance_create(this.xx + 10, this.yy - 5, OBJ_WRITER);
 			}
 		} else {
 			this.side = 1;

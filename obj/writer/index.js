@@ -508,27 +508,27 @@ function draw() {
 
           if (this.shake > 38) {
             if (this.shake == 39) {
-              direction += 10;
-              spritex += hspeed;
-              spritey += vspeed;
+              this.direction += 10;
+              spritex += this.hspeed;
+              spritey += this.vspeed;
             } else if (this.shake == 40) {
-              spritex += hspeed;
-              spritey += vspeed;
+              spritex += this.hspeed;
+              spritey += this.vspeed;
             } else if (this.shake == 41) {
-              direction += 10 * n;
-              spritex += hspeed;
-              spritey += vspeed;
+              this.direction += 10 * n;
+              spritex += this.hspeed;
+              spritey += this.vspeed;
               direction -= 10 * n;
             } else if (this.shake == 42) {
-              direction += 20 * n;
-              spritex += hspeed;
-              spritey += vspeed;
-              direction -= 20 * n;
+              this.direction += 20 * n;
+              spritex += this.hspeed;
+              spritey += this.vspeed;
+              this.direction -= 20 * n;
             } else if (this.shake == 43) {
-              direction += 30 * n;
-              spritex += hspeed * 0.7 + 10;
-              spritey += vspeed * 0.7;
-              direction -= 30 * n;
+              this.direction += 30 * n;
+              spritex += this.hspeed * 0.7 + 10;
+              spritey += this.vspeed * 0.7;
+              this.direction -= 30 * n;
             }
           } else if (!instance_exists(obj_papdate)) {
             spritex += random(this.shake) - this.shake / 2;
@@ -710,27 +710,27 @@ function draw() {
 
       if (this.shake > 38) {
         if (this.shake == 39) {
-          direction += 10;
-          offsetx += hspeed;
-          offsety += vspeed;
+          this.direction += 10;
+          offsetx += this.hspeed;
+          offsety += this.vspeed;
         } else if (this.shake == 40) {
-          offsetx += hspeed;
-          offsety += vspeed;
+          offsetx += this.hspeed;
+          offsety += this.vspeed;
         } else if (this.shake == 41) {
-          direction += 10 * n;
-          offsetx += hspeed;
-          offsety += vspeed;
-          direction -= 10 * n;
+          this.direction += 10 * n;
+          offsetx += this.hspeed;
+          offsety += this.vspeed;
+          this.direction -= 10 * n;
         } else if (this.shake == 42) {
-          direction += 20 * n;
-          offsetx += hspeed;
-          offsety += vspeed;
-          direction -= 20 * n;
+          this.direction += 20 * n;
+          offsetx += this.hspeed;
+          offsety += this.vspeed;
+          this.direction -= 20 * n;
         } else if (this.shake == 43) {
-          direction += 30 * n;
-          offsetx += hspeed * 0.7 + 10;
-          offsety += vspeed * 0.7;
-          direction -= 30 * n;
+          this.direction += 30 * n;
+          offsetx += this.hspeed * 0.7 + 10;
+          offsety += this.vspeed * 0.7;
+          this.direction -= 30 * n;
         }
       } else if (this.shake !== 0) {
         offsetx += random(this.shake) - this.shake / 2;
@@ -740,9 +740,7 @@ function draw() {
         offsety = 0;
       }
 
-      var display_scale =
-        surface_get_width("application_surface") /
-        final_view_wview[view_current];
+      var display_scale = surface_get_width("application_surface") / final_view_wview[view_current];
       var finalx = round((letterx + offsetx) * display_scale) / display_scale;
       var finaly = round((myy + offsety) * display_scale) / display_scale;
       draw_text_transformed(
