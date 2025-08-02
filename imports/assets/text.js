@@ -10,12 +10,15 @@ import {
   ds_map_add,
   script_execute,
   _with,
+  round,
+  random,
 } from "/imports/assets/gamemakerFunctions.js";
 
 import * as obj_mainchara from "/obj/mainchara/index.js";
 
 function SCR_TEXT(argument0) {
   let adder;
+  let i;
   switch (argument0) {
     case 0:
       break;
@@ -46696,7 +46699,7 @@ function textdata_en() {
     "obj_readable_modernbook_68",
     " * (Some unfinished book.)/%%"
   );
-  ds_map_add(global.text_data_en, "obj_readable_room1_64", " %%");
+  ds_map_add(global.text_data_en, "obj_readable_room1_64", " * [NO TEXT] (obj_readable_room1)/%%");
   ds_map_add(
     global.text_data_en,
     "obj_readable_room1_65",
@@ -47730,7 +47733,7 @@ function textdata_en() {
     "obj_readable_room1_652",
     " * (Rich history of Tem.)/%%"
   );
-  ds_map_add(global.text_data_en, "obj_readable_room2_60", " %%");
+  ds_map_add(global.text_data_en, "obj_readable_room2_60", "  * [NO TEXT] (obj_readable_room2) /%%");
   ds_map_add(
     global.text_data_en,
     "obj_readable_room2_63",
@@ -48575,7 +48578,7 @@ function textdata_en() {
     "obj_readable_room2_570",
     " * (It's a nice thing you can&  see the southern wall from&  this angle.)/%%"
   );
-  ds_map_add(global.text_data_en, "obj_readable_room3_59", " %%");
+  ds_map_add(global.text_data_en, "obj_readable_room3_59", " * [NO TEXT] (obj_readable_room3) /%%");
   ds_map_add(
     global.text_data_en,
     "obj_readable_room3_60",
@@ -48991,7 +48994,7 @@ function textdata_en() {
     "obj_readable_room3_325",
     " * (Statue of tem..^1. very famus^1)&* (VERY!!!!!!!!!)/%%"
   );
-  ds_map_add(global.text_data_en, "obj_readable_room4_60", " %%");
+  ds_map_add(global.text_data_en, "obj_readable_room4_60", " * [NO TEXT] (obj_readable_room4) /%%");
   ds_map_add(global.text_data_en, "obj_readable_room4_63", " * It's you!/%%");
   ds_map_add(
     global.text_data_en,
@@ -49257,7 +49260,7 @@ function textdata_en() {
     "obj_readable_room4_237",
     " * Huh!^1?&* There's a camera behind&  the waterfall./%%"
   );
-  ds_map_add(global.text_data_en, "obj_readable_room5_64", " %%");
+  ds_map_add(global.text_data_en, "obj_readable_room5_64", " * [NO TEXT] (obj_readable_room5) /%%");
   ds_map_add(
     global.text_data_en,
     "obj_readable_room5_68",
