@@ -53,6 +53,7 @@ function create() {
     followPath,
     createContext,
     user0,
+    alarm0,
   };
 
   self._hspeed = 0;
@@ -176,26 +177,13 @@ function create() {
 }
 
 function updateAlarms() {
-  function callInheritedFunction(funcName) {
-    let currentObj = this._object;
-
-    while (currentObj) {
-      const func = currentObj[funcName];
-      if (typeof func === "function") {
-        return func.call(instance);
-      }
-      currentObj = currentObj.parent ?? null;
-    }
-    // No function found in hierarchy
-    return;
-  }
-
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
+      if (!Number.isInteger(this.alarm[i])) this.alarm[i] = floor(this.alarm[i]);
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
-        if (typeof handler === "function") callInheritedFunction(handler); // call with instance context
+        if (typeof handler === "function") handler.call(this); // call with instance context
       }
     } else if (this.alarm[i] === 0) {
       this.alarm[i]--;
@@ -334,7 +322,7 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
-  SCR_TEXTTYPE.call(this, global.typer);
+  SCR_TEXTTYPE.call(this, global.typer, this.x, this.y);
   this.x = round(this.x);
   this.y = round(this.y);
   this.writingx = round(this.writingx);
@@ -370,6 +358,10 @@ function user1() {
   this.parent.user1.call(this);
 }
 
+function alarm0() {
+  this.parent.alarm0.call(this);
+}
+
 export {
   create,
   updateAlarms,
@@ -384,4 +376,5 @@ export {
   step,
   draw,
   user1,
+  alarm0,
 };
