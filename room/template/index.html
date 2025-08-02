@@ -21,9 +21,10 @@
   <script src="/imports/howler.js"></script>
   <script type="module">
     import { control_update, input_update, keyboard, _key_state } from "/imports/input.js";
-    import { instance_create, instances, secondFont, draw_text } from "/imports/assets/gamemakerFunctions.js"
+    import { instance_create, instances, secondFont, draw_text, draw_tile } from "/imports/assets/gamemakerFunctions.js"
     import { view_current, view_xview, view_yview, updateCamera } from "/imports/view.js"
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
+    import roomSize from "/imports/assets/roomSize.js"
     import global from "/imports/assets/global.js"
     import * as obj_objectname from '/obj/objectname/index.js'
     import * as screenUpdater from '/obj/screen/index.js'
@@ -92,19 +93,37 @@
       }
     }
 
+    function draw_tiles() {
+      // here you draw_tile() any tiles in this room
+      //                    tile object     tile index     vertical flip          horizontal flip       frame     x      y
+      // EXAMPLE: draw_tile(tile1,        {tile_index:5, vflip:false,           hflip:false},           0,        5,    10);
+    }
+
     function callInheritedFunction(instance, funcName) {
       let currentObj = instance._object;
 
       while (currentObj) {
         const func = currentObj[funcName];
         if (typeof func === "function") {
-          return func.call(instance, ...args);
+          return func.call(instance);
         }
         currentObj = currentObj.parent ?? null;
       }
       // No function found in hierarchy
       return undefined;
     }
+
+    function filterDestroyed() {
+      for (const [obj, instanceList] of instances) {
+        // Remove all destroyed instances
+        for (let i = instanceList.length - 1; i >= 0; i--) {
+          if (instanceList[i]._destroyed) {
+            instanceList.splice(i, 1);
+          }
+        }
+      }
+    }
+
     // gameloop DO NOT EDIT VARIABLES UNLESS NECESSARY (eg. changing fps in this room for some reason)
     // IMPORTANT: replace "obj_objectname" with the object name (eg. obj_mainchara) and import it from /obj/objectname/index.js above
     const FPS = 30;
@@ -134,9 +153,10 @@
         control_update();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.beginStep?.call(instance);
+            callInheritedFunction(instance, "beginStep");
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateAlarms?.call(instance);
@@ -148,6 +168,7 @@
             obj.updateMouse?.call(instance);
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateIndex?.call(instance);
@@ -155,9 +176,18 @@
         }
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            callInheritedFunction(instance, "step");
+            callInheritedFunction(instance, "step")
           }
         }
+        filterDestroyed();
+        for (const [obj, instanceList] of instances) {
+          for (const instance of instanceList) {
+            if (instance.x > roomSize.width || instance.x < 0 || instance.y > roomSize.height || instance.y < 0) {
+              callInheritedFunction(instance, "outsideRoom")
+            }
+          }
+        }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateSpeed?.call(instance);
@@ -169,12 +199,16 @@
             obj.updateCol?.call(instance);
           }
         }
+        filterDestroyed();
         screenUpdater.endStep();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.endStep?.call(instance);
+            callInheritedFunction(instance, "endStep");
           }
         }
+        filterDestroyed();
+
+        draw_tiles?.();
 
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
@@ -183,45 +217,49 @@
         }
         allInstances.sort((a, b) => b.instance.depth - a.instance.depth);
         for (const { obj, instance } of allInstances) {
-          obj.preDraw?.call(instance);
+            callInheritedFunction(instance, "preDraw");
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
-          obj.drawBegin?.call(instance);
+            callInheritedFunction(instance, "drawBegin");
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
           if (!obj.draw) obj.updateSprite?.call(instance);
           obj.draw?.call(instance);
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
-          obj.drawEnd?.call(instance);
+            callInheritedFunction(instance, "drawEnd");
         }
+        filterDestroyed();
         for (const { obj, instance } of allInstances) {
-          obj.postDraw?.call(instance);
+            callInheritedFunction(instance, "postDraw");
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.drawGUIBegin?.call(instance);
+            callInheritedFunction(instance, "drawGUIBegin");
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.drawGUI?.call(instance);
+            callInheritedFunction(instance, "drawGUI");
           }
         }
+        filterDestroyed();
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
-            obj.drawGUIEnd?.call(instance);
+            callInheritedFunction(instance, "drawGUIEnd");
           }
         }
+        filterDestroyed();
 
         for (const [obj, instanceList] of instances) {
           for (const instance of instanceList) {
             obj.updateGamemakerFunctions?.call(instance); // legacy function
           }
-        }
-
-        if (global.debug === 1 && secondFont) {
-          draw_text(15 + view_xview[view_current], 15 + view_yview[view_current], currentFps, 1);
         }
 
         updateCamera(instances.get(obj_objectname)[0]) // replace obj_objectname with your centered object or instances.get(...)[0] with {x: 0, y: 0} for no screen centering
@@ -283,31 +321,41 @@
           try {
             localStorage.setItem("global", JSON.stringify(global));
           } catch (_) {
-            if (global.currentsong !== -1) {
+            try {
               let currentsong = global.currentsong;
-              global.currentsong = {
-                name: extractNameFromSrc(currentsong._src) ?? "unknown",
-                rate: currentsong.rate?.() ?? 1,
-                volume: currentsong.volume?.() ?? 1,
-                paused: !currentsong.playing?.() ?? false,
-                pos: currentsong.seek?.() ?? 0,
-                loop: currentsong.loop?.() ?? false,
-              };
+              let currentsong2 = global.currentsong2;
+              let batmusic = global.batmusic;
+              if (global.currentsong !== -1) {
+                global.currentsong = {
+                  name: extractNameFromSrc(currentsong._src) ?? "unknown",
+                  rate: currentsong.rate?.() ?? 1,
+                  volume: currentsong.volume?.() ?? 1,
+                  paused: !global.playing1 ?? false,
+                  pos: currentsong.seek?.() ?? 0,
+                  loop: currentsong.loop?.() ?? false,
+                };
+              }
+              if (global.currentsong2 !== -1) {
+                global.currentsong2 = {
+                  name: extractNameFromSrc(currentsong2._src) ?? "unknown",
+                  rate: currentsong2.rate?.() ?? 1,
+                  volume: currentsong2.volume?.() ?? 1,
+                  paused: !global.playing2 ?? false,
+                  pos: currentsong2.seek?.() ?? 0,
+                  loop: currentsong2.loop?.() ?? false,
+                };
+              }
+              global.batmusic = -1;
               localStorage.setItem("global", JSON.stringify(global));
               global.currentsong = currentsong;
-            }
-            if (global.currentsong2 !== -1) {
-              let currentsong2 = global.currentsong2;
-              global.currentsong2 = {
-                name: extractNameFromSrc(currentsong2._src) ?? "unknown",
-                rate: currentsong2.rate?.() ?? 1,
-                volume: currentsong2.volume?.() ?? 1,
-                paused: !currentsong2.playing?.() ?? false,
-                pos: currentsong2.seek?.() ?? 0,
-                loop: currentsong2.loop?.() ?? false,
-              };
-              localStorage.setItem("global", JSON.stringify(global));
               global.currentsong2 = currentsong2;
+              global.batmusic = batmusic;
+            } catch(_) {
+              console.log("WHAT??");
+              const newGlob = global;
+              newGlob.monsterinstance = [];
+              newGlob.mntrg = {};
+              localStorage.setItem("global", JSON.stringify(newGlob));
             }
           }
           window.location.href = nextRoom;
