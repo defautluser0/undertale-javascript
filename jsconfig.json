@@ -3,11 +3,14 @@
     "baseUrl": ".",
     "paths": {
       "/imports/*": ["imports/*"],
-      "/obj/*": ["obj/*"],
+      "/obj/*": ["obj/*"]
     },
     "module": "esnext",
     "target": "esnext",
     "checkJs": false
   },
-  "include": ["imports/**/*.js", "obj/**/index.js"]
+  "include": [
+    "imports/**/*.js",
+    "obj/**/index.js",
+  ]
 }

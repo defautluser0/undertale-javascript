@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "/imports/*": ["imports/*"]
+    },
+    "typeRoots": ["imports/assets/@types"],
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "target": "ES2024",
+    "lib": ["ES2024", "DOM"]
+  },
+  "include": [
+    "imports/assets/gamemakerFunctions.js",
+    "imports/assets/@types/**/*.d.ts"
+  ]
+}
