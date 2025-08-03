@@ -219,13 +219,13 @@ function updateGamemakerFunctions() {
   }
 
   // apply friction
-  if (this.friction !== 0 && this.speed > 0) {
+  if (this.friction !== 0 && this.speed > 0 && Number.isFinite(this.friction)) {
     this.speed -= this.friction;
     if (this.speed < 0) this.speed = 0;
   }
 
   // apply gravity vector
-  if (this.gravity) {
+  if (this.gravity !== 0 && Number.isFinite(this.gravity)) {
     let gravRad = this.gravity_direction * (Math.PI / 180);
     this.hspeed += Math.cos(gravRad) * this.gravity;
     this.vspeed -= Math.sin(gravRad) * this.gravity;
@@ -321,6 +321,7 @@ function step() {
     this.y = this.mychoicey;
     this.speed = 0;
   }
+  console.log(this.hspeed, this.vspeed, this.x, this.y);
 }
 
 export {
