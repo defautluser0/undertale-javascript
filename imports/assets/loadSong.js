@@ -13,7 +13,7 @@ export function loadCurrentSong(key, playing) {
 
   global[key] = howl;
   // Apply saved settings
-	const id = howl.play();
+  const id = howl.play();
   howl.volume(songData.volume, id);
   howl.rate(songData.rate, id);
   howl.loop(songData.loop);

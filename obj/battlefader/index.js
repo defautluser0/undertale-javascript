@@ -1,13 +1,13 @@
 import {
   draw_sprite_ext,
-  instance_exists,
   instance_destroy,
+  instance_exists,
   instances,
 } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as obj_heart from "/obj/heart/index.js";
 import * as obj_fakeheart from "/obj/fakeheart/index.js";
+import * as obj_heart from "/obj/heart/index.js";
 
 const parent = null;
 

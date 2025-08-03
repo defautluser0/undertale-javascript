@@ -1,16 +1,16 @@
 import {
   draw_sprite_ext,
+  getBoundingBox,
   instance_create,
   room_goto,
   room_previous,
-  getBoundingBox,
 } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
+import * as parent from "/obj/doorparent/index.js";
 import * as obj_persistentfader from "/obj/persistentfader/index.js";
 import * as obj_unfader from "/obj/unfader/index.js";
-import * as parent from "/obj/doorparent/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);

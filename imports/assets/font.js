@@ -2,25 +2,25 @@
 
 function parseGlyphCSV(csvText) {
   const glyphs = {};
-  const lines = csvText.trim().split('\n');
+  const lines = csvText.trim().split("\n");
 
   for (const line of lines) {
-    const [charCodeStr, x, y, w, h, shift, offset] = line.split(';');
+    const [charCodeStr, x, y, w, h, shift, offset] = line.split(";");
 
-		if (!charCodeStr) {
-			return;
-		}
+    if (!charCodeStr) {
+      return;
+    }
 
-		const charCode = parseInt(charCodeStr);
-		const char = String.fromCodePoint(charCode);
+    const charCode = parseInt(charCodeStr);
+    const char = String.fromCodePoint(charCode);
 
     glyphs[char] = {
       x: parseInt(x),
       y: parseInt(y),
       w: parseInt(w),
       h: parseInt(h),
-			shift: parseInt(shift),
-      offset: parseInt(offset)
+      shift: parseInt(shift),
+      offset: parseInt(offset),
     };
   }
 
@@ -123,7 +123,7 @@ const fnt_main_glyphs = `32;198;122;6;32;6;0
 125;42;122;10;26;12;0
 126;104;122;14;18;16;0
 127;88;122;14;18;16;0
-`
+`;
 
 const fnt_maintext_glyphs = `32;79;81;3;16;3;0
 33;73;81;4;13;6;1
@@ -221,9 +221,9 @@ const fnt_maintext_glyphs = `32;79;81;3;16;3;0
 125;113;66;5;13;6;0
 126;24;81;7;9;8;0
 127;15;81;7;9;8;0
-`
+`;
 
-const fnt_plain_glyphs  = `32;106;53;9;16;9;0
+const fnt_plain_glyphs = `32;106;53;9;16;9;0
 33;79;53;2;14;9;4
 34;56;53;5;6;9;3
 35;2;2;9;14;9;0
@@ -319,7 +319,7 @@ const fnt_plain_glyphs  = `32;106;53;9;16;9;0
 125;154;36;6;15;9;1
 126;2;53;8;8;9;1
 127;29;36;7;14;9;1
-`
+`;
 
 const fnt_plainbig_glyphs = `32;2;2;33;64;33;0
 33;484;247;6;55;33;14
@@ -417,7 +417,7 @@ const fnt_plainbig_glyphs = `32;2;2;33;64;33;0
 125;430;184;23;61;33;6
 126;203;247;28;34;33;3
 127;292;184;27;54;33;3
-`
+`;
 
 const fnt_comicsans_glyphs = `32;50;23;6;19;6;0
 33;30;65;2;15;3;1
@@ -515,7 +515,7 @@ const fnt_comicsans_glyphs = `32;50;23;6;19;6;0
 125;202;23;5;19;5;0
 126;171;44;7;12;8;0
 127;154;44;7;12;8;0
-`
+`;
 
 const fnt_papyruns_glyphs = `32;110;90;3;18;3;0
 33;69;110;2;12;3;1
@@ -613,7 +613,7 @@ const fnt_papyruns_glyphs = `32;110;90;3;18;3;0
 125;79;90;4;14;6;1
 126;97;74;7;10;8;1
 127;74;74;7;10;8;1
-`
+`;
 
 const fnt_wingdings_glyphs = `32;107;2;16;17;16;0
 33;74;21;15;14;16;1
@@ -711,7 +711,7 @@ const fnt_wingdings_glyphs = `32;107;2;16;17;16;0
 125;80;92;7;8;8;1
 126;89;92;7;8;8;1
 127;56;92;6;14;8;1
-`
+`;
 
 const fnt_small_glyphs = `32;2;2;4;7;4;0
 33;107;25;2;5;5;1
@@ -809,7 +809,7 @@ const fnt_small_glyphs = `32;2;2;4;7;4;0
 125;24;33;0;0;0;0
 126;32;33;0;0;0;0
 127;15;33;1;6;4;0
-`
+`;
 
 const fnt_dmg_glyphs = `32;138;156;9;32;9;0
 33;62;156;13;28;17;0
@@ -907,7 +907,7 @@ const fnt_dmg_glyphs = `32;138;156;9;32;9;0
 125;218;122;21;28;25;0
 126;451;122;25;16;29;0
 127;478;122;25;16;29;0
-`
+`;
 
 const fnt_curs_glyphs = `32;100;62;9;24;9;0
 33;44;22;12;18;15;0
@@ -1005,75 +1005,75 @@ const fnt_curs_glyphs = `32;100;62;9;24;9;0
 125;180;88;9;18;12;0
 126;224;88;12;9;15;0
 127;210;88;12;9;15;0
-`
+`;
 
-export const fnt_main = { 
-	file: "/imports/assets/fnt/main.png",
-	size: 24,
-	glyphs: parseGlyphCSV(fnt_main_glyphs),
-	image: null,
-	loading: false,
+export const fnt_main = {
+  file: "/imports/assets/fnt/main.png",
+  size: 24,
+  glyphs: parseGlyphCSV(fnt_main_glyphs),
+  image: null,
+  loading: false,
 };
-export const fnt_maintext = { 
-	file: "/imports/assets/fnt/maintext.png",
-	size: 12,
-	glyphs: parseGlyphCSV(fnt_maintext_glyphs),
-	image: null,
-	loading: false,
+export const fnt_maintext = {
+  file: "/imports/assets/fnt/maintext.png",
+  size: 12,
+  glyphs: parseGlyphCSV(fnt_maintext_glyphs),
+  image: null,
+  loading: false,
 };
-export const fnt_plain = { 
-	file: "/imports/assets/fnt/plain.png",
-	size: 12,
-	glyphs: parseGlyphCSV(fnt_plain_glyphs),
-	image: null,
-	loading: false,
+export const fnt_plain = {
+  file: "/imports/assets/fnt/plain.png",
+  size: 12,
+  glyphs: parseGlyphCSV(fnt_plain_glyphs),
+  image: null,
+  loading: false,
 };
-export const fnt_plainbig = { 
-	file: "/imports/assets/fnt/plainbig.png",
-	size: 48,
-	glyphs: parseGlyphCSV(fnt_plainbig_glyphs),
-	image: null,
-	loading: false,
+export const fnt_plainbig = {
+  file: "/imports/assets/fnt/plainbig.png",
+  size: 48,
+  glyphs: parseGlyphCSV(fnt_plainbig_glyphs),
+  image: null,
+  loading: false,
 };
-export const fnt_comicsans = { 
-	file: "/imports/assets/fnt/comicsans.png",
-	size: 10,
-	glyphs: parseGlyphCSV(fnt_comicsans_glyphs),
-	image: null,
-	loading: false,
+export const fnt_comicsans = {
+  file: "/imports/assets/fnt/comicsans.png",
+  size: 10,
+  glyphs: parseGlyphCSV(fnt_comicsans_glyphs),
+  image: null,
+  loading: false,
 };
-export const fnt_papyrus	= {
-	file: "/imports/assets/fnt/papyrus.png",
-	size: 8,
-	glyphs: parseGlyphCSV(fnt_papyruns_glyphs),
-	image: null,
-	loading: false,
+export const fnt_papyrus = {
+  file: "/imports/assets/fnt/papyrus.png",
+  size: 8,
+  glyphs: parseGlyphCSV(fnt_papyruns_glyphs),
+  image: null,
+  loading: false,
 };
 export const fnt_wingdings = {
-	file: "/imports/assets/fnt/wingdings.png",
-	size: 12,
-	glyphs: parseGlyphCSV(fnt_wingdings_glyphs),
-	image: null,
-	loading: false,
+  file: "/imports/assets/fnt/wingdings.png",
+  size: 12,
+  glyphs: parseGlyphCSV(fnt_wingdings_glyphs),
+  image: null,
+  loading: false,
 };
 export const fnt_small = {
-	file: "/imports/assets/fnt/small.png",
-	size: 6,
-	glyphs: parseGlyphCSV(fnt_small_glyphs),
-	image: null,
-	loading: false,
+  file: "/imports/assets/fnt/small.png",
+  size: 6,
+  glyphs: parseGlyphCSV(fnt_small_glyphs),
+  image: null,
+  loading: false,
 };
 export const fnt_dmg = {
-	file: "/imports/assets/fnt/dmg.png",
-	size: 24,
-	glyphs: parseGlyphCSV(fnt_dmg_glyphs),
-	image: null,
-	loading: false,
+  file: "/imports/assets/fnt/dmg.png",
+  size: 24,
+  glyphs: parseGlyphCSV(fnt_dmg_glyphs),
+  image: null,
+  loading: false,
 };
 export const fnt_curs = {
-	file: "/imports/assets/fnt/curs.png",
-	size: 18,
-	glyphs: parseGlyphCSV(fnt_curs_glyphs),
-	image: null,
-	loading: false,
+  file: "/imports/assets/fnt/curs.png",
+  size: 18,
+  glyphs: parseGlyphCSV(fnt_curs_glyphs),
+  image: null,
+  loading: false,
 };

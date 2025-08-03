@@ -1,25 +1,25 @@
 import {
-  draw_sprite_ext,
-  draw_sprite,
   _with,
+  draw_sprite,
+  draw_sprite_ext,
   instance_create,
   instance_destroy,
-  room_goto,
   instances,
+  room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, snd_noise } from "/imports/assets.js";
 import {
-  caster_set_volume,
   caster_pause,
+  caster_set_volume,
   snd_play,
 } from "/imports/customFunctions.js";
-
+import { c_white, snd_noise } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as obj_tempblack from "/obj/tempblack/index.js";
-import * as obj_mainchara from "/obj/mainchara/index.js";
 import * as obj_fader from "/obj/fader/index.js";
+import * as obj_mainchara from "/obj/mainchara/index.js";
+import * as obj_tempblack from "/obj/tempblack/index.js";
 import * as obj_transheart from "/obj/transheart/index.js";
+
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {

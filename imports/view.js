@@ -1,6 +1,5 @@
 import { ogCanvas } from "/imports/canvasSetup.js";
 import roomSize from "/imports/assets/roomSize.js";
-import global from "/imports/assets/global.js";
 
 let view_xview = [0];
 let view_yview = [0];
@@ -17,10 +16,14 @@ let view_offset_hview = [0];
 let view_current = 0;
 
 function updateCamera(target) {
-  view_offset_xview[view_current] = view_xview[view_current] - final_view_xview[view_current];
-  view_offset_yview[view_current] = view_yview[view_current] - final_view_yview[view_current];
-  view_offset_wview[view_current] = view_wview[view_current] - final_view_wview[view_current];
-  view_offset_hview[view_current] = view_hview[view_current] - final_view_hview[view_current];
+  view_offset_xview[view_current] =
+    view_xview[view_current] - final_view_xview[view_current];
+  view_offset_yview[view_current] =
+    view_yview[view_current] - final_view_yview[view_current];
+  view_offset_wview[view_current] =
+    view_wview[view_current] - final_view_wview[view_current];
+  view_offset_hview[view_current] =
+    view_hview[view_current] - final_view_hview[view_current];
 
   const screenWidth = ogCanvas.width;
   const screenHeight = ogCanvas.height;
@@ -47,8 +50,10 @@ function updateCamera(target) {
   const cameraHeight = screenHeight / scale;
 
   // Assign to view variables
-  final_view_wview[view_current] = cameraWidth + view_offset_hview[view_current];
-  final_view_hview[view_current] = cameraHeight + view_offset_wview[view_current];
+  final_view_wview[view_current] =
+    cameraWidth + view_offset_hview[view_current];
+  final_view_hview[view_current] =
+    cameraHeight + view_offset_wview[view_current];
 
   // Center camera on target
   let camX = target.x - cameraWidth / 2;
@@ -67,4 +72,15 @@ function updateCamera(target) {
   view_hview[view_current] = final_view_hview[view_current];
 }
 
-export { view_current, view_hview, view_wview, view_xview, view_yview, updateCamera, final_view_hview, final_view_wview, final_view_xview, final_view_yview }
+export {
+  view_current,
+  view_hview,
+  view_wview,
+  view_xview,
+  view_yview,
+  updateCamera,
+  final_view_hview,
+  final_view_wview,
+  final_view_xview,
+  final_view_yview,
+};

@@ -1,9 +1,15 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle, instance_destroy, _with } from "/imports/assets/gamemakerFunctions.js";
+import {
+  collision_rectangle,
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
 import * as obj_toribuster from "/obj/toribuster/index.js"; // replace with a valid colliding object. if none, delete this line and any references
-                                                            // to this fake object
+
+// to this fake object
 import * as parent from "/obj/toroverworld3/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -58,7 +64,7 @@ function create() {
     step,
     animationEnd,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -71,7 +77,7 @@ function create() {
     absolute: false,
     xOffset: 0,
     yOffset: 0,
-  }
+  };
   self._x = 0;
   self._y = 0;
   self.initialspeed = null;
@@ -124,8 +130,8 @@ function create() {
     },
     set(val) {
       this._path.data = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_speed", {
     get() {
@@ -133,8 +139,8 @@ function create() {
     },
     set(val) {
       this._path.speed = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_endaction", {
     get() {
@@ -142,28 +148,28 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "x", {
     get() {
       return this._x;
     },
     set(val) {
-      this._x = val
+      this._x = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "y", {
     get() {
       return this._y;
     },
     set(val) {
-      this._y = val
+      this._y = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
@@ -175,7 +181,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -198,18 +204,18 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
 
-		this.animationEnd?.();
+    this.animationEnd?.();
   }
 
   getBoundingBox.call(this);
 
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
+  this.previousx = this.x;
+  this.xprevious = this.x;
+  this.previousy = this.y;
+  this.yprevious = this.y;
 
   this.updateCol();
- 
+
   // apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -224,7 +230,9 @@ function updateGamemakerFunctions() {
     this._manualVel = false;
 
     // recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -246,11 +254,11 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
     if (img) {
       this.sprite_width = img.width;
-      this.sprite_height = img.height
+      this.sprite_height = img.height;
     }
   }
 }
@@ -260,7 +268,9 @@ function followPath() {
   if (!pathState || !pathState.data.points) return;
 
   const points = pathState.data.points;
-  const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
+  const keys = Object.keys(points)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   let currKey = pathState.index;
   let nextKeyIndex = keys.indexOf(currKey) + 1;
@@ -286,12 +296,11 @@ function followPath() {
     }
 
     // apply GMS1.x-like direction update quirk
-    if (
-      this.path_speed > 0 &&
-      !this._manualVel &&
-      !this._manualPos
-    ) {
-      const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    if (this.path_speed > 0 && !this._manualVel && !this._manualPos) {
+      const radians = Math.atan2(
+        -(this.y - this.yprevious),
+        this.x - this.xprevious
+      );
       const degrees = (radians * 180) / Math.PI;
       this.direction = (degrees + 360) % 360;
     }
@@ -321,27 +330,40 @@ function followPath() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_toribuster, false, false);
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_toribuster,
+    false,
+    false
+  );
   if (other) {
     // collision updates with an object here. other
-    // is the colliding instance, so use 
+    // is the colliding instance, so use
     // other.property for instance properties, like
     // x, y and such.
     instance_destroy(this);
   }
-  // to add more collision checks, set other to 
-  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
-  // obj_solidobject2 being a different solid object 
+  // to add more collision checks, set other to
+  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
+  // obj_solidobject2 being a different solid object
   // and do another if (other) {} to run scripts.
 }
 
 function roomStart() {
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/ruins3/" && global.plot >= 4) {
+  if (
+    window.location.href ===
+      "https://undertale.defautluser0.xyz/room/ruins3/" &&
+    global.plot >= 4
+  ) {
     instance_destroy(this);
   }
-  
+
   if (global.plot >= 5.5) {
-      instance_destroy(this);
+    instance_destroy(this);
   }
 
   this.direction = 270;
@@ -359,4 +381,16 @@ function animationEnd() {
   this.parent.animationEnd.call(this);
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, followPath, updateCol, parent, roomStart, beginStep, step, animationEnd };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  followPath,
+  updateCol,
+  parent,
+  roomStart,
+  beginStep,
+  step,
+  animationEnd,
+};

@@ -1,38 +1,38 @@
 // function/declaration imports
 import {
-  scr_setfont,
-  scr_drawtext_icons_multiline,
-  scr_drawtext_centered_scaled,
-  scr_drawtext_centered,
-} from "/imports/customFunctions.js";
-import { control_check_pressed, vk_left, vk_right } from "/imports/input.js";
-import {
-  draw_set_color,
   audio_is_playing,
   audio_play_sound,
   audio_stop_all,
-  keyboard_check_pressed,
+  draw_set_color,
   draw_text,
+  keyboard_check_pressed,
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
-import { canvas, ctx, ogCanvas, ogCtx } from "/imports/canvasSetup.js";
 import {
+  scr_drawtext_centered,
+  scr_drawtext_centered_scaled,
+  scr_drawtext_icons_multiline,
+  scr_setfont,
+} from "/imports/customFunctions.js";
+import { canvas, ctx, ogCanvas, ogCtx } from "/imports/canvasSetup.js";
+import { control_check_pressed, vk_left, vk_right } from "/imports/input.js";
+import {
+  updateCamera,
   view_current,
   view_hview,
   view_wview,
   view_xview,
   view_yview,
-  updateCamera,
 } from "/imports/view.js";
 // asset imports
 import {
   c_white,
   c_yellow,
+  fnt_main,
   mus_st_happytown,
   mus_st_him,
   mus_st_meatfactory,
   mus_st_troubledingle,
-  fnt_main,
 } from "/imports/assets.js";
 
 // create
@@ -62,7 +62,7 @@ function updateGamemakerFunctions() {
     ogCanvas.width,
     ogCanvas.height
   );
-  updateCamera({x: 0,y: 0});
+  updateCamera({ x: 0, y: 0 });
 }
 
 function step() {

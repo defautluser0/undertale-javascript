@@ -1,66 +1,76 @@
 import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
-import roomSize from "/imports/assets/roomSize.js"
-import { c_white } from "/imports/assets.js"
+import { c_white } from "/imports/assets.js";
+import roomSize from "/imports/assets/roomSize.js";
 
 function create() {
-	const alarm = new Array(12).fill(-1);
+  const alarm = new Array(12).fill(-1);
 
-	// create code
-	return {
-		name: "whitefader", // sprite name
-		depth: -99999, // object depth
-		image_xscale: roomSize.width, // sprite scale
-		image_yscale: roomSize.height, // sprite scale
-		x: 0, // object x. this is set by room
-		y: 0, // object y. this is set by room
-		image_alpha: 0, // sprite alpha
-		image_index: 0, // sprite frame index
-		image_speed: 0, // sprite frame speed
-		image_number: 1, // sprite frame number
-		sprite_index: "spr_whitefader", // sprite object
-		visible: true, // sprite visibility
+  // create code
+  return {
+    name: "whitefader", // sprite name
+    depth: -99999, // object depth
+    image_xscale: roomSize.width, // sprite scale
+    image_yscale: roomSize.height, // sprite scale
+    x: 0, // object x. this is set by room
+    y: 0, // object y. this is set by room
+    image_alpha: 0, // sprite alpha
+    image_index: 0, // sprite frame index
+    image_speed: 0, // sprite frame speed
+    image_number: 1, // sprite frame number
+    sprite_index: "spr_whitefader", // sprite object
+    visible: true, // sprite visibility
 
-		alarm: alarm, // alarm array
+    alarm: alarm, // alarm array
 
-		// any variables assigned inside create code
-		tspeed: 0.006,
-		over: 0,
+    // any variables assigned inside create code
+    tspeed: 0.006,
+    over: 0,
 
-		// object functions. add to here if you want them to be accessible from this. context
-		updateAlarms,
-		updateGamemakerFunctions,
-		updateSprite,
-		step,
-	}
+    // object functions. add to here if you want them to be accessible from this. context
+    updateAlarms,
+    updateGamemakerFunctions,
+    updateSprite,
+    step,
+  };
 }
 
 function updateAlarms() {
-	for (let i = 0; i < this.alarm.length; i++) {
-		if (this.alarm[i] > 0) {
-			this.alarm[i]--;
-			if (this.alarm[i] === 0) {
-				const handler = this[`alarm${i}`];
-				if (typeof handler === "function") handler.call(this); // call with instance context
-			}
-		} else if (this.alarm[i] === 0) {
-			this.alarm[i]--;
-		}
-	}
+  for (let i = 0; i < this.alarm.length; i++) {
+    if (this.alarm[i] > 0) {
+      this.alarm[i]--;
+      if (this.alarm[i] === 0) {
+        const handler = this[`alarm${i}`];
+        if (typeof handler === "function") handler.call(this); // call with instance context
+      }
+    } else if (this.alarm[i] === 0) {
+      this.alarm[i]--;
+    }
+  }
 }
 
 function updateGamemakerFunctions() {
-	this.image_index += this.image_speed;
-	if (this.image_index >= this.image_number) {
-		this.image_index -= this.image_number;
-	}
+  this.image_index += this.image_speed;
+  if (this.image_index >= this.image_number) {
+    this.image_index -= this.image_number;
+  }
 }
 
 function updateSprite() {
-	draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, 0, c_white, this.image_alpha)
+  draw_sprite_ext(
+    this.sprite_index,
+    this.image_index,
+    this.x,
+    this.y,
+    this.image_xscale,
+    this.image_yscale,
+    0,
+    c_white,
+    this.image_alpha
+  );
 }
 
 function step() {
-	this.image_alpha += this.tspeed;
+  this.image_alpha += this.tspeed;
 }
 
 export { create, updateAlarms, updateGamemakerFunctions, updateSprite, step };

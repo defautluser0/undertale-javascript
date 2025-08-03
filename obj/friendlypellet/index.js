@@ -1,26 +1,26 @@
 import {
-  draw_sprite_ext,
-  instance_number,
-  instance_destroy,
-  action_move,
-  move_towards_point,
-  instances,
-  random,
-  getBoundingBox,
-  collision_rectangle,
-  instance_create,
-  instance_exists,
   _with,
+  action_move,
+  collision_rectangle,
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instance_number,
+  instances,
+  move_towards_point,
+  random,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, snd_hurt1 } from "/imports/assets.js";
 import { snd_play } from "/imports/customFunctions.js";
+import { c_white, snd_hurt1 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
+import * as obj_blconwdflowey from "/obj/blconwdflowey/index.js";
 import * as obj_fakeheart from "/obj/fakeheart/index.js";
 import * as obj_floweybattle1 from "/obj/floweybattle1/index.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
-import * as obj_blconwdflowey from "/obj/blconwdflowey/index.js";
 import * as obj_shaker from "/obj/shaker/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 

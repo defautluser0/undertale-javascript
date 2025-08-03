@@ -1,15 +1,15 @@
 import {
+  _with,
+  abs,
+  collision_rectangle,
   draw_sprite_ext,
   getBoundingBox,
-  instance_destroy,
-  path_end,
   instance_create,
-  instance_find,
-  _with,
-  path_start,
+  instance_destroy,
   instance_exists,
-  collision_rectangle,
-  abs,
+  instance_find,
+  path_end,
+  path_start,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   c_white,
@@ -19,12 +19,14 @@ import {
 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
+import * as obj_dialoguer from "/obj/dialoguer/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js"; // replace with a valid colliding object. if none, delete this line and any references
+
 // to this fake object
 import * as obj_toroverworld3 from "/obj/toroverworld3/index.js";
-import * as obj_dialoguer from "/obj/dialoguer/index.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_wallswitchcut1 from "/obj/wallswitchcut1/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
+
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {

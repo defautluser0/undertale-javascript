@@ -1,4 +1,13 @@
-import { draw_sprite_ext, action_move, move_towards_point, instances, collision_rectangle, getBoundingBox, _with, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import {
+  _with,
+  action_move,
+  collision_rectangle,
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_destroy,
+  instances,
+  move_towards_point,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
 import * as obj_fakeheart from "/obj/fakeheart/index.js";
@@ -79,9 +88,9 @@ function updateGamemakerFunctions() {
   this.hspeed = Math.cos(dirRad) * this.speed;
   this.vspeed = Math.sin(dirRad) * this.speed;
 
-	// Update position
-	this.x += this.hspeed;
-	this.y += this.vspeed;
+  // Update position
+  this.x += this.hspeed;
+  this.y += this.vspeed;
   this.updateCol();
 }
 
@@ -106,31 +115,50 @@ function alarm0() {
 }
 
 function step() {
-  const fakeheart = instances.get(obj_fakeheart)[0]
+  const fakeheart = instances.get(obj_fakeheart)[0];
   if (this.attackyou === 1) {
     move_towards_point.call(this, fakeheart.xstart, fakeheart.ystart, 0.1);
     this.depth = -500;
     this.attackyou = 2;
-    this.friction = -0.004
+    this.friction = -0.004;
   }
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_fakeheart, true, false);
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_fakeheart,
+    true,
+    false
+  );
   if (other) {
-    _with(obj_floweybattle1, function() {
+    _with(obj_floweybattle1, function () {
       this.alarm[9] = 2;
-    })
-    _with(this._object, function() {
+    });
+    _with(this._object, function () {
       this.x = -800;
-    })
+    });
   }
 }
 
 function outsideRoom() {
-  _with(this._object, function() {
+  _with(this._object, function () {
     instance_destroy(this);
-  })
+  });
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, updateCol, parent, alarm0, step, outsideRoom };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  updateCol,
+  parent,
+  alarm0,
+  step,
+  outsideRoom,
+};

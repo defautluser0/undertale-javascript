@@ -6,8 +6,8 @@ import {
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as parent from "/obj/interactable/index.js";
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
+import * as parent from "/obj/interactable/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);

@@ -1,14 +1,14 @@
 import {
   draw_sprite_ext,
+  getBoundingBox,
   instance_create,
   instance_destroy,
-  getBoundingBox,
 } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as parent from "/obj/readable/index.js";
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
+import * as parent from "/obj/readable/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);

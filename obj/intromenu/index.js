@@ -1,13 +1,27 @@
-import global from "/imports/assets/global.js";
+import {
+  draw_background,
+  draw_set_color,
+  draw_sprite,
+  draw_sprite_ext,
+  file_exists,
+  ini_close,
+  ini_open,
+  ini_read_real,
+  ini_read_string,
+  script_execute,
+} from "/imports/assets/gamemakerFunctions.js";
 import {
   caster_loop,
-  scr_namingscreen_setup,
-  scr_namingscreen_check,
   scr_drawtext_centered,
-  scr_setfont,
   scr_namingscreen,
+  scr_namingscreen_check,
+  scr_namingscreen_setup,
+  scr_setfont,
 } from "/imports/customFunctions.js";
 import {
+  c_gray,
+  c_white,
+  fnt_small,
   mus_menu0,
   mus_menu1,
   mus_menu2,
@@ -15,22 +29,8 @@ import {
   mus_menu4,
   mus_menu5,
   mus_menu6,
-  c_white,
-  c_gray,
-  fnt_small,
 } from "/imports/assets.js";
-import {
-  draw_sprite_ext,
-  draw_sprite,
-  draw_background,
-  draw_set_color,
-  script_execute,
-  ini_read_string,
-  ini_read_real,
-  ini_open,
-  ini_close,
-  file_exists,
-} from "/imports/assets/gamemakerFunctions.js";
+import global from "/imports/assets/global.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -141,7 +141,6 @@ function create() {
   const namingscreen_setup = scr_namingscreen_setup(truereset);
 
   return {
-    name: "intromenu", // sprite name
     depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
@@ -161,8 +160,6 @@ function create() {
     selected: 65,
     charname: "",
     naming: 3,
-    selected2: 0,
-    selected3: 0,
     q: 0,
     name,
     hasname,
@@ -238,7 +235,6 @@ function updateAlarms() {
 
 function updateGamemakerFunctions() {
   this.image_index += this.image_speed;
-  this.image_index = this.image_index;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
@@ -283,20 +279,20 @@ function draw() {
     }
 
     if (this.mlevel == 3) {
-      draw_sprite("spr_chairiel_sleep", siner_o / 8, 125, 138);
+      draw_sprite("spr_chairiel_sleep", this.siner_o / 8, 125, 138);
       draw_sprite("spr_papyrus_d_darkbg", 0, 241, 151);
       draw_sprite("spr_sans_shrug1_dark", 0, 271, 164);
     }
 
     if (this.mlevel == 4) {
-      draw_sprite("spr_chairiel_sleep", siner_o / 8, 125, 138);
+      draw_sprite("spr_chairiel_sleep", this.siner_o / 8, 125, 138);
       draw_sprite("spr_papyrus_cape_dark", 0, 243, 151);
       draw_sprite("spr_undyne_youremine_dark", 0, 243 - 3, 103);
       draw_sprite("spr_sans_shrug1_dark", 0, 63, 33);
     }
 
     if (this.mlevel == 5) {
-      draw_sprite("spr_chairiel_sleep", siner_o / 8, 125, 138);
+      draw_sprite("spr_chairiel_sleep", this.siner_o / 8, 125, 138);
       draw_sprite("spr_alphys_d_dark", 0, 270, 167);
       draw_sprite("spr_papyrus_cape_dark", 0, 272, 132);
       draw_sprite("spr_undyne_youremine_dark", 0, 269, 84);

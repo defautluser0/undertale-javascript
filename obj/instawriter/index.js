@@ -1,9 +1,12 @@
-import { draw_sprite_ext, string_length, instance_exists } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_exists,
+  string_length,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
-import global from "/imports/assets/global.js"
-
-import * as obj_choicer from "/obj/choicer/index.js"
+import * as obj_choicer from "/obj/choicer/index.js";
 import * as parent from "/obj/writer/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -30,12 +33,12 @@ function create() {
 
     // any variables assigned inside create code
     stringno: 0,
-		stringpos: 0,
-		halt: 0,
-		dfy: 0,
-		sound_enable: 1,
-		originalstring: "",
-		mystring: [],
+    stringpos: 0,
+    halt: 0,
+    dfy: 0,
+    sound_enable: 1,
+    originalstring: "",
+    mystring: [],
     doak: 0,
 
     // object functions. add to here if you want them to be accessible from this. context
@@ -141,4 +144,20 @@ function user0() {
   this.parent.user0.call(this);
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, user1, step, draw, beginStep, parent_beginStep, parent_draw, parent_step, user0, alarm0 };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  user1,
+  step,
+  draw,
+  beginStep,
+  parent_beginStep,
+  parent_draw,
+  parent_step,
+  user0,
+  alarm0,
+};

@@ -1,28 +1,28 @@
 import {
-  caster_load,
-  caster_play,
-  caster_free,
-  scr_setfont,
-  snd_play,
-} from "/imports/customFunctions.js";
-import {
-  mus_intronoise,
-  c_gray,
-  c_white,
-  fnt_small,
-  fnt_maintext,
-  snd_ballchime,
-} from "/imports/assets.js";
-import {
-  room_goto,
+  draw_set_color,
   draw_sprite,
   draw_sprite_ext,
-  draw_set_color,
   draw_text,
   keyboard_check_pressed,
   ord,
+  room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
+import {
+  caster_free,
+  caster_load,
+  caster_play,
+  scr_setfont,
+  snd_play,
+} from "/imports/customFunctions.js";
 import { control_check_pressed } from "/imports/input.js";
+import {
+  c_gray,
+  c_white,
+  fnt_maintext,
+  fnt_small,
+  mus_intronoise,
+  snd_ballchime,
+} from "/imports/assets.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);

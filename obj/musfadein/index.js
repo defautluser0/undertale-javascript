@@ -1,7 +1,13 @@
-import { draw_sprite_ext, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  caster_get_volume,
+  caster_set_volume,
+} from "/imports/customFunctions.js";
 import { c_white } from "/imports/assets.js";
-import { caster_get_volume, caster_set_volume } from "/imports/customFunctions.js"
-import global from "/imports/assets/global.js"
+import global from "/imports/assets/global.js";
 
 const parent = null;
 
@@ -29,15 +35,15 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-		mysong: mysong,
-		volume: caster_get_volume(mysong),
-		fadespeed: 0.1,
+    mysong: mysong,
+    volume: caster_get_volume(mysong),
+    fadespeed: 0.1,
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		step,
+    step,
   };
 }
 
@@ -79,17 +85,24 @@ function updateSprite() {
 }
 
 function step() {
-	this.volume += this.fadespeed;
+  this.volume += this.fadespeed;
 
-	if (this.volume > 0.95) {
-		this.volume = 1;
-	}
+  if (this.volume > 0.95) {
+    this.volume = 1;
+  }
 
-	caster_set_volume(this.mysong, this.volume);
+  caster_set_volume(this.mysong, this.volume);
 
-	if (this.volume === 1) {
-		instance_destroy(this);
-	}
+  if (this.volume === 1) {
+    instance_destroy(this);
+  }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  step,
+};

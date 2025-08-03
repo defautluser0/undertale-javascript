@@ -1,7 +1,12 @@
-import { draw_sprite_ext, getBoundingBox, instance_destroy, collision_rectangle } from "/imports/assets/gamemakerFunctions.js";
+import {
+  collision_rectangle,
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as obj_fakeheart from "/obj/fakeheart/index.js"
+import * as obj_fakeheart from "/obj/fakeheart/index.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -60,9 +65,9 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  getBoundingBox.call(this)
+  getBoundingBox.call(this);
 
-  this.updateCol()
+  this.updateCol();
 }
 
 function updateSprite() {
@@ -92,10 +97,27 @@ function alarm0() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_fakeheart, true, false)
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_fakeheart,
+    true,
+    false
+  );
   if (other) {
     instance_destroy(this);
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm1, alarm0 };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  alarm1,
+  alarm0,
+};

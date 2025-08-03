@@ -1,17 +1,23 @@
 import {
   draw_sprite_ext,
   getBoundingBox,
+  instance_create,
   instance_destroy,
   instance_exists,
-  instance_create,
+  string,
 } from "/imports/assets/gamemakerFunctions.js";
-import { scr_murderlv, snd_play, scr_depth } from "/imports/customFunctions.js";
+import {
+  scr_depth,
+  scr_gettext,
+  scr_murderlv,
+  snd_play,
+} from "/imports/customFunctions.js";
 import { c_white, snd_power } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
 import * as parent from "/obj/readablesolid/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -306,20 +312,20 @@ function alarm0() {
     ) {
       if (global.flag[27] == 0) {
         global.msc = 0;
-        pop = 16 - global.flag[203];
+        this.pop = 16 - global.flag[203];
 
-        if (pop < 0) pop = 0;
+        if (this.pop < 0) this.pop = 0;
 
         if (scr_murderlv.call(this) >= 2)
-          global.msg[0] = scr_gettext("obj_savepoint_97", string(pop));
+          global.msg[0] = scr_gettext("obj_savepoint_97", string(this.pop));
 
         if (scr_murderlv.call(this) == 5)
           global.msg[0] = scr_gettext("obj_savepoint_99"); // \R* That comedian.../%%
 
-        if (global.flag[57] == 2 && pop <= 0)
+        if (global.flag[57] == 2 && this.pop <= 0)
           global.msg[0] = scr_gettext("obj_savepoint_101"); // * Determination./%%
 
-        if (pop <= 0 && global.flag[57] != 2)
+        if (this.pop <= 0 && global.flag[57] != 2)
           global.msg[0] = scr_gettext("obj_savepoint_103"); // * The comedian got away^1.&* Failure./%%
       }
     }
@@ -348,14 +354,14 @@ function alarm0() {
     ) {
       if (global.flag[27] == 0) {
         global.msc = 0;
-        pop = 18 - global.flag[204];
+        this.pop = 18 - global.flag[204];
 
-        if (pop < 0) pop = 0;
+        if (this.pop < 0) this.pop = 0;
 
         if (scr_murderlv.call(this) >= 8)
-          global.msg[0] = scr_gettext("obj_savepoint_118", string(pop));
+          global.msg[0] = scr_gettext("obj_savepoint_118", string(this.pop));
 
-        if (pop <= 0) global.msg[0] = scr_gettext("obj_savepoint_120"); // * Determination./%%
+        if (this.pop <= 0) global.msg[0] = scr_gettext("obj_savepoint_120"); // * Determination./%%
       }
     }
   }
@@ -381,14 +387,14 @@ function alarm0() {
     ) {
       if (global.flag[27] == 0) {
         global.msc = 0;
-        pop = 40 - global.flag[205];
+        this.pop = 40 - global.flag[205];
 
-        if (pop < 0) pop = 0;
+        if (this.pop < 0) this.pop = 0;
 
         if (scr_murderlv.call(this) >= 12)
-          global.msg[0] = scr_gettext("obj_savepoint_135", string(pop));
+          global.msg[0] = scr_gettext("obj_savepoint_135", string(this.pop));
 
-        if (pop <= 0) global.msg[0] = scr_gettext("obj_savepoint_137"); // * Determination./%%
+        if (this.pop <= 0) global.msg[0] = scr_gettext("obj_savepoint_137"); // * Determination./%%
       }
     }
   }

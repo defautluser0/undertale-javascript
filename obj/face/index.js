@@ -1,7 +1,11 @@
-import { draw_sprite_ext, instance_exists, instances } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_exists,
+  instances,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
-import * as obj_dialoguer from "/obj/dialoguer/index.js"
+import * as obj_dialoguer from "/obj/dialoguer/index.js";
 
 const parent = null;
 
@@ -9,7 +13,7 @@ function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-	let visible = true;
+  let visible = true;
 
   return {
     name: "face", // sprite name
@@ -34,7 +38,7 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		alarm9,
+    alarm9,
     roomStart,
   };
 }
@@ -77,16 +81,24 @@ function updateSprite() {
 }
 
 function alarm9() {
-	this.visible = true
+  this.visible = true;
 }
 
 function roomStart() {
-	if (instance_exists(obj_dialoguer)) {
-		if (instances.get(obj_dialoguer).find(inst => inst.count === 0)) {
-			this.visible = false;
-			this.alarm[9] = 1;
-		}
-	}
+  if (instance_exists(obj_dialoguer)) {
+    if (instances.get(obj_dialoguer).find((inst) => inst.count === 0)) {
+      this.visible = false;
+      this.alarm[9] = 1;
+    }
+  }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm9, roomStart };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  alarm9,
+  roomStart,
+};

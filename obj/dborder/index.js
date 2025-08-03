@@ -1,6 +1,9 @@
-import { draw_sprite_ext, round, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  getBoundingBox,
+  round,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-
 import global from "/imports/assets/global.js";
 
 import * as parent from "/obj/borderparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
@@ -60,7 +63,7 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  getBoundingBox.call(this)
+  getBoundingBox.call(this);
 }
 
 function updateSprite() {
@@ -88,7 +91,7 @@ function roomStart() {
 function step() {
   if (this.x !== global.idealborder[0]) {
     if (Math.abs(this.x - global.idealborder[0]) <= 15) {
-      this.x = global.idealborder[0]
+      this.x = global.idealborder[0];
     } else if (this.x > global.idealborder[0]) {
       this.x -= 15;
     } else {
@@ -98,7 +101,7 @@ function step() {
 
   if (this.y !== global.idealborder[3]) {
     if (Math.abs(this.y - global.idealborder[3]) <= 15) {
-      this.y = global.idealborder[3]
+      this.y = global.idealborder[3];
     } else if (this.y > global.idealborder[3]) {
       this.y -= 15;
     } else {
@@ -108,21 +111,26 @@ function step() {
   let size = round((global.idealborder[1] - global.idealborder[0]) / 5) + 1;
 
   if (this.image_xscale !== size) {
-    if (Math.abs(size - this.image_xscale) <= 6)
-      this.image_xscale = size;
-    
-    if (this.image_xscale > size)
-      this.image_xscale -= 6;
-    
-    if (this.image_xscale < size)
-      this.image_xscale += 6;
+    if (Math.abs(size - this.image_xscale) <= 6) this.image_xscale = size;
+
+    if (this.image_xscale > size) this.image_xscale -= 6;
+
+    if (this.image_xscale < size) this.image_xscale += 6;
   }
 
   if (this.instaborder === 1) {
     this.x = global.idealborder[0];
     this.y = global.idealborder[3];
-    this.image_xscale = 1 + ((global.idealborder[1] - global.idealborder[0]) / 5);
+    this.image_xscale = 1 + (global.idealborder[1] - global.idealborder[0]) / 5;
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, step };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  step,
+};

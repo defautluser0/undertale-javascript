@@ -1,9 +1,15 @@
-import { draw_sprite_ext, instance_destroy, instance_exists, instance_find } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_destroy,
+  instance_exists,
+  instance_find,
+} from "/imports/assets/gamemakerFunctions.js";
+import { snd_play } from "/imports/customFunctions.js";
 import { c_white, snd_floweylaugh } from "/imports/assets.js";
-import { snd_play } from "/imports/customFunctions.js"
-import global from "/imports/assets/global.js"
+import global from "/imports/assets/global.js";
 
 import * as obj_floface from "/obj/floface/index.js";
+
 const parent = null;
 
 function create() {
@@ -34,8 +40,8 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		roomStart,
-		alarm1,
+    roomStart,
+    alarm1,
     alarm0,
     step,
   };
@@ -79,32 +85,34 @@ function updateSprite() {
 }
 
 function roomStart() {
-	if (global.currentroom === "room_area1_2") {
-		if (global.plot !== 0) {
-			instance_destroy(this);
-		}
-	}
-	if (global.currentroom === "room_ruinsexit") {
-		if (global.plot > 27) {
-			instance_destroy(this);
-		}
-	}
+  if (global.currentroom === "room_area1_2") {
+    if (global.plot !== 0) {
+      instance_destroy(this);
+    }
+  }
+  if (global.currentroom === "room_ruinsexit") {
+    if (global.plot > 27) {
+      instance_destroy(this);
+    }
+  }
 }
 
 function alarm1() {
-	this.image_index = 0;
-	this.sprite_index = "spr_floweyshrink";
-	this.image_speed = 0.5;
+  this.image_index = 0;
+  this.sprite_index = "spr_floweyshrink";
+  this.image_speed = 0.5;
 }
 
 function alarm0() {
   snd_play(snd_floweylaugh);
   this.alarm[1] = 150;
-  this.image_speed = 0.6
+  this.image_speed = 0.6;
 }
 
 function step() {
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/area1_2/") {
+  if (
+    window.location.href === "https://undertale.defautluser0.xyz/room/area1_2/"
+  ) {
     if (global.plot !== 0) {
       instance_destroy(this);
     }
@@ -115,8 +123,18 @@ function step() {
   }
 
   if (this.sprite_index === "spr_floweysink" && this.image_index === 5) {
-    instance_destroy(this)
+    instance_destroy(this);
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm1, alarm0, step };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  alarm1,
+  alarm0,
+  step,
+};

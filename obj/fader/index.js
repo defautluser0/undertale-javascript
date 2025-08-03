@@ -1,7 +1,9 @@
-import { draw_sprite_ext, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-
-import roomSize from "/imports/assets/roomSize.js"
+import roomSize from "/imports/assets/roomSize.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -89,4 +91,12 @@ function beginStep() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, beginStep };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  beginStep,
+};

@@ -1,35 +1,36 @@
 import {
-  caster_load,
-  caster_play,
-  caster_stop,
-  caster_free,
-  caster_set_volume,
-  scr_gettext,
-} from "/imports/customFunctions.js";
-import { mus_story } from "/imports/assets.js";
-import {
+  draw_sprite_ext,
   instance_create,
   instance_destroy,
   instance_exists,
-  draw_sprite_ext,
   room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
-import global from "/imports/assets/global.js";
-import { ogCanvas, ogCtx, canvas, ctx } from "/imports/canvasSetup.js";
 import {
-  view_current,
+  caster_free,
+  caster_load,
+  caster_play,
+  caster_set_volume,
+  caster_stop,
+  scr_gettext,
+} from "/imports/customFunctions.js";
+import { canvas, ctx, ogCanvas, ogCtx } from "/imports/canvasSetup.js";
+import { control_check_pressed } from "/imports/input.js";
+import {
   final_view_hview,
   final_view_wview,
   final_view_xview,
   final_view_yview,
+  view_current,
 } from "/imports/view.js";
-import { control_check_pressed } from "/imports/input.js";
-import { textdata_en } from "/imports/assets/text.js";
+import { mus_story } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 import roomSize from "/imports/assets/roomSize.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
+import { textdata_en } from "/imports/assets/text.js";
+
 import * as obj_introfader from "/obj/introfader/index.js";
-import * as obj_unfader from "/obj/unfader/index.js";
 import * as obj_introlast from "/obj/introlast/index.js";
+import * as obj_unfader from "/obj/unfader/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 // holy shit this code is so outdated compared to new objects i cant
 // create

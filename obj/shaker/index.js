@@ -1,6 +1,9 @@
-import { draw_sprite_ext, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
+import { view_current, view_xview, view_yview } from "/imports/view.js";
 import { c_white } from "/imports/assets.js";
-import { view_current, view_xview, view_yview } from "/imports/view.js"
 import global from "/imports/assets/global.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
@@ -9,7 +12,7 @@ function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-	alarm[0] = 1;
+  alarm[0] = 1;
   return {
     name: "shaker", // sprite name
     depth: 0, // object depth
@@ -28,19 +31,19 @@ function create() {
     alarm: alarm, // alarm array
 
     // any variables assigned inside create code
-		hshake: global.hshake,
-		vshake: global.vshake,
-		shakespeed: global.shakespeed,
-		myview: view_current,
-		myx: view_xview[view_current],
-		myy: view_yview[view_current],
+    hshake: global.hshake,
+    vshake: global.vshake,
+    shakespeed: global.shakespeed,
+    myview: view_current,
+    myx: view_xview[view_current],
+    myy: view_yview[view_current],
 
     // object functions. add to here if you want them to be accessible from this. context
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		alarm0,
-		destroy,
+    alarm0,
+    destroy,
   };
 }
 
@@ -82,39 +85,44 @@ function updateSprite() {
 }
 
 function alarm0() {
-	if (this.hshake !== 0) {
-		if (this.hshake < 0) {
-			view_xview[this.myview] += this.hshake;
-			this.hshake += 1;
-		}
+  if (this.hshake !== 0) {
+    if (this.hshake < 0) {
+      view_xview[this.myview] += this.hshake;
+      this.hshake += 1;
+    }
 
-		if (this.hshake > 0)
-			view_xview[this.myview] += this.hshake;
+    if (this.hshake > 0) view_xview[this.myview] += this.hshake;
 
-		this.hshake = -this.hshake;
-	}
+    this.hshake = -this.hshake;
+  }
 
-	if (this.vshake !== 0) {
-		if (this.vshake < 0) {
-			view_yview[this.myview] += this.vshake;
-			this.vshake += 1;
-		}
+  if (this.vshake !== 0) {
+    if (this.vshake < 0) {
+      view_yview[this.myview] += this.vshake;
+      this.vshake += 1;
+    }
 
-		if (this.vshake > 0)
-			view_yview[this.myview] += this.vshake;
+    if (this.vshake > 0) view_yview[this.myview] += this.vshake;
 
-		this.vshake = -this.vshake;
-	}
+    this.vshake = -this.vshake;
+  }
 
-	this.alarm[this.myview] = this.shakespeed;
+  this.alarm[this.myview] = this.shakespeed;
 
-	if (this.hshake === 0 && this.vshake === 0)
-		instance_destroy(this);
+  if (this.hshake === 0 && this.vshake === 0) instance_destroy(this);
 }
 
 function destroy() {
-	view_xview[this.myview] = this.myx;
-	view_yview[this.myview] = this.myy;
+  view_xview[this.myview] = this.myx;
+  view_yview[this.myview] = this.myy;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm0, destroy };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  alarm0,
+  destroy,
+};

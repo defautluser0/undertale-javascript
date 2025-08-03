@@ -5,14 +5,14 @@ import {
   instance_exists,
   script_execute,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
 import { scr_npcdir } from "/imports/customFunctions.js";
+import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as parent from "/obj/readablesolid/index.js";
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
 import * as obj_face_asriel from "/obj/face_asriel/index.js";
 import * as obj_face_torieltalk from "/obj/face_torieltalk/index.js";
+import * as parent from "/obj/readablesolid/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);

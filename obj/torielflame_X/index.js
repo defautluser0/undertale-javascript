@@ -1,6 +1,13 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle, instance_create, instance_destroy, draw_rectangle, _with } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, snd_ehurt1 } from "/imports/assets.js";
+import {
+  _with,
+  collision_rectangle,
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_create,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
 import { snd_play } from "/imports/customFunctions.js";
+import { c_white, snd_ehurt1 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
 import * as obj_floweybattle1 from "/obj/floweybattle1/index.js";
@@ -70,7 +77,7 @@ function updateGamemakerFunctions() {
 
   getBoundingBox.call(this);
 
-  this.checkCol()
+  this.checkCol();
 }
 
 function updateSprite() {
@@ -93,7 +100,7 @@ function alarm1() {
   this.hspeed = -8;
   this.flashing = 0;
   this.visible = true;
-  this.image_speed = 0.25
+  this.image_speed = 0.25;
 }
 
 function alarm0() {
@@ -108,19 +115,37 @@ function alarm0() {
 }
 
 function checkCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom,  obj_floweybattle1, false, false);
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_floweybattle1,
+    false,
+    false
+  );
   if (other) {
-    _with (obj_floweybattle1, function() {
+    _with(obj_floweybattle1, function () {
       this.conversation = 17;
       this.sprite_index = "spr_floweyhurt";
-    })
+    });
     snd_play(snd_ehurt1);
     global.hshake = 2;
     global.shakespeed = 2;
     global.vshake = 0;
     instance_create(0, 0, obj_shaker);
-    instance_destroy(this)
+    instance_destroy(this);
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, alarm1, alarm0, checkCol };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  alarm1,
+  alarm0,
+  checkCol,
+};

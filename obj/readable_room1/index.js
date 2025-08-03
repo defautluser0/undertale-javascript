@@ -1,11 +1,11 @@
 import {
   draw_sprite_ext,
   getBoundingBox,
-  instance_destroy,
   instance_create,
+  instance_destroy,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, rooms } from "/imports/assets.js";
 import { scr_gettext } from "/imports/customFunctions.js";
+import { c_white, rooms } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
@@ -331,10 +331,10 @@ function updateCol() {
   //  false
   //);
   //if (other) {
-    // collision updates with an object here. other
-    // is the colliding instance, so use
-    // other.property for instance properties, like
-    // x, y and such.
+  // collision updates with an object here. other
+  // is the colliding instance, so use
+  // other.property for instance properties, like
+  // x, y and such.
   //}
   // to add more collision checks, set other to
   // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,

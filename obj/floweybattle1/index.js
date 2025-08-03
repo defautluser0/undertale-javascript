@@ -1,45 +1,43 @@
 import {
-  draw_sprite_ext,
-  instance_create,
-  instance_exists,
-  instance_destroy,
   _with,
-  instances,
-  instance_find,
+  draw_sprite_ext,
   getBoundingBox,
-  draw_rectangle,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instance_find,
+  instances,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, snd_floweylaugh, snd_power } from "/imports/assets.js";
 import {
-  SCR_BORDERSETUP,
-  snd_play,
-  snd_stop,
-  caster_stop,
   caster_free,
   caster_set_pitch,
   caster_set_volume,
-  scr_textskip,
+  caster_stop,
+  SCR_BORDERSETUP,
   scr_gettext,
+  scr_textskip,
+  snd_play,
+  snd_stop,
 } from "/imports/customFunctions.js";
+import { c_white, snd_floweylaugh, snd_power } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
-import * as obj_fakeheart from "/obj/fakeheart/index.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_blconwdflowey from "/obj/blconwdflowey/index.js";
-import * as obj_uborder from "/obj/uborder/index.js";
-import * as obj_rborder from "/obj/rborder/index.js";
 import * as obj_dborder from "/obj/dborder/index.js";
-import * as obj_lborder from "/obj/lborder/index.js";
-import * as obj_friendlypellet from "/obj/friendlypellet/index.js";
-import * as obj_shaker from "/obj/shaker/index.js";
-import * as obj_radialfakegen from "/obj/radialfakegen/index.js";
+import * as obj_fakeheart from "/obj/fakeheart/index.js";
 import * as obj_fakepellet from "/obj/fakepellet/index.js";
+import * as obj_friendlypellet from "/obj/friendlypellet/index.js";
 import * as obj_guidearrows from "/obj/guidearrows/index.js";
 import * as OBJ_INSTAWRITER from "/obj/instawriter/index.js";
-import * as obj_torielflame_X from "/obj/torielflame_X/index.js";
-import * as obj_winkstar from "/obj/winkstar/index.js";
+import * as obj_lborder from "/obj/lborder/index.js";
+import * as obj_radialfakegen from "/obj/radialfakegen/index.js";
+import * as obj_rborder from "/obj/rborder/index.js";
+import * as obj_shaker from "/obj/shaker/index.js";
 import * as obj_torielcutscene from "/obj/torielcutscene/index.js";
-
-import global from "/imports/assets/global.js";
+import * as obj_torielflame_X from "/obj/torielflame_X/index.js";
+import * as obj_uborder from "/obj/uborder/index.js";
+import * as obj_winkstar from "/obj/winkstar/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 

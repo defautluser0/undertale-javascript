@@ -1,18 +1,38 @@
-import { draw_sprite_ext, getBoundingBox, instance_find, instance_destroy, instance_create, script_execute, action_move, round, random, _with, instance_exists, floor } from "/imports/assets/gamemakerFunctions.js";
-import { scr_monstersetup, scr_gettext, scr_mercystandard, snd_play, scr_newvapordata } from "/imports/customFunctions.js";
+import {
+  _with,
+  action_move,
+  draw_sprite_ext,
+  floor,
+  getBoundingBox,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instance_find,
+  random,
+  round,
+  script_execute,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  scr_gettext,
+  scr_mercystandard,
+  scr_monstersetup,
+  scr_newvapordata,
+  snd_play,
+} from "/imports/customFunctions.js";
 import { control_check_pressed } from "/imports/input.js";
-import { c_white, snd_slidewhist, snd_damage } from "/imports/assets.js";
+import { c_white, snd_damage, snd_slidewhist } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
+
+import * as obj_blconsm from "/obj/blconsm/index.js";
+import * as obj_dmgwriter from "/obj/dmgwriter/index.js";
+import * as obj_lborder from "/obj/lborder/index.js";
+import * as parent from "/obj/monsterparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
 //                                                               // to this fake object
 import * as OBJ_NOMSCWRITER from "/obj/nomscwriter/index.js";
+import * as obj_vaporized_new from "/obj/vaporized_new/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
-import * as obj_lborder from "/obj/lborder/index.js";
-import * as obj_blconsm from "/obj/blconsm/index.js";
-import * as obj_dmgwriter  from "/obj/dmgwriter/index.js";
-import * as obj_vaporized_new  from "/obj/vaporized_new/index.js";
-import * as parent from "/obj/monsterparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -70,7 +90,7 @@ function create() {
     alarm5,
     alarm3,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -83,7 +103,7 @@ function create() {
     absolute: false,
     xOffset: 0,
     yOffset: 0,
-  }
+  };
   self._x = 0;
   self._y = 0;
   self.initialspeed = null;
@@ -136,8 +156,8 @@ function create() {
     },
     set(val) {
       this._path.data = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_speed", {
     get() {
@@ -145,8 +165,8 @@ function create() {
     },
     set(val) {
       this._path.speed = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_endaction", {
     get() {
@@ -154,28 +174,28 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "x", {
     get() {
       return this._x;
     },
     set(val) {
-      this._x = val
+      this._x = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "y", {
     get() {
       return this._y;
     },
     set(val) {
-      this._y = val
+      this._y = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
@@ -187,14 +207,15 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
-      if (!Number.isInteger(this.alarm[i])) this.alarm[i] = floor(this.alarm[i]);
+      if (!Number.isInteger(this.alarm[i]))
+        this.alarm[i] = floor(this.alarm[i]);
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
@@ -227,7 +248,9 @@ function updateSpeed() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -257,7 +280,9 @@ function followPath() {
   if (!pathState || !pathState.data.points) return;
 
   const points = pathState.data.points;
-  const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
+  const keys = Object.keys(points)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   let currKey = pathState.index;
   let nextKeyIndex = keys.indexOf(currKey) + 1;
@@ -308,7 +333,10 @@ function followPath() {
     !this._manualVel &&
     !this._manualPos
   ) {
-    const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    const radians = Math.atan2(
+      -(this.y - this.yprevious),
+      this.x - this.xprevious
+    );
     const degrees = (radians * 180) / Math.PI;
     this.direction = (degrees + 360) % 360;
   }
@@ -318,20 +346,20 @@ function updateCol() {
   getBoundingBox.call(this);
   //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   //if (other) {
-    // collision updates with an object here. other
-    // is the colliding instance, so use 
-    // other.property for instance properties, like
-    // x, y and such.
+  // collision updates with an object here. other
+  // is the colliding instance, so use
+  // other.property for instance properties, like
+  // x, y and such.
   //}
-  // to add more collision checks, set other to 
-  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
-  // obj_solidobject2 being a different solid object 
+  // to add more collision checks, set other to
+  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
+  // obj_solidobject2 being a different solid object
   // and do another if (other) {} to run scripts.
 }
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
-  scr_monstersetup.call(this, 0, 0, 0, 0, 0)
+  scr_monstersetup.call(this, 0, 0, 0, 0, 0);
 }
 
 function destroy() {
@@ -342,9 +370,9 @@ function destroy() {
     global.monstersprite = this.sprite_index;
     this.ddd = instance_create(this.x, this.y, obj_vaporized_new);
 
-    _with (this.ddd, function() {
+    _with(this.ddd, function () {
       scr_newvapordata.call(this, 23);
-    })
+    });
 
     this.ddd.sprite_index = this.sprite_index;
     this.ddd.ht = this.ht;
@@ -367,31 +395,30 @@ function outsideRoom() {
     this.outside = 1;
     instance_destroy(this);
     global.flag[13] = 1;
-    global.flag[14] =3;
+    global.flag[14] = 3;
   }
 }
 
 function step() {
-  const lborder = instance_find(obj_lborder, 0)
+  const lborder = instance_find(obj_lborder, 0);
   if (global.mnfight === 3) {
     this.attacked = 0;
   }
 
-
   if (this.alarm[5] > 0) {
     if (global.monster[0] === 1) {
       if (global.monsterinstance[0].alarm[5] > this.alarm[5]) {
-        this.alarm[5] = global.monsterinstance[0].alarm[5]
+        this.alarm[5] = global.monsterinstance[0].alarm[5];
       }
     }
     if (global.monster[1] === 1) {
       if (global.monsterinstance[1].alarm[5] > this.alarm[5]) {
-        this.alarm[5] = global.monsterinstance[1].alarm[5]
+        this.alarm[5] = global.monsterinstance[1].alarm[5];
       }
     }
     if (global.monster[2] === 1) {
       if (global.monsterinstance[2].alarm[5] > this.alarm[5]) {
-        this.alarm[5] = global.monsterinstance[1].alarm[5]
+        this.alarm[5] = global.monsterinstance[1].alarm[5];
       }
     }
   }
@@ -420,31 +447,35 @@ function step() {
 
   if (global.hurtanim[this.myself] == 2) {
     global.monsterhp[this.myself] -= this.takedamage;
-    
-    _with (this.dmgwriter, function() {
+
+    _with(this.dmgwriter, function () {
       this.alarm[2] = 15;
-    })
-    
+    });
+
     if (global.monsterhp[this.myself] >= 1) {
-        global.hurtanim[this.myself] = 0;
-        this.image_index = 0;
-        global.myfight = 0;
-        global.mnfight = 1;
+      global.hurtanim[this.myself] = 0;
+      this.image_index = 0;
+      global.myfight = 0;
+      global.mnfight = 1;
     } else {
-        global.myfight = 0;
-        global.mnfight = 1;
-        this.killed = 1;
-        instance_destroy(this);
+      global.myfight = 0;
+      global.mnfight = 1;
+      this.killed = 1;
+      instance_destroy(this);
     }
   }
 
   if (global.hurtanim[this.myself] === 5) {
     global.damage = 0;
-    instance_create((this.x + (this.sprite_width / 2)) - 48, this.y - 24, obj_dmgwriter)
+    instance_create(
+      this.x + this.sprite_width / 2 - 48,
+      this.y - 24,
+      obj_dmgwriter
+    );
 
-    _with (obj_dmgwriter, function() {
+    _with(obj_dmgwriter, function () {
       this.alarm[2] = 30;
-    })
+    });
 
     global.myfight = 0;
     global.mnfight = 1;
@@ -474,7 +505,11 @@ function step() {
           global.mnfight = 2;
           global.typer = 1;
           global.msc = 0;
-          this.iii = instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER);
+          this.iii = instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
         }
       }
 
@@ -502,14 +537,18 @@ function step() {
         if (this.whatiheard === 0) {
           global.msc = 0;
           global.msg[0] = scr_gettext("obj_dummymonster_437");
-          _with (OBJ_WRITER, function() {
+          _with(OBJ_WRITER, function () {
             this.halt = 3;
           });
-          this.iii = instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER)
+          this.iii = instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
 
-          _with (this.iii, function() {
+          _with(this.iii, function () {
             this.halt = 0;
-          })
+          });
         }
 
         if (this.whatiheard === 3) {
@@ -518,14 +557,18 @@ function step() {
           global.msg[1] = scr_gettext("obj_dummymonster_446");
           global.msg[2] = scr_gettext("obj_dummymonster_447");
           global.flag[14] = 2;
-          _with (OBJ_WRITER, function() {
+          _with(OBJ_WRITER, function () {
             this.halt = 3;
           });
-          this.iii = instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER);
+          this.iii = instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
 
-          _with (this.iii, function() {
+          _with(this.iii, function () {
             this.halt = 0;
-          })
+          });
         }
 
         global.heard = 1;
@@ -535,14 +578,14 @@ function step() {
 
   if (global.mnfight === 4) {
     if (global.mercyuse === 0) {
-      script_execute.call(this, scr_mercystandard)
+      script_execute.call(this, scr_mercystandard);
     }
   }
 }
 
 function alarm7() {
   action_move.call(this, "000000010", 4);
-  snd_play(snd_slidewhist)
+  snd_play(snd_slidewhist);
 }
 
 function alarm6() {
@@ -555,17 +598,21 @@ function alarm6() {
 
   global.msg[1] = scr_gettext("obj_dummymonster_222");
   global.typer = 2;
-  this.blconwd = instance_create(this.blcon.x + 15, this.blcon.y + 10, OBJ_NOMSCWRITER);
+  this.blconwd = instance_create(
+    this.blcon.x + 15,
+    this.blcon.y + 10,
+    OBJ_NOMSCWRITER
+  );
 }
 
 function alarm5() {
-  _with (this.blconwd, function() {
+  _with(this.blconwd, function () {
     instance_destroy(this);
-  })
+  });
 
-  _with (this.blcon, function() {
+  _with(this.blcon, function () {
     instance_destroy(this);
-  })
+  });
 
   this.talked = 0;
   this.whatiheard = -1;
@@ -574,12 +621,16 @@ function alarm5() {
 
 function alarm3() {
   if (this.image_index !== 1) {
-    this.dmgwriter = instance_create((this.x + (this.sprite_width / 2)) - 48, this.y - 24, obj_dmgwriter);
+    this.dmgwriter = instance_create(
+      this.x + this.sprite_width / 2 - 48,
+      this.y - 24,
+      obj_dmgwriter
+    );
     global.damage = this.takedamage;
 
-    _with (this.dmgwriter, function() {
+    _with(this.dmgwriter, function () {
       this.dmg = global.damage;
-    })
+    });
 
     this.image_index = 1;
     snd_play(snd_damage);
@@ -601,4 +652,21 @@ function alarm3() {
   this.alarm[3] = 2;
 }
 
-export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext, destroy, outsideRoom, step, alarm7, alarm6, alarm5, alarm3 };
+export {
+  create,
+  updateAlarms,
+  updateSpeed,
+  updateIndex,
+  updateSprite,
+  followPath,
+  updateCol,
+  parent,
+  createContext,
+  destroy,
+  outsideRoom,
+  step,
+  alarm7,
+  alarm6,
+  alarm5,
+  alarm3,
+};

@@ -1,12 +1,25 @@
-import { draw_sprite_ext, action_move, room_goto, instance_create, _with, instance_destroy, instance_exists, instances } from "/imports/assets/gamemakerFunctions.js";
-import { caster_load, caster_loop, scr_textskip } from "/imports/customFunctions.js"
+import {
+  _with,
+  action_move,
+  draw_sprite_ext,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instances,
+  room_goto,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  caster_load,
+  caster_loop,
+  scr_textskip,
+} from "/imports/customFunctions.js";
 import { c_white, mus_toriel } from "/imports/assets.js";
-import roomSize from "/imports/assets/roomSize.js";
 import global from "/imports/assets/global.js";
+import roomSize from "/imports/assets/roomSize.js";
 
 import * as obj_blconwdflowey from "/obj/blconwdflowey/index.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
 import * as obj_unfader from "/obj/unfader/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -29,14 +42,14 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
     image_number: 2, // sprite frame number
-    image_width: 72,   // placeholder
+    image_width: 72, // placeholder
     image_height: 102, // placeholder
     image_angle: 0,
     image_blend: c_white,
     sprite_index: "spr_torielside1", // sprite object
     visible: true, // sprite visibility
-    direction: 0,   // placeholder
-    speed: 0,       // placeholder
+    direction: 0, // placeholder
+    speed: 0, // placeholder
     friction: 0,
     gravity: 0,
     gravity_direction: 270, // gravity direction
@@ -150,7 +163,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // Recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -171,7 +186,7 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
 
     if (img) {
@@ -194,18 +209,26 @@ function alarm2() {
 }
 
 function step() {
-  if (this.x < ((roomSize.width / 2) - (this.sprite_width / 2))) {
+  if (this.x < roomSize.width / 2 - this.sprite_width / 2) {
     if (this.conversation === 0) {
       global.currentsong = caster_load(mus_toriel);
       caster_loop(global.currentsong, 0.7, 0.86);
       global.playing1 = 1;
       this.conversation = 1;
       this.hspeed = 0;
-      this.blcon = instance_create((this.x + 40 + this.sprite_width) - 10, this.y + 2, obj_blconwdflowey);
+      this.blcon = instance_create(
+        this.x + 40 + this.sprite_width - 10,
+        this.y + 2,
+        obj_blconwdflowey
+      );
       global.msc = 674;
       this.conversation = 1;
       this.image_speed = 0.2;
-      this.blconwriter = instance_create(this.blcon.x + 40, this.blcon.y + 10, OBJ_WRITER);
+      this.blconwriter = instance_create(
+        this.blcon.x + 40,
+        this.blcon.y + 10,
+        OBJ_WRITER
+      );
     }
   }
 
@@ -226,9 +249,9 @@ function step() {
 
   if (!instance_exists(OBJ_WRITER)) {
     if (this.conversation === 1) {
-      _with (this.blcon, function() {
+      _with(this.blcon, function () {
         instance_destroy(this);
-      })
+      });
 
       instance_create(0, 0, obj_unfader);
       this.alarm[2] = 20;
@@ -239,11 +262,18 @@ function step() {
     }
   }
 
-  if (global.faceemotion === 1)
-    this.sprite_index = "spr_torielside1";
+  if (global.faceemotion === 1) this.sprite_index = "spr_torielside1";
 
-  if (global.faceemotion === 2) 
-    this.sprite_index = "spr_torielcutscene";
+  if (global.faceemotion === 2) this.sprite_index = "spr_torielcutscene";
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm2, step };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  alarm2,
+  step,
+};

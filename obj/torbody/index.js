@@ -1,10 +1,13 @@
-import { draw_sprite_ext, getBoundingBox, instance_exists, instance_find, instance_destroy, _with } from "/imports/assets/gamemakerFunctions.js";
+import {
+  draw_sprite_ext,
+  instance_destroy,
+  instance_exists,
+  instance_find,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-import global from "/imports/assets/global.js";
-
-import * as obj_torface from "/obj/torface/index.js";
 
 import * as parent from "/obj/face/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as obj_torface from "/obj/torface/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -41,11 +44,11 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		step,
-		roomStart,
-		alarm9,
+    step,
+    roomStart,
+    alarm9,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -101,7 +104,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -124,16 +127,16 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
 
-		this.animationEnd?.();
+    this.animationEnd?.();
   }
 
   // getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
 
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+  this.previousx = this.x;
+  this.xprevious = this.x;
+  this.previousy = this.y;
+  this.yprevious = this.y;
+
   // Apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -147,7 +150,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // Recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -168,11 +173,11 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
     if (img) {
       this.sprite_width = img.width;
-      this.sprite_height = img.height
+      this.sprite_height = img.height;
     }
   }
 }
@@ -185,13 +190,22 @@ function step() {
 
 function roomStart() {
   const torface = instance_find(obj_torface, 0);
-  this.x = torface.x + ((torface.sprite_width / 2) - (this.sprite_width / 2))
+  this.x = torface.x + (torface.sprite_width / 2 - this.sprite_width / 2);
   this.y = torface.y + 27;
-	parent.create.call(this);
+  parent.create.call(this);
 }
 
 function alarm9() {
-	parent.alarm9.call(this);
+  parent.alarm9.call(this);
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step, roomStart, alarm9 };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  step,
+  roomStart,
+  alarm9,
+};

@@ -1,38 +1,64 @@
 import {
+  draw_set_color,
+  draw_sprite_ext,
+  draw_text_transformed,
+  floor,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  ord,
+  random,
+  real,
+  round,
+  script_execute,
+  string_char_at,
+  string_width,
+  surface_get_width,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  SCR_NEWLINE,
+  scr_replace_buttons_pc,
+  scr_setfont,
   SCR_TEXTTYPE,
   snd_play,
-  scr_replace_buttons_pc,
   snd_stop,
-  scr_setfont,
-  SCR_NEWLINE,
 } from "/imports/customFunctions.js";
 import { control_check_pressed, control_clear } from "/imports/input.js";
 import {
-  string_char_at,
-  floor,
-  random,
-  round,
-  draw_set_color,
-  surface_get_width,
-  draw_text_transformed,
-  script_execute,
-  real,
-  instance_destroy,
-  ord,
-} from "/imports/assets/gamemakerFunctions.js";
-import {
   final_view_wview,
-  view_current,
   final_view_xview,
+  view_current,
 } from "/imports/view.js";
 import {
+  c_white,
   fnt_comicsans,
   fnt_papyrus,
-  fnt_main,
+  snd_mtt1,
+  snd_mtt2,
+  snd_mtt3,
+  snd_mtt4,
+  snd_mtt5,
+  snd_mtt6,
+  snd_mtt7,
+  snd_mtt8,
+  snd_mtt9,
   snd_phone,
+  snd_tem,
+  snd_tem2,
+  snd_tem3,
+  snd_tem4,
+  snd_tem5,
+  snd_tem6,
+  snd_wngdng1,
+  snd_wngdng2,
+  snd_wngdng3,
+  snd_wngdng4,
+  snd_wngdng5,
+  snd_wngdng6,
+  snd_wngdng7,
 } from "/imports/assets.js";
-import { SCR_TEXT } from "/imports/assets/text.js";
 import global from "/imports/assets/global.js";
+import { SCR_TEXT } from "/imports/assets/text.js";
 
 import * as obj_choicer from "/obj/choicer/index.js";
 
@@ -371,8 +397,8 @@ function user0() {
 function user1() {
   if (global.inbattle === 0) {
     if (!instance_exists(obj_choicer)) {
-      choicer = instance_create(0, 0, obj_choicer);
-      choicer.creator = "OBJ_WRITER";
+      this.choicer = instance_create(0, 0, obj_choicer);
+      this.choicer.creator = "OBJ_WRITER";
     }
 
     this.halt = 5;
@@ -493,86 +519,6 @@ function draw() {
             1
           );
         }
-      } else if (this.ch == "*") {
-        n++;
-        this.ch = string_char_at(this.originalstring, n);
-        var icontype = 0;
-
-        if (this.myfont == fnt_papyrus) icontype = 1;
-
-        var sprite = scr_getbuttonsprite(this.ch, icontype);
-
-        if (sprite != -4) {
-          var spritex = myx;
-          var spritey = myy;
-
-          if (this.shake > 38) {
-            if (this.shake == 39) {
-              this.direction += 10;
-              spritex += this.hspeed;
-              spritey += this.vspeed;
-            } else if (this.shake == 40) {
-              spritex += this.hspeed;
-              spritey += this.vspeed;
-            } else if (this.shake == 41) {
-              this.direction += 10 * n;
-              spritex += this.hspeed;
-              spritey += this.vspeed;
-              direction -= 10 * n;
-            } else if (this.shake == 42) {
-              this.direction += 20 * n;
-              spritex += this.hspeed;
-              spritey += this.vspeed;
-              this.direction -= 20 * n;
-            } else if (this.shake == 43) {
-              this.direction += 30 * n;
-              spritex += this.hspeed * 0.7 + 10;
-              spritey += this.vspeed * 0.7;
-              this.direction -= 30 * n;
-            }
-          } else if (!instance_exists(obj_papdate)) {
-            spritex += random(this.shake) - this.shake / 2;
-            spritey += random(this.shake) - this.shake / 2;
-          }
-
-          var icon_scale = 1;
-
-          if (this.myfont == fnt_main) icon_scale = 2;
-
-          if (this.myfont == fnt_main || this.myfont == fnt_maintext)
-            spritey += 1 * icon_scale;
-
-          if (this.myfont == fnt_papyrus && icontype == 1)
-            spritey += floor((16 - sprite_get_height(sprite)) / 2);
-
-          if (this.vtext) {
-            draw_sprite_ext(
-              sprite,
-              0,
-              spritex - sprite_get_width(sprite),
-              spritey,
-              icon_scale,
-              icon_scale,
-              0,
-              c_white,
-              1
-            );
-            myy += (sprite_get_height(sprite) + 1) * icon_scale;
-          } else {
-            draw_sprite_ext(
-              sprite,
-              0,
-              spritex,
-              spritey,
-              icon_scale,
-              icon_scale,
-              0,
-              c_white,
-              1
-            );
-            myx += (sprite_get_width(sprite) + 1) * icon_scale;
-          }
-        }
       } else if (this.ch == ">") {
         n++;
         var choiceindex = real(string_char_at(this.originalstring, n));
@@ -581,8 +527,6 @@ function draw() {
           myx = 196;
         } else {
           myx = 100;
-
-          if (this.myfont == fnt_ja_comicsans_big) myx += 11;
         }
 
         if (final_view_wview[view_current] == 640) myx *= 2;
@@ -665,40 +609,6 @@ function draw() {
 
           if (this.myletter == "'") letterx += 1;
         }
-      } else if (global.language == "ja") {
-        if (
-          this.vtext &&
-          (this.myfont == fnt_ja_papyrus || this.myfont == fnt_ja_papyrus_btl)
-        ) {
-          if (
-            myy == writingy &&
-            (this.myletter == "「" || this.myletter == "『")
-          )
-            myy -= round(
-              (string_width(this.myletter) / 2) * this.htextscale * halfscale
-            );
-        } else if (
-          this.myfont == fnt_ja_maintext ||
-          this.myfont == fnt_ja_main
-        ) {
-          var unit = this.htextscale * halfscale;
-
-          if (this.myfont == fnt_ja_main) unit *= 2;
-
-          if (ord(this.myletter) < 1024 || ord(this.myletter) == 8211) {
-            if (n > 1) {
-              var lastch = ord(string_char_at(this.originalstring, n - 1));
-
-              if (
-                lastch >= 1024 &&
-                lastch < 65281 &&
-                lastch != 8211 &&
-                lastch != 12288
-              )
-                letterx += unit;
-            }
-          }
-        }
       }
 
       scr_setfont(this.myfont);
@@ -740,7 +650,9 @@ function draw() {
         offsety = 0;
       }
 
-      var display_scale = surface_get_width("application_surface") / final_view_wview[view_current];
+      var display_scale =
+        surface_get_width("application_surface") /
+        final_view_wview[view_current];
       var finalx = round((letterx + offsetx) * display_scale) / display_scale;
       var finaly = round((myy + offsety) * display_scale) / display_scale;
       draw_text_transformed(
@@ -816,13 +728,6 @@ function draw() {
           );
         } else if (this.myletter == " " || ord(this.myletter) >= 65377) {
           letterx -= floor(this.spacing / 2);
-        } else if (ord(this.myletter) < 1024 || ord(this.myletter) == 8211) {
-          if (
-            this.myfont == fnt_ja_comicsans ||
-            this.myfont == fnt_ja_comicsans_big
-          )
-            letterx -= floor(this.spacing * 0.3);
-          else letterx -= floor(this.spacing * 0.4);
         }
       }
 

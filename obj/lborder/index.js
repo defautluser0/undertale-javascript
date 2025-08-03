@@ -1,18 +1,16 @@
 import {
-  draw_sprite_ext,
-  round,
   abs,
-  instances,
+  draw_sprite_ext,
   getBoundingBox,
+  instances,
+  round,
 } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
-
 import global from "/imports/assets/global.js";
 
+import * as parent from "/obj/borderparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 import * as obj_dborder from "/obj/dborder/index.js";
 import * as obj_uborder from "/obj/uborder/index.js";
-
-import * as parent from "/obj/borderparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);

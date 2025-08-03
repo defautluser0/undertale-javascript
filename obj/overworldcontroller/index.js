@@ -1,52 +1,57 @@
 import {
-  draw_sprite_ext,
-  draw_sprite,
-  instances,
+  _with,
   draw_set_color,
+  draw_sprite,
+  draw_sprite_ext,
   draw_text,
   draw_text_transformed,
-  keyboard_check_pressed,
-  string,
+  floor,
   ini_read_real,
   ini_read_string,
-  floor,
+  instance_exists,
+  instances,
+  keyboard_check_pressed,
   round,
-  string_width,
   script_execute,
+  string,
+  string_width,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
-  c_white,
+  ossafe_fill_rectangle,
+  ossafe_ini_close,
+  ossafe_ini_open,
+  scr_drawtext_centered,
+  scr_gettext,
+  scr_roomname,
+  scr_save,
+  scr_setfont,
+  snd_play,
+  substr,
+} from "/imports/customFunctions.js";
+import {
+  control_check_pressed,
+  control_clear,
+  vk_down,
+  vk_left,
+  vk_right,
+  vk_up,
+} from "/imports/input.js";
+import { view_current, view_xview, view_yview } from "/imports/view.js";
+import {
   c_black,
-  fnt_small,
-  fnt_maintext,
   c_gray,
+  c_white,
+  c_yellow,
+  fnt_maintext,
+  fnt_small,
   snd_save,
   snd_select,
   snd_squeak,
-  c_yellow,
 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
-import { view_current, view_xview, view_yview } from "/imports/view.js";
+
+import * as obj_dialoguer from "/obj/dialoguer/index.js";
 import * as obj_maincharaReal from "/obj/mainchara/index.js";
-import {
-  ossafe_fill_rectangle,
-  scr_setfont,
-  snd_play,
-  scr_gettext,
-  ossafe_ini_open,
-  ossafe_ini_close,
-  scr_roomname,
-  substr,
-  scr_save,
-} from "/imports/customFunctions.js";
-import {
-  control_clear,
-  control_check_pressed,
-  vk_up,
-  vk_down,
-  vk_right,
-  vk_left,
-} from "/imports/input.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -256,12 +261,6 @@ function draw() {
       var name0_y = 20 + this.moveyy;
       var name0_scale = 1;
 
-      if (global.language == "ja") {
-        draw_set_font(fnt_ja_curs);
-        name0_y += 4;
-        name0_scale = 0.5;
-      }
-
       draw_text_transformed(
         name0_x,
         name0_y,
@@ -289,7 +288,7 @@ function draw() {
         draw_text(42 + this.xx, 120 + this.yy, scr_gettext("field_menu_cell"));
 
       if (global.menuno == 1 || global.menuno == 5) {
-        for (i = 0; i < 8; i += 1)
+        for (let i = 0; i < 8; i += 1)
           draw_text(116 + this.xx, 30 + this.yy + i * 16, global.itemname[i]);
 
         draw_text(116 + this.xx, 170 + this.yy, scr_gettext("item_menu_use"));
@@ -307,21 +306,21 @@ function draw() {
     }
 
     if (global.menuno == 3) {
-      for (i = 0; i < 7; i += 1)
+      for (let i = 0; i < 7; i += 1)
         draw_text(116 + this.xx, 30 + this.yy + i * 16, global.phonename[i]);
     }
 
     if (global.menuno == 6) {
       scr_itemname();
 
-      for (i = 0; i < 8; i += 1)
+      for (let i = 0; i < 8; i += 1)
         draw_text(116 + this.xx, 30 + this.yy + i * 16, global.itemname[i]);
     }
 
     if (global.menuno == 7) {
       scr_storagename(300);
 
-      for (i = 0; i < 10; i += 1)
+      for (let i = 0; i < 10; i += 1)
         draw_text(116 + this.xx, 30 + this.yy + i * 16, global.itemname[i]);
     }
 
@@ -400,13 +399,6 @@ function draw() {
       if (global.charname.length >= 7) {
         var x2 = 192 + this.xx;
         var y2 = 32 + this.yy;
-        var scale = 1;
-
-        if (global.language == "ja") {
-          x2 += 16;
-          y2 += 20;
-          scale = 0.5;
-        }
 
         draw_text_transformed(x2, y2, "Easy to#change,#huh?");
       }
@@ -694,7 +686,7 @@ function draw() {
 
         if (global.menucoord[5] == 2) {
           global.menuno = 9;
-          dontthrow = 0;
+          this.dontthrow = 0;
 
           if (
             global.item[global.menucoord[1]] != 23 &&
@@ -717,8 +709,9 @@ function draw() {
               );
 
               if (instance_exists(obj_rarependant)) {
-                //with (obj_rarependant)
-                //con = 1;
+                _with(obj_rarependant, function () {
+                  this.con = 1;
+                });
               }
             }
 
@@ -729,7 +722,7 @@ function draw() {
                 0,
                 "* (You threw the Bad Memory&  away.^1)&* (But it came back.)/%%"
               );
-              dontthrow = 1;
+              this.dontthrow = 1;
             }
 
             if (global.item[global.menucoord[1]] == 56) {
@@ -749,7 +742,7 @@ function draw() {
                   0,
                   "* Hey^1! Don't throw that&  away^1! Just deliver it!/%%"
                 );
-                dontthrow = 1;
+                this.dontthrow = 1;
               }
             }
 
@@ -760,11 +753,11 @@ function draw() {
                 0,
                 "* (The letter is too powerful to&  throw away.^1)&* (It gets the better of you.)/%%"
               );
-              dontthrow = 1;
+              this.dontthrow = 1;
             }
           }
 
-          if (dontthrow == 0)
+          if (this.dontthrow == 0)
             script_execute.call(this, scr_itemshift, global.menucoord[1], 0);
         }
       }
@@ -788,7 +781,7 @@ function draw() {
           300
         );
 
-        if (noroom == 0) {
+        if (this.noroom == 0) {
           script_execute.call(this, scr_writetext, 16, "x", 0, 0);
           script_execute.call(this, scr_itemshift, global.menucoord[6], 0);
         } else {
@@ -804,7 +797,7 @@ function draw() {
           global.flag[global.menucoord[7] + 300]
         );
 
-        if (noroom == 0) {
+        if (this.noroom == 0) {
           script_execute.call(this, scr_writetext, 17, "x", 0, 0);
           scr_storageshift(global.menucoord[7], 0, 300);
         } else {

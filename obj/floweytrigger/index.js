@@ -1,33 +1,37 @@
 import {
-  draw_sprite_ext,
-  instance_destroy,
-  instance_exists,
-  instance_create,
-  getBoundingBox,
+  _with,
   collision_rectangle,
-  instances,
+  draw_sprite_ext,
+  getBoundingBox,
+  ini_close,
   ini_open,
   ini_read_real,
   ini_write_real,
-  ini_close,
-  _with,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instances,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, mus_flowey, mus_toriel } from "/imports/assets.js";
 import {
+  caster_free,
   caster_load,
   caster_loop,
   scr_depth,
+  scr_gettext,
 } from "/imports/customFunctions.js";
+import { view_yview } from "/imports/view.js";
+import { c_white, mus_flowey, mus_toriel } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
+import * as obj_battlerflowey from "/obj/battlerflowey/index.js";
+import * as obj_dialoguer from "/obj/dialoguer/index.js";
+import * as obj_fader from "/obj/fader/index.js";
 import * as obj_floweytalker1 from "/obj/floweytalker1/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js";
-import * as obj_dialoguer from "/obj/dialoguer/index.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
-import * as obj_fader from "/obj/fader/index.js";
-import * as obj_battlerflowey from "/obj/battlerflowey/index.js";
-import * as obj_toroverworld1 from "/obj/toroverworld1/index.js";
+import * as obj_musfadeout from "/obj/musfadeout/index.js";
 import * as obj_torface from "/obj/torface/index.js";
+import * as obj_toroverworld1 from "/obj/toroverworld1/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 const parent = null;
 
@@ -327,7 +331,7 @@ function step() {
       this.visible = false;
     });
 
-    this.flow_m = scr_marker(flow.x, flow.y, spr_floweysink);
+    this.flow_m = scr_marker(this.flow.x, this.flow.y, "spr_floweysink");
 
     scr_depth.call(this.flow_m);
 
@@ -355,7 +359,7 @@ function step() {
   }
 
   if (this.conversation == 23) {
-    this.temptor = scr_marker(146, view_yview[0] - 60, spr_toriel_d);
+    this.temptor = scr_marker(146, view_yview[0] - 60, "spr_toriel_d");
     this.temptor.image_speed = 0.25;
     this.temptor.vspeed = 2;
     global.currentsong = caster_load(mus_toriel);

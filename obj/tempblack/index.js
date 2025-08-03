@@ -1,5 +1,10 @@
-import { draw_sprite_ext, instance_destroy, draw_set_color, draw_rectangle } from "/imports/assets/gamemakerFunctions.js";
-import { c_white, c_black } from "/imports/assets.js";
+import {
+  draw_rectangle,
+  draw_set_color,
+  draw_sprite_ext,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
+import { c_black, c_white } from "/imports/assets.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -79,7 +84,15 @@ function roomEnd() {
 
 function draw() {
   draw_set_color(c_black);
-  draw_rectangle(0, 0, 9999, 9999, false)
+  draw_rectangle(0, 0, 9999, 9999, false);
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomEnd, draw };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomEnd,
+  draw,
+};

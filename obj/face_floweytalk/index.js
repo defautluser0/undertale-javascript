@@ -1,7 +1,7 @@
 import {
   draw_sprite_ext,
-  instances,
   instance_exists,
+  instances,
 } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
@@ -126,13 +126,13 @@ function step() {
     this.sprite_index = "spr_floweygrin";
 
   if (global.currentroom == "room_ruinsexit") {
-    if (global.faceemotion == 6 && sprite_index != "spr_floweygrin")
+    if (global.faceemotion == 6 && this.sprite_index != "spr_floweygrin")
       this.sprite_index = "spr_floweytoriel";
 
-    if (global.faceemotion == 7 && sprite_index != "spr_floweygrin")
+    if (global.faceemotion == 7 && this.sprite_index != "spr_floweygrin")
       this.sprite_index = "spr_floweytoriel2";
 
-    if (global.faceemotion == 8 && sprite_index != "spr_floweygrin")
+    if (global.faceemotion == 8 && this.sprite_index != "spr_floweygrin")
       this.sprite_index = "spr_floweyplain";
   }
 

@@ -1,15 +1,37 @@
-import { draw_sprite_ext, instance_find, instance_number, keyboard_check, instance_exists, getBoundingBox, collision_rectangle, instance_create, room_goto } from "/imports/assets/gamemakerFunctions.js";
-import { snd_play, caster_stop, caster_free } from "/imports/customFunctions.js"
+import {
+  collision_rectangle,
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_create,
+  instance_exists,
+  instance_find,
+  instance_number,
+  keyboard_check,
+  room_goto,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  caster_free,
+  caster_stop,
+  snd_play,
+} from "/imports/customFunctions.js";
+import {
+  control_check,
+  control_check_pressed,
+  vk_down,
+  vk_left,
+  vk_right,
+  vk_up,
+} from "/imports/input.js";
 import { c_white } from "/imports/assets.js";
-import { control_check_pressed, control_check, vk_up, vk_down, vk_left, vk_right } from "/imports/input.js"
 import global from "/imports/assets/global.js";
 
 import * as obj_battlecontroller from "/obj/battlecontroller/index.js";
-import * as obj_uborder from "/obj/uborder/index.js";
-import * as obj_rborder from "/obj/rborder/index.js";
 import * as obj_dborder from "/obj/dborder/index.js";
 import * as obj_lborder from "/obj/lborder/index.js";
+import * as obj_rborder from "/obj/rborder/index.js";
+import * as obj_uborder from "/obj/uborder/index.js";
 import * as obj_unfader from "/obj/unfader/index.js";
+
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -59,7 +81,7 @@ function create() {
     user7,
     updateCol,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -72,7 +94,7 @@ function create() {
     absolute: false,
     xOffset: 0,
     yOffset: 0,
-  }
+  };
   self._x = 0;
   self._y = 0;
   self.initialspeed = null;
@@ -125,8 +147,8 @@ function create() {
     },
     set(val) {
       this._path.data = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_speed", {
     get() {
@@ -134,8 +156,8 @@ function create() {
     },
     set(val) {
       this._path.speed = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_endaction", {
     get() {
@@ -143,28 +165,28 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "x", {
     get() {
       return this._x;
     },
     set(val) {
-      this._x = val
+      this._x = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "y", {
     get() {
       return this._y;
     },
     set(val) {
-      this._y = val
+      this._y = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
@@ -293,19 +315,19 @@ function step() {
   }
 
   if (this.confuse === 1 && global.mnfight === 2) {
-    if (this.x < (lborder.x + 8)) {
+    if (this.x < lborder.x + 8) {
       this.x = lborder.x + 8;
     }
 
-    if (this.y < (uborder.x + 8)) {
+    if (this.y < uborder.x + 8) {
       this.y = uborder.x + 8;
     }
 
-    if (this.x > (rborder.x - 8)) {
+    if (this.x > rborder.x - 8) {
       this.x = rborder.x - 8;
     }
 
-    if (this.y > (dborder.x - 8)) {
+    if (this.y > dborder.x - 8) {
       this.y = dborder.x - 8;
     }
   }
@@ -367,79 +389,59 @@ function step() {
     }
   }
 
-  if (this.jumpstage == 2 && this.movement == 2)
-{
-    if (keyboard_check(vk_up) == 0 && this.vspeed <= -1)
-      this.vspeed = -1;
-    
-    if (this.vspeed > 0.5 && this.vspeed < 8)
-        this.vspeed += 0.6;
-    
-    if (this.vspeed > -1 && this.vspeed <= 0.5)
-        this.vspeed += 0.2;
-    
-    if (this.vspeed > -4 && this.vspeed <= -1)
-        this.vspeed += 0.5;
-    
-    if (this.vspeed <= -4)
-        this.vspeed += 0.2;
-}
+  if (this.jumpstage == 2 && this.movement == 2) {
+    if (keyboard_check(vk_up) == 0 && this.vspeed <= -1) this.vspeed = -1;
 
-if (this.jumpstage == 2 && this.movement == 11)
-{
-    if (keyboard_check(vk_left) == 0 && this.hspeed <= -1)
-      this.hspeed = -1;
-    
-    if (this.hspeed > 0.5 && this.hspeed < 8)
-        this.hspeed += 0.6;
-    
-    if (this.hspeed > -1 && this.hspeed <= 0.5)
-        this.hspeed += 0.2;
-    
-    if (this.hspeed > -4 && this.hspeed <= -1)
-        this.hspeed += 0.5;
-    
-    if (this.hspeed <= -4)
-        this.hspeed += 0.2;
-}
+    if (this.vspeed > 0.5 && this.vspeed < 8) this.vspeed += 0.6;
 
-  if (this.jumpstage == 2 && this.movement == 12)
-  {
-    if (keyboard_check(vk_down) == 0 && this.vspeed >= 1)
-      this.vspeed = 1;
-    
-    if (this.vspeed < -0.5 && this.vspeed > -8)
-      this.vspeed -= 0.6;
-    
-    if (this.vspeed < 1 && this.vspeed >= -0.5)
-      this.vspeed -= 0.2;
-    
-    if (this.vspeed < 4 && this.vspeed >= 1)
-      this.vspeed -= 0.5;
-    
-    if (this.vspeed >= 4)
-      this.vspeed -= 0.2;
+    if (this.vspeed > -1 && this.vspeed <= 0.5) this.vspeed += 0.2;
+
+    if (this.vspeed > -4 && this.vspeed <= -1) this.vspeed += 0.5;
+
+    if (this.vspeed <= -4) this.vspeed += 0.2;
   }
 
-  if (this.jumpstage == 2 && this.movement == 13)
-  {
-    if (keyboard_check(vk_right) == 0 && this.hspeed >= 1)
-      this.hspeed = 1;
+  if (this.jumpstage == 2 && this.movement == 11) {
+    if (keyboard_check(vk_left) == 0 && this.hspeed <= -1) this.hspeed = -1;
 
-    if (this.hspeed < -0.5 && this.hspeed > -8)
-        this.hspeed -= 0.6;
-    
-    if (this.hspeed < 1 && this.hspeed >= -0.5)
-        this.hspeed -= 0.2;
-    
-    if (this.hspeed < 4 && this.hspeed >= 1)
-        this.hspeed -= 0.5;
-    
-    if (this.hspeed >= 4)
-        this.hspeed -= 0.2;
+    if (this.hspeed > 0.5 && this.hspeed < 8) this.hspeed += 0.6;
+
+    if (this.hspeed > -1 && this.hspeed <= 0.5) this.hspeed += 0.2;
+
+    if (this.hspeed > -4 && this.hspeed <= -1) this.hspeed += 0.5;
+
+    if (this.hspeed <= -4) this.hspeed += 0.2;
   }
 
-  if (this.ignore_border === 0 && instance_exists("obj_sansb_body") && global.mnfight === 2) {
+  if (this.jumpstage == 2 && this.movement == 12) {
+    if (keyboard_check(vk_down) == 0 && this.vspeed >= 1) this.vspeed = 1;
+
+    if (this.vspeed < -0.5 && this.vspeed > -8) this.vspeed -= 0.6;
+
+    if (this.vspeed < 1 && this.vspeed >= -0.5) this.vspeed -= 0.2;
+
+    if (this.vspeed < 4 && this.vspeed >= 1) this.vspeed -= 0.5;
+
+    if (this.vspeed >= 4) this.vspeed -= 0.2;
+  }
+
+  if (this.jumpstage == 2 && this.movement == 13) {
+    if (keyboard_check(vk_right) == 0 && this.hspeed >= 1) this.hspeed = 1;
+
+    if (this.hspeed < -0.5 && this.hspeed > -8) this.hspeed -= 0.6;
+
+    if (this.hspeed < 1 && this.hspeed >= -0.5) this.hspeed -= 0.2;
+
+    if (this.hspeed < 4 && this.hspeed >= 1) this.hspeed -= 0.5;
+
+    if (this.hspeed >= 4) this.hspeed -= 0.2;
+  }
+
+  if (
+    this.ignore_border === 0 &&
+    instance_exists("obj_sansb_body") &&
+    global.mnfight === 2
+  ) {
     console.log("what how");
   }
 
@@ -468,7 +470,7 @@ function updateKeyboard() {
         this.y += global.sp;
 
         if (control_check(1) === 1) {
-          this.y -= (global.sp / 2);
+          this.y -= global.sp / 2;
         }
       }
 
@@ -476,7 +478,7 @@ function updateKeyboard() {
         this.y -= global.sp;
 
         if (control_check(1) === 1) {
-          this.y += (global.sp / 2);
+          this.y += global.sp / 2;
         }
       }
     }
@@ -488,15 +490,15 @@ function updateKeyboard() {
         this.x += global.sp;
 
         if (control_check(1) === 1) {
-          this.x -= (global.sp / 2);
+          this.x -= global.sp / 2;
         }
       }
-      
-      if (this.confuse === 1 && this.x < (global.idealborder[0] + 8)) {
+
+      if (this.confuse === 1 && this.x < global.idealborder[0] + 8) {
         this.x -= global.sp;
 
         if (control_check(1) === 1) {
-          this.x += (global.sp / 2);
+          this.x += global.sp / 2;
         }
       }
     }
@@ -508,7 +510,7 @@ function updateKeyboard() {
         this.y -= global.sp;
 
         if (control_check(1) === 1) {
-          this.y += (global.sp / 2);
+          this.y += global.sp / 2;
         }
       }
 
@@ -516,7 +518,7 @@ function updateKeyboard() {
         this.y += global.sp;
 
         if (control_check(1) === 1) {
-          this.y -= (global.sp / 2);
+          this.y -= global.sp / 2;
         }
       }
     }
@@ -535,15 +537,15 @@ function updateKeyboard() {
         this.x -= global.sp;
 
         if (control_check(1) === 1) {
-          this.x += (global.sp / 2);
+          this.x += global.sp / 2;
         }
       }
-      
-      if (this.confuse === 1 && this.x < (global.idealborder[1] - 8)) {
+
+      if (this.confuse === 1 && this.x < global.idealborder[1] - 8) {
         this.x += global.sp;
 
         if (control_check(1) === 1) {
-          this.x -= (global.sp / 2);
+          this.x -= global.sp / 2;
         }
       }
     }
@@ -557,13 +559,22 @@ function user7() {
 function updateCol() {
   getBoundingBox.call(this);
 
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_dborder, false, false);
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_dborder,
+    false,
+    false
+  );
   if (other && other.solid) {
     this.x = this.xprevious;
   }
   if (other) {
     if (this.ignore_border === 0) {
-      this.y = other.y - this.sprite_height
+      this.y = other.y - this.sprite_height;
     }
 
     if (this.movement === 2) {
@@ -572,10 +583,25 @@ function updateCol() {
       this.vspeed = 0;
     }
 
-    if (this.confuse === 1 && instance_find(obj_battlecontroller).runaway !== 1) {
+    if (
+      this.confuse === 1 &&
+      instance_find(obj_battlecontroller).runaway !== 1
+    ) {
       this.y = other.y - 8;
     }
   }
 }
 
-export { create, updateAlarms, updateIndex, updateSpeed, updateSprite, parent, createContext, step, updateKeyboard, user7, updateCol };
+export {
+  create,
+  updateAlarms,
+  updateIndex,
+  updateSpeed,
+  updateSprite,
+  parent,
+  createContext,
+  step,
+  updateKeyboard,
+  user7,
+  updateCol,
+};

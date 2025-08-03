@@ -1,17 +1,17 @@
 import {
   draw_sprite_ext,
-  instance_exists,
-  instance_create,
   getBoundingBox,
+  instance_create,
+  instance_exists,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
 import { caster_free } from "/imports/customFunctions.js";
+import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as obj_unfader from "/obj/unfader/index.js";
-import * as obj_undyneachaser from "/obj/undyneachaser/index.js";
-import * as obj_musfadeout from "/obj/musfadeout/index.js";
 import * as parent from "/obj/doorB/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as obj_musfadeout from "/obj/musfadeout/index.js";
+import * as obj_undyneachaser from "/obj/undyneachaser/index.js";
+import * as obj_unfader from "/obj/unfader/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);

@@ -1,4 +1,8 @@
-import { draw_sprite_ext, action_move, instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import {
+  action_move,
+  draw_sprite_ext,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
@@ -62,7 +66,7 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
   }
-  
+
   if (this.friction !== 0) {
     if (this.speed > 0) {
       this.speed -= this.friction;
@@ -74,9 +78,9 @@ function updateGamemakerFunctions() {
   this.hspeed = Math.cos(dirRad) * this.speed;
   this.vspeed = Math.sin(dirRad) * this.speed;
 
-	// Update position
-	this.x += this.hspeed;
-	this.y += this.vspeed;
+  // Update position
+  this.x += this.hspeed;
+  this.y += this.vspeed;
 }
 
 function updateSprite() {
@@ -113,4 +117,13 @@ function step() {
   this.image_angle += 8;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, alarm0, step };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  alarm0,
+  step,
+};

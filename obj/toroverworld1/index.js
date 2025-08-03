@@ -1,10 +1,17 @@
-import { draw_sprite_ext, getBoundingBox, instance_exists, instance_find, instance_destroy, collision_rectangle, _with } from "/imports/assets/gamemakerFunctions.js";
+import {
+  _with,
+  collision_rectangle,
+  draw_sprite_ext,
+  getBoundingBox,
+  instance_destroy,
+  instance_exists,
+  instance_find,
+} from "/imports/assets/gamemakerFunctions.js";
 import { scr_depth, scr_npcdir } from "/imports/customFunctions.js";
 import { c_white } from "/imports/assets.js";
-import global from "/imports/assets/global.js";
 
-import * as obj_toribuster from "/obj/toribuster/index.js";
 import * as obj_torface from "/obj/torface/index.js";
+import * as obj_toribuster from "/obj/toribuster/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
 
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
@@ -62,7 +69,7 @@ function create() {
     step,
     updateCol,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -118,7 +125,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -142,17 +149,23 @@ function updateGamemakerFunctions() {
     this.image_index -= this.image_number;
   }
 
-  if ((this.sprite_index === this.dtsprite || this.sprite_index === this.utsprite || this.sprite_index === this.ltsprite || this.sprite_index === this.rtsprite) && this.image_index >= this.image_number_t) {
+  if (
+    (this.sprite_index === this.dtsprite ||
+      this.sprite_index === this.utsprite ||
+      this.sprite_index === this.ltsprite ||
+      this.sprite_index === this.rtsprite) &&
+    this.image_index >= this.image_number_t
+  ) {
     this.image_index -= this.image_number_t;
   }
 
-  getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
+  getBoundingBox.call(this); // uncomment if bounding box is needed for something (collision checks from this or others)
 
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+  this.previousx = this.x;
+  this.xprevious = this.x;
+  this.previousy = this.y;
+  this.yprevious = this.y;
+
   // Apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -166,7 +179,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // Recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -187,22 +202,26 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
     if (img) {
       this.sprite_width = img.width;
-      this.sprite_height = img.height
+      this.sprite_height = img.height;
     }
   }
 }
 
 function roomStart() {
-  scr_depth.call(this, 0, 0, 0, 0, 0)
+  scr_depth.call(this, 0, 0, 0, 0, 0);
 
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/basement3" || window.location.href === "https://undertale.defautluser0.xyz/room/basement4") {
+  if (
+    window.location.href ===
+      "https://undertale.defautluser0.xyz/room/basement3" ||
+    window.location.href === "https://undertale.defautluser0.xyz/room/basement4"
+  ) {
     this.facing = 2;
     this.direction = 90;
-    this.sprite_index = "spr_toriel_u"
+    this.sprite_index = "spr_toriel_u";
   }
 }
 
@@ -213,7 +232,7 @@ function step() {
     this.myinteract = 1;
     if (instance_exists(OBJ_WRITER)) {
       if (instance_find(OBJ_WRITER, 0).halt !== 0) {
-        this.image_speed = 0.2
+        this.image_speed = 0.2;
       }
     }
   } else {
@@ -230,7 +249,11 @@ function step() {
 
   scr_npcdir.call(this, 0);
 
-  if (window.location.href === "https://undertale.defautluser0.xyz/room/area1_2/" && this.y < 140) {
+  if (
+    window.location.href ===
+      "https://undertale.defautluser0.xyz/room/area1_2/" &&
+    this.y < 140
+  ) {
     this.fader = 1;
   }
 
@@ -238,18 +261,36 @@ function step() {
     this.image_alpha -= 0.2;
 
     if (this.image_alpha <= 0.2) {
-      instance_destroy(this)
+      instance_destroy(this);
     }
   }
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_toribuster, false, false)
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_toribuster,
+    false,
+    false
+  );
   if (other) {
-    _with (this._object, function() {
+    _with(this._object, function () {
       instance_destroy(this);
-    })
+    });
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, step, updateCol };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  step,
+  updateCol,
+};

@@ -1,58 +1,60 @@
 import {
+  choose,
+  draw_circle,
+  draw_rectangle,
+  draw_set_color,
   draw_sprite_ext,
+  draw_text,
+  draw_text_transformed,
+  file_exists,
+  file_text_export,
+  file_text_import,
+  ini_close,
+  ini_export,
+  ini_import,
   ini_open,
   ini_read_real,
   ini_write_real,
   ini_write_string,
-  ini_close,
-  file_exists,
-  room_goto,
   instance_create,
-  draw_set_color,
-  draw_text_transformed,
-  draw_text,
-  merge_color,
-  choose,
-  draw_circle,
   keyboard_check_pressed,
-  draw_rectangle,
-  ini_import,
-  ini_export,
-  file_text_import,
-  file_text_export,
+  merge_color,
+  room_goto,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   caster_free,
   caster_load,
-  scr_setfont,
-  scr_drawtext_centered_scaled,
-  caster_play,
   caster_loop,
+  caster_play,
+  scr_drawtext_centered_scaled,
+  scr_setfont,
 } from "/imports/customFunctions.js";
 import {
-  c_white,
-  c_yellow,
-  c_orange,
-  c_red,
-  c_gray,
-  c_black,
-  mus_harpnoise,
-  mus_options_winter,
-  mus_options_fall,
-  mus_options_summer,
-  fnt_maintext,
-} from "/imports/assets.js";
-import {
+  control_check_pressed,
   vk_down,
-  vk_up,
   vk_left,
   vk_right,
-  control_check_pressed,
+  vk_up,
 } from "/imports/input.js";
+import {
+  c_black,
+  c_gray,
+  c_orange,
+  c_red,
+  c_white,
+  c_yellow,
+  fnt_maintext,
+  mus_harpnoise,
+  mus_options_fall,
+  mus_options_summer,
+  mus_options_winter,
+} from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
+// change as neccesary. if no parent, replace this line with "const parent = null;"
 import * as obj_ct_fallobj from "/obj/ct_fallobj/index.js";
+
+const parent = null;
 
 function create() {
   const alarm = new Array(12).fill(-1);

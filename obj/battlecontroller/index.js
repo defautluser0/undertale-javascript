@@ -1,28 +1,87 @@
-import { draw_sprite_ext, getBoundingBox, collision_rectangle, instance_create, ceil, script_execute, audio_stop_sound, instance_find, instance_exists, string_length, instance_number, room_goto, keyboard_check_pressed, _with, string, draw_set_color, draw_rectangle, string_char_at, ord } from "/imports/assets/gamemakerFunctions.js";
-import { SCR_BORDERSETUP, scr_battlegroup, scr_enable_screen_border, scr_levelup, caster_stop, caster_free, snd_play, scr_itemnameb, scr_attack, scr_itemuseb, scr_runaway, scr_battlemenu_cursor_y, scr_gameoverb, snd_isplaying, scr_gettext, ossafe_fill_rectangle, scr_binfowrite, strlen } from "/imports/customFunctions.js";
-import { control_check, control_check_pressed, control_clear, vk_down, vk_left, vk_up, vk_right } from "/imports/input.js";
-import { SCR_TEXT } from "/imports/assets/text.js";
-import { c_white, snd_levelup, mus_battle1, mus_toomuch, snd_power, snd_select, snd_squeak, c_red, c_black, c_lime } from "/imports/assets.js";
+import {
+  _with,
+  audio_stop_sound,
+  ceil,
+  draw_rectangle,
+  draw_set_color,
+  draw_sprite_ext,
+  instance_create,
+  instance_exists,
+  instance_find,
+  instance_number,
+  keyboard_check_pressed,
+  ord,
+  room_goto,
+  script_execute,
+  string,
+  string_char_at,
+  string_length,
+} from "/imports/assets/gamemakerFunctions.js";
+import {
+  caster_free,
+  caster_load,
+  caster_loop,
+  caster_stop,
+  ossafe_fill_rectangle,
+  scr_attack,
+  scr_battlegroup,
+  scr_battlemenu_cursor_y,
+  scr_binfowrite,
+  SCR_BORDERSETUP,
+  scr_enable_screen_border,
+  scr_gameoverb,
+  scr_gettext,
+  scr_itemnameb,
+  scr_itemuseb,
+  scr_levelup,
+  scr_runaway,
+  snd_isplaying,
+  snd_play,
+  strlen,
+} from "/imports/customFunctions.js";
+import {
+  control_check,
+  control_check_pressed,
+  control_clear,
+  vk_down,
+  vk_left,
+  vk_right,
+  vk_up,
+} from "/imports/input.js";
+import {
+  c_black,
+  c_lime,
+  c_red,
+  c_white,
+  mus_battle1,
+  mus_toomuch,
+  snd_levelup,
+  snd_power,
+  snd_select,
+  snd_squeak,
+} from "/imports/assets.js";
 import global from "/imports/assets/global.js";
+import { SCR_TEXT } from "/imports/assets/text.js";
 
+import * as obj_dborder from "/obj/dborder/index.js";
+import * as obj_heart from "/obj/heart/index.js";
+import * as OBJ_INSTAWRITER from "/obj/instawriter/index.js";
+import * as obj_lborder from "/obj/lborder/index.js";
+import * as obj_rborder from "/obj/rborder/index.js";
+import * as obj_talkbt from "/obj/talkbt/index.js";
+import * as obj_uborder from "/obj/uborder/index.js";
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
 //                                                               // to this fake object
 import * as OBJ_WRITER from "/obj/writer/index.js";
-import * as OBJ_INSTAWRITER from "/obj/instawriter/index.js";
-import * as obj_heart from "/obj/heart/index.js";
-import * as obj_lborder from "/obj/lborder/index.js";
-import * as obj_rborder from "/obj/rborder/index.js";
-import * as obj_uborder from "/obj/uborder/index.js";
-import * as obj_dborder from "/obj/dborder/index.js";
-import * as obj_talkbt from "/obj/talkbt/index.js";
+
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
   const alarm = new Array(12).fill(-1);
 
   // create code
-  SCR_BORDERSETUP(0,0,0,0,0)
-  scr_battlegroup(0,0,0,0,0)
+  SCR_BORDERSETUP(0, 0, 0, 0, 0);
+  scr_battlegroup(0, 0, 0, 0, 0);
   global.mercyuse = -1;
   global.inbattle = 1;
   global.itemused = 0;
@@ -43,13 +102,13 @@ function create() {
     global.lv = 20;
   }
 
-  global.maxhp = 16 + (global.lv * 4);
+  global.maxhp = 16 + global.lv * 4;
 
-  if (global.hp > (global.maxhp + 15)) {
+  if (global.hp > global.maxhp + 15) {
     global.hp = global.maxhp + 15;
   }
 
-  global.at = 8 + (global.lv * 2);
+  global.at = 8 + global.lv * 2;
   global.df = 9 + ceil(global.lv / 4);
 
   if (global.lv === 20) {
@@ -62,7 +121,12 @@ function create() {
   let suppress_border = 0;
 
   if (global.screen_border_active) {
-    if (global.battlegroup === 100 || global.battlegroup === 101 || global.battlegroup === 255 || global.battlegroup === 256) {
+    if (
+      global.battlegroup === 100 ||
+      global.battlegroup === 101 ||
+      global.battlegroup === 255 ||
+      global.battlegroup === 256
+    ) {
       suppress_border = 1;
       scr_enable_screen_border(0);
     }
@@ -119,7 +183,7 @@ function create() {
     updateKeyboard,
     draw,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -132,7 +196,7 @@ function create() {
     absolute: false,
     xOffset: 0,
     yOffset: 0,
-  }
+  };
   self._x = 0;
   self._y = 0;
   self.initialspeed = null;
@@ -185,8 +249,8 @@ function create() {
     },
     set(val) {
       this._path.data = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_speed", {
     get() {
@@ -194,8 +258,8 @@ function create() {
     },
     set(val) {
       this._path.speed = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_endaction", {
     get() {
@@ -203,28 +267,28 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "x", {
     get() {
       return this._x;
     },
     set(val) {
-      this._x = val
+      this._x = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "y", {
     get() {
       return this._y;
     },
     set(val) {
-      this._y = val
+      this._y = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
@@ -236,7 +300,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -275,7 +339,9 @@ function updateSpeed() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -305,7 +371,9 @@ function followPath() {
   if (!pathState || !pathState.data.points) return;
 
   const points = pathState.data.points;
-  const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
+  const keys = Object.keys(points)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   let currKey = pathState.index;
   let nextKeyIndex = keys.indexOf(currKey) + 1;
@@ -356,7 +424,10 @@ function followPath() {
     !this._manualVel &&
     !this._manualPos
   ) {
-    const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    const radians = Math.atan2(
+      -(this.y - this.yprevious),
+      this.x - this.xprevious
+    );
     const degrees = (radians * 180) / Math.PI;
     this.direction = (degrees + 360) % 360;
   }
@@ -365,14 +436,14 @@ function followPath() {
 function updateCol() {
   //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   //if (other) {
-    // collision updates with an object here. other
-    // is the colliding instance, so use 
-    // other.property for instance properties, like
-    // x, y and such.
+  // collision updates with an object here. other
+  // is the colliding instance, so use
+  // other.property for instance properties, like
+  // x, y and such.
   //}
-  // to add more collision checks, set other to 
-  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
-  // obj_solidobject2 being a different solid object 
+  // to add more collision checks, set other to
+  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
+  // obj_solidobject2 being a different solid object
   // and do another if (other) {} to run scripts.
 }
 
@@ -391,7 +462,7 @@ function beginStep() {
 }
 
 function step() {
-  const lborder = instance_find(obj_lborder, 0)
+  const lborder = instance_find(obj_lborder, 0);
   SCR_BORDERSETUP(0, 0, 0, 0, 0);
   this.currentplace = global.bmenuno;
 
@@ -403,18 +474,22 @@ function step() {
           global.xp += global.xpreward[3];
           global.gold += global.goldreward[3];
           this.tlvl = global.lv;
-          script_execute.call(this, scr_levelup)
+          script_execute.call(this, scr_levelup);
 
           if (global.flag[15] === 0) {
             caster_stop(global.batmusic);
             caster_free(global.batmusic);
           }
 
-          global.msg[0] = scr_gettext("obj_battlecontroller_286", string(global.xpreward[3]), string(global.goldreward[3]));
+          global.msg[0] = scr_gettext(
+            "obj_battlecontroller_286",
+            string(global.xpreward[3]),
+            string(global.goldreward[3])
+          );
 
           if (this.tlvl !== global.lv) {
             global.msg[0] += scr_gettext("obj_battlecontroller_287");
-            snd_play(snd_levelup)
+            snd_play(snd_levelup);
           }
 
           global.msg[0] += "/%";
@@ -433,7 +508,11 @@ function step() {
           }
 
           global.msc = 0;
-          this.writer = instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER);
+          this.writer = instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
           this.writer.writingxend += 20;
           return;
         }
@@ -443,37 +522,26 @@ function step() {
 
   global.inv = 30;
 
-  if (global.armor == 44)
-    global.inv += 30;
+  if (global.armor == 44) global.inv += 30;
 
-  if (global.armor == 64)
-    global.inv += 15;
+  if (global.armor == 64) global.inv += 15;
 
-  if (global.weapon == 45)
-    global.inv += 15;
+  if (global.weapon == 45) global.inv += 15;
 
-  if (global.inv < 15)
-    global.inv = 15;
+  if (global.inv < 15) global.inv = 15;
 
-  if (global.armor == 46 || global.armor == 64)
-  {
-    if (global.mnfight == 0 && global.myfight == 0)
-    {
-      if (((global.turn + 1) % 2) == 0)
-      {
-          if (this.healed == 0)
-          {
-            this.healed = 1;
-            
-            if (global.hp < global.maxhp)
-                global.hp += 1;
-            
-            snd_play(snd_power);
-          }
+  if (global.armor == 46 || global.armor == 64) {
+    if (global.mnfight == 0 && global.myfight == 0) {
+      if ((global.turn + 1) % 2 == 0) {
+        if (this.healed == 0) {
+          this.healed = 1;
+
+          if (global.hp < global.maxhp) global.hp += 1;
+
+          snd_play(snd_power);
+        }
       }
-    }
-    else
-    {
+    } else {
       this.healed = 0;
     }
   }
@@ -495,25 +563,33 @@ function step() {
                 global.rmsg = global.msg[0];
                 global.mytarget = 0;
 
-                _with (OBJ_WRITER, function() {
+                _with(OBJ_WRITER, function () {
                   this.halt = 3;
-                })
+                });
 
-                _with (OBJ_INSTAWRITER, function() {
+                _with(OBJ_INSTAWRITER, function () {
                   this.halt = 3;
-                })
+                });
 
                 global.bmenuno = 10;
                 global.msc = 1000 + global.monstertype[global.mytarget];
-                instance_create(global.idealborder[0], global.idealborder[2], OBJ_INSTAWRITER);
+                instance_create(
+                  global.idealborder[0],
+                  global.idealborder[2],
+                  OBJ_INSTAWRITER
+                );
                 control_clear(0);
-                SCR_TEXT(global.msc)
+                SCR_TEXT(global.msc);
               }
             }
           }
 
-          if (global.bmenuno === 1 || global.bmenuno === 2 || global.bmenuno === 11) {
-            global.msc =3;
+          if (
+            global.bmenuno === 1 ||
+            global.bmenuno === 2 ||
+            global.bmenuno === 11
+          ) {
+            global.msc = 3;
 
             if (global.monster[global.bmenucoord[1]] === 0) {
               global.bmenucoord[1] += 1;
@@ -524,20 +600,17 @@ function step() {
             }
 
             if (global.monster[0] == 0 && global.monster[2] == 0) {
-                global.bmenucoord[1] = 1;
+              global.bmenucoord[1] = 1;
             }
 
-            if  (global.bmenucoord[1] > 2) {
-              global.bmenucoord[1] =  0;
+            if (global.bmenucoord[1] > 2) {
+              global.bmenucoord[1] = 0;
 
-              if (global.monster[0] == 0)
-                global.bmenucoord[1] = 1;
+              if (global.monster[0] == 0) global.bmenucoord[1] = 1;
 
-              if (global.monster[1] == 0)
-                global.bmenucoord[1] = 2;
+              if (global.monster[1] == 0) global.bmenucoord[1] = 2;
 
-              if (global.monster[2] == 0)
-                global.bmenucoord[1] = 0;
+              if (global.monster[2] == 0) global.bmenucoord[1] = 0;
             }
           }
 
@@ -551,14 +624,13 @@ function step() {
               for (let i = 0; i < 8; i++) {
                 let len = 9;
 
-                if ((i % 2) === 0) {
+                if (i % 2 === 0) {
                   len = 10;
                 }
 
                 do {
                   global.itemnameb[i] += pad;
-                }
-                while (string_length(global.itemnameb[i]) < len)
+                } while (string_length(global.itemnameb[i]) < len);
               }
             } else {
               global.bmenuno = 0;
@@ -571,15 +643,19 @@ function step() {
 
           snd_play(snd_select);
 
-          _with (OBJ_WRITER, function() {
-            this.halt =3;
-          })
+          _with(OBJ_WRITER, function () {
+            this.halt = 3;
+          });
 
-          _with (OBJ_INSTAWRITER, function() {
-            this.halt =3;
-          })
+          _with(OBJ_INSTAWRITER, function () {
+            this.halt = 3;
+          });
 
-          instance_create(global.idealborder[0], global.idealborder[2], OBJ_INSTAWRITER);
+          instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_INSTAWRITER
+          );
           control_clear(0);
           return;
         }
@@ -603,9 +679,9 @@ function step() {
           instance_find(OBJ_INSTAWRITER, 0).halt = 3;
           snd_play(snd_select);
 
-          _with (global.mntrg, function() {
+          _with(global.mntrg, function () {
             this.whatiheard = global.talked;
-          })
+          });
 
           global.myfight = 2;
           instance_find(obj_heart, 0).x = -200;
@@ -617,8 +693,12 @@ function step() {
           instance_find(OBJ_WRITER, 0).halt = 3;
           instance_find(OBJ_INSTAWRITER, 0).halt = 3;
           global.bmenuno = 10;
-          global.msc  = 1000 + global.monstertype[global.mytarget];
-          instance_create(global.idealborder[0], global.idealborder[2], OBJ_INSTAWRITER);
+          global.msc = 1000 + global.monstertype[global.mytarget];
+          instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_INSTAWRITER
+          );
           control_clear(0);
           SCR_TEXT(global.msc);
 
@@ -630,9 +710,14 @@ function step() {
         if (global.bmenuno >= 3 && global.bmenuno < 4) {
           if (!global.right && !global.left) {
             instance_find(OBJ_WRITER, 0).halt = 3;
-            this.itempos = global.bmenucoord[3] + ((global.bmenuno - 3) * 8);
+            this.itempos = global.bmenucoord[3] + (global.bmenuno - 3) * 8;
             this.thisitemid = global.item[this.itempos];
-            script_execute.call(this, scr_itemuseb, this.itempos, this.thisitemid);
+            script_execute.call(
+              this,
+              scr_itemuseb,
+              this.itempos,
+              this.thisitemid
+            );
             global.talked = 91;
             global.myfight = 4;
             instance_find(obj_heart, 0).x = -200;
@@ -670,7 +755,11 @@ function step() {
           global.typer = 1;
           global.msg[0] = global.tmsg;
           global.msc = 0;
-          instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER);
+          instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
           control_clear(1);
         }
 
@@ -690,7 +779,11 @@ function step() {
             }
           }
 
-          instance_create(global.idealborder[0], global.idealborder[2], OBJ_INSTAWRITER);
+          instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_INSTAWRITER
+          );
           control_clear(1);
         }
 
@@ -700,24 +793,37 @@ function step() {
           global.bmenuno = 3;
           global.typer = 1;
           global.msc = 0;
-          instance_create(global.idealborder[0], global.idealborder[2], OBJ_INSTAWRITER);
+          instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_INSTAWRITER
+          );
           control_clear(1);
         }
       }
     }
-    
+
     if (global.bmenuno === 1 || global.bmenuno === 2 || global.bmenuno === 11) {
       instance_find(obj_heart, 0).x = global.idealborder[0] + 32;
-      instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(this, global.bmenucoord[1])
+      instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(
+        this,
+        global.bmenucoord[1]
+      );
     }
 
     if (global.bmenuno === 10) {
       if (global.bmenucoord[2] <= 2) {
         instance_find(obj_heart, 0).x = global.idealborder[0] + 32;
-        instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(this, global.bmenucoord[2])
+        instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(
+          this,
+          global.bmenucoord[2]
+        );
       } else {
         instance_find(obj_heart, 0).x = global.idealborder[0] + 292;
-        instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(this, global.bmenucoord[2] - 3);
+        instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(
+          this,
+          global.bmenucoord[2] - 3
+        );
       }
     }
 
@@ -737,7 +843,10 @@ function step() {
 
     if (global.bmenuno === 4) {
       instance_find(obj_heart, 0).x = global.idealborder[0] + 32;
-      instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(this, global.bmenucoord[4]);
+      instance_find(obj_heart, 0).y = scr_battlemenu_cursor_y.call(
+        this,
+        global.bmenucoord[4]
+      );
     }
   }
 
@@ -745,7 +854,9 @@ function step() {
     if (control_check_pressed(1)) {
       if (global.mnfight === 0 && global.flag[21] === 0) {
         if (instance_number(OBJ_WRITER) > 0) {
-          instance_find(OBJ_WRITER, 0).stringpos = string_length(instance_find(OBJ_WRITER, 0).originalstring);
+          instance_find(OBJ_WRITER, 0).stringpos = string_length(
+            instance_find(OBJ_WRITER, 0).originalstring
+          );
         }
 
         control_clear(1);
@@ -761,7 +872,7 @@ function step() {
     global.border = 0;
     script_execute.call(this, SCR_BORDERSETUP);
     if (lborder.x === global.idealborder[0]) {
-      global.typer  = 1;
+      global.typer = 1;
       global.msc = 0;
       instance_create(global.idealborder[0], global.idealborder[2], OBJ_WRITER);
       global.bmenuno = 0;
@@ -775,16 +886,17 @@ function step() {
   if (global.myfight === 3) {
     if (instance_exists(OBJ_WRITER)) {
       if (instance_find(OBJ_WRITER, 0).halt > 0) {
-        instance_find(obj_heart, 0).x = global.idealborder[0] + 32 + (global.bmenucoord[6] * 252);
+        instance_find(obj_heart, 0).x =
+          global.idealborder[0] + 32 + global.bmenucoord[6] * 252;
         instance_find(obj_heart, 0).y = global.idealborder[2] + 92;
 
         if (control_check_pressed(0)) {
           global.heard = 0;
           global.talked = 6 + global.bmenucoord[6];
 
-          _with (global.monsterinstance[global.mytarget], function() {
-            this.whatiheard = global.talked
-          })
+          _with(global.monsterinstance[global.mytarget], function () {
+            this.whatiheard = global.talked;
+          });
 
           instance_find(obj_heart, 0).x = -200;
           instance_find(OBJ_WRITER, 0).halt = 3;
@@ -797,7 +909,7 @@ function step() {
   if (global.myfight === 4) {
     if (this.runaway === 0) {
       instance_find(obj_heart, 0).x = -200;
-      
+
       if (!instance_exists(OBJ_WRITER)) {
         global.myfight = 0;
         global.mnfight = 1;
@@ -807,7 +919,7 @@ function step() {
   }
 
   if (global.hp <= 0) {
-    script_execute.call(this, scr_gameoverb)
+    script_execute.call(this, scr_gameoverb);
   }
 
   if (this.currentplace < global.bmenuno) {
@@ -830,7 +942,7 @@ function user0() {
 }
 
 function roomEnd() {
-  global.at = 8 + (global.lv * 2);
+  global.at = 8 + global.lv * 2;
   global.df = 9 + ceil(global.lv / 4);
   global.sp = this.tempspd;
   global.flag[78] = 0;
@@ -839,384 +951,339 @@ function roomEnd() {
 function updateKeyboard() {
   if (keyboard_check_pressed(vk_down)) {
     if (global.mnfight === 0) {
-      if (global.bmenuno === 1 || global.bmenuno === 2 || global.bmenuno === 11) {
+      if (
+        global.bmenuno === 1 ||
+        global.bmenuno === 2 ||
+        global.bmenuno === 11
+      ) {
         let oldcoord = global.bmenucoord[1];
         global.bmenucoord[1] += 1;
 
-        if (global.bmenucoord[1] > 2)
-          global.bmenucoord[1] = 0;
-        
+        if (global.bmenucoord[1] > 2) global.bmenucoord[1] = 0;
+
         if (global.monster[0] == 0 && global.monster[2] == 0)
           global.bmenucoord[1] = 1;
-        
+
         if (global.bmenucoord[1] == 0 && global.monster[0] == 0)
           global.bmenucoord[1] = 1;
-        
+
         if (global.bmenucoord[1] == 1 && global.monster[1] == 0)
           global.bmenucoord[1] = 2;
-        
+
         if (global.bmenucoord[1] == 2 && global.monster[2] == 0)
           global.bmenucoord[1] = 0;
 
-        if (global.bmenucoord[1] !== oldcoord)
-          snd_play(snd_squeak);
+        if (global.bmenucoord[1] !== oldcoord) snd_play(snd_squeak);
       }
 
       if (global.bmenuno === 10) {
         let oldcoord = global.bmenucoord[2];
         if (global.bmenucoord[2] != 2 && global.bmenucoord[2] != 5)
           global.bmenucoord[2] += 1;
-        else
-          global.bmenucoord[2] -= 2;
+        else global.bmenucoord[2] -= 2;
 
-         if (global.choices[global.bmenucoord[2]] == 0 && global.bmenucoord[2] > 2)
+        if (
+          global.choices[global.bmenucoord[2]] == 0 &&
+          global.bmenucoord[2] > 2
+        )
           global.bmenucoord[2] = 3;
-        
-        if (global.choices[global.bmenucoord[2]] == 0 && global.bmenucoord[2] <= 2)
-          global.bmenucoord[2] = 0;
-        
-        if (global.choices[0] == 1 && global.choices[1] == 0 && global.choices[2] == 0 && global.choices[3] == 0 && global.choices[4] == 0 && global.choices[5] == 0)
+
+        if (
+          global.choices[global.bmenucoord[2]] == 0 &&
+          global.bmenucoord[2] <= 2
+        )
           global.bmenucoord[2] = 0;
 
-        if (global.bmenucoord[2] !== oldcoord)
-          snd_play(snd_squeak);
+        if (
+          global.choices[0] == 1 &&
+          global.choices[1] == 0 &&
+          global.choices[2] == 0 &&
+          global.choices[3] == 0 &&
+          global.choices[4] == 0 &&
+          global.choices[5] == 0
+        )
+          global.bmenucoord[2] = 0;
+
+        if (global.bmenucoord[2] !== oldcoord) snd_play(snd_squeak);
       }
 
-      if (global.bmenuno >= 3 && global.bmenuno < 4)
-      {
-        let tempcheck = global.bmenucoord[3] + ((global.bmenuno - 3) * 8);
+      if (global.bmenuno >= 3 && global.bmenuno < 4) {
+        let tempcheck = global.bmenucoord[3] + (global.bmenuno - 3) * 8;
         let mv = 0;
 
-        if (global.bmenucoord[3] == 2 || global.bmenucoord[3] == 3)
-        {
+        if (global.bmenucoord[3] == 2 || global.bmenucoord[3] == 3) {
           global.bmenucoord[3] -= 2;
           mv = 1;
         }
 
-        if (mv == 0)
-        {
-          if (global.bmenucoord[3] == 0 || global.bmenucoord[3] == 1)
-          {
+        if (mv == 0) {
+          if (global.bmenucoord[3] == 0 || global.bmenucoord[3] == 1) {
             global.bmenucoord[3] += 2;
-            
-            if (global.item[tempcheck + 2] == 0)
-              global.bmenucoord[3] -= 2;
-            
+
+            if (global.item[tempcheck + 2] == 0) global.bmenucoord[3] -= 2;
+
             mv = 1;
           }
         }
 
-        if (mv != 0)
-          snd_play(snd_squeak);
+        if (mv != 0) snd_play(snd_squeak);
       }
-      if (global.bmenuno == 4)
-      {
+      if (global.bmenuno == 4) {
         let oldcoord = global.bmenucoord[4];
 
         if (global.bmenucoord[4] == 0 && global.mercy < 1)
           global.bmenucoord[4] = 1;
-        else
-          global.bmenucoord[4] = 0;
+        else global.bmenucoord[4] = 0;
 
-        if (global.bmenucoord[4] != oldcoord)
-          snd_play(snd_squeak);
+        if (global.bmenucoord[4] != oldcoord) snd_play(snd_squeak);
       }
     }
   }
 
   if (keyboard_check_pressed(vk_right)) {
-    if (global.mnfight == 0)
-    {
-      if (global.bmenuno == 0)
-      {
-          var oldcoord = global.bmenucoord[0];
-          global.bmenucoord[0] += 1;
-          
-          if (global.bmenucoord[0] > 3)
-              global.bmenucoord[0] = 0;
-          
-          if (global.mercy == 2 && global.bmenucoord[0] == 3)
-              global.bmenucoord[0] = 0;
-          
-          if (global.mercy == 3)
-              global.bmenucoord[0] = 1;
-          
-          if (global.bmenucoord[0] != oldcoord)
-              snd_play(snd_squeak);
+    if (global.mnfight == 0) {
+      if (global.bmenuno == 0) {
+        var oldcoord = global.bmenucoord[0];
+        global.bmenucoord[0] += 1;
+
+        if (global.bmenucoord[0] > 3) global.bmenucoord[0] = 0;
+
+        if (global.mercy == 2 && global.bmenucoord[0] == 3)
+          global.bmenucoord[0] = 0;
+
+        if (global.mercy == 3) global.bmenucoord[0] = 1;
+
+        if (global.bmenucoord[0] != oldcoord) snd_play(snd_squeak);
       }
-      
-      if (global.bmenuno == 10)
-      {
-          var oldcoord = global.bmenucoord[2];
-          
-          if (global.bmenucoord[2] <= 2)
-              global.bmenucoord[2] += 3;
-          else
-              global.bmenucoord[2] -= 3;
-          
-          if (global.choices[global.bmenucoord[2]] == 0)
-              global.bmenucoord[2] -= 1;
-          
-          if (global.choices[0] == 1 && global.choices[1] == 0 && global.choices[2] == 0 && global.choices[3] == 0 && global.choices[4] == 0 && global.choices[5] == 0)
-              global.bmenucoord[2] = 0;
-          
-          if (global.bmenucoord[2] != oldcoord)
-              snd_play(snd_squeak);
+
+      if (global.bmenuno == 10) {
+        var oldcoord = global.bmenucoord[2];
+
+        if (global.bmenucoord[2] <= 2) global.bmenucoord[2] += 3;
+        else global.bmenucoord[2] -= 3;
+
+        if (global.choices[global.bmenucoord[2]] == 0)
+          global.bmenucoord[2] -= 1;
+
+        if (
+          global.choices[0] == 1 &&
+          global.choices[1] == 0 &&
+          global.choices[2] == 0 &&
+          global.choices[3] == 0 &&
+          global.choices[4] == 0 &&
+          global.choices[5] == 0
+        )
+          global.bmenucoord[2] = 0;
+
+        if (global.bmenucoord[2] != oldcoord) snd_play(snd_squeak);
       }
-      
-      if (global.bmenuno == 6)
-      {
-          if (global.bmenucoord[6] == 0)
-              global.bmenucoord[6] += 1;
-          else
-              global.bmenucoord[6] -= 1;
-          
-          snd_play(snd_squeak);
+
+      if (global.bmenuno == 6) {
+        if (global.bmenucoord[6] == 0) global.bmenucoord[6] += 1;
+        else global.bmenucoord[6] -= 1;
+
+        snd_play(snd_squeak);
       }
-      
-      if (global.myfight != 4)
-      {
-          var mv = 0;
-          
-          if (global.bmenuno == 3)
-          {
-              var tempcheck = global.bmenuno;
-              
-              if (global.bmenucoord[3] == 0)
-              {
-                  if (global.item[1] != 0)
-                      global.bmenucoord[3] = 1;
-                  
-                  mv = 1;
-              }
-              
-              if (mv == 0)
-              {
-                  if (global.bmenucoord[3] == 1)
-                  {
-                      if (global.item[4] != 0)
-                      {
-                          global.bmenucoord[3] = 0;
-                          global.bmenuno = 3.5;
-                      }
-                      else
-                      {
-                          global.bmenucoord[3] = 0;
-                      }
-                      
-                      mv = 1;
-                  }
-              }
-              
-              if (global.bmenucoord[3] == 2)
-              {
-                  if (global.item[3] != 0)
-                      global.bmenucoord[3] = 3;
-                  
-                  mv = 1;
-              }
-              
-              if (mv == 0)
-              {
-                  if (global.bmenucoord[3] == 3)
-                  {
-                      if (global.item[6] != 0)
-                      {
-                          global.bmenucoord[3] = 2;
-                          global.bmenuno = 3.5;
-                      }
-                      else
-                      {
-                          global.bmenucoord[3] = 2;
-                      }
-                      
-                      mv = 1;
-                  }
-              }
-              
-              if (mv == 1)
-                  snd_play(snd_squeak);
-              
-              if (global.bmenuno != tempcheck)
-                  script_execute(scr_itemrewrite);
+
+      if (global.myfight != 4) {
+        var mv = 0;
+
+        if (global.bmenuno == 3) {
+          var tempcheck = global.bmenuno;
+
+          if (global.bmenucoord[3] == 0) {
+            if (global.item[1] != 0) global.bmenucoord[3] = 1;
+
+            mv = 1;
           }
-          
-          if (mv == 0 && global.bmenuno == 3.5)
-          {
-              var tempcheck = global.bmenuno;
-              
-              if (global.bmenucoord[3] == 1)
-              {
-                  global.bmenucoord[3] = 0;
-                  global.bmenuno = 3;
-                  mv = 1;
+
+          if (mv == 0) {
+            if (global.bmenucoord[3] == 1) {
+              if (global.item[4] != 0) {
+                global.bmenucoord[3] = 0;
+                global.bmenuno = 3.5;
+              } else {
+                global.bmenucoord[3] = 0;
               }
-              
-              if (mv == 0)
-              {
-                  if (global.bmenucoord[3] == 0)
-                  {
-                      if (global.item[5] != 0)
-                      {
-                          global.bmenucoord[3] = 1;
-                      }
-                      else
-                      {
-                          global.bmenucoord[3] = 0;
-                          global.bmenuno = 3;
-                      }
-                      
-                      mv = 1;
-                  }
-              }
-              
-              if (mv == 0)
-              {
-                  if (global.bmenucoord[3] == 3)
-                  {
-                      global.bmenucoord[3] = 2;
-                      global.bmenuno = 3;
-                      mv = 1;
-                  }
-              }
-              
-              if (mv == 0)
-              {
-                  if (global.bmenucoord[3] == 2)
-                  {
-                      if (global.item[7] != 0)
-                      {
-                          global.bmenucoord[3] = 3;
-                      }
-                      else
-                      {
-                          global.bmenucoord[3] = 2;
-                          global.bmenuno = 3;
-                      }
-                      
-                      mv = 1;
-                  }
-              }
-              
-              if (mv == 1)
-                  snd_play(snd_squeak);
-              
-              if (global.bmenuno != tempcheck)
-                  script_execute(scr_itemrewrite);
+
+              mv = 1;
+            }
           }
+
+          if (global.bmenucoord[3] == 2) {
+            if (global.item[3] != 0) global.bmenucoord[3] = 3;
+
+            mv = 1;
+          }
+
+          if (mv == 0) {
+            if (global.bmenucoord[3] == 3) {
+              if (global.item[6] != 0) {
+                global.bmenucoord[3] = 2;
+                global.bmenuno = 3.5;
+              } else {
+                global.bmenucoord[3] = 2;
+              }
+
+              mv = 1;
+            }
+          }
+
+          if (mv == 1) snd_play(snd_squeak);
+
+          if (global.bmenuno != tempcheck)
+            script_execute.call(this, scr_itemrewrite);
+        }
+
+        if (mv == 0 && global.bmenuno == 3.5) {
+          var tempcheck = global.bmenuno;
+
+          if (global.bmenucoord[3] == 1) {
+            global.bmenucoord[3] = 0;
+            global.bmenuno = 3;
+            mv = 1;
+          }
+
+          if (mv == 0) {
+            if (global.bmenucoord[3] == 0) {
+              if (global.item[5] != 0) {
+                global.bmenucoord[3] = 1;
+              } else {
+                global.bmenucoord[3] = 0;
+                global.bmenuno = 3;
+              }
+
+              mv = 1;
+            }
+          }
+
+          if (mv == 0) {
+            if (global.bmenucoord[3] == 3) {
+              global.bmenucoord[3] = 2;
+              global.bmenuno = 3;
+              mv = 1;
+            }
+          }
+
+          if (mv == 0) {
+            if (global.bmenucoord[3] == 2) {
+              if (global.item[7] != 0) {
+                global.bmenucoord[3] = 3;
+              } else {
+                global.bmenucoord[3] = 2;
+                global.bmenuno = 3;
+              }
+
+              mv = 1;
+            }
+          }
+
+          if (mv == 1) snd_play(snd_squeak);
+
+          if (global.bmenuno != tempcheck)
+            script_execute.call(this, scr_itemrewrite);
+        }
       }
     }
   }
 
   if (keyboard_check_pressed(vk_up)) {
     if (!keyboard_check_pressed(vk_down)) {
-      if (global.mnfight == 0)
-      {
-        if (global.bmenuno == 1 || global.bmenuno == 2 || global.bmenuno == 11)
-        {
-            var oldcoord = global.bmenucoord[1];
-            global.bmenucoord[1] -= 1;
-            
-            if (global.bmenucoord[1] < 0)
-                global.bmenucoord[1] = 2;
-            
-            if (global.monster[0] == 0 && global.monster[2] == 0)
-                global.bmenucoord[1] = 1;
-            
-            if (global.bmenucoord[1] == 2 && global.monster[2] == 0)
-                global.bmenucoord[1] = 1;
-            
-            if (global.bmenucoord[1] == 1 && global.monster[1] == 0)
-                global.bmenucoord[1] = 0;
-            
-            if (global.bmenucoord[1] == 0 && global.monster[0] == 0)
-                global.bmenucoord[1] = 2;
-            
-            if (global.bmenucoord[1] != oldcoord)
-                snd_play(snd_squeak);
+      if (global.mnfight == 0) {
+        if (
+          global.bmenuno == 1 ||
+          global.bmenuno == 2 ||
+          global.bmenuno == 11
+        ) {
+          var oldcoord = global.bmenucoord[1];
+          global.bmenucoord[1] -= 1;
+
+          if (global.bmenucoord[1] < 0) global.bmenucoord[1] = 2;
+
+          if (global.monster[0] == 0 && global.monster[2] == 0)
+            global.bmenucoord[1] = 1;
+
+          if (global.bmenucoord[1] == 2 && global.monster[2] == 0)
+            global.bmenucoord[1] = 1;
+
+          if (global.bmenucoord[1] == 1 && global.monster[1] == 0)
+            global.bmenucoord[1] = 0;
+
+          if (global.bmenucoord[1] == 0 && global.monster[0] == 0)
+            global.bmenucoord[1] = 2;
+
+          if (global.bmenucoord[1] != oldcoord) snd_play(snd_squeak);
         }
-        
-        if (global.bmenuno == 10)
-        {
-            var oldcoord = global.bmenucoord[2];
-            
-            if (global.bmenucoord[2] != 0 && global.bmenucoord[2] != 3)
-                global.bmenucoord[2] -= 1;
-            else
-                global.bmenucoord[2] += 2;
-            
-            if (global.choices[global.bmenucoord[2]] == 0)
-                global.bmenucoord[2] -= 1;
-            
-            if (global.choices[global.bmenucoord[2]] == 0)
-                global.bmenucoord[2] -= 1;
-            
-            if (global.choices[0] == 1 && global.choices[1] == 0 && global.choices[2] == 0 && global.choices[3] == 0 && global.choices[4] == 0 && global.choices[5] == 0)
-                global.bmenucoord[2] = 0;
-            
-            if (global.bmenucoord[2] != oldcoord)
-                snd_play(snd_squeak);
+
+        if (global.bmenuno == 10) {
+          var oldcoord = global.bmenucoord[2];
+
+          if (global.bmenucoord[2] != 0 && global.bmenucoord[2] != 3)
+            global.bmenucoord[2] -= 1;
+          else global.bmenucoord[2] += 2;
+
+          if (global.choices[global.bmenucoord[2]] == 0)
+            global.bmenucoord[2] -= 1;
+
+          if (global.choices[global.bmenucoord[2]] == 0)
+            global.bmenucoord[2] -= 1;
+
+          if (
+            global.choices[0] == 1 &&
+            global.choices[1] == 0 &&
+            global.choices[2] == 0 &&
+            global.choices[3] == 0 &&
+            global.choices[4] == 0 &&
+            global.choices[5] == 0
+          )
+            global.bmenucoord[2] = 0;
+
+          if (global.bmenucoord[2] != oldcoord) snd_play(snd_squeak);
         }
-        
-        if (global.bmenuno >= 3 && global.bmenuno < 4)
-        {
-            var tempcheck = global.bmenucoord[3] + ((global.bmenuno - 3) * 8);
-            
-            if (global.language == "ja")
-            {
-                if (tempcheck > 0)
-                {
-                    if (global.bmenucoord[3] > 0)
-                        global.bmenucoord[3] -= 1;
-                    else
-                        global.bmenuno -= 0.125;
-                    
-                    snd_play(snd_squeak);
-                }
+
+        if (global.bmenuno >= 3 && global.bmenuno < 4) {
+          var tempcheck = global.bmenucoord[3] + (global.bmenuno - 3) * 8;
+
+          if (global.language == "ja") {
+            if (tempcheck > 0) {
+              if (global.bmenucoord[3] > 0) global.bmenucoord[3] -= 1;
+              else global.bmenuno -= 0.125;
+
+              snd_play(snd_squeak);
             }
-            else
-            {
-                var mv = 0;
-                tempcheck = global.bmenucoord[3];
-                
-                if (global.bmenuno == 3.5)
-                    tempcheck += 4;
-                
-                if (global.bmenucoord[3] == 2 || global.bmenucoord[3] == 3)
-                {
-                    global.bmenucoord[3] -= 2;
-                    mv = 1;
-                }
-                
-                if (mv == 0)
-                {
-                    if (global.bmenucoord[3] == 0 || global.bmenucoord[3] == 1)
-                    {
-                        global.bmenucoord[3] += 2;
-                        
-                        if (global.item[tempcheck + 2] == 0)
-                            global.bmenucoord[3] -= 2;
-                        
-                        mv = 1;
-                    }
-                }
-                
-                if (mv != 0)
-                    snd_play(snd_squeak);
+          } else {
+            var mv = 0;
+            tempcheck = global.bmenucoord[3];
+
+            if (global.bmenuno == 3.5) tempcheck += 4;
+
+            if (global.bmenucoord[3] == 2 || global.bmenucoord[3] == 3) {
+              global.bmenucoord[3] -= 2;
+              mv = 1;
             }
+
+            if (mv == 0) {
+              if (global.bmenucoord[3] == 0 || global.bmenucoord[3] == 1) {
+                global.bmenucoord[3] += 2;
+
+                if (global.item[tempcheck + 2] == 0) global.bmenucoord[3] -= 2;
+
+                mv = 1;
+              }
+            }
+
+            if (mv != 0) snd_play(snd_squeak);
+          }
         }
-        
-        if (global.bmenuno == 4)
-        {
-            var oldcoord = global.bmenucoord[4];
-            
-            if (global.bmenucoord[4] == 0 && global.mercy < 1)
-                global.bmenucoord[4] = 1;
-            else
-                global.bmenucoord[4] = 0;
-            
-            if (global.bmenucoord[4] != oldcoord)
-                snd_play(snd_squeak);
+
+        if (global.bmenuno == 4) {
+          var oldcoord = global.bmenucoord[4];
+
+          if (global.bmenucoord[4] == 0 && global.mercy < 1)
+            global.bmenucoord[4] = 1;
+          else global.bmenucoord[4] = 0;
+
+          if (global.bmenucoord[4] != oldcoord) snd_play(snd_squeak);
         }
       }
     }
@@ -1224,185 +1291,148 @@ function updateKeyboard() {
 
   if (keyboard_check_pressed(vk_left)) {
     if (!keyboard_check_pressed(vk_right)) {
-      if (global.mnfight == 0)
-      {
-        if (global.bmenuno == 0)
-        {
-            var oldcoord = global.bmenucoord[0];
-            global.bmenucoord[0] -= 1;
-            
-            if (global.bmenucoord[0] < 0)
-                global.bmenucoord[0] = 3;
-            
-            if (global.mercy == 2 && global.bmenucoord[0] == 3)
-                global.bmenucoord[0] = 2;
-            
-            if (global.mercy == 3)
-                global.bmenucoord[0] = 1;
-            
-            if (global.bmenucoord[0] != oldcoord)
-                snd_play(snd_squeak);
+      if (global.mnfight == 0) {
+        if (global.bmenuno == 0) {
+          var oldcoord = global.bmenucoord[0];
+          global.bmenucoord[0] -= 1;
+
+          if (global.bmenucoord[0] < 0) global.bmenucoord[0] = 3;
+
+          if (global.mercy == 2 && global.bmenucoord[0] == 3)
+            global.bmenucoord[0] = 2;
+
+          if (global.mercy == 3) global.bmenucoord[0] = 1;
+
+          if (global.bmenucoord[0] != oldcoord) snd_play(snd_squeak);
         }
-        
-        if (global.bmenuno == 10)
-        {
-            var oldcoord = global.bmenucoord[2];
-            
-            if (global.bmenucoord[2] <= 2)
-                global.bmenucoord[2] += 3;
-            else
-                global.bmenucoord[2] -= 3;
-            
-            if (global.choices[global.bmenucoord[2]] == 0)
-                global.bmenucoord[2] -= 1;
-            
-            if (global.choices[0] == 1 && global.choices[1] == 0 && global.choices[2] == 0 && global.choices[3] == 0 && global.choices[4] == 0 && global.choices[5] == 0)
-                global.bmenucoord[2] = 0;
-            
-            if (global.bmenucoord[2] != oldcoord)
-                snd_play(snd_squeak);
+
+        if (global.bmenuno == 10) {
+          var oldcoord = global.bmenucoord[2];
+
+          if (global.bmenucoord[2] <= 2) global.bmenucoord[2] += 3;
+          else global.bmenucoord[2] -= 3;
+
+          if (global.choices[global.bmenucoord[2]] == 0)
+            global.bmenucoord[2] -= 1;
+
+          if (
+            global.choices[0] == 1 &&
+            global.choices[1] == 0 &&
+            global.choices[2] == 0 &&
+            global.choices[3] == 0 &&
+            global.choices[4] == 0 &&
+            global.choices[5] == 0
+          )
+            global.bmenucoord[2] = 0;
+
+          if (global.bmenucoord[2] != oldcoord) snd_play(snd_squeak);
         }
-        
-        if (global.bmenuno == 6)
-        {
-            if (global.bmenucoord[6] == 0)
-                global.bmenucoord[6] += 1;
-            else
-                global.bmenucoord[6] -= 1;
-            
-            snd_play(snd_squeak);
+
+        if (global.bmenuno == 6) {
+          if (global.bmenucoord[6] == 0) global.bmenucoord[6] += 1;
+          else global.bmenucoord[6] -= 1;
+
+          snd_play(snd_squeak);
         }
-        
-        if (global.myfight != 4)
-        {
-            var mv = 0;
-            
-            if (global.bmenuno == 3)
-            {
-                var tempcheck = global.bmenuno;
-                
-                if (global.bmenucoord[3] == 0)
-                {
-                    if (global.item[1] != 0)
-                        global.bmenucoord[3] = 1;
-                    
-                    mv = 1;
-                }
-                
-                if (mv == 0)
-                {
-                    if (global.bmenucoord[3] == 1)
-                    {
-                        if (global.item[4] != 0)
-                        {
-                            global.bmenucoord[3] = 0;
-                            global.bmenuno = 3.5;
-                        }
-                        else
-                        {
-                            global.bmenucoord[3] = 0;
-                        }
-                        
-                        mv = 1;
-                    }
-                }
-                
-                if (global.bmenucoord[3] == 2)
-                {
-                    if (global.item[3] != 0)
-                        global.bmenucoord[3] = 3;
-                    
-                    mv = 1;
-                }
-                
-                if (mv == 0)
-                {
-                    if (global.bmenucoord[3] == 3)
-                    {
-                        if (global.item[6] != 0)
-                        {
-                            global.bmenucoord[3] = 2;
-                            global.bmenuno = 3.5;
-                        }
-                        else
-                        {
-                            global.bmenucoord[3] = 2;
-                        }
-                        
-                        mv = 1;
-                    }
-                }
-                
-                if (mv == 1)
-                    snd_play(snd_squeak);
-                
-                if (global.bmenuno != tempcheck)
-                    script_execute(scr_itemrewrite);
+
+        if (global.myfight != 4) {
+          var mv = 0;
+
+          if (global.bmenuno == 3) {
+            var tempcheck = global.bmenuno;
+
+            if (global.bmenucoord[3] == 0) {
+              if (global.item[1] != 0) global.bmenucoord[3] = 1;
+
+              mv = 1;
             }
-            
-            if (mv == 0 && global.bmenuno == 3.5)
-            {
-                var tempcheck = global.bmenuno;
-                
-                if (global.bmenucoord[3] == 1)
-                {
-                    global.bmenucoord[3] = 0;
-                    global.bmenuno = 3;
-                    mv = 1;
+
+            if (mv == 0) {
+              if (global.bmenucoord[3] == 1) {
+                if (global.item[4] != 0) {
+                  global.bmenucoord[3] = 0;
+                  global.bmenuno = 3.5;
+                } else {
+                  global.bmenucoord[3] = 0;
                 }
-                
-                if (mv == 0)
-                {
-                    if (global.bmenucoord[3] == 0)
-                    {
-                        if (global.item[5] != 0)
-                        {
-                            global.bmenucoord[3] = 1;
-                        }
-                        else
-                        {
-                            global.bmenucoord[3] = 0;
-                            global.bmenuno = 3;
-                        }
-                        
-                        mv = 1;
-                    }
-                }
-                
-                if (mv == 0)
-                {
-                    if (global.bmenucoord[3] == 3)
-                    {
-                        global.bmenucoord[3] = 2;
-                        global.bmenuno = 3;
-                        mv = 1;
-                    }
-                }
-                
-                if (mv == 0)
-                {
-                    if (global.bmenucoord[3] == 2)
-                    {
-                        if (global.item[7] != 0)
-                        {
-                            global.bmenucoord[3] = 3;
-                        }
-                        else
-                        {
-                            global.bmenucoord[3] = 2;
-                            global.bmenuno = 3;
-                        }
-                        
-                        mv = 1;
-                    }
-                }
-                
-                if (mv == 1)
-                    snd_play(snd_squeak);
-                
-                if (global.bmenuno != tempcheck)
-                    script_execute(scr_itemrewrite);
+
+                mv = 1;
+              }
             }
+
+            if (global.bmenucoord[3] == 2) {
+              if (global.item[3] != 0) global.bmenucoord[3] = 3;
+
+              mv = 1;
+            }
+
+            if (mv == 0) {
+              if (global.bmenucoord[3] == 3) {
+                if (global.item[6] != 0) {
+                  global.bmenucoord[3] = 2;
+                  global.bmenuno = 3.5;
+                } else {
+                  global.bmenucoord[3] = 2;
+                }
+
+                mv = 1;
+              }
+            }
+
+            if (mv == 1) snd_play(snd_squeak);
+
+            if (global.bmenuno != tempcheck)
+              script_execute.call(this, scr_itemrewrite);
+          }
+
+          if (mv == 0 && global.bmenuno == 3.5) {
+            var tempcheck = global.bmenuno;
+
+            if (global.bmenucoord[3] == 1) {
+              global.bmenucoord[3] = 0;
+              global.bmenuno = 3;
+              mv = 1;
+            }
+
+            if (mv == 0) {
+              if (global.bmenucoord[3] == 0) {
+                if (global.item[5] != 0) {
+                  global.bmenucoord[3] = 1;
+                } else {
+                  global.bmenucoord[3] = 0;
+                  global.bmenuno = 3;
+                }
+
+                mv = 1;
+              }
+            }
+
+            if (mv == 0) {
+              if (global.bmenucoord[3] == 3) {
+                global.bmenucoord[3] = 2;
+                global.bmenuno = 3;
+                mv = 1;
+              }
+            }
+
+            if (mv == 0) {
+              if (global.bmenucoord[3] == 2) {
+                if (global.item[7] != 0) {
+                  global.bmenucoord[3] = 3;
+                } else {
+                  global.bmenucoord[3] = 2;
+                  global.bmenuno = 3;
+                }
+
+                mv = 1;
+              }
+            }
+
+            if (mv == 1) snd_play(snd_squeak);
+
+            if (global.bmenuno != tempcheck)
+              script_execute.call(this, scr_itemrewrite);
+          }
         }
       }
     }
@@ -1411,12 +1441,11 @@ function updateKeyboard() {
 
 function draw() {
   const uborder = instance_find(obj_uborder, 0);
-  const lborder = instance_find(obj_lborder, 0);
   const rborder = instance_find(obj_rborder, 0);
   const dborder = instance_find(obj_dborder, 0);
 
   if (global.turntimer > 0) {
-    this.depth = -1000
+    this.depth = -1000;
     draw_set_color(c_red);
     global.turntimer -= 1;
   }
@@ -1437,7 +1466,7 @@ function draw() {
   if (global.bmenuno === 1 && global.myfight === 0 && global.mnfight === 0) {
     let maxwidth = 0;
     let width;
-    
+
     for (let i = 0; i < 3; i++) {
       let name = global.monstername[i];
       if (global.monstername[i] === 1) {
@@ -1469,12 +1498,41 @@ function draw() {
         let lineheight = 32;
         let y_start = 280;
 
-        draw_rectangle(xwrite, y_start + (i * lineheight), xwrite + 100, y_start + (i * lineheight) + 16, false);
+        draw_rectangle(
+          xwrite,
+          y_start + i * lineheight,
+          xwrite + 100,
+          y_start + i * lineheight + 16,
+          false
+        );
         draw_set_color(c_lime);
-        draw_rectangle(xwrite, y_start + (i * lineheight), xwrite + ((global.monsterhp[i] / global.monstermaxhp[i]) * 100), y_start + (i * lineheight) + 16, false);
+        draw_rectangle(
+          xwrite,
+          y_start + i * lineheight,
+          xwrite + (global.monsterhp[i] / global.monstermaxhp[i]) * 100,
+          y_start + i * lineheight + 16,
+          false
+        );
       }
     }
   }
 }
 
-export { create, updateAlarms, updateIndex, updateSpeed, updateSprite, followPath, updateCol, parent, createContext, alarm0, beginStep, step, user0, roomEnd, updateKeyboard, draw };
+export {
+  create,
+  updateAlarms,
+  updateIndex,
+  updateSpeed,
+  updateSprite,
+  followPath,
+  updateCol,
+  parent,
+  createContext,
+  alarm0,
+  beginStep,
+  step,
+  user0,
+  roomEnd,
+  updateKeyboard,
+  draw,
+};

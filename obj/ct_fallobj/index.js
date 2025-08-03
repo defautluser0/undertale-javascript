@@ -1,4 +1,9 @@
-import { draw_sprite_ext, random, choose , instance_destroy } from "/imports/assets/gamemakerFunctions.js";
+import {
+  choose,
+  draw_sprite_ext,
+  instance_destroy,
+  random,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import roomSize from "/imports/assets/roomSize.js";
 
@@ -20,15 +25,15 @@ function create() {
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
     image_number: 1, // sprite frame number
-		image_angle: 0, // image angle
-		image_blend: c_white, // image color
+    image_angle: 0, // image angle
+    image_blend: c_white, // image color
     sprite_index: null, // sprite object
-		gravity: 0, // object gravity
-		gravity_direction: 270, // gravity direction (270 = down)
-		speed: 0, // instance speed
-		vspeed: 0, // vertical speed
-		hspeed: 0, // horizontal speed
-		direction: 0, // direction
+    gravity: 0, // object gravity
+    gravity_direction: 270, // gravity direction (270 = down)
+    speed: 0, // instance speed
+    vspeed: 0, // vertical speed
+    hspeed: 0, // horizontal speed
+    direction: 0, // direction
     visible: true, // sprite visibility
     parent: parent,
 
@@ -40,8 +45,8 @@ function create() {
     updateAlarms,
     updateGamemakerFunctions,
     updateSprite,
-		roomStart,
-		step,
+    roomStart,
+    step,
   };
 }
 
@@ -60,20 +65,20 @@ function updateAlarms() {
 }
 
 function updateGamemakerFunctions() {
-	// gravity_direction in degrees, gravity magnitude
-	let rad = this.gravity_direction * (Math.PI / 180);
+  // gravity_direction in degrees, gravity magnitude
+  let rad = this.gravity_direction * (Math.PI / 180);
 
-	// Apply gravity vector to velocity components
-	this.hspeed += Math.cos(rad) * this.gravity;
-	this.vspeed -= Math.sin(rad) * this.gravity;
+  // Apply gravity vector to velocity components
+  this.hspeed += Math.cos(rad) * this.gravity;
+  this.vspeed -= Math.sin(rad) * this.gravity;
 
-	// Update speed and direction from hspeed and vspeed
-	this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
-	this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
+  // Update speed and direction from hspeed and vspeed
+  this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+  this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
 
-	// Update position
-	this.x += this.hspeed;
-	this.y += this.vspeed;
+  // Update position
+  this.x += this.hspeed;
+  this.y += this.vspeed;
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
@@ -97,25 +102,33 @@ function updateSprite() {
 }
 
 function roomStart() {
-	this.x = random(roomSize.width);
-	this.gravity = 0.02;
-	this.vspeed = 1;
-	this.image_alpha = 0.5;
-	this.rotspeed = choose(1, -1) * (2 + random(4));
-	this.hspeed  = choose(1, -1) * (1 + random(1));
-	this.siner = 0;
-	this.sinerfactor = choose(1, -1) * random(1);
+  this.x = random(roomSize.width);
+  this.gravity = 0.02;
+  this.vspeed = 1;
+  this.image_alpha = 0.5;
+  this.rotspeed = choose(1, -1) * (2 + random(4));
+  this.hspeed = choose(1, -1) * (1 + random(1));
+  this.siner = 0;
+  this.sinerfactor = choose(1, -1) * random(1);
 }
 
 function step() {
-	if (this.y > 250) {
-		instance_destroy(this);
+  if (this.y > 250) {
+    instance_destroy(this);
   }
 
-	this.siner += 1;
-	this.x += (Math.sin(this.siner / 5) * this.sinerfactor);
-	this.y += (Math.sin(this.siner / 6) * this.sinerfactor);
-	this.image_angle += this.rotspeed;
+  this.siner += 1;
+  this.x += Math.sin(this.siner / 5) * this.sinerfactor;
+  this.y += Math.sin(this.siner / 6) * this.sinerfactor;
+  this.image_angle += this.rotspeed;
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, roomStart, step };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  roomStart,
+  step,
+};

@@ -26,7 +26,7 @@
     import { loadCurrentSong } from "/imports/assets/loadSong.js"
     import roomSize from "/imports/assets/roomSize.js"
     import global from "/imports/assets/global.js"
-    //import * as obj_spiketile1 from '/obj/spiketile1/index.js'
+    import * as obj_spiketile1 from '/obj/spiketile1/index.js'
     //import * as obj_spiketile2 from '/obj/spiketile2/index.js'
     import * as obj_fakewateropenr from '/obj/fakewateropenr/index.js'
     import * as obj_fakewateropenl from '/obj/fakewateropenl/index.js'
@@ -60,6 +60,44 @@
 
     global.newRoom = ["spiketile1", "spiketile2", "fakewateropenr", "fakewateropenl", "fakewateropenm", "fakewaterl", "fakewaterm", "fakewaterr", "fakewatershadowl", "fakewatershadowm", "fakewatershadowr", "solidtall", "mainchara", "solidsmall", "doorB", "markerA", "doorA", "markerB", "encountertrigger1", "toroverworld5", "plotwall2", "ruinsmusic", "readable_room1", "solidlong", "overworldcontroller"] // add all objects created here's names to this array, so the roomStart is executed
     screenUpdater.create()
+    instance_create(840, 140, obj_spiketile1);
+    instance_create(860, 140, obj_spiketile1);
+    instance_create(880, 140, obj_spiketile1);
+    instance_create(900, 140, obj_spiketile1);
+    instance_create(840, 160, obj_spiketile1);
+    instance_create(860, 160, obj_spiketile1);
+    instance_create(880, 160, obj_spiketile1);
+    instance_create(900, 160, obj_spiketile1);
+    instance_create(880, 120, obj_spiketile1);
+    instance_create(900, 120, obj_spiketile1);
+    instance_create(920, 120, obj_spiketile1);
+    instance_create(940, 120, obj_spiketile1);
+    instance_create(960, 120, obj_spiketile1);
+    instance_create(880, 100, obj_spiketile1);
+    instance_create(900, 100, obj_spiketile1);
+    instance_create(920, 100, obj_spiketile1);
+    instance_create(940, 100, obj_spiketile1);
+    instance_create(960, 100, obj_spiketile1);
+    instance_create(940, 140, obj_spiketile1);
+    instance_create(960, 140, obj_spiketile1);
+    instance_create(980, 140, obj_spiketile1);
+    instance_create(1000, 140, obj_spiketile1);
+    instance_create(1020, 140, obj_spiketile1);
+    instance_create(1040, 140, obj_spiketile1);
+    instance_create(1060, 140, obj_spiketile1);
+    instance_create(940, 160, obj_spiketile1);
+    instance_create(960, 160, obj_spiketile1);
+    instance_create(980, 160, obj_spiketile1);
+    instance_create(1000, 160, obj_spiketile1);
+    instance_create(1020, 160, obj_spiketile1);
+    instance_create(1040, 160, obj_spiketile1);
+    instance_create(1060, 160, obj_spiketile1);
+    instance_create(1080, 100, obj_spiketile1);
+    instance_create(1060, 100, obj_spiketile1);
+    instance_create(1040, 100, obj_spiketile1);
+    instance_create(1080, 120, obj_spiketile1);
+    instance_create(1060, 120, obj_spiketile1);
+    instance_create(1040, 120, obj_spiketile1);
     instance_create(1140, 60, obj_fakewateropenr);
     instance_create(800, 60, obj_fakewateropenl);
     instance_create(820, 60, obj_fakewateropenm);
@@ -146,7 +184,7 @@
     //instance_create(520, 0, obj_encountertrigger1);
     //instance_create(200, 100, obj_toroverworld5);
     //instance_create(780, 20, obj_plotwall2);
-    //instance_create(40, 0, obj_ruinsmusic);
+    instance_create(40, 0, obj_ruinsmusic);
     instance_create(580, 140, obj_readable_room1);
     instance_create(600, 140, obj_readable_room1);
     instance_create(20, 60, obj_solidlong);

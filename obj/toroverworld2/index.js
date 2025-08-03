@@ -1,21 +1,19 @@
 import {
+  collision_rectangle,
   draw_sprite_ext,
   getBoundingBox,
-  instance_find,
   instance_create,
   instance_destroy,
-  collision_rectangle,
-  _with,
+  instance_find,
   path_start,
 } from "/imports/assets/gamemakerFunctions.js";
 import { scr_depth, scr_npcdir } from "/imports/customFunctions.js";
 import { c_white, path_torielwalk1 } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as obj_toribuster from "/obj/toribuster/index.js";
 import * as obj_mainchara from "/obj/mainchara/index.js";
 import * as obj_stalkerflowey from "/obj/stalkerflowey/index.js";
-
+import * as obj_toribuster from "/obj/toribuster/index.js";
 import * as parent from "/obj/toroverworld1/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {

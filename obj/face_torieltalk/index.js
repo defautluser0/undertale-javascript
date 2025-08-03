@@ -1,26 +1,24 @@
 import {
-  draw_sprite_ext,
-  getBoundingBox,
-  instance_exists,
-  instance_change,
-  instance_find,
-  instance_destroy,
-  instance_create,
   _with,
+  draw_sprite_ext,
+  instance_change,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instance_find,
 } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
 
-import * as obj_face_torielblink from "/obj/face_torielblink/index.js";
-import * as obj_face_sans from "/obj/face_sans/index.js";
-import * as obj_face_undyne from "/obj/face_undyne/index.js";
+import * as obj_face_alphys from "/obj/face_alphys/index.js";
+import * as obj_face_asgore from "/obj/face_asgore/index.js";
 import * as obj_face_papyrus from "/obj/face_papyrus/index.js";
-import * as obj_face_alphys from "/obj/face_torielblink/index.js";
-import * as obj_face_asgore from "/obj/face_torielblink/index.js";
+import * as obj_face_sans from "/obj/face_sans/index.js";
 import * as obj_face_torglasses from "/obj/face_torglasses/index.js";
-import * as OBJ_WRITER from "/obj/writer/index.js";
-
+import * as obj_face_torielblink from "/obj/face_torielblink/index.js";
+import * as obj_face_undyne from "/obj/face_undyne/index.js";
 import * as parent from "/obj/torface/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);

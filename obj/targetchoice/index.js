@@ -1,13 +1,25 @@
-import { draw_sprite_ext, getBoundingBox, instance_destroy, instance_exists, round, random, _with, instance_find, script_execute, abs, instance_create } from "/imports/assets/gamemakerFunctions.js";
+import {
+  _with,
+  abs,
+  draw_sprite_ext,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instance_find,
+  random,
+  round,
+  script_execute,
+} from "/imports/assets/gamemakerFunctions.js";
 import { scr_attackcalc } from "/imports/customFunctions.js";
+import { control_check_pressed } from "/imports/input.js";
 import { c_white } from "/imports/assets.js";
-import { control_check_pressed } from "/imports/input.js"
 import global from "/imports/assets/global.js";
 
+import * as obj_slice from "/obj/slice/index.js";
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
 //                                                               // to this fake object
 import * as obj_target from "/obj/target/index.js";
-import * as obj_slice from "/obj/slice/index.js";
+
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -52,7 +64,7 @@ function create() {
     destroy,
     step,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -65,7 +77,7 @@ function create() {
     absolute: false,
     xOffset: 0,
     yOffset: 0,
-  }
+  };
   self._x = 0;
   self._y = 0;
   self.initialspeed = null;
@@ -118,8 +130,8 @@ function create() {
     },
     set(val) {
       this._path.data = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_speed", {
     get() {
@@ -127,8 +139,8 @@ function create() {
     },
     set(val) {
       this._path.speed = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "path_endaction", {
     get() {
@@ -136,28 +148,28 @@ function create() {
     },
     set(val) {
       this._path.endaction = val;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "x", {
     get() {
       return this._x;
     },
     set(val) {
-      this._x = val
+      this._x = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   Object.defineProperty(self, "y", {
     get() {
       return this._y;
     },
     set(val) {
-      this._y = val
+      this._y = val;
       this._manualPos = true;
-    }
-  })
+    },
+  });
 
   self._updateCartesianFromPolar = function () {
     const rad = (this._direction * Math.PI) / 180;
@@ -169,7 +181,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -208,7 +220,9 @@ function updateSpeed() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -238,7 +252,9 @@ function followPath() {
   if (!pathState || !pathState.data.points) return;
 
   const points = pathState.data.points;
-  const keys = Object.keys(points).map(Number).sort((a, b) => a - b);
+  const keys = Object.keys(points)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   let currKey = pathState.index;
   let nextKeyIndex = keys.indexOf(currKey) + 1;
@@ -289,7 +305,10 @@ function followPath() {
     !this._manualVel &&
     !this._manualPos
   ) {
-    const radians = Math.atan2(-(this.y - this.yprevious), this.x - this.xprevious);
+    const radians = Math.atan2(
+      -(this.y - this.yprevious),
+      this.x - this.xprevious
+    );
     const degrees = (radians * 180) / Math.PI;
     this.direction = (degrees + 360) % 360;
   }
@@ -298,14 +317,14 @@ function followPath() {
 function updateCol() {
   //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
   //if (other) {
-    // collision updates with an object here. other
-    // is the colliding instance, so use 
-    // other.property for instance properties, like
-    // x, y and such.
+  // collision updates with an object here. other
+  // is the colliding instance, so use
+  // other.property for instance properties, like
+  // x, y and such.
   //}
-  // to add more collision checks, set other to 
-  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);, 
-  // obj_solidobject2 being a different solid object 
+  // to add more collision checks, set other to
+  // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
+  // obj_solidobject2 being a different solid object
   // and do another if (other) {} to run scripts.
 }
 
@@ -326,15 +345,15 @@ function createContext() {
 }
 
 function destroy() {
-  _with (obj_target, function() {
+  _with(obj_target, function () {
     this.fade = 1;
-  })
+  });
 }
 
 function step() {
   const target = instance_find(obj_target, 0);
   if (this.hspeed > 0) {
-    if (this.x > (target.x + target.sprite_width)) {
+    if (this.x > target.x + target.sprite_width) {
       this.xxx = 1;
     }
   }
@@ -360,10 +379,10 @@ function step() {
     this.mons.trgtest = this;
   }
 
-  _with (this.mons, function() {
+  _with(this.mons, function () {
     this.trgtest.ht = this.ht;
     this.trgtest.wd = this.wd;
-  })
+  });
 
   if (this.image_speed === 0) {
     if (control_check_pressed(0)) {
@@ -372,15 +391,16 @@ function step() {
       script_execute.call(this, scr_attackcalc);
       global.damage = this.damage;
       global.damage += random(2);
-      this.myx = this.x + (this.sprite_width / 2);
-      this.myperfectx = target.x + (target.sprite_width / 2);
+      this.myx = this.x + this.sprite_width / 2;
+      this.myperfectx = target.x + target.sprite_width / 2;
       this.bonusfactor = abs(this.myx - this.myperfectx);
 
       if (this.bonusfactor === 0) {
         this.bonusfactor = 1;
       }
 
-      global.stretch = (target.sprite_width - this.bonusfactor) / target.sprite_width;
+      global.stretch =
+        (target.sprite_width - this.bonusfactor) / target.sprite_width;
 
       if (this.bonusfactor <= 12) {
         global.damage = round(global.damage * 2.2);
@@ -390,11 +410,15 @@ function step() {
         global.damage = round(global.damage * global.stretch * 2);
       }
 
-      _with (this.mons, function() {
+      _with(this.mons, function () {
         this.takedamage = global.damage;
-      })
+      });
 
-      instance_create((this.mons.x + (this.wd / 2)) - 5,  this.mons.y - 5, obj_slice);
+      instance_create(
+        this.mons.x + this.wd / 2 - 5,
+        this.mons.y - 5,
+        obj_slice
+      );
       global.hurtanim[global.mytarget] = 1;
       this.image_speed = 0.4;
     }
@@ -405,4 +429,16 @@ function step() {
   }
 }
 
-export { create, updateAlarms, updateSpeed, updateIndex, updateSprite, followPath, updateCol, parent, createContext, destroy, step };
+export {
+  create,
+  updateAlarms,
+  updateSpeed,
+  updateIndex,
+  updateSprite,
+  followPath,
+  updateCol,
+  parent,
+  createContext,
+  destroy,
+  step,
+};

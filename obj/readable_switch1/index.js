@@ -1,10 +1,10 @@
 import {
   draw_sprite_ext,
   getBoundingBox,
-  script_execute,
   instance_create,
   instance_exists,
   instance_find,
+  script_execute,
 } from "/imports/assets/gamemakerFunctions.js";
 import { scr_depth, scr_gettext, snd_play } from "/imports/customFunctions.js";
 import { c_white, snd_wrongvictory } from "/imports/assets.js";
@@ -13,8 +13,8 @@ import global from "/imports/assets/global.js";
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
 //                                                               // to this fake object
 import * as obj_dialoguer from "/obj/dialoguer/index.js";
-import * as obj_torinteractable2 from "/obj/torinteractable2/index.js";
 import * as parent from "/obj/readable/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as obj_torinteractable2 from "/obj/torinteractable2/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -320,22 +320,22 @@ function followPath() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(
-    this,
-    this.bbox_left,
-    this.bbox_top,
-    this.bbox_right,
-    this.bbox_bottom,
-    obj_solidobject,
-    false,
-    false
-  );
-  if (other) {
-    // collision updates with an object here. other
-    // is the colliding instance, so use
-    // other.property for instance properties, like
-    // x, y and such.
-  }
+  // let other = collision_rectangle.call(
+  //   this,
+  //   this.bbox_left,
+  //   this.bbox_top,
+  //   this.bbox_right,
+  //   this.bbox_bottom,
+  //   obj_solidobject,
+  //   false,
+  //   false
+  // );
+  // if (other) {
+  //   collision updates with an object here. other
+  //   is the colliding instance, so use
+  //   other.property for instance properties, like
+  //   x, y and such.
+  // }
   // to add more collision checks, set other to
   // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
   // obj_solidobject2 being a different solid object

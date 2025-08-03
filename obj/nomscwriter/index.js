@@ -1,11 +1,11 @@
 import {
   draw_sprite_ext,
-  getBoundingBox,
+  floor,
   round,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
-  SCR_TEXTTYPE,
   scr_replace_buttons_pc,
+  SCR_TEXTTYPE,
 } from "/imports/customFunctions.js";
 import { c_white } from "/imports/assets.js";
 import global from "/imports/assets/global.js";
@@ -179,7 +179,8 @@ function create() {
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
-      if (!Number.isInteger(this.alarm[i])) this.alarm[i] = floor(this.alarm[i]);
+      if (!Number.isInteger(this.alarm[i]))
+        this.alarm[i] = floor(this.alarm[i]);
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];

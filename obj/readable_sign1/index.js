@@ -317,22 +317,22 @@ function followPath() {
 }
 
 function updateCol() {
-  let other = collision_rectangle.call(
-    this,
-    this.bbox_left,
-    this.bbox_top,
-    this.bbox_right,
-    this.bbox_bottom,
-    obj_solidobject,
-    false,
-    false
-  );
-  if (other) {
-    // collision updates with an object here. other
-    // is the colliding instance, so use
-    // other.property for instance properties, like
-    // x, y and such.
-  }
+  // let other = collision_rectangle.call(
+  //   this,
+  //   this.bbox_left,
+  //   this.bbox_top,
+  //   this.bbox_right,
+  //   this.bbox_bottom,
+  //   obj_solidobject,
+  //   false,
+  //   false
+  // );
+  // if (other) {
+  //   collision updates with an object here. other
+  //   is the colliding instance, so use
+  //   other.property for instance properties, like
+  //   x, y and such.
+  // }
   // to add more collision checks, set other to
   // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
   // obj_solidobject2 being a different solid object

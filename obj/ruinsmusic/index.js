@@ -1,7 +1,11 @@
-import { draw_sprite_ext, getBoundingBox } from "/imports/assets/gamemakerFunctions.js";
-import { caster_is_playing, caster_load, caster_loop } from "/imports/customFunctions.js"
+import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
+import {
+  caster_is_playing,
+  caster_load,
+  caster_loop,
+} from "/imports/customFunctions.js";
 import { c_white, mus_ruins, mus_toomuch } from "/imports/assets.js";
-import global from "/imports/assets/global.js"
+import global from "/imports/assets/global.js";
 
 import * as parent from "/obj/musicobjectparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
@@ -44,7 +48,7 @@ function create() {
     alarm0,
     user0,
   };
-  
+
   self._hspeed = 0;
   self._vspeed = 0;
   self._speed = 0;
@@ -100,7 +104,7 @@ function create() {
     this._speed = Math.sqrt(this._hspeed ** 2 + this._vspeed ** 2);
     this._direction = Math.atan2(-this._vspeed, this._hspeed) * (180 / Math.PI);
   };
-  
+
   return self;
 }
 
@@ -123,16 +127,16 @@ function updateGamemakerFunctions() {
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
 
-		this.animationEnd?.();
+    this.animationEnd?.();
   }
 
   // getBoundingBox.call(this) // uncomment if bounding box is needed for something (collision checks from this or others)
 
-	this.previousx = this.x;
-	this.xprevious = this.x;
-	this.previousy = this.y;
-	this.yprevious = this.y;
- 
+  this.previousx = this.x;
+  this.xprevious = this.x;
+  this.previousy = this.y;
+  this.yprevious = this.y;
+
   // Apply friction
   if (this.friction !== 0 && this.speed > 0) {
     this.speed -= this.friction;
@@ -146,7 +150,9 @@ function updateGamemakerFunctions() {
     this.vspeed -= Math.sin(gravRad) * this.gravity;
 
     // Recalculate speed and direction based on new velocity
-    this.speed = Math.sqrt(this.hspeed * this.hspeed + this.vspeed * this.vspeed);
+    this.speed = Math.sqrt(
+      this.hspeed * this.hspeed + this.vspeed * this.vspeed
+    );
     this.direction = Math.atan2(-this.vspeed, this.hspeed) * (180 / Math.PI);
   }
 
@@ -167,11 +173,11 @@ function updateSprite() {
       this.image_angle,
       this.image_blend,
       this.image_alpha,
-      1,
+      1
     );
     if (img) {
       this.sprite_width = img.width;
-      this.sprite_height = img.height
+      this.sprite_height = img.height;
     }
   }
 }
@@ -200,4 +206,13 @@ function roomStart() {
   }
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, user0, alarm0, roomStart };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  user0,
+  alarm0,
+  roomStart,
+};

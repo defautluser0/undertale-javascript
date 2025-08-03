@@ -1,6 +1,11 @@
-import { draw_sprite_ext, instance_create, instance_destroy, _with } from "/imports/assets/gamemakerFunctions.js";
+import {
+  _with,
+  draw_sprite_ext,
+  instance_create,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
+import { snd_play } from "/imports/customFunctions.js";
 import { c_white, snd_chug } from "/imports/assets.js";
-import { snd_play } from "/imports/customFunctions.js"
 
 import * as obj_fakepellet from "/obj/fakepellet/index.js";
 
@@ -76,9 +81,9 @@ function updateGamemakerFunctions() {
   this.hspeed = Math.cos(dirRad) * this.speed;
   this.vspeed = Math.sin(dirRad) * this.speed;
 
-	// Update position
-	this.x += this.hspeed;
-	this.y += this.vspeed;
+  // Update position
+  this.x += this.hspeed;
+  this.y += this.vspeed;
 }
 
 function updateSprite() {
@@ -104,9 +109,17 @@ function step() {
 }
 
 function alarm0() {
-  _with (this._object, function() {
+  _with(this._object, function () {
     instance_destroy(this);
-  })
+  });
 }
 
-export { create, updateAlarms, updateGamemakerFunctions, updateSprite, parent, step, alarm0 };
+export {
+  create,
+  updateAlarms,
+  updateGamemakerFunctions,
+  updateSprite,
+  parent,
+  step,
+  alarm0,
+};

@@ -1,58 +1,55 @@
 import {
-  draw_sprite_ext,
-  merge_color,
-  instance_exists,
-  round,
-  keyboard_check,
-  draw_sprite,
-  draw_sprite_part_ext,
-  collision_rectangle,
+  _with,
   collision_line,
   collision_point,
-  script_execute,
+  collision_rectangle,
+  draw_sprite,
+  draw_sprite_ext,
+  draw_sprite_part_ext,
   getBoundingBox,
-  instances,
   instance_create,
-  _with,
-  draw_rectangle,
-  draw_set_color,
+  instance_exists,
+  instances,
+  keyboard_check,
+  merge_color,
+  round,
+  script_execute,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
-  c_white,
-  c_gray,
-  c_black,
-  snd_splash,
-  snd_squeak,
-  c_red,
-} from "/imports/assets.js";
-import global from "/imports/assets/global.js";
-import {
-  scr_hardmodename,
-  snd_play,
-  scr_interact,
   caster_resume,
+  scr_hardmodename,
+  scr_interact,
+  snd_play,
 } from "/imports/customFunctions.js";
+import { control_check_pressed, control_clear } from "/imports/input.js";
 import {
+  view_hview,
+  view_wview,
   view_xview,
   view_yview,
-  view_wview,
-  view_hview,
 } from "/imports/view.js";
-import { control_check_pressed, control_clear } from "/imports/input.js";
+import {
+  c_black,
+  c_gray,
+  c_white,
+  snd_splash,
+  snd_squeak,
+} from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
-import * as obj_shaker from "/obj/shaker/index.js";
+import * as obj_battler from "/obj/battler/index.js";
+import * as obj_doorparent from "/obj/doorparent/index.js";
+import * as obj_interactable from "/obj/interactable/index.js";
 import * as obj_markerA from "/obj/markerA/index.js";
 import * as obj_markerB from "/obj/markerB/index.js";
-import * as obj_interactable from "/obj/interactable/index.js";
-import * as obj_doorparent from "/obj/doorparent/index.js";
-import * as obj_solidnpcparent from "/obj/solidnpcparent/index.js";
-import * as obj_solidparent from "/obj/solidparent/index.js";
+import * as obj_musfadein from "/obj/musfadein/index.js";
 import * as obj_sdl from "/obj/sdl/index.js";
 import * as obj_sdr from "/obj/sdr/index.js";
+import * as obj_shaker from "/obj/shaker/index.js";
+import * as obj_solidnpcparent from "/obj/solidnpcparent/index.js";
+import * as obj_solidparent from "/obj/solidparent/index.js";
 import * as obj_sul from "/obj/sul/index.js";
 import * as obj_sur from "/obj/sur/index.js";
-import * as obj_musfadein from "/obj/musfadein/index.js";
-import * as obj_battler from "/obj/battler/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -464,7 +461,7 @@ function step() {
       this.y -= 3;
 
       if (global.debug == 1) {
-        if (keyboard_check("Backspace")) y -= 5;
+        if (keyboard_check("Backspace")) this.y -= 5;
       }
 
       if (this.moving != 1) this.image_index = 1;
