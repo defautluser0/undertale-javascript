@@ -1,5 +1,3 @@
-/* eslint-error jsdoc/require-jsdoc */
-
 // @ts-check
 
 /// <reference types="gamemaker" />
@@ -37,11 +35,11 @@ const __ds_map_store = {};
 let __ds_map_next_id = 0;
 
 const surfaces = [];
-surfaces[-1] = { canvas: canvas, context: ctx };
 let surfaceIdCounter = 0;
 let context = ctx;
 // eslint-disable-next-line no-unused-vars
 let currCanvas = canvas;
+surfaces[-1] = { canvas: canvas, context: ctx };
 context.imageSmoothingEnabled = false;
 
 const spriteOffsets = {
@@ -625,7 +623,7 @@ function get_tinted_glyph(glyph, tintColor, char, second) {
   gctx.globalCompositeOperation = "source-over";
 
   globalTintCache.set(cacheKey, cacheCanvas);
-  return canvas;
+  return cacheCanvas;
 }
 
 /**

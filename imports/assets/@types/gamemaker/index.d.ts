@@ -1,6 +1,7 @@
 // @ts-check
 
-// types.ts. this is only for types in JSDoc in gamemakerFunctions.js. you do not need to compile this or do anything with it other than add types. please do not try to compile it, as i have not tested what it will do
+// this is only for types in JSDoc in gamemakerFunctions.js. you do not need to compile this or do anything with it other than add types. 
+// please do not try to compile it, as i have not tested what it will do.
 
 declare type Real = number;
 declare type Colour = string;
