@@ -185,6 +185,121 @@ if (global.debug === 1) {
   globalThis.instances = instances;
 }
 
+// random 1
+class MersenneTwister {
+  constructor(seed) {
+    this.N = 624;
+    this.M = 397;
+    this.MATRIX_A = 0x9908b0df;
+    this.UPPER_MASK = 0x80000000;
+    this.LOWER_MASK = 0x7fffffff;
+
+    this.mt = new Array(this.N);
+    this.mti = this.N + 1;
+
+    this.init_genrand(seed);
+  }
+
+  init_genrand(s) {
+    this.mt[0] = s >>> 0;
+    for (this.mti = 1; this.mti < this.N; this.mti++) {
+      let prev = this.mt[this.mti - 1];
+      this.mt[this.mti] =
+        (1812433253 * (prev ^ (prev >>> 30)) + this.mti) >>> 0;
+    }
+  }
+
+  genrand_int32() {
+    let y;
+    const mag01 = [0x0, this.MATRIX_A];
+
+    if (this.mti >= this.N) {
+      let kk;
+
+      for (kk = 0; kk < this.N - this.M; kk++) {
+        y =
+          (this.mt[kk] & this.UPPER_MASK) | (this.mt[kk + 1] & this.LOWER_MASK);
+        this.mt[kk] = this.mt[kk + this.M] ^ (y >>> 1) ^ mag01[y & 0x1];
+      }
+      for (; kk < this.N - 1; kk++) {
+        y =
+          (this.mt[kk] & this.UPPER_MASK) | (this.mt[kk + 1] & this.LOWER_MASK);
+        this.mt[kk] =
+          this.mt[kk + (this.M - this.N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+      }
+      y =
+        (this.mt[this.N - 1] & this.UPPER_MASK) |
+        (this.mt[0] & this.LOWER_MASK);
+      this.mt[this.N - 1] = this.mt[this.M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+
+      this.mti = 0;
+    }
+
+    y = this.mt[this.mti++];
+
+    // Tempering
+    y ^= y >>> 11;
+    y ^= (y << 7) & 0x9d2c5680;
+    y ^= (y << 15) & 0xefc60000;
+    y ^= y >>> 18;
+
+    return y >>> 0;
+  }
+
+  // Equivalent to GameMaker's random(1) (float in [0,1))
+  genrand_real1() {
+    return this.genrand_int32() * (1.0 / 4294967296.0); // divide by 2^32
+  }
+}
+
+// random 2
+class GameMakerRandom {
+  constructor() {
+    this.seed = 0; // GameMaker always starts with seed 0
+    this.rng = new MersenneTwister(this.seed);
+  }
+
+  // --- Seed control functions ---
+  random_set_seed(seed) {
+    this.seed = seed >>> 0; // force unsigned int
+    this.rng = new MersenneTwister(this.seed);
+  }
+
+  random_get_seed() {
+    return this.seed;
+  }
+
+  randomize() {
+    // use time in milliseconds like GameMaker does
+    let newSeed = Date.now() & 0xffffffff; // keep within 32-bit
+    this.random_set_seed(newSeed);
+    return newSeed;
+  }
+
+  // --- Random functions ---
+  random(n) {
+    return this.rng.genrand_real1() * n;
+  }
+
+  irandom(n) {
+    return Math.floor(this.rng.genrand_real1() * (n + 1));
+  }
+
+  random_range(a, b) {
+    return a + this.rng.genrand_real1() * (b - a);
+  }
+
+  irandom_range(a, b) {
+    return Math.floor(a + this.rng.genrand_real1() * (b - a + 1));
+  }
+
+  choose(...args) {
+    return args[this.irandom(args.length - 1)];
+  }
+}
+
+const gm = new GameMakerRandom();
+
 // eslint-disable-next-line jsdoc/require-jsdoc
 export function getBoundingBox() {
   // @ts-expect-error
@@ -1152,7 +1267,75 @@ export function round(n) {
  * @returns {Real}
  */
 export function random(n) {
-  return Math.random() * n;
+  return gm.random(n);
+}
+
+/**
+ * This function returns a random value as an integer (whole number). So, for example, to get a random number from 0 to 9 you can use irandom(9) and it will return a number from 0 to 9 inclusive.
+ *
+ * Floats can also be used but the upper value after the point will be excluded, so irandom(9.7) will return a value from 0 to 9 only. The function has an upper bound of $7fffffffffffffffLL, so care should be taken if using very large numbers.
+ * @param {number} n The upper range from which the random number will be selected.
+ * @returns {number}
+ */
+export function irandom(n) {
+  return gm.irandom(n);
+}
+
+/**
+ * This function returns a random floating-point (decimal) number between the specified lower limit (inclusive) and the specified upper limit (inclusive).
+ *
+ * For example, random_range(20,50) will return a random number from 20.00 to 50.00, but the value may be a real number like 38.65265. Real numbers can also be used as input arguments.
+ * @param {number} n1 The low end of the range from which the random number will be selected.
+ * @param {number} n2 The high end of the range from which the random number will be selected.
+ * @returns {number}
+ */
+export function random_range(n1, n2) {
+  return gm.random_range(n1, n2);
+}
+
+/**
+ * This function is similar to random_range() only with integer values as the input. You supply the low value for the range as well as the high value, and the function will return a random integer value within (and including) the given range. For example, irandom_range(10, 35) will return an integer between 10 and 35 inclusive.
+ *
+ * As with the irandom() function, real numbers can be used, in which case they will be rounded down to the nearest integer EG: irandom_range(6.2,9.9) will give a value between 6 and 9.
+ * @param {number} n1 The low end of the range from which the random number will be selected.
+ * @param {number} n2 The high end of the range from which the random number will be selected.
+ * @returns {number}
+ */
+export function irandom_range(n1, n2) {
+  return gm.irandom_range(n1, n2);
+}
+
+/**
+ * To generate a random number GameMaker starts with a random seed number. With this function you can set that seed to a known value and so "force" the outcome of all random events afterwards to be the same every time the program is run. For example, this function can be used in conjunction with random_get_seed() to create procedurally generated content and save the results without having huge savegames (you save the seed only, no need for anything else). Should you need truly random results for everything, you should be using the randomise() function.
+ * @param {number} val The seed to set
+ * @returns {void}
+ */
+export function random_set_seed(val) {
+  gm.random_set_seed(val);
+}
+
+/**
+ * To generate a random number GameMaker starts with a random seed number. With this function you can retrieve that seed, which can then be stored to reproduce a specific series of random events. For example, say you have a procedurally generated game, but want the player to be able to go back to previously discovered areas. Well, at the start of each area, you can store the random seed with this function and so every time you need to go back there, you can use random_set_seed() to set the seed to what it was previously and so force GameMaker to reproduce the same set of "random" functions that it used previously.
+ * @returns {number}
+ */
+export function random_get_seed() {
+  return gm.random_get_seed();
+}
+
+/**
+ * This function sets the seed to a random value. Should you need to keep a consistent value over a number of runs of a game, you should be using random_set_seed(). Please note, that when using the random number functions in GameMaker the initial seed is always the same, as this makes tracing errors and debugging far easier. Should you wish to test with true random, you should call this function at the start of your game. The function will return the new randomised seed value (an unsigned 32bit integer).
+ * @returns {number}
+ */
+export function randomise() {
+  return gm.randomize();
+}
+
+/**
+ * This function sets the seed to a random value. Should you need to keep a consistent value over a number of runs of a game, you should be using random_set_seed(). Please note, that when using the random number functions in GameMaker the initial seed is always the same, as this makes tracing errors and debugging far easier. Should you wish to test with true random, you should call this function at the start of your game. The function will return the new randomised seed value (an unsigned 32bit integer).
+ * @returns {number}
+ */
+export function randomize() {
+  return randomise();
 }
 
 /**
@@ -1855,7 +2038,7 @@ export function file_exists(fname) {
  */
 export function choose(...args) {
   if (args.length === 0) return undefined;
-  const index = Math.floor(Math.random() * args.length);
+  const index = gm.irandom(args.length - 1);
   return args[index];
 }
 
