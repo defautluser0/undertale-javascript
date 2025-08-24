@@ -1,8 +1,24 @@
-import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
+import {
+  // eslint-disable-next-line no-unused-vars
+  collision_rectangle,
+  draw_sprite_ext,
+  floor,
+  // eslint-disable-next-line no-unused-vars
+  getBoundingBox,
+  instance_create,
+  instance_destroy,
+  instance_exists,
+  instance_find,
+  random,
+} from "/imports/assets/gamemakerFunctions.js";
+import { scr_murderlv, snd_play } from "/imports/customFunctions.js";
+import { c_white, snd_b } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
-// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
-//                                                               // to this fake object
+// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
+import * as obj_battler from "/obj/battler/index.js";
+import * as obj_mainchara from "/obj/mainchara/index.js";
+
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -11,8 +27,8 @@ function create() {
   // create code
 
   const self = {
-    name: "battlebg", // sprite name
-    depth: 30, // object depth
+    name: "battleblcon", // sprite name
+    depth: 0, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
@@ -23,7 +39,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: "spr_battlebg", // sprite object
+    sprite_index: "spr_exc", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -43,6 +59,9 @@ function create() {
     updateCol,
     followPath,
     createContext,
+    user2,
+    alarm0,
+    endStep,
   };
 
   self._hspeed = 0;
@@ -168,6 +187,8 @@ function create() {
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
+      if (!Number.isInteger(this.alarm[i]))
+        this.alarm[i] = floor(this.alarm[i]);
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
@@ -183,18 +204,19 @@ function updateIndex() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
+    this.animationEnd?.();
   }
 }
 
 function updateSpeed() {
   // apply friction
-  if (this.friction !== 0 && this.speed > 0) {
+  if (this.friction !== 0 && this.speed > 0 && Number.isFinite(this.friction)) {
     this.speed -= this.friction;
     if (this.speed < 0) this.speed = 0;
   }
 
   // apply gravity vector
-  if (this.gravity) {
+  if (Number.isFinite(this.gravity)) {
     let gravRad = this.gravity_direction * (Math.PI / 180);
     this.hspeed += Math.cos(gravRad) * this.gravity;
     this.vspeed -= Math.sin(gravRad) * this.gravity;
@@ -212,8 +234,8 @@ function updateSpeed() {
 }
 
 function updateSprite() {
-  if (this.visible === true) {
-    draw_sprite_ext(
+  if (this.visible === true && this.sprite_index) {
+    const img = draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -221,9 +243,15 @@ function updateSprite() {
       this.image_xscale,
       this.image_yscale,
       this.image_angle,
-      c_white,
-      this.image_alpha
+      this.image_blend,
+      this.image_alpha,
+      1
     );
+
+    if (img) {
+      this.sprite_width = img.width;
+      this.sprite_height = img.height;
+    }
   }
 }
 
@@ -295,8 +323,11 @@ function followPath() {
 }
 
 function updateCol() {
-  //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
-  //if (other) {
+  // uncomment the following line if any collision will happen involving this object
+  // getBoundingBox.call(this);
+  // uncomment the if statement if said collision is checked by this object
+  // let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
+  // if (other) {
   // collision updates with an object here. other
   // is the colliding instance, so use
   // other.property for instance properties, like
@@ -310,6 +341,79 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  const mainchara = instance_find(obj_mainchara, 0);
+
+  this.depth = mainchara.depth;
+  snd_play(snd_b);
+  this.alarm[0] = 15 + random(5);
+  global.interact = 3;
+
+  if (scr_murderlv() >= 8 && global.flag[27] === 0) {
+    this.sprite_index = "spr_exc_f";
+  }
+
+  this.x = mainchara.x;
+  this.y = mainchara.y - 11;
+}
+
+function user2() {
+  global.interact = 0;
+  instance_destroy(this);
+}
+
+function alarm0() {
+  const mainchara = instance_find(obj_mainchara, 0);
+  global.flag[10] = 0;
+  global.flag[11] = 0;
+  global.flag[12] = 0;
+  global.flag[13] = 0;
+  global.entrance = 0;
+  mainchara.depth = -600;
+  this.battle = 1;
+
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/asghouse1/"
+  ) {
+    this.battle = 2;
+  }
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/asghouse2/"
+  ) {
+    this.battle = 2;
+  }
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/asghouse3/"
+  ) {
+    this.battle = 2;
+  }
+  if (
+    window.location.href ===
+    "https://undertale.defautluser0.xyz/room/kichen_final/"
+  ) {
+    this.battle = 2;
+  }
+
+  if (this.battle === 1) {
+    if (!instance_exists(obj_battler)) {
+      instance_create(0, 0, obj_battler);
+    }
+  }
+
+  if (this.battle === 2) {
+    console.log("what");
+    throw new Error("what how");
+  }
+
+  instance_destroy(this);
+}
+
+function endStep() {
+  const mainchara = instance_find(obj_mainchara, 0);
+  this.x = mainchara.x;
+  this.y = mainchara.y - 11;
 }
 
 export {
@@ -322,4 +426,7 @@ export {
   updateCol,
   parent,
   createContext,
+  user2,
+  alarm0,
+  endStep,
 };

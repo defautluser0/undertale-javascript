@@ -2260,34 +2260,133 @@ export function path_start(path, speed, endaction, absolute) {
       typeof path !== "object" ||
       typeof speed !== "number" ||
       typeof endaction !== "string" ||
-      typeof absolute !== "boolean" ||
-      (typeof absolute === "number" && (absolute !== 1 || absolute !== 0))
+      typeof absolute !== "boolean"
     ) {
       throw new Error("path_start: invalid arguments");
     }
 
-    const firstPoint = path.points[1];
+    const originalPoints = path.points;
+    const firstPoint = originalPoints[1];
     if (!firstPoint) {
       throw new Error("path_start: path has no starting point");
     }
 
-    if (absolute) {
-      this.x = firstPoint.x;
-      this.y = firstPoint.y;
+    // Compute offset so point[1] becomes this.x / this.y
+    // @ts-expect-error
+    const dx = this.x - firstPoint.x;
+    // @ts-expect-error
+    const dy = this.y - firstPoint.y;
+
+    // Shift all points to start at this.x, this.y (absolute path now)
+    const shiftedPoints = {};
+    for (const key in originalPoints) {
+      const p = originalPoints[key];
+      shiftedPoints[key] = {
+        ...p,
+        x: p.x + dx,
+        y: p.y + dy,
+      };
+    }
+
+    // If smooth, generate spline samples for interpolation
+    let splineSamples = null;
+    if (path.smooth) {
+      const precision = Math.max(path.precision || 1, 1);
+      splineSamples = generateSplineSamples(
+        shiftedPoints,
+        path.closed,
+        precision
+      );
     }
 
     this._path = {
-      data: path,
-      index: 1,
+      data: {
+        ...path,
+        points: shiftedPoints,
+      },
+      index: 0, // now index refers to sample index for smooth path
       speed,
       endaction,
-      absolute,
+      absolute: true, // path shifted already
+      smooth: !!path.smooth,
+      samples: splineSamples, // array of {x,y} for smooth movement
     };
 
     this.initialspeed = speed;
+
+    // Snap to first point immediately
+    this.x = shiftedPoints[1].x;
+    this.y = shiftedPoints[1].y;
   } catch (error) {
     console.error(error);
   }
+}
+// helpers
+// eslint-disable-next-line jsdoc/require-jsdoc
+function catmullRom(p0, p1, p2, p3, t) {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  const x =
+    0.5 *
+    (2 * p1.x +
+      (-p0.x + p2.x) * t +
+      (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+      (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
+  const y =
+    0.5 *
+    (2 * p1.y +
+      (-p0.y + p2.y) * t +
+      (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+      (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
+  return { x, y };
+}
+// eslint-disable-next-line jsdoc/require-jsdoc
+function generateSplineSamples(points, closed, samplesPerSegment) {
+  const keys = Object.keys(points)
+    .map(Number)
+    .sort((a, b) => a - b);
+  const samples = [];
+
+  // Helper to get point with wrapping for closed path or clamping
+  // eslint-disable-next-line jsdoc/require-jsdoc
+  function getPoint(i) {
+    if (closed) {
+      const len = keys.length;
+      return points[keys[((i % len) + len) % len]];
+    } else {
+      if (i < 0) return points[keys[0]];
+      if (i >= keys.length) return points[keys[keys.length - 1]];
+      return points[keys[i]];
+    }
+  }
+
+  for (let i = 0; i < keys.length - (closed ? 0 : 1); i++) {
+    // p0..p3 for Catmull-Rom
+    const p0 = getPoint(i - 1);
+    const p1 = getPoint(i);
+    const p2 = getPoint(i + 1);
+    const p3 = getPoint(i + 2);
+
+    for (let t = 0; t < samplesPerSegment; t++) {
+      const pos = catmullRom(p0, p1, p2, p3, t / samplesPerSegment);
+      samples.push(pos);
+    }
+  }
+
+  // For closed paths, add the last point connecting end to start smoothly
+  if (closed) {
+    // Also add last sample at t=1 of last segment
+    const p0 = getPoint(keys.length - 2);
+    const p1 = getPoint(keys.length - 1);
+    const p2 = getPoint(0);
+    const p3 = getPoint(1);
+    samples.push(catmullRom(p0, p1, p2, p3, 1));
+  } else {
+    // For open paths, add the last point explicitly
+    samples.push(points[keys[keys.length - 1]]);
+  }
+
+  return samples;
 }
 
 /**

@@ -140,6 +140,7 @@ declare interface Instance extends Obj {
   xprevious: Real;
   previousy: Real;
   yprevious: Real;
+  solid: Boolean;
   create2: true; // should always be true, will be removed later
   _object: Obj; // self
   _destroyed: boolean; // set by instance_destroy()

@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import {
   _with,
   abs,
@@ -120,13 +119,16 @@ import * as obj_face_papyrus from "/obj/face_papyrus/index.js";
 import * as obj_face_sans from "/obj/face_sans/index.js";
 import * as obj_face_torieltalk from "/obj/face_torieltalk/index.js";
 import * as obj_face_undyne from "/obj/face_undyne/index.js";
+import * as obj_fakefroggit from "/obj/fakefroggit/index.js";
 import * as obj_fakeheart from "/obj/fakeheart/index.js";
 import * as obj_heart from "/obj/heart/index.js";
 import * as obj_hpname from "/obj/hpname/index.js";
 import * as OBJ_INSTAWRITER from "/obj/instawriter/index.js";
 import * as obj_persistentfader from "/obj/persistentfader/index.js";
+import * as obj_spared from "/obj/spared/index.js";
 import * as obj_target from "/obj/target/index.js";
 import * as obj_torbody from "/obj/torbody/index.js";
+import * as obj_vaporized_new from "/obj/vaporized_new/index.js";
 import * as obj_whitefader from "/obj/whitefader/index.js";
 import * as OBJ_WRITER from "/obj/writer/index.js";
 
@@ -2541,6 +2543,19 @@ function scr_battlegroup() {
       global.extraintro = 0;
       global.monsterinstance[0] = instance_create(216, 136, obj_dummymonster);
       break;
+
+    case 3:
+      global.monstertype[0] = 3;
+      global.monstertype[1] = 0;
+      global.monstertype[2] = 0;
+      global.batmusic = caster_load(mus_prebattle1);
+      caster_loop(global.batmusic, 0.5, 1);
+      global.msc = global.battlegroup + 3000;
+      global.battlelv = 0;
+      global.actfirst = 0;
+      global.extrainfo = 0;
+      global.monsterinstance[0] = instance_create(216, 136, obj_fakefroggit);
+      break;
   }
 }
 
@@ -2585,6 +2600,18 @@ function scr_monstersetup() {
       global.goldreward[this.myself] = 0;
       global.itemrewardid = 0;
       global.itemrewardchance = 0;
+      break;
+
+    case 3:
+      global.monstername[this.myself] = scr_gettext("monstername_3");
+      global.monstermaxhp[this.myself] = 20;
+      global.monsterhp[this.myself] = 20;
+      global.monsteratk[this.myself] = 4;
+      global.monsterdef[this.myself] = 1;
+      global.xpreward[this.myself] = 10;
+      global.goldreward[this.myself] = 10;
+      global.itemrewardid = 1;
+      global.itemrewardchance = 50;
       break;
   }
 }
@@ -3065,6 +3092,56 @@ function ossafe_file_exists(argument0) {
   return file_exists(argument0);
 }
 
+function ossafe_savedata_save() {
+  return;
+}
+
+function ossafe_savedata_load() {
+  return;
+}
+
+function scr_monsterdefeat() {
+  if (this.killed === 1) {
+    global.xpreward[3] += global.xpreward[this.myself];
+    global.goldreward[3] += global.goldreward[this.myself];
+    global.vaporspeed = 0;
+    global.monstersprite = this.sprite_index;
+    this.ddd = instance_create(this.x, this.y, obj_vaporized_new);
+    this.ddd.sprite_index = this.sprite_index;
+    this.ddd.ht = this.ht;
+    this.ddd.wd = this.wd;
+
+    this.ddd.image_speed = 0;
+    this.ddd.image_index = 1;
+    global.kills += 1;
+    global.areapop[global.area] -= 1;
+
+    if (global.areapop[global.area] < 0) {
+      global.areapop[global.area] = 0;
+    }
+
+    global.flag[12] = 1;
+  }
+
+  if (this.killed === 0) {
+    global.goldreward[3] += floor(
+      global.goldreward[this.myself] *
+        ((global.monstermaxhp[this.myself] - global.monsterhp[this.myself]) /
+          global.monstermaxhp[this.myself])
+    );
+    global.monstersprite = this.sprite_index;
+    this.ddd = instance_create(this.x, this.y, obj_spared);
+    this.ddd.image_speed = 0;
+    this.ddd.image_index = 1;
+    this.ddd.sprite_width = this.sprite_width;
+    this.ddd.sprite_height = this.sprite_height;
+    global.flag[10] = 1;
+    global.flag[23] += 1;
+  }
+
+  global.monster[this.myself] = 0;
+}
+
 export {
   scr_replace_buttons_pc,
   scr_drawtext_icons,
@@ -3141,6 +3218,9 @@ export {
   scr_newvapordata,
   ossafe_file_delete,
   ossafe_file_exists,
+  ossafe_savedata_save,
+  ossafe_savedata_load,
+  scr_monsterdefeat,
 };
 
 export * from "/imports/assets/text.js";

@@ -1,16 +1,36 @@
 import {
+  _with,
   // eslint-disable-next-line no-unused-vars
   collision_rectangle,
   draw_sprite_ext,
   floor,
   // eslint-disable-next-line no-unused-vars
   getBoundingBox,
+  instance_create,
+  instance_destroy,
+  instance_find,
+  script_execute,
 } from "/imports/assets/gamemakerFunctions.js";
-import { c_white } from "/imports/assets.js";
+import {
+  control_check_pressed,
+  scr_gettext,
+  scr_mercystandard,
+  scr_monsterdefeat,
+  scr_monstersetup,
+  snd_play,
+} from "/imports/customFunctions.js";
+import { c_white, snd_damage, snd_ehurt1 } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
+import roomSize from "/imports/assets/roomSize.js";
 
+import * as obj_dmgwriter from "/obj/dmgwriter/index.js";
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
-
-import * as parent from "/obj/parentobject/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as obj_froghead from "/obj/froghead/index.js";
+import * as obj_froglegs from "/obj/froglegs/index.js";
+import * as obj_lborder from "/obj/lborder/index.js";
+import * as parent from "/obj/monsterparent/index.js"; // change as neccesary. if no parent, replace this line with "const parent = null;"
+import * as obj_torieldisapprove from "/obj/torieldisapprove/index.js";
+import * as OBJ_WRITER from "/obj/writer/index.js";
 
 function create() {
   const alarm = new Array(12).fill(-1);
@@ -18,8 +38,8 @@ function create() {
   // create code
 
   const self = {
-    name: "objectname", // sprite name
-    depth: 0, // object depth
+    name: "fakefroggit", // sprite name
+    depth: 10, // object depth
     image_xscale: 1, // sprite scale
     image_yscale: 1, // sprite scale
     image_alpha: 1, // sprite alpha
@@ -30,7 +50,7 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: null, // sprite object
+    sprite_index: "spr_froggit", // sprite object
     visible: true, // sprite visibility
     friction: 0,
     gravity: 0,
@@ -50,6 +70,14 @@ function create() {
     updateCol,
     followPath,
     createContext,
+    destroy,
+    alarm11,
+    alarm10,
+    alarm8,
+    alarm6,
+    alarm5,
+    alarm3,
+    step,
   };
 
   self._hspeed = 0;
@@ -329,6 +357,312 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  scr_monstersetup.call(this, 0, 0, 0, 0, 0);
+  this.image_speed = 0;
+  this.mypart1 = instance_create(this.x, this.y, obj_froghead);
+  this.mypart2 = instance_create(this.x, this.y, obj_froglegs);
+  this.hurtanim = 0;
+  this.hurtsond = "snd_ehurt1";
+  this.talked = 0;
+  this.whatiheard = -1;
+  this.attacked = 0;
+  this.killed = 0;
+  global.heard = 0;
+  this.takedamage = 0;
+  this.mercymod = 3;
+  global.flag[30] = 1;
+  this.ht = 100;
+  this.wd = 100;
+}
+
+function destroy() {
+  if (
+    this.mercymod === 30 &&
+    global.monsterhp[this.myself] === global.monstermaxhp[this.myself]
+  ) {
+    if (
+      this.mercymod > 10 &&
+      global.monsterhp[this.myself] == global.monstermaxhp[this.myself]
+    )
+      global.goldreward[3] += 2;
+  }
+
+  scr_monsterdefeat.call(this, 0, 0, 0, 0, 0);
+
+  _with(this.mypart1, function () {
+    instance_destroy(this);
+  });
+
+  _with(this.mypart2, function () {
+    instance_destroy(this);
+  });
+}
+
+function alarm11() {
+  this.hspeed = -4;
+  this.image_index = 3;
+}
+
+function alarm10() {
+  _with(this.mypart1, function () {
+    instance_destroy(this);
+  });
+
+  _with(this.mypart2, function () {
+    instance_destroy(this);
+  });
+
+  this.image_index = 2;
+  this.alarm[11] = 30;
+}
+
+function alarm8() {
+  snd_play(snd_ehurt1);
+}
+
+function alarm6() {
+  instance_create(
+    roomSize.width + 40,
+    this.y + this.sprite_height - 204,
+    obj_torieldisapprove
+  );
+  this.alarm[10] = 40;
+}
+
+function alarm5() {
+  /*yes its empty ingame*/
+}
+
+function alarm3() {
+  if (this.image_index !== 1) {
+    _with(this.mypart1, function () {
+      instance_destroy(this);
+    });
+
+    _with(this.mypart2, function () {
+      instance_destroy(this);
+    });
+
+    this.dmgwriter = instance_create(
+      this.x + this.sprite_width / 2 - 48,
+      this.y - 24,
+      obj_dmgwriter
+    );
+    global.damage = this.takedamage;
+    _with(this.dmgwriter, function () {
+      this.dmg = global.damage;
+    });
+
+    this.image_index = 1;
+    snd_play(snd_damage);
+    this.alarm[8] = 11;
+  }
+
+  this.x += this.shudder;
+
+  if (this.shudder < 0) {
+    this.shudder = -(this.shudder + 2);
+  } else {
+    this.shudder = -this.shudder;
+  }
+
+  if (this.shudder === 0) {
+    global.hurtanim[this.myself] = 2;
+    return;
+  }
+
+  this.alarm[3] = 2;
+}
+
+function step() {
+  if (global.mnfight === 3) {
+    this.attacked = 0;
+  }
+
+  if (this.alarm[5] > 0) {
+    if (global.monster[0] === 1) {
+      if (global.monsterinstance[0].alarm[5] > this.alarm[5])
+        this.alarm[5] = global.monsterinstance[0].alarm[5];
+    }
+
+    if (global.monster[1] === 1) {
+      if (global.monsterinstance[1].alarm[5] > this.alarm[5])
+        this.alarm[5] = global.monsterinstance[1].alarm[5];
+    }
+
+    if (global.monster[2] === 1) {
+      if (global.monsterinstance[2].alarm[5] > this.alarm[5])
+        this.alarm[5] = global.monsterinstance[2].alarm[5];
+    }
+  }
+
+  if (global.mnfight == 1) {
+    if (this.talked == 0) {
+      this.alarm[5] = 60;
+      this.alarm[6] = 1;
+      this.talked = 1;
+      global.heard = 0;
+    }
+  }
+
+  if (control_check_pressed(0)) {
+    if (
+      this.alarm[5] > 5 &&
+      instance_find(obj_lborder, 0).x === global.idealborder[0]
+    ) {
+      this.alarm[5] = 2;
+    }
+  }
+
+  if (global.hurtanim[this.myself] === 1) {
+    this.shudder = 16;
+    this.alarm[3] = global.damagetimer;
+    global.hurtanim[this.myself] = 3;
+  }
+
+  if (global.hurtanim[this.myself] === 2) {
+    global.monsterhp[this.myself] -= this.takedamage;
+
+    _with(this.dmgwriter, function () {
+      this.alarm[2] = 15;
+    });
+
+    if (global.monsterhp[this.myself] >= 1) {
+      this.mypart1 = instance_create(this.x, this.y, obj_froghead);
+      this.mypart2 = instance_create(this.x, this.y, obj_froglegs);
+      global.hurtanim[this.myself] = 0;
+      this.image_index = 0;
+      global.myfight = 0;
+      global.mnfight = 1;
+    } else {
+      global.myfight = 0;
+      global.mnfight = 1;
+      this.killed = 1;
+      instance_destroy(this);
+    }
+  }
+
+  if (global.hurtanim[this.myself] == 5) {
+    global.damage = 0;
+    instance_create(
+      this.x + this.sprite_width / 2 - 48,
+      this.y - 24,
+      obj_dmgwriter
+    );
+
+    _with(obj_dmgwriter, function () {
+      this.alarm[2] = 30;
+    });
+
+    global.myfight = 0;
+    global.mnfight = 1;
+    global.hurtanim[this.myself] = 0;
+  }
+
+  if (global.mnfight === 2) {
+    if (this.attacked === 0) {
+      global.turntimer = 100;
+      global.firingrate = 20;
+      this.gen = null; // fake froggit that will never fire so dont create
+
+      if (this.command >= 0) {
+        global.msg[0] = scr_gettext("obj_fakefroggit_479");
+      }
+
+      if (this.command >= 30) {
+        global.msg[0] = scr_gettext("obj_fakefroggit_480");
+      }
+
+      if (this.command >= 60) {
+        global.msg[0] = scr_gettext("obj_fakefroggit_481");
+      }
+
+      if (this.command >= 80) {
+        global.msg[0] = scr_gettext("obj_fakefroggit_482");
+      }
+
+      if (this.mercymod > 5) {
+        global.msg[0] = scr_gettext("obj_fakefroggit_483");
+      }
+
+      if (global.monsterhp[this.myself] < 5) {
+        global.msg[0] = scr_gettext("obj_fakefroggit_484");
+      }
+
+      this.attacked = 1;
+    }
+  }
+
+  if (global.myfight == 2) {
+    if (this.whatiheard != -1) {
+      if (global.heard == 0) {
+        if (this.whatiheard == 0) {
+          global.msc = 0;
+          global.msg[0] = scr_gettext("obj_fakefroggit_500"); // * FROGGIT - ATK 4 DEF 5&* Life is difficult for&  this enemy./^
+          instance_find(OBJ_WRITER, 0).halt = 3;
+          this.iii = instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
+
+          _with(this.iii, function () {
+            this.halt = 0;
+          });
+        }
+
+        if (this.whatiheard == 3) {
+          global.msc = 0;
+          global.msg[0] = scr_gettext("obj_fakefroggit_508"); // * Froggit didn't understand&  what you said^1, but was&  flattered anyway./^
+          instance_find(OBJ_WRITER, 0).halt = 3;
+          this.iii = instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
+
+          _with(this.iii, function () {
+            this.halt = 0;
+          });
+
+          this.mercymod = 30;
+        }
+
+        if (this.whatiheard == 1) {
+          global.msc = 0;
+          global.msg[0] = scr_gettext("obj_fakefroggit_518"); // * Froggit didn't understand&  what you said^1, but was&  scared anyway./^
+          instance_find(OBJ_WRITER, 0).halt = 3;
+          this.iii = instance_create(
+            global.idealborder[0],
+            global.idealborder[2],
+            OBJ_WRITER
+          );
+
+          _with(this.iii, function () {
+            this.halt = 0;
+          });
+
+          this.mercymod = 30;
+        }
+
+        global.heard = 1;
+      }
+    }
+  }
+
+  if (global.myfight === 4) {
+    if (global.mercyuse === 0) {
+      script_execute.call(this, scr_mercystandard);
+
+      if (this.mercy < 0) {
+        instance_destroy(this);
+      }
+    }
+  }
+
+  if (this.x < -this.sprite_width) {
+    global.monster[this.myself] = 0;
+  }
 }
 
 export {
@@ -341,4 +675,12 @@ export {
   updateCol,
   parent,
   createContext,
+  destroy,
+  alarm11,
+  alarm10,
+  alarm8,
+  alarm6,
+  alarm5,
+  alarm3,
+  step,
 };

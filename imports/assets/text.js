@@ -2,13 +2,16 @@ import {
   _with,
   ds_map_add,
   ds_map_create,
+  ini_write_real,
   random,
   round,
   script_execute,
+  string,
 } from "/imports/assets/gamemakerFunctions.js";
 import {
   ossafe_ini_close,
   ossafe_ini_open,
+  ossafe_savedata_save,
   scr_gettext,
   scr_mercystandard,
 } from "/imports/customFunctions.js";
@@ -120,6 +123,10 @@ function SCR_TEXT(argument0) {
 
           if (global.monsterinstance[i].mercy < 0 && global.flag[22] == 2)
             global.msg[0] = " \\p";
+
+          if (global.monsterinstance[i].mercy >= 0) {
+            global.msg[0] = " \\W";
+          }
         }
       }
 
@@ -71523,7 +71530,7 @@ function textdata_en() {
     "item_menub_page2",
     "                     PAGE 2"
   );
-  ds_map_add(global.text_data_en, "battle_mercy_spare", "    * Spare");
+  ds_map_add(global.text_data_en, "battle_mercy_spare", "   * Spare");
   ds_map_add(global.text_data_en, "battle_mercy_flee", "   * Flee");
   ds_map_add(global.text_data_en, "battle_name_header", "   *");
   ds_map_add(global.text_data_en, "battle_name_a", " A");

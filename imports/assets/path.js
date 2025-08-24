@@ -187,3 +187,16 @@ export const path_torielwalk4_2 = {
     3: { x: 100, y: 20, speed: 100 },
   },
 };
+
+export const path_froghead = {
+  smooth: true,
+  closed: true,
+  precision: 1,
+  points: {
+    1: { x: 264, y: 300, speed: 100 },
+    2: { x: 272, y: 296, speed: 100 },
+    3: { x: 280, y: 300, speed: 100 },
+    4: { x: 272, y: 304, speed: 100 },
+    5: { x: 272, y: 292, speed: 100 },
+  },
+};

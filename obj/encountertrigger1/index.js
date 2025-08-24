@@ -1,8 +1,17 @@
-import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
+import {
+  collision_rectangle,
+  draw_sprite_ext,
+  floor,
+  getBoundingBox,
+  instance_create,
+  instance_destroy,
+} from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
+import global from "/imports/assets/global.js";
 
-// import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references
-//                                                               // to this fake object
+import * as obj_battleblcon from "/obj/battleblcon/index.js";
+import * as obj_mainchara from "/obj/mainchara/index.js"; // replace with a valid colliding object & uncomment. if none, you can safely ignore
+
 const parent = null; // change as neccesary. if no parent, replace this line with "const parent = null;"
 
 function create() {
@@ -11,10 +20,10 @@ function create() {
   // create code
 
   const self = {
-    name: "battlebg", // sprite name
-    depth: 30, // object depth
+    name: "encountertrigger1", // sprite name
+    depth: 0, // object depth
     image_xscale: 1, // sprite scale
-    image_yscale: 1, // sprite scale
+    image_yscale: 50, // sprite scale
     image_alpha: 1, // sprite alpha
     image_index: 0, // sprite frame index
     image_speed: 0, // sprite frame speed
@@ -23,8 +32,8 @@ function create() {
     sprite_height: 0, // set to sprite_index's height
     image_angle: 0,
     image_blend: c_white,
-    sprite_index: "spr_battlebg", // sprite object
-    visible: true, // sprite visibility
+    sprite_index: "spr_event", // sprite object
+    visible: false, // sprite visibility
     friction: 0,
     gravity: 0,
     gravity_direction: 270, // gravity direction
@@ -168,6 +177,8 @@ function create() {
 function updateAlarms() {
   for (let i = 0; i < this.alarm.length; i++) {
     if (this.alarm[i] > 0) {
+      if (!Number.isInteger(this.alarm[i]))
+        this.alarm[i] = floor(this.alarm[i]);
       this.alarm[i]--;
       if (this.alarm[i] === 0) {
         const handler = this[`alarm${i}`];
@@ -183,18 +194,19 @@ function updateIndex() {
   this.image_index += this.image_speed;
   if (this.image_index >= this.image_number) {
     this.image_index -= this.image_number;
+    this.animationEnd?.();
   }
 }
 
 function updateSpeed() {
   // apply friction
-  if (this.friction !== 0 && this.speed > 0) {
+  if (this.friction !== 0 && this.speed > 0 && Number.isFinite(this.friction)) {
     this.speed -= this.friction;
     if (this.speed < 0) this.speed = 0;
   }
 
   // apply gravity vector
-  if (this.gravity) {
+  if (Number.isFinite(this.gravity)) {
     let gravRad = this.gravity_direction * (Math.PI / 180);
     this.hspeed += Math.cos(gravRad) * this.gravity;
     this.vspeed -= Math.sin(gravRad) * this.gravity;
@@ -212,8 +224,8 @@ function updateSpeed() {
 }
 
 function updateSprite() {
-  if (this.visible === true) {
-    draw_sprite_ext(
+  if (this.visible === true && this.sprite_index) {
+    const img = draw_sprite_ext(
       this.sprite_index,
       this.image_index,
       this.x,
@@ -221,9 +233,15 @@ function updateSprite() {
       this.image_xscale,
       this.image_yscale,
       this.image_angle,
-      c_white,
-      this.image_alpha
+      this.image_blend,
+      this.image_alpha,
+      1
     );
+
+    if (img) {
+      this.sprite_width = img.width;
+      this.sprite_height = img.height;
+    }
   }
 }
 
@@ -295,13 +313,29 @@ function followPath() {
 }
 
 function updateCol() {
-  //let other = collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject, false, false);
-  //if (other) {
-  // collision updates with an object here. other
-  // is the colliding instance, so use
-  // other.property for instance properties, like
-  // x, y and such.
-  //}
+  // uncomment the following line if any collision will happen involving this object
+  getBoundingBox.call(this);
+  // uncomment the if statement if said collision is checked by this object
+  let other = collision_rectangle.call(
+    this,
+    this.bbox_left,
+    this.bbox_top,
+    this.bbox_right,
+    this.bbox_bottom,
+    obj_mainchara,
+    false,
+    false
+  );
+  if (other) {
+    // collision updates with an object here. other
+    // is the colliding instance, so use
+    // other.property for instance properties, like
+    // x, y and such.
+    global.battlegroup = 3;
+    instance_create(0, 0, obj_battleblcon);
+    global.flag[30] = 1;
+    instance_destroy(this);
+  }
   // to add more collision checks, set other to
   // collision_rectangle.call(this, this.bbox_left, this.bbox_top, this.bbox_right, this.bbox_bottom, obj_solidobject2, false, false);,
   // obj_solidobject2 being a different solid object
@@ -310,6 +344,9 @@ function updateCol() {
 
 function createContext() {
   // here goes anything to do when you need context creation, so like calling any script with context you do here
+  if (global.flag[30] === 1) {
+    instance_destroy(this);
+  }
 }
 
 export {

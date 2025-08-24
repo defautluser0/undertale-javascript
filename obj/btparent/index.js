@@ -1,6 +1,4 @@
-import {
-  draw_sprite_ext,
-} from "/imports/assets/gamemakerFunctions.js";
+import { draw_sprite_ext } from "/imports/assets/gamemakerFunctions.js";
 import { c_white } from "/imports/assets.js";
 
 // import * as obj_solidobject from "/obj/solidobject/index.js"; // replace with a valid colliding object. if none, delete this line and any references

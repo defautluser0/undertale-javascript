@@ -27,7 +27,7 @@
     import roomSize from "/imports/assets/roomSize.js"
     import global from "/imports/assets/global.js"
     import * as obj_spiketile1 from '/obj/spiketile1/index.js'
-    //import * as obj_spiketile2 from '/obj/spiketile2/index.js'
+    import * as obj_spiketile2 from '/obj/spiketile2/index.js'
     import * as obj_fakewateropenr from '/obj/fakewateropenr/index.js'
     import * as obj_fakewateropenl from '/obj/fakewateropenl/index.js'
     import * as obj_fakewateropenm from '/obj/fakewateropenm/index.js'
@@ -44,9 +44,9 @@
     import * as obj_markerA from '/obj/markerA/index.js'
     import * as obj_markerB from '/obj/markerB/index.js'
     import * as obj_doorA from '/obj/doorA/index.js'
-    //import * as obj_encountertrigger1 from '/obj/encountertrigger1/index.js'
+    import * as obj_encountertrigger1 from '/obj/encountertrigger1/index.js'
     //import * as obj_toroverworld5 from '/obj/toroverworld5/index.js'
-    //import * as obj_plotwall2 from '/obj/plotwall2/index.js'
+    import * as obj_plotwall2 from '/obj/plotwall2/index.js'
     import * as obj_ruinsmusic from '/obj/ruinsmusic/index.js'
     import * as obj_readable_room1 from '/obj/readable_room1/index.js'
     import * as obj_solidlong from '/obj/solidlong/index.js'
@@ -92,12 +92,30 @@
     instance_create(1020, 160, obj_spiketile1);
     instance_create(1040, 160, obj_spiketile1);
     instance_create(1060, 160, obj_spiketile1);
+    instance_create(1100, 100, obj_spiketile1);
     instance_create(1080, 100, obj_spiketile1);
     instance_create(1060, 100, obj_spiketile1);
     instance_create(1040, 100, obj_spiketile1);
+    instance_create(1100, 120, obj_spiketile1);
     instance_create(1080, 120, obj_spiketile1);
     instance_create(1060, 120, obj_spiketile1);
     instance_create(1040, 120, obj_spiketile1);
+    instance_create(840, 100, obj_spiketile2);
+    instance_create(840, 120, obj_spiketile2);
+    instance_create(860, 100, obj_spiketile2);
+    instance_create(860, 120, obj_spiketile2);
+    instance_create(920, 140, obj_spiketile2);
+    instance_create(920, 160, obj_spiketile2);
+    instance_create(980, 100, obj_spiketile2);
+    instance_create(1000, 100, obj_spiketile2);
+    instance_create(1020, 100, obj_spiketile2);
+    instance_create(980, 120, obj_spiketile2);
+    instance_create(1000, 120, obj_spiketile2);
+    instance_create(1020, 120, obj_spiketile2);
+    instance_create(1080, 140, obj_spiketile2);
+    instance_create(1080, 160, obj_spiketile2);
+    instance_create(1100, 140, obj_spiketile2);
+    instance_create(1100, 160, obj_spiketile2);
     instance_create(1140, 60, obj_fakewateropenr);
     instance_create(800, 60, obj_fakewateropenl);
     instance_create(820, 60, obj_fakewateropenm);
@@ -175,15 +193,29 @@
     instance_create(620, 140, obj_solidsmall);
     instance_create(640, 140, obj_solidsmall);
     instance_create(660, 140, obj_solidsmall);
+    instance_create(680, 120, obj_solidsmall);
+    instance_create(700, 120, obj_solidsmall);
+    instance_create(720, 120, obj_solidsmall);
+    instance_create(740, 120, obj_solidsmall);
+    instance_create(760, 120, obj_solidsmall);
+    instance_create(780, 120, obj_solidsmall);
+    instance_create(800, 120, obj_solidsmall);
+    instance_create(820, 120, obj_solidsmall);
+    instance_create(820, 100, obj_solidsmall);
+    instance_create(1120, 140, obj_solidsmall);
+    instance_create(1120, 160, obj_solidsmall);
+    instance_create(1140, 140, obj_solidsmall);
+    instance_create(1160, 140, obj_solidsmall);
+    instance_create(1160, 80, obj_solidsmall);
     instance_create(140, 220, obj_doorB);
     instance_create(160, 220, obj_doorB);
     instance_create(150, 190, obj_markerA);
     instance_create(1158, 100, obj_markerB);
     instance_create(1178, 100, obj_doorA);
     instance_create(1178, 120, obj_doorA);
-    //instance_create(520, 0, obj_encountertrigger1);
+    instance_create(520, 0, obj_encountertrigger1);
     //instance_create(200, 100, obj_toroverworld5);
-    //instance_create(780, 20, obj_plotwall2);
+    instance_create(780, 20, obj_plotwall2);
     instance_create(40, 0, obj_ruinsmusic);
     instance_create(580, 140, obj_readable_room1);
     instance_create(600, 140, obj_readable_room1);
@@ -217,6 +249,7 @@
                 obj = inst;
                 obj.saved = true;
                 inst.saved = false;
+                console.log(inst.saved, obj.saved);
                 break;
               }
             }
@@ -239,11 +272,18 @@
           instance.xstart = instance.x;
           instance.ystart = instance.y;
 
+          instance.saved = true;
           if (!instances.get(obj._object)[0].saved) instances.set(obj._object, []);
 
           instances.get(obj._object).push(instance);
 
-          obj.roomStart?.call(instance);
+          console.log(instances.get(obj._object)[0].saved, instance.saved, instance.name);
+
+          if (instance.create2) {
+            obj.createContext?.call(instance);
+          } else {
+            obj.roomStart?.call(instance);
+          }
         };
       }
     }

@@ -249,6 +249,9 @@ export const snd_wngdng6 = new Howl({
 export const snd_wngdng7 = new Howl({
   src: ["/imports/assets/snd/wngdng7.wav"],
 });
+export const snd_b = new Howl({
+  src: ["/imports/assets/snd/b.wav"],
+});
 
 // currently playing sounds map
 export const playingSounds = new Map();
